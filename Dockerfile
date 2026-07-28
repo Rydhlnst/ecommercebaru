@@ -34,8 +34,8 @@ RUN composer install \
 FROM node:20-alpine AS assets
 WORKDIR /app
 COPY --from=vendor /app /app
-RUN cd packages/Webkul/Admin && npm ci && npm run build \
- && cd /app/packages/Webkul/Shop && npm ci && npm run build \
+RUN cd packages/Webkul/Admin && npm install --no-audit --no-fund && npm run build \
+ && cd /app/packages/Webkul/Shop && npm install --no-audit --no-fund && npm run build \
  && rm -rf /app/packages/Webkul/*/node_modules
 
 # -----------------------------------------------------------------------------
