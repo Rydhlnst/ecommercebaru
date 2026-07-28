@@ -1,0 +1,32 @@
+{
+    "name": "beres/permission",
+    "description": "Beres Commerce Permission Module",
+    "type": "bagisto-package",
+    "keywords": ["laravel", "bagisto", "permission", "role", "ecommerce"],
+    "license": "proprietary",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Beres\\Permission\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Beres\\Permission\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Beres\\Permission\\Providers\\PermissionServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

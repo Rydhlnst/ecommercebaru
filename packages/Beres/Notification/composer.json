@@ -1,0 +1,32 @@
+{
+    "name": "beres/notification",
+    "description": "Beres Commerce Notification Module",
+    "type": "bagisto-package",
+    "keywords": ["laravel", "bagisto", "notification", "email", "ecommerce"],
+    "license": "proprietary",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Beres\\Notification\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Beres\\Notification\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Beres\\Notification\\Providers\\NotificationServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

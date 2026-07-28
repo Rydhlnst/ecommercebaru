@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+
+# Deny private / transactional / auth areas
+Disallow: /customer/
+Disallow: /checkout/
+Disallow: /cart
+Disallow: /admin/
+Disallow: /_debugbar/
+Disallow: /storage/
+Disallow: /*?_debug_bar_*
+
+# Crawl-friendly for search engines
+Sitemap: /sitemap.xml

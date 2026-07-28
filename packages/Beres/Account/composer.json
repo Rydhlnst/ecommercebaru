@@ -1,0 +1,32 @@
+{
+    "name": "beres/account",
+    "description": "Beres Commerce Customer Account Module",
+    "type": "bagisto-package",
+    "keywords": ["laravel", "bagisto", "account", "ecommerce"],
+    "license": "proprietary",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Beres\\Account\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Beres\\Account\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Beres\\Account\\Providers\\AccountServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

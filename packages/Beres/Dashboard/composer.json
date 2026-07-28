@@ -1,0 +1,32 @@
+{
+    "name": "beres/dashboard",
+    "description": "Beres Commerce Dashboard Module",
+    "type": "bagisto-package",
+    "keywords": ["laravel", "bagisto", "dashboard", "ecommerce"],
+    "license": "proprietary",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Beres\\Dashboard\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Beres\\Dashboard\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Beres\\Dashboard\\Providers\\DashboardServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

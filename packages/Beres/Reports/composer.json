@@ -1,0 +1,32 @@
+{
+    "name": "beres/reports",
+    "description": "Beres Commerce Reports Module",
+    "type": "bagisto-package",
+    "keywords": ["laravel", "bagisto", "reports", "analytics", "ecommerce"],
+    "license": "proprietary",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Beres\\Reports\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Beres\\Reports\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Beres\\Reports\\Providers\\ReportServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
