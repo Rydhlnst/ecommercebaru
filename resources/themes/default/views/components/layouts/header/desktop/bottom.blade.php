@@ -342,7 +342,7 @@
                 </div>
             </div>
 
-            <!-- Bagisto Drawer Integration -->
+            <!-- Cart Drawer Integration -->
             <x-shop::drawer
                 position="left"
                 width="400px"

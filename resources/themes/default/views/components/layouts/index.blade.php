@@ -53,7 +53,7 @@
                 ?? 'Pasar online untuk bahan segar dan pantry esensial — langsung dari petani dan produsen lokal, diantar hari itu juga.';
             $defaultKeys  = $channel->home_seo['meta_keywords']
                 ?? 'belanja bahan segar, pasar online, sayur, buah, daging, roti, minuman, bumbu, snack sehat';
-            $ogImage      = $channel->logo_url ?? bagisto_asset('images/logo.svg');
+            $ogImage      = $channel->logo_url ?? null;
             $canonicalUrl = url()->current();
         @endphp
 
@@ -72,13 +72,13 @@
         <meta property="og:title"      content="{{ $defaultTitle }}">
         <meta property="og:description" content="{{ $defaultDesc }}">
         <meta property="og:url"        content="{{ $canonicalUrl }}">
-        <meta property="og:image"      content="{{ $ogImage }}">
+        @if ($ogImage)<meta property="og:image" content="{{ $ogImage }}">@endif
 
         {{-- Twitter Card --}}
         <meta name="twitter:card"        content="summary_large_image">
         <meta name="twitter:title"       content="{{ $defaultTitle }}">
         <meta name="twitter:description" content="{{ $defaultDesc }}">
-        <meta name="twitter:image"       content="{{ $ogImage }}">
+        @if ($ogImage)<meta name="twitter:image" content="{{ $ogImage }}">@endif
 
         {{-- hreflang alternates (only if channel has >1 locale) --}}
         @if (($locales = $channel->locales()->get()) && $locales->count() > 1)
@@ -95,7 +95,7 @@
             '@type'    => 'Organization',
             'name'     => $siteName,
             'url'      => url('/'),
-            'logo'     => $ogImage,
+            'logo'     => $ogImage ?? url('/'),
             'sameAs'   => array_values(array_filter([
                 core()->getConfigData('general.content.social.facebook_link'),
                 core()->getConfigData('general.content.social.instagram_link'),
@@ -109,11 +109,9 @@
 
         @stack('meta')
 
-        <link
-            rel="icon"
-            sizes="16x16"
-            href="{{ core()->getCurrentChannel()->favicon_url ?? bagisto_asset('images/favicon.ico') }}"
-        />
+        @if ($favicon = core()->getCurrentChannel()->favicon_url)
+            <link rel="icon" sizes="16x16" href="{{ $favicon }}" />
+        @endif
 
         @bagistoVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'])
 
@@ -211,7 +209,7 @@
             Skip to main content
         </a>
 
-        <!-- Built With Bagisto -->
+        <!-- Beres Commerce -->
         <div id="app">
             <!-- Flash Message Blade Component -->
             <x-shop::flash-group />

@@ -73,7 +73,7 @@
     $homeDesc    = $channel->home_seo['meta_description'] ?? 'Pasar online untuk bahan segar dan pantry esensial. Buah, sayur, daging, roti, minuman, bumbu, dan snack sehat langsung dari petani dan produsen lokal — diantar hari itu juga.';
     $homeKeys    = $channel->home_seo['meta_keywords']    ?? 'belanja bahan segar, pasar online, sayur online, buah online, daging online, roti, minuman, bumbu, snack sehat, kopi arabika gayo, madu organik, keju premium';
     $homeUrl     = route('shop.home.index');
-    $homeOgImage = $channel->logo_url ?? bagisto_asset('images/logo.svg');
+    $homeOgImage = $channel->logo_url ?? null;
 @endphp
 
 @push ('meta')
@@ -85,11 +85,11 @@
     <meta property="og:title"        content="{{ $homeTitle }}" />
     <meta property="og:description"  content="{{ $homeDesc }}" />
     <meta property="og:url"          content="{{ $homeUrl }}" />
-    <meta property="og:image"        content="{{ $homeOgImage }}" />
+    @if ($homeOgImage)<meta property="og:image" content="{{ $homeOgImage }}" />@endif
     <meta property="og:type"         content="website" />
     <meta name="twitter:title"       content="{{ $homeTitle }}" />
     <meta name="twitter:description" content="{{ $homeDesc }}" />
-    <meta name="twitter:image"       content="{{ $homeOgImage }}" />
+    @if ($homeOgImage)<meta name="twitter:image" content="{{ $homeOgImage }}" />@endif
 
     {{-- WebSite + SearchAction (Sitelinks Search Box) --}}
     <script type="application/ld+json">
@@ -112,7 +112,7 @@
         '@context'  => 'https://schema.org',
         '@type'     => 'LocalBusiness',
         'name'      => $siteName,
-        'image'     => $homeOgImage,
+        'image'     => $homeOgImage ?? url('/'),
         'telephone' => '+62-21-555-1234',
         'email'     => 'halo@ecommerce.id',
         'url'       => url('/'),
@@ -197,8 +197,7 @@
                 </div>
             </div>
 
-            <div class="relative aspect-[4/5] lg:aspect-[5/6] overflow-hidden flex items-center justify-center" style="background-color:#E8F0E5;">
-                <svg class="w-48 h-48 md:w-64 md:h-64 text-ink/70" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" aria-hidden="true">{!! $svgIcons['salad'] !!}</svg>
+            <div class="relative aspect-[4/5] lg:aspect-[5/6] overflow-hidden" style="background-color:#E8F0E5;">
                 <div class="absolute bottom-6 left-6 right-6 md:left-8 md:bottom-8 md:right-auto md:max-w-xs bg-cream/95 backdrop-blur p-5">
                     <p class="inline-flex items-center gap-2 text-[11px] tracking-[0.14em] uppercase text-stone">
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clip-rule="evenodd"/></svg>
@@ -256,9 +255,7 @@
             <div class="grid gap-4 md:gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
                 @foreach ($dummyCategories as [$label, $bg, $iconKey])
                     <a href="#" class="group block">
-                        <div class="relative aspect-square overflow-hidden flex items-center justify-center" style="background-color:#{{ $bg }};">
-                            <svg class="w-16 h-16 md:w-20 md:h-20 text-ink/70 transition-transform duration-500 group-hover:scale-110" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24" aria-hidden="true">{!! $svgIcons[$iconKey] !!}</svg>
-                        </div>
+                        <div class="relative aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]" style="background-color:#{{ $bg }};"></div>
                         <p class="mt-4 text-center text-[13px] tracking-[0.14em] uppercase text-ink group-hover:text-clay transition-colors">
                             {{ $label }}
                         </p>
@@ -289,8 +286,7 @@
             <div class="grid gap-6 grid-cols-2 lg:grid-cols-4">
                 @foreach ($newProducts as $i => [$name, $price, $compare, $bg, $iconKey])
                     <a href="#" class="group block">
-                        <div class="relative aspect-[4/5] overflow-hidden flex items-center justify-center" style="background-color:#{{ $bg }};">
-                            <svg class="w-24 h-24 md:w-28 md:h-28 text-ink/70 transition-transform duration-500 group-hover:scale-105" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24" aria-hidden="true">{!! $svgIcons[$iconKey] !!}</svg>
+                        <div class="relative aspect-[4/5] overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]" style="background-color:#{{ $bg }};">
                             @if ($compare)
                                 <span class="absolute top-3 left-3 bg-ink text-cream text-[10px] tracking-[0.14em] uppercase px-2.5 py-1">Sale</span>
                             @endif
@@ -315,9 +311,7 @@
     {{-- EDITORIAL BAND --}}
     <section class="bg-ink text-cream">
         <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-24 grid gap-12 lg:grid-cols-2 items-center">
-            <div class="relative aspect-[4/3] overflow-hidden flex items-center justify-center order-2 lg:order-1" style="background-color:#2A2A2A;">
-                <svg class="w-40 h-40 md:w-52 md:h-52 text-cream/85" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" aria-hidden="true">{!! $svgIcons['gift'] !!}</svg>
-            </div>
+            <div class="relative aspect-[4/3] overflow-hidden order-2 lg:order-1" style="background-color:#2A2A2A;"></div>
             <div class="max-w-lg order-1 lg:order-2 lg:pl-8">
                 <p class="inline-flex items-center gap-2 text-[11px] tracking-[0.14em] uppercase text-sand mb-4">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/></svg>
@@ -359,8 +353,7 @@
             <div class="grid gap-6 grid-cols-2 lg:grid-cols-4">
                 @foreach ($bestSellers as [$name, $price, $bg, $iconKey])
                     <a href="#" class="group block">
-                        <div class="relative aspect-[4/5] overflow-hidden flex items-center justify-center" style="background-color:#{{ $bg }};">
-                            <svg class="w-24 h-24 md:w-28 md:h-28 text-ink/70 transition-transform duration-500 group-hover:scale-105" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24" aria-hidden="true">{!! $svgIcons[$iconKey] !!}</svg>
+                        <div class="relative aspect-[4/5] overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]" style="background-color:#{{ $bg }};">
                             <div class="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <span class="icon-heart w-9 h-9 rounded-full bg-cream/95 flex items-center justify-center text-lg text-ink" role="presentation"></span>
                                 <span class="icon-eye w-9 h-9 rounded-full bg-cream/95 flex items-center justify-center text-lg text-ink" role="presentation"></span>
@@ -464,9 +457,7 @@
                 @foreach ($journals as $i => [$cat, $title, $excerpt, $bg, $iconKey])
                     <article class="group">
                         <a href="#" class="block">
-                            <div class="relative aspect-[4/3] overflow-hidden mb-5 flex items-center justify-center" style="background-color:#{{ $bg }};">
-                                <svg class="w-24 h-24 md:w-28 md:h-28 text-ink/70 transition-transform duration-500 group-hover:scale-105" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24" aria-hidden="true">{!! $svgIcons[$iconKey] !!}</svg>
-                            </div>
+                            <div class="relative aspect-[4/3] overflow-hidden mb-5 transition-transform duration-500 group-hover:scale-[1.02]" style="background-color:#{{ $bg }};"></div>
                             <p class="text-[11px] tracking-[0.14em] uppercase text-stone mb-2">{{ $cat }}</p>
                             <h3 class="text-2xl text-ink group-hover:text-clay transition-colors" style="font-weight: 500; letter-spacing: -0.015em;">{{ $title }}</h3>
                             <p class="mt-3 text-sm text-cocoa/80 leading-relaxed">{{ $excerpt }}</p>
