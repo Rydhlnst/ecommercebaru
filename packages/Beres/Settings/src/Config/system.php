@@ -30,6 +30,12 @@ return [
             ['name' => 'cta_secondary','title' => 'Tombol sekunder',    'type' => 'text',     'default' => 'Lihat kategori'],
             ['name' => 'promo_label',  'title' => 'Label promo',        'type' => 'text',     'default' => 'Terlaris minggu ini'],
             ['name' => 'promo_text',   'title' => 'Text promo',         'type' => 'text',     'default' => 'Bundle Sarapan Sehat — mulai Rp 149.000'],
+
+            /* Hero carousel slide images — upload 1-4 gambar untuk carousel utama */
+            ['name' => 'slide1_img',   'title' => 'Slide 1 — Gambar',   'type' => 'image',    'info' => 'Rasio ideal 16:7 (desktop), min 2000px lebar. Format: JPG/PNG/WebP.'],
+            ['name' => 'slide2_img',   'title' => 'Slide 2 — Gambar',   'type' => 'image'],
+            ['name' => 'slide3_img',   'title' => 'Slide 3 — Gambar',   'type' => 'image'],
+            ['name' => 'slide4_img',   'title' => 'Slide 4 — Gambar',   'type' => 'image'],
         ],
     ],
 
@@ -102,6 +108,8 @@ return [
         'fields' => [
             ['name' => 'title',   'title' => 'Judul',   'type' => 'textarea', 'default' => "Baca tips produk favorit\nuntuk gaya hidup lebih sehat."],
             ['name' => 'button',  'title' => 'Tombol',  'type' => 'text',     'default' => 'Lihat semua blog'],
+            ['name' => 'image',   'title' => 'Background image', 'type' => 'image', 'info' => 'Gambar background banner. Rasio 16:9 disarankan.'],
+            ['name' => 'link',    'title' => 'Link tombol', 'type' => 'text', 'default' => '/pages/blog', 'info' => 'URL atau slug CMS page tujuan.'],
         ],
     ],
 

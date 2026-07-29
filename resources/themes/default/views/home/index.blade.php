@@ -164,6 +164,44 @@
             if (btn) { btn.disabled = false; btn.textContent = original; }
         }
     };
+
+    // Qty stepper
+    window.beresQty = function(btn, delta) {
+        const input = btn.parentElement.querySelector('input[name="quantity"]');
+        if (!input) return;
+        let v = parseInt(input.value || 1, 10) + delta;
+        if (v < 1) v = 1;
+        if (v > 99) v = 99;
+        input.value = v;
+    };
+
+    // Wishlist toggle → Bagisto API
+    window.beresToggleWishlist = async function(btn, productId) {
+        const token = document.querySelector('meta[name="csrf-token"]')?.content;
+        const svg   = btn.querySelector('svg');
+        const filled = btn.getAttribute('data-active') === '1';
+        try {
+            const res = await fetch('{{ url('/api/customer/wishlist') }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': token,
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify({ product_id: productId }),
+            });
+            if (res.status === 401 || res.redirected) {
+                window.location.href = '{{ route('shop.customer.session.create') }}';
+                return;
+            }
+            if (res.ok) {
+                btn.setAttribute('data-active', filled ? '0' : '1');
+                if (svg) svg.setAttribute('fill', filled ? 'none' : '#2D5A27');
+            }
+        } catch (e) { /* silent */ }
+    };
 </script>
 @endpush
 
@@ -234,36 +272,40 @@
         @media (max-width:640px){.beres-hero__nav{width:36px;height:36px;font-size:14px;}.beres-hero__nav--prev{left:8px;}.beres-hero__nav--next{right:8px;}}
     </style>
 
-    @push('scripts')
     <script>
         (function(){
-            var track = document.getElementById('beresHeroTrack');
-            if (!track) return;
-            var slides = track.querySelectorAll('.beres-hero__slide');
-            var dots   = document.querySelectorAll('.beres-hero__dot');
-            var total  = slides.length;
-            var idx    = 0;
-            if (total < 2) return;
+            function initBeresHero(){
+                var track = document.getElementById('beresHeroTrack');
+                if (!track) return;
+                var slides = track.querySelectorAll('.beres-hero__slide');
+                var dots   = document.querySelectorAll('.beres-hero__dot');
+                var total  = slides.length;
+                var idx    = 0;
+                if (total < 2) return;
 
-            window.beresHeroGoto = function(i){
-                idx = (i + total) % total;
-                track.style.transform = 'translateX(-' + (idx * 100) + '%)';
-                dots.forEach(function(d,k){ d.classList.toggle('is-active', k === idx); });
-            };
-            window.beresHeroGo = function(dir){ window.beresHeroGoto(idx + dir); };
+                window.beresHeroGoto = function(i){
+                    idx = (i + total) % total;
+                    track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+                    dots.forEach(function(d,k){ d.classList.toggle('is-active', k === idx); });
+                };
+                window.beresHeroGo = function(dir){ window.beresHeroGoto(idx + dir); };
 
-            // Autoplay
-            var timer = setInterval(function(){ window.beresHeroGo(1); }, 5000);
-            track.parentElement.addEventListener('mouseenter', function(){ clearInterval(timer); });
-            track.parentElement.addEventListener('mouseleave', function(){ timer = setInterval(function(){ window.beresHeroGo(1); }, 5000); });
+                var timer = setInterval(function(){ window.beresHeroGo(1); }, 5000);
+                var wrap  = track.parentElement;
+                wrap.addEventListener('mouseenter', function(){ clearInterval(timer); });
+                wrap.addEventListener('mouseleave', function(){ timer = setInterval(function(){ window.beresHeroGo(1); }, 5000); });
 
-            // Touch swipe
-            var startX = 0, endX = 0;
-            track.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
-            track.addEventListener('touchend',   function(e){ endX = e.changedTouches[0].clientX; var dx = endX - startX; if (Math.abs(dx) > 40) window.beresHeroGo(dx < 0 ? 1 : -1); }, {passive:true});
+                var startX = 0;
+                track.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
+                track.addEventListener('touchend',   function(e){ var dx = e.changedTouches[0].clientX - startX; if (Math.abs(dx) > 40) window.beresHeroGo(dx < 0 ? 1 : -1); }, {passive:true});
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initBeresHero);
+            } else {
+                initBeresHero();
+            }
         })();
     </script>
-    @endpush
 
     {{-- ============ FEATURED PRODUCT SPOTLIGHT ============ --}}
     @if ($featuredProduct)
@@ -273,8 +315,8 @@
             $fpUrl   = route('shop.product_or_category.index', $featuredProduct->url_key ?? '#');
             $fpImage = product_image()->getProductBaseImage($featuredProduct)['medium_image_url'] ?? null;
         @endphp
-        <section class="bg-white">
-            <div class="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-16">
+        <section class="bg-white beres-reveal">
+            <div class="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
                     <a href="{{ $fpUrl }}" class="block aspect-square md:aspect-[4/5] overflow-hidden" style="background-color:#E8F0E5;">
                         @if ($fpImage)
@@ -314,8 +356,8 @@
     @endif
 
     {{-- ============ NEW ARRIVALS ============ --}}
-    <section class="bg-white">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-16">
+    <section class="bg-white beres-reveal">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.new_title', 'New Arrivals') }}</h2>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -333,8 +375,8 @@
     </section>
 
     {{-- ============ KITS & BUNDLES ============ --}}
-    <section class="bg-white border-t" style="border-color:#F5F9F3;">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-16">
+    <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.bundle_title', 'Kits & Bundles') }}</h2>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -352,7 +394,7 @@
     </section>
 
     {{-- ============ 100% NATURAL BANNER ============ --}}
-    <section style="background-color:#2D5A27;">
+    <section class="beres-reveal" style="background-color:#2D5A27;">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-10">
             <div class="flex items-center justify-center gap-6 md:gap-16 text-white text-center">
                 <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text1', '100% NATURAL') }}</p>
@@ -363,8 +405,8 @@
     </section>
 
     {{-- ============ SHOP BY CATEGORY ============ --}}
-    <section class="bg-white">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-16">
+    <section class="bg-white beres-reveal">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex items-center justify-between mb-6 md:mb-8">
                 <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.cat_title', 'Shop By Category') }}</h2>
                 <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All Categories</a>
@@ -404,8 +446,8 @@
     </section>
 
     {{-- ============ ALL TIME BEST SELLER ============ --}}
-    <section class="bg-white border-t" style="border-color:#F5F9F3;">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-16">
+    <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <h2 class="text-xl md:text-2xl text-[#171717] mb-6 md:mb-8" style="font-weight:600;">{{ $c('sections.best_title', 'All Time Best Seller') }}</h2>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -423,7 +465,7 @@
     </section>
 
     {{-- ============ CATEGORY TICKER (Marquee) ============ --}}
-    <section style="background-color:#2D5A27;" class="overflow-hidden">
+    <section class="overflow-hidden beres-reveal" style="background-color:#2D5A27;">
         <div class="py-4 md:py-5">
             <div class="flex whitespace-nowrap animate-[marquee_35s_linear_infinite] text-white gap-10 md:gap-14">
                 @php $tickerItems = ['Grannis Signature Kits','Oats With Nuts','Spices and Salts','Seeds and Superfoods','Fry Mix Masala','Desi Ghee','Recipe Mix Masalas']; @endphp
@@ -439,8 +481,8 @@
     </section>
 
     {{-- ============ SEEDS & SUPERFOODS ============ --}}
-    <section class="bg-white">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-16">
+    <section class="bg-white beres-reveal">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex items-center justify-between mb-6 md:mb-8">
                 <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Our Seeds and Superfoods</h2>
                 <a href="#" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All</a>
@@ -477,7 +519,7 @@
     </section>
 
     {{-- ============ TRUST BADGES with icons ============ --}}
-    <section class="bg-white border-t" style="border-color:#F5F9F3;">
+    <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-14">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 @php
@@ -502,8 +544,8 @@
     </section>
 
     {{-- ============ CUSTOMER REVIEWS ============ --}}
-    <section style="background-color:#F5F9F3;">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-16">
+    <section class="beres-reveal" style="background-color:#F5F9F3;">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-8">
                 <div>
                     <p class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Our customers' Google reviews</p>
@@ -551,8 +593,8 @@
     </section>
 
     {{-- ============ FAQ ============ --}}
-    <section class="bg-white">
-        <div class="mx-auto max-w-4xl px-4 sm:px-6 md:px-10 py-10 md:py-16">
+    <section class="bg-white beres-reveal">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 md:px-10 py-16 md:py-24">
             <h2 class="text-2xl md:text-3xl text-[#171717] mb-8" style="font-weight:600;">{{ $c('sections.faq_title', 'FAQ') }}</h2>
 
             <div class="space-y-3">
@@ -570,7 +612,7 @@
     </section>
 
     {{-- ============ BLOG CTA BANNER ============ --}}
-    <section class="bg-white pb-4 md:pb-6">
+    <section class="bg-white pb-4 md:pb-6 beres-reveal">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14">
             <div class="text-white p-8 md:p-12 lg:p-16 relative overflow-hidden" style="background-color:#2D5A27;">
                 <h2 class="text-2xl md:text-3xl lg:text-4xl max-w-2xl" style="font-weight:600; letter-spacing:-0.01em;">
@@ -584,8 +626,8 @@
     </section>
 
     {{-- ============ LATEST BLOGS ============ --}}
-    <section class="bg-white">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-16">
+    <section class="bg-white beres-reveal">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex items-center justify-between mb-6 md:mb-8">
                 <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Latest Blogs</h2>
                 <a href="#" class="text-sm underline text-[#2D5A27] hover:opacity-70">Browse Wellness Blogs</a>

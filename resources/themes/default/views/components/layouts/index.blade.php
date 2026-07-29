@@ -187,6 +187,23 @@
 
             a { color: inherit; text-decoration: none; }
             a:hover { color: var(--clay); }
+
+            /* Scroll-reveal for sections */
+            .beres-reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease-out, transform .7s cubic-bezier(.2,.7,.2,1); }
+            .beres-reveal.is-visible { opacity: 1; transform: none; }
+            @media (prefers-reduced-motion: reduce) { .beres-reveal { opacity: 1; transform: none; transition: none; } }
+
+            /* Product card polish */
+            .beres-card { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease, border-color .35s ease; }
+            .beres-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(45,90,39,0.08); border-color: #C8DBBE !important; }
+
+            /* Button ripple-ish press */
+            .beres-btn { position: relative; transition: transform .15s ease, background-color .25s ease, opacity .2s ease; }
+            .beres-btn:active { transform: scale(.97); }
+
+            /* Fade page-in on load */
+            @keyframes beresFadeIn { from { opacity: 0; } to { opacity: 1; } }
+            main#main { animation: beresFadeIn .4s ease-out; }
         </style>
 
         @if(core()->getConfigData('general.content.speculation_rules.enabled'))
@@ -262,6 +279,31 @@
         <x-shop::layouts.webmcp />
 
         @stack('scripts')
+
+        {{-- Global scroll-reveal observer --}}
+        <script>
+            (function(){
+                function initReveal(){
+                    var els = document.querySelectorAll('.beres-reveal');
+                    if (!els.length) return;
+                    if (!('IntersectionObserver' in window)) {
+                        els.forEach(function(e){ e.classList.add('is-visible'); });
+                        return;
+                    }
+                    var io = new IntersectionObserver(function(entries){
+                        entries.forEach(function(en){
+                            if (en.isIntersecting) {
+                                en.target.classList.add('is-visible');
+                                io.unobserve(en.target);
+                            }
+                        });
+                    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+                    els.forEach(function(e){ io.observe(e); });
+                }
+                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initReveal);
+                else initReveal();
+            })();
+        </script>
 
         {!! view_render_event('bagisto.shop.layout.vue-app-mount.before') !!}
         <script>
