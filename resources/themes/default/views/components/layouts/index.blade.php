@@ -244,10 +244,16 @@
                 <x-shop::layouts.services />
             @endif
 
+            <!-- Store Location + Map (semua page) -->
+            @include('shop::components.layouts.map-section')
+
             <!-- Page Footer Blade Component -->
             @if ($hasFooter)
                 <x-shop::layouts.footer />
             @endif
+
+            <!-- Mobile Bottom Navigation -->
+            @include('shop::components.layouts.bottom-nav')
         </div>
 
         {!! view_render_event('bagisto.shop.layout.body.after') !!}

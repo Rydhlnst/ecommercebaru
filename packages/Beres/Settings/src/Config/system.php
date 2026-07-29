@@ -1,0 +1,179 @@
+<?php
+
+/**
+ * Storefront content settings — muncul di admin: Configure → Storefront
+ * Semua text di homepage & map section bisa di-edit dari sini oleh customer.
+ * Read via: core()->getConfigData('beres_storefront.<section>.<key>')
+ */
+
+return [
+    [
+        'key'  => 'beres_storefront',
+        'name' => 'Storefront Content',
+        'info' => 'Semua text yang tampil di homepage dan section kontak.',
+        'sort' => 1,
+    ],
+
+    /* =========================
+     | HERO section
+     ========================= */
+    [
+        'key'    => 'beres_storefront.hero',
+        'name'   => 'Hero Banner',
+        'info'   => 'Bagian teratas homepage.',
+        'sort'   => 1,
+        'fields' => [
+            ['name' => 'eyebrow',    'title' => 'Label kecil di atas',  'type' => 'text',     'default' => 'Panen Hari Ini'],
+            ['name' => 'headline',   'title' => 'Headline',             'type' => 'textarea', 'default' => "Bahan segar,\ndapur bahagia."],
+            ['name' => 'subhead',    'title' => 'Sub-headline',         'type' => 'textarea', 'default' => 'Buah, sayur, daging, dan pantry pilihan — langsung dari petani dan produsen lokal terpercaya, sampai depan pintu kamu hari itu juga.'],
+            ['name' => 'cta_primary','title' => 'Tombol utama',         'type' => 'text',     'default' => 'Belanja sekarang'],
+            ['name' => 'cta_secondary','title' => 'Tombol sekunder',    'type' => 'text',     'default' => 'Lihat kategori'],
+            ['name' => 'promo_label',  'title' => 'Label promo',        'type' => 'text',     'default' => 'Terlaris minggu ini'],
+            ['name' => 'promo_text',   'title' => 'Text promo',         'type' => 'text',     'default' => 'Bundle Sarapan Sehat — mulai Rp 149.000'],
+        ],
+    ],
+
+    /* =========================
+     | TRUST BADGES
+     ========================= */
+    [
+        'key'    => 'beres_storefront.trust',
+        'name'   => 'Trust Badges',
+        'info'   => '4 keunggulan di bar hijau di bawah hero.',
+        'sort'   => 2,
+        'fields' => [
+            ['name' => 'badge1_title', 'title' => 'Badge 1 — Judul', 'type' => 'text',     'default' => '100% Alami'],
+            ['name' => 'badge1_desc',  'title' => 'Badge 1 — Desc',  'type' => 'text',     'default' => 'Tanpa pengawet & bahan sintetis'],
+            ['name' => 'badge2_title', 'title' => 'Badge 2 — Judul', 'type' => 'text',     'default' => 'Lab Certified'],
+            ['name' => 'badge2_desc',  'title' => 'Badge 2 — Desc',  'type' => 'text',     'default' => 'Diuji kualitas oleh laboratorium'],
+            ['name' => 'badge3_title', 'title' => 'Badge 3 — Judul', 'type' => 'text',     'default' => 'Kirim Sameday'],
+            ['name' => 'badge3_desc',  'title' => 'Badge 3 — Desc',  'type' => 'text',     'default' => 'Area Jakarta pesan pagi sampai sore'],
+            ['name' => 'badge4_title', 'title' => 'Badge 4 — Judul', 'type' => 'text',     'default' => 'Retur Gratis'],
+            ['name' => 'badge4_desc',  'title' => 'Badge 4 — Desc',  'type' => 'text',     'default' => 'Rusak? Ganti tanpa perlu kembalikan'],
+        ],
+    ],
+
+    /* =========================
+     | SECTION HEADINGS
+     ========================= */
+    [
+        'key'    => 'beres_storefront.sections',
+        'name'   => 'Judul Section',
+        'info'   => 'Heading tiap section homepage.',
+        'sort'   => 3,
+        'fields' => [
+            ['name' => 'new_eyebrow',    'title' => 'New — Eyebrow',    'type' => 'text', 'default' => 'Baru datang'],
+            ['name' => 'new_title',      'title' => 'New — Judul',      'type' => 'text', 'default' => 'Produk terbaru.'],
+            ['name' => 'bundle_eyebrow', 'title' => 'Bundle — Eyebrow', 'type' => 'text', 'default' => 'Bundle hemat'],
+            ['name' => 'bundle_title',   'title' => 'Bundle — Judul',   'type' => 'text', 'default' => 'Paket & bundle pilihan.'],
+            ['name' => 'cat_eyebrow',    'title' => 'Kategori — Eyebrow','type' => 'text','default' => 'Belanja per kategori'],
+            ['name' => 'cat_title',      'title' => 'Kategori — Judul', 'type' => 'text', 'default' => 'Semua kebutuhan dapur.'],
+            ['name' => 'best_eyebrow',   'title' => 'Best — Eyebrow',   'type' => 'text', 'default' => 'Favorit pelanggan'],
+            ['name' => 'best_title',     'title' => 'Best — Judul',     'type' => 'text', 'default' => 'Best seller.'],
+            ['name' => 'review_eyebrow', 'title' => 'Review — Eyebrow', 'type' => 'text', 'default' => '★★★★★ 4.8 dari 2.400+ ulasan'],
+            ['name' => 'review_title',   'title' => 'Review — Judul',   'type' => 'text', 'default' => 'Apa kata pelanggan.'],
+            ['name' => 'faq_title',      'title' => 'FAQ — Judul',      'type' => 'text', 'default' => 'Pertanyaan umum.'],
+            ['name' => 'journal_title',  'title' => 'Journal — Judul',  'type' => 'text', 'default' => 'Cerita dari dapur.'],
+        ],
+    ],
+
+    /* =========================
+     | NATURAL BANNER
+     ========================= */
+    [
+        'key'    => 'beres_storefront.natural_banner',
+        'name'   => 'Banner Natural',
+        'info'   => 'Banner hijau "100% NATURAL · LAB CERTIFIED".',
+        'sort'   => 7,
+        'fields' => [
+            ['name' => 'text1', 'title' => 'Text kiri',  'type' => 'text', 'default' => '100% NATURAL'],
+            ['name' => 'text2', 'title' => 'Text kanan', 'type' => 'text', 'default' => 'LAB CERTIFIED'],
+        ],
+    ],
+
+    /* =========================
+     | BLOG CTA
+     ========================= */
+    [
+        'key'    => 'beres_storefront.blog_cta',
+        'name'   => 'Blog CTA Banner',
+        'info'   => 'Banner hijau ajakan baca blog.',
+        'sort'   => 8,
+        'fields' => [
+            ['name' => 'title',   'title' => 'Judul',   'type' => 'textarea', 'default' => "Baca tips produk favorit\nuntuk gaya hidup lebih sehat."],
+            ['name' => 'button',  'title' => 'Tombol',  'type' => 'text',     'default' => 'Lihat semua blog'],
+        ],
+    ],
+
+    /* =========================
+     | NEWSLETTER
+     ========================= */
+    [
+        'key'    => 'beres_storefront.newsletter',
+        'name'   => 'Newsletter',
+        'info'   => 'Section signup email di dekat footer.',
+        'sort'   => 4,
+        'fields' => [
+            ['name' => 'title',       'title' => 'Judul',       'type' => 'text',     'default' => 'Resep, tips, dan promo mingguan.'],
+            ['name' => 'description', 'title' => 'Deskripsi',   'type' => 'textarea', 'default' => 'Dapatkan inspirasi masak, panduan bahan segar, dan diskon eksklusif langsung ke inbox kamu.'],
+            ['name' => 'button',      'title' => 'Tombol',      'type' => 'text',     'default' => 'Daftar'],
+        ],
+    ],
+
+    /* =========================
+     | FAQ
+     ========================= */
+    [
+        'key'    => 'beres_storefront.faq',
+        'name'   => 'FAQ',
+        'info'   => '4 pertanyaan yang muncul di section FAQ.',
+        'sort'   => 9,
+        'fields' => [
+            ['name' => 'q1', 'title' => 'Q1', 'type' => 'text',     'default' => 'Berapa lama produk saya dibuat & dikirim?'],
+            ['name' => 'a1', 'title' => 'A1', 'type' => 'textarea', 'default' => 'Untuk area Jakarta pesanan sebelum jam 10 pagi sampai di hari yang sama. Luar kota 2-5 hari kerja tergantung ekspedisi.'],
+            ['name' => 'q2', 'title' => 'Q2', 'type' => 'text',     'default' => 'Berapa biaya pengiriman?'],
+            ['name' => 'a2', 'title' => 'A2', 'type' => 'textarea', 'default' => 'Gratis ongkir untuk pembelian di atas Rp 200.000 area Jabodetabek. Di bawah itu tarif menyesuaikan ekspedisi.'],
+            ['name' => 'q3', 'title' => 'Q3', 'type' => 'text',     'default' => 'Bagaimana kalau saya tidak puas?'],
+            ['name' => 'a3', 'title' => 'A3', 'type' => 'textarea', 'default' => 'Ganti atau refund penuh dalam 24 jam setelah barang diterima — cukup kirim foto ke customer service kami.'],
+            ['name' => 'q4', 'title' => 'Q4', 'type' => 'text',     'default' => 'Bisa ubah alamat setelah pesan?'],
+            ['name' => 'a4', 'title' => 'A4', 'type' => 'textarea', 'default' => 'Bisa selama status pesanan masih "Diproses". Hubungi CS via WhatsApp dan kami bantu update.'],
+        ],
+    ],
+
+    /* =========================
+     | CONTACT & MAP (di atas footer)
+     ========================= */
+    [
+        'key'    => 'beres_storefront.contact',
+        'name'   => 'Kontak & Lokasi',
+        'info'   => 'Section maps + info kontak di atas footer.',
+        'sort'   => 5,
+        'fields' => [
+            ['name' => 'eyebrow',      'title' => 'Label kecil',       'type' => 'text',     'default' => 'Kunjungi kami'],
+            ['name' => 'title',        'title' => 'Judul',             'type' => 'text',     'default' => 'Lokasi & kontak.'],
+            ['name' => 'description',  'title' => 'Deskripsi',         'type' => 'textarea', 'default' => 'Mampir ke gerai fisik kami untuk pengalaman belanja langsung, atau hubungi tim kami untuk pertanyaan seputar produk & pengiriman.'],
+            ['name' => 'address',      'title' => 'Alamat lengkap',    'type' => 'textarea', 'default' => "Pasar Modern BSD, Blok C-12\nJl. Letnan Sutopo No. 12, Serpong\nTangerang Selatan 15321"],
+            ['name' => 'hours',        'title' => 'Jam operasional',   'type' => 'textarea', 'default' => "Senin – Sabtu · 07.00 – 21.00\nMinggu · 08.00 – 20.00"],
+            ['name' => 'phone',        'title' => 'Nomor telepon',     'type' => 'text',     'default' => '+62 21 555 1234'],
+            ['name' => 'email',        'title' => 'Email',             'type' => 'text',     'default' => 'halo@ecommerce.beres.io'],
+            ['name' => 'map_query',    'title' => 'Query maps (search)','type'=> 'text',     'default' => 'Pasar Modern BSD, Serpong, Tangerang',
+             'channel_based' => false],
+        ],
+    ],
+
+    /* =========================
+     | BOTTOM NAV LABELS (mobile)
+     ========================= */
+    [
+        'key'    => 'beres_storefront.bottom_nav',
+        'name'   => 'Bottom Navigation',
+        'info'   => 'Label icon di navigasi bawah mobile.',
+        'sort'   => 6,
+        'fields' => [
+            ['name' => 'label_home',    'title' => 'Home',    'type' => 'text', 'default' => 'Home'],
+            ['name' => 'label_shop',    'title' => 'Shop',    'type' => 'text', 'default' => 'Shop'],
+            ['name' => 'label_cart',    'title' => 'Cart',    'type' => 'text', 'default' => 'Cart'],
+            ['name' => 'label_account', 'title' => 'Account', 'type' => 'text', 'default' => 'Akun'],
+        ],
+    ],
+];

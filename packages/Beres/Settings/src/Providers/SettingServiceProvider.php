@@ -23,5 +23,12 @@ class SettingServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-settings');
         $this->loadRoutesFrom(__DIR__ . '/../Routes/admin.php');
+
+        // Merge storefront settings ke Bagisto core config
+        // Muncul di admin: Configure → Storefront Content
+        $this->mergeConfigFrom(
+            __DIR__ . '/../Config/system.php',
+            'core'
+        );
     }
 }
