@@ -24,13 +24,13 @@
     }
 @endphp
 
-<div class="group border" style="border-color:#E8F0E5;">
+<div class="group border overflow-hidden" style="border-color:#E8F0E5; border-radius:16px;">
     <a href="{{ $href }}" class="block relative aspect-square overflow-hidden" style="background-color:{{ $bg }};">
         @if ($image)
             <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy">
         @endif
         @if ($compare)
-            <span class="absolute top-3 left-3 text-white text-[10px] tracking-[0.14em] uppercase px-2 py-1" style="background-color:#2D5A27;">Sale</span>
+            <span class="absolute top-3 left-3 text-white text-[10px] tracking-[0.14em] uppercase px-2.5 py-1" style="background-color:#2D5A27; border-radius:999px;">Sale</span>
         @endif
     </a>
 
@@ -51,9 +51,9 @@
                 <p class="text-[10px] tracking-wide text-[#737373] mb-1">Ukuran</p>
                 <div class="flex flex-wrap gap-1">
                     @foreach ($variants as $i => $v)
-                        <button type="button" class="px-2 py-1 text-[10px] border transition-colors
+                        <button type="button" class="px-3 py-1 text-[10px] border transition-colors
                             {{ $i === 0 ? 'text-white' : 'text-[#737373] hover:border-[#2D5A27] hover:text-[#2D5A27]' }}"
-                            style="{{ $i === 0 ? 'background-color:#2D5A27; border-color:#2D5A27;' : 'border-color:#E8F0E5;' }}">
+                            style="{{ $i === 0 ? 'background-color:#2D5A27; border-color:#2D5A27;' : 'border-color:#E8F0E5;' }} border-radius:999px;">
                             {{ $v }}
                         </button>
                     @endforeach
@@ -74,14 +74,14 @@
                 <input type="hidden" name="quantity" value="1">
                 <button type="submit"
                         class="w-full py-2.5 text-[11px] tracking-[0.14em] uppercase text-white hover:opacity-90 transition-opacity"
-                        style="background-color:#2D5A27; font-weight:600;">
+                        style="background-color:#2D5A27; font-weight:600; border-radius:999px;">
                     Add to Cart
                 </button>
             </form>
         @else
             <a href="{{ $href }}"
                class="mt-3 block w-full py-2.5 text-[11px] tracking-[0.14em] uppercase text-white hover:opacity-90 transition-opacity text-center"
-               style="background-color:#2D5A27; font-weight:600;">
+               style="background-color:#2D5A27; font-weight:600; border-radius:999px;">
                 Lihat produk
             </a>
         @endif

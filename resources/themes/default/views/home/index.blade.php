@@ -180,37 +180,90 @@
 <x-shop::layouts>
     <x-slot:title>{{ $channel->home_seo['meta_title'] ?? '' }}</x-slot>
 
-    {{-- ============ HERO BANNER ============ --}}
-    <section style="background-color:#F5F9F3;">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-20">
-            <div class="relative overflow-hidden" style="background-color:#E8F0E5;">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-center px-6 md:px-12 py-12 md:py-20">
-                    <div class="aspect-square md:aspect-[3/4] order-2 md:order-1" style="background-color:#DCE8D6;"></div>
+    {{-- ============ HERO CAROUSEL (full-width, gambar penuh) ============ --}}
+    @php
+        $heroSlides = array_values(array_filter([
+            $c('hero.slide1_img'),
+            $c('hero.slide2_img'),
+            $c('hero.slide3_img'),
+            $c('hero.slide4_img'),
+        ]));
+        if (empty($heroSlides)) {
+            $heroSlides = [
+                'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=2000&q=80',
+                'https://images.unsplash.com/photo-1506806732259-39c2d0268443?auto=format&fit=crop&w=2000&q=80',
+                'https://images.unsplash.com/photo-1490818387583-1baba5e638af?auto=format&fit=crop&w=2000&q=80',
+            ];
+        }
+    @endphp
 
-                    <div class="text-center order-1 md:order-2">
-                        <p class="text-xs md:text-sm tracking-[0.2em] uppercase mb-3" style="color:#4A7A3E;">Two New Flavour</p>
-                        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[0.95]" style="color:#1A3E1A; font-weight:700; letter-spacing:-0.02em;">
-                            {!! nl2br(e($c('hero.headline', "DELICIOUS\nMASALA OATS"))) !!}
-                        </h1>
-                        <p class="mt-4 text-sm md:text-base text-[#404040]">{{ $c('hero.subhead', 'Two New Flavour in Oats') }}</p>
-
-                        <div class="mt-6 md:mt-8 grid grid-cols-2 gap-4 text-xs md:text-sm">
-                            <div>
-                                <p class="tracking-[0.14em] uppercase" style="color:#2D5A27; font-weight:600;">Chatpata</p>
-                                <p class="tracking-[0.14em] uppercase" style="color:#2D5A27; font-weight:600;">Masala Oats</p>
-                            </div>
-                            <div>
-                                <p class="tracking-[0.14em] uppercase" style="color:#2D5A27; font-weight:600;">Chicken</p>
-                                <p class="tracking-[0.14em] uppercase" style="color:#2D5A27; font-weight:600;">Masala Oats</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="aspect-square md:aspect-[3/4] order-3" style="background-color:#DCE8D6;"></div>
+    <section class="beres-hero" aria-label="Hero carousel">
+        <div class="beres-hero__track" id="beresHeroTrack">
+            @foreach ($heroSlides as $i => $img)
+                <div class="beres-hero__slide" data-idx="{{ $i }}">
+                    <img src="{{ $img }}" alt="Slide {{ $i + 1 }}" loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
                 </div>
-            </div>
+            @endforeach
         </div>
+
+        @if (count($heroSlides) > 1)
+            <button type="button" class="beres-hero__nav beres-hero__nav--prev" aria-label="Previous slide" onclick="beresHeroGo(-1)">&#10094;</button>
+            <button type="button" class="beres-hero__nav beres-hero__nav--next" aria-label="Next slide" onclick="beresHeroGo(1)">&#10095;</button>
+
+            <div class="beres-hero__dots" role="tablist">
+                @foreach ($heroSlides as $i => $img)
+                    <button type="button" class="beres-hero__dot {{ $i === 0 ? 'is-active' : '' }}" data-idx="{{ $i }}" aria-label="Slide {{ $i + 1 }}" onclick="beresHeroGoto({{ $i }})"></button>
+                @endforeach
+            </div>
+        @endif
     </section>
+
+    <style>
+        .beres-hero{position:relative;width:100vw;margin-left:calc(50% - 50vw);overflow:hidden;background:#000;}
+        .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);}
+        .beres-hero__slide{flex:0 0 100%;width:100vw;aspect-ratio:16/7;background:#111;}
+        .beres-hero__slide img{width:100%;height:100%;object-fit:cover;display:block;}
+        @media (max-width:768px){.beres-hero__slide{aspect-ratio:4/5;}}
+        .beres-hero__nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:rgba(255,255,255,.85);color:#1A3E1A;border:0;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+        .beres-hero__nav:hover{background:#fff;}
+        .beres-hero__nav--prev{left:16px;}
+        .beres-hero__nav--next{right:16px;}
+        .beres-hero__dots{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2;}
+        .beres-hero__dot{width:10px;height:10px;border-radius:999px;background:rgba(255,255,255,.5);border:0;cursor:pointer;padding:0;transition:all .2s;}
+        .beres-hero__dot.is-active{background:#fff;width:28px;}
+        @media (max-width:640px){.beres-hero__nav{width:36px;height:36px;font-size:14px;}.beres-hero__nav--prev{left:8px;}.beres-hero__nav--next{right:8px;}}
+    </style>
+
+    @push('scripts')
+    <script>
+        (function(){
+            var track = document.getElementById('beresHeroTrack');
+            if (!track) return;
+            var slides = track.querySelectorAll('.beres-hero__slide');
+            var dots   = document.querySelectorAll('.beres-hero__dot');
+            var total  = slides.length;
+            var idx    = 0;
+            if (total < 2) return;
+
+            window.beresHeroGoto = function(i){
+                idx = (i + total) % total;
+                track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+                dots.forEach(function(d,k){ d.classList.toggle('is-active', k === idx); });
+            };
+            window.beresHeroGo = function(dir){ window.beresHeroGoto(idx + dir); };
+
+            // Autoplay
+            var timer = setInterval(function(){ window.beresHeroGo(1); }, 5000);
+            track.parentElement.addEventListener('mouseenter', function(){ clearInterval(timer); });
+            track.parentElement.addEventListener('mouseleave', function(){ timer = setInterval(function(){ window.beresHeroGo(1); }, 5000); });
+
+            // Touch swipe
+            var startX = 0, endX = 0;
+            track.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
+            track.addEventListener('touchend',   function(e){ endX = e.changedTouches[0].clientX; var dx = endX - startX; if (Math.abs(dx) > 40) window.beresHeroGo(dx < 0 ? 1 : -1); }, {passive:true});
+        })();
+    </script>
+    @endpush
 
     {{-- ============ FEATURED PRODUCT SPOTLIGHT ============ --}}
     @if ($featuredProduct)
@@ -245,10 +298,10 @@
                             @csrf
                             <input type="hidden" name="product_id" value="{{ $featuredProduct->id }}">
                             <input type="hidden" name="quantity" value="1">
-                            <button type="submit" class="px-8 py-3 text-[13px] tracking-[0.14em] uppercase text-white hover:opacity-90 transition-opacity" style="background-color:#2D5A27; font-weight:600;">
+                            <button type="submit" class="px-8 py-3 text-[13px] tracking-[0.14em] uppercase text-white hover:opacity-90 transition-opacity" style="background-color:#2D5A27; font-weight:600; border-radius:999px;">
                                 Add to Cart
                             </button>
-                            <a href="{{ $fpUrl }}" class="px-8 py-3 text-[13px] tracking-[0.14em] uppercase border transition-colors hover:bg-[#E8F0E5] text-center" style="border-color:#2D5A27; color:#2D5A27; font-weight:600;">
+                            <a href="{{ $fpUrl }}" class="px-8 py-3 text-[13px] tracking-[0.14em] uppercase border transition-colors hover:bg-[#E8F0E5] text-center" style="border-color:#2D5A27; color:#2D5A27; font-weight:600; border-radius:999px;">
                                 Buy It Now
                             </a>
                         </form>
@@ -331,7 +384,7 @@
                                     <img src="{{ $catImg }}" alt="{{ $catName }}" class="w-full h-full object-cover" loading="lazy">
                                 @endif
                             </div>
-                            <p class="mt-2 text-center text-[11px] md:text-xs text-white px-2 py-2" style="background-color:#2D5A27; font-weight:500;">
+                            <p class="mt-2 text-center text-[11px] md:text-xs text-white px-3 py-2" style="background-color:#2D5A27; font-weight:500; border-radius:999px;">
                                 {{ $catName }}
                             </p>
                         </a>
@@ -340,7 +393,7 @@
                     @foreach ($dummyCategories as $i => $label)
                         <a href="{{ route('shop.search.index') }}" class="group block">
                             <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.03]" style="background-color:{{ $bgPick($i) }};"></div>
-                            <p class="mt-2 text-center text-[11px] md:text-xs text-white px-2 py-2" style="background-color:#2D5A27; font-weight:500;">
+                            <p class="mt-2 text-center text-[11px] md:text-xs text-white px-3 py-2" style="background-color:#2D5A27; font-weight:500; border-radius:999px;">
                                 {{ $label }}
                             </p>
                         </a>
@@ -523,7 +576,7 @@
                 <h2 class="text-2xl md:text-3xl lg:text-4xl max-w-2xl" style="font-weight:600; letter-spacing:-0.01em;">
                     {!! nl2br(e($c('blog_cta.title', "Baca tips produk favorit\nuntuk gaya hidup lebih sehat."))) !!}
                 </h2>
-                <a href="#" class="mt-6 inline-block px-6 py-3 text-[13px] tracking-[0.14em] uppercase bg-white text-[#2D5A27] hover:bg-[#E8F0E5] transition-colors" style="font-weight:600;">
+                <a href="#" class="mt-6 inline-block px-6 py-3 text-[13px] tracking-[0.14em] uppercase bg-white text-[#2D5A27] hover:bg-[#E8F0E5] transition-colors" style="font-weight:600; border-radius:999px;">
                     {{ $c('blog_cta.button', 'Lihat semua blog') }}
                 </a>
             </div>

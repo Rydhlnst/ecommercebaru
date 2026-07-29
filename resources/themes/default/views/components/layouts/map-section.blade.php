@@ -77,7 +77,7 @@
                     href="https://www.google.com/maps/search/?api=1&query={{ urlencode($mapQuery) }}"
                     target="_blank" rel="noopener"
                     class="mt-8 inline-flex items-center gap-2 px-6 py-3 text-[13px] tracking-[0.14em] uppercase text-white transition-colors hover:opacity-90"
-                    style="background-color:#2D5A27;"
+                    style="background-color:#2D5A27; border-radius:999px;"
                 >
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="13.5" y1="4.5" x2="21" y2="12"/><polyline points="21,12 13.5,19.5"/><line x1="21" y1="12" x2="3" y2="12"/>
@@ -87,7 +87,7 @@
             </div>
 
             {{-- Map embed --}}
-            <div class="relative w-full aspect-[4/3] md:aspect-[16/12] overflow-hidden bg-[#DCE8D6]">
+            <div class="relative w-full aspect-[4/3] md:aspect-[16/12] overflow-hidden bg-[#DCE8D6]" style="border-radius:16px;">
                 <iframe
                     src="https://www.google.com/maps?q={{ urlencode($mapQuery) }}&output=embed"
                     class="absolute inset-0 w-full h-full border-0"
