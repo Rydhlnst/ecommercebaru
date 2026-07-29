@@ -35,7 +35,7 @@
     >
     <meta 
         name="generator" 
-        content="Bagisto"
+        content="{{ config('app.name') }}"
     >
 
     @stack('meta')
@@ -51,12 +51,6 @@
         href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap"
         rel="stylesheet"
     />
-
-    <link
-        rel="preload"
-        as="image"
-        href="{{ url('cache/logo/bagisto.png') }}"
-    >
 
     @if ($favicon = core()->getConfigData('general.design.admin_logo.favicon'))
         <link
@@ -86,7 +80,7 @@
 <body class="h-full dark:bg-gray-950">
     {!! view_render_event('bagisto.admin.layout.body.before') !!}
 
-    <!-- Built With Bagisto -->
+    <!-- App -->
     <div
         id="app"
         class="h-full"
@@ -130,10 +124,7 @@
                 <!-- Powered By -->
                 <div class="mt-auto">
                     <div class="border-t bg-white py-2 text-center text-xs sm:text-sm dark:border-gray-800 dark:bg-gray-900 dark:text-white">
-                        @lang('admin::app.components.layouts.powered-by.description', [
-                            'bagisto' => '<a class="text-blue-600 hover:underline dark:text-darkBlue" href="https://bagisto.com/en/">Bagisto</a>',
-                            'webkul' => '<a class="text-blue-600 hover:underline dark:text-darkBlue" href="https://webkul.com/">Webkul</a>',
-                        ])
+                        &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
                     </div>
                 </div>
             </div>

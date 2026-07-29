@@ -14,20 +14,10 @@
             <div style="padding: 30px;">
                 <!-- Email Header -->
                 <div style="margin-bottom: 65px;">
-                    <a href="{{ route('shop.home.index') }}">
-                        @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                            <img
-                                src="{{ Storage::url($logo) }}"
-                                alt="{{ config('app.name') }}"
-                                style="height: 40px; width: 110px;"
-                            />
-                        @else
-                            <img
-                                src="{{ bagisto_asset('images/logo.svg', 'admin') }}"
-                                alt="{{ config('app.name') }}"
-                                style="width: 156px;height: 40px;"
-                            />
-                        @endif
+                    <a href="{{ route('shop.home.index') }}" style="text-decoration: none;">
+                        <span style="font-size: 24px; font-weight: 600; letter-spacing: -0.5px; color: #111827; font-family: inter, sans-serif;">
+                            {{ config('app.name') }}
+                        </span>
                     </a>
                 </div>
 

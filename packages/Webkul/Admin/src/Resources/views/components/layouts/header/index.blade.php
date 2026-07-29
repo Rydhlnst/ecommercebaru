@@ -13,20 +13,9 @@
 
         <!-- Logo -->
         <a href="{{ route('admin.dashboard.index') }}" class="flex-shrink-0">
-            @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                <img
-                    class="h-8 w-auto sm:h-10"
-                    src="{{ Storage::url($logo) }}"
-                    alt="{{ config('app.name') }}"
-                />
-            @else
-                <img
-                    src="{{ request()->cookie('dark_mode') ? bagisto_asset('images/dark-logo.svg') : bagisto_asset('images/logo.svg') }}"
-                    class="h-8 w-auto sm:h-10"
-                    id="logo-image"
-                    alt="{{ config('app.name') }}"
-                />
-            @endif
+            <span class="text-base font-semibold tracking-tight text-gray-800 dark:text-white sm:text-lg">
+                {{ config('app.name') }}
+            </span>
         </a>
 
         <!-- Mega Search Bar Vue Component -->
@@ -96,14 +85,7 @@
 
             <!-- Admin Dropdown -->
             <x-slot:content class="!p-0">
-                <div class="flex items-center gap-1.5 border border-b-gray-300 px-4 py-2 dark:border-gray-800 sm:px-5 sm:py-2.5">
-                    <img
-                        src="{{ url('cache/logo/bagisto.png') }}"
-                        class="sm:h-6 sm:w-6"
-                        width="20"
-                        height="20"
-                    />
-
+                <div class="flex items-center gap-1.5 border-b border-gray-300 px-4 py-2 dark:border-gray-800 sm:px-5 sm:py-2.5">
                     <!-- Version -->
                     <p class="text-xs text-gray-400 sm:text-sm">
                         @lang('admin::app.components.layouts.header.app-version', ['version' => 'v' . core()->version()])
@@ -148,20 +130,9 @@
     <!-- Drawer Header -->
     <x-slot:header>
         <div class="flex items-center justify-between">
-            @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                <img
-                    src="{{ Storage::url($logo) }}"
-                    class="h-8 w-auto sm:h-10"
-                    alt="{{ config('app.name') }}"
-                />
-            @else
-                <img
-                    src="{{ request()->cookie('dark_mode') ? bagisto_asset('images/dark-logo.svg') : bagisto_asset('images/logo.svg') }}"
-                    class="h-8 w-auto sm:h-10"
-                    id="logo-image"
-                    alt="{{ config('app.name') }}"
-                />
-            @endif
+            <span class="text-base font-semibold tracking-tight text-gray-800 dark:text-white sm:text-lg">
+                {{ config('app.name') }}
+            </span>
         </div>
     </x-slot>
 
@@ -740,10 +711,6 @@
             data() {
                 return {
                     isDarkMode: {{ request()->cookie('dark_mode') ?? 0 }},
-
-                    logo: "{{ bagisto_asset('images/logo.svg') }}",
-
-                    dark_logo: "{{ bagisto_asset('images/dark-logo.svg') }}",
                 };
             },
 
@@ -761,12 +728,8 @@
 
                     if (this.isDarkMode) {
                         this.$emitter.emit('change-theme', 'dark');
-
-                        document.getElementById('logo-image').src = this.dark_logo;
                     } else {
                         this.$emitter.emit('change-theme', 'light');
-
-                        document.getElementById('logo-image').src = this.logo;
                     }
                 },
 

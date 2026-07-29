@@ -7,19 +7,9 @@
     <div class="flex h-[100vh] items-center justify-center">
         <div class="flex flex-col items-center gap-5">
             <!-- Logo -->
-            @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                <img
-                    class="h-10 w-[110px]"
-                    src="{{ Storage::url($logo) }}"
-                    alt="{{ config('app.name') }}"
-                />
-            @else
-                <img
-                    class="w-max" 
-                    src="{{ bagisto_asset('images/logo.svg') }}"
-                    alt="{{ config('app.name') }}"
-                />
-            @endif
+            <h1 class="text-2xl font-semibold tracking-tight text-gray-800 dark:text-white sm:text-3xl">
+                {{ config('app.name') }}
+            </h1>
 
             <div class="box-shadow flex min-w-[300px] flex-col rounded-md bg-white dark:bg-gray-900">
                 <!-- Forget Password Form -->
@@ -71,11 +61,8 @@
             </div>
 
             <!-- Powered By -->
-            <div class="text-sm font-normal">
-                @lang('admin::app.users.forget-password.create.powered-by-description', [
-                    'bagisto' => '<a class="text-blue-600 hover:underline" href="https://bagisto.com/en/">Bagisto</a>',
-                    'webkul' => '<a class="text-blue-600 hover:underline" href="https://webkul.com/">Webkul</a>',
-                ])
+            <div class="text-sm font-normal text-gray-500">
+                &copy; {{ date('Y') }} {{ config('app.name') }}
             </div>
         </div>
     </div>

@@ -41,7 +41,7 @@
         >
         <meta 
             name="generator" 
-            content="Bagisto"
+            content="{{ config('app.name') }}"
         >
 
         @stack('meta')
@@ -102,7 +102,7 @@
             Skip to main content
         </a>
 
-        <!-- Built With Bagisto -->
+        <!-- App -->
         <div id="app">
             <!-- Flash Message Blade Component -->
             <x-shop::flash-group />
