@@ -76,8 +76,8 @@ return [
             ['name' => 'cat_title',      'title' => 'Kategori — Judul', 'type' => 'text', 'default' => 'Semua kebutuhan dapur.'],
             ['name' => 'best_eyebrow',   'title' => 'Best — Eyebrow',   'type' => 'text', 'default' => 'Favorit pelanggan'],
             ['name' => 'best_title',     'title' => 'Best — Judul',     'type' => 'text', 'default' => 'Best seller.'],
-            ['name' => 'review_eyebrow', 'title' => 'Review — Eyebrow', 'type' => 'text', 'default' => '★★★★★ 4.8 dari 2.400+ ulasan'],
-            ['name' => 'review_title',   'title' => 'Review — Judul',   'type' => 'text', 'default' => 'Apa kata pelanggan.'],
+            ['name' => 'review_eyebrow', 'title' => 'Review — Eyebrow', 'type' => 'text', 'default' => '4.8 dari 2.400+ ulasan'],
+            ['name' => 'review_title',   'title' => 'Review — Judul',   'type' => 'text', 'default' => 'Ulasan pelanggan'],
             ['name' => 'faq_title',      'title' => 'FAQ — Judul',      'type' => 'text', 'default' => 'Pertanyaan umum.'],
             ['name' => 'journal_title',  'title' => 'Journal — Judul',  'type' => 'text', 'default' => 'Cerita dari dapur.'],
         ],
@@ -178,10 +178,10 @@ return [
         'info'   => 'Label icon di navigasi bawah mobile.',
         'sort'   => 6,
         'fields' => [
-            ['name' => 'label_home',    'title' => 'Home',    'type' => 'text', 'default' => 'Home'],
             ['name' => 'label_shop',    'title' => 'Shop',    'type' => 'text', 'default' => 'Shop'],
             ['name' => 'label_cart',    'title' => 'Cart',    'type' => 'text', 'default' => 'Cart'],
-            ['name' => 'label_account', 'title' => 'Account', 'type' => 'text', 'default' => 'Akun'],
+            ['name' => 'label_account', 'title' => 'Account', 'type' => 'text', 'default' => 'Account'],
+            ['name' => 'label_search',  'title' => 'Search',  'type' => 'text', 'default' => 'Search'],
         ],
     ],
 ];
