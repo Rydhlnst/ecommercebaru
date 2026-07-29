@@ -81,9 +81,11 @@
 {{-- Spacer supaya konten tidak ke-tumpuk bottom nav (mobile only) --}}
 <div class="beres-bottom-nav-spacer" style="display:none; height:68px;" aria-hidden="true"></div>
 
+@push('styles')
 <style>
     @media (max-width: 767px) {
         .beres-bottom-nav { display: block !important; }
         .beres-bottom-nav-spacer { display: block !important; }
     }
 </style>
+@endpush

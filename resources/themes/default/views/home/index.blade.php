@@ -121,8 +121,62 @@
     $homeOgImage = $channel->logo_url ?? null;
 @endphp
 
+@push('styles')
+<style>
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .beres-hero{position:relative;width:100vw;margin-left:calc(50% - 50vw);overflow:hidden;background:#000;}
+    .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform;}
+    .beres-hero__slide{flex:0 0 100%;width:100vw;aspect-ratio:16/7;background:#111;}
+    .beres-hero__slide img{width:100%;height:100%;object-fit:cover;display:block;}
+    @media (max-width:768px){.beres-hero__slide{aspect-ratio:4/5;}}
+    .beres-hero__nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:rgba(255,255,255,.85);color:#1A3E1A;border:0;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+    .beres-hero__nav:hover{background:#fff;}
+    .beres-hero__nav--prev{left:16px;}
+    .beres-hero__nav--next{right:16px;}
+    .beres-hero__dots{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2;}
+    .beres-hero__dot{width:10px;height:10px;border-radius:999px;background:rgba(255,255,255,.5);border:0;cursor:pointer;padding:0;transition:all .2s;}
+    .beres-hero__dot.is-active{background:#fff;width:28px;}
+    @media (max-width:640px){.beres-hero__nav{width:36px;height:36px;font-size:14px;}.beres-hero__nav--prev{left:8px;}.beres-hero__nav--next{right:8px;}}
+</style>
+@endpush
+
 @push('scripts')
 <script>
+    // Hero carousel — di-inisialisasi setelah Vue mount supaya tidak konflik
+    (function(){
+        function initBeresHero(){
+            var track = document.getElementById('beresHeroTrack');
+            if (!track) return;
+            var slides = track.querySelectorAll('.beres-hero__slide');
+            var dots   = document.querySelectorAll('.beres-hero__dot');
+            var total  = slides.length;
+            var idx    = 0;
+            if (total < 2) return;
+
+            window.beresHeroGoto = function(i){
+                idx = (i + total) % total;
+                track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+                dots.forEach(function(d,k){ d.classList.toggle('is-active', k === idx); });
+            };
+            window.beresHeroGo = function(dir){ window.beresHeroGoto(idx + dir); };
+
+            var timer = setInterval(function(){ window.beresHeroGo(1); }, 5000);
+            var wrap  = track.parentElement;
+            wrap.addEventListener('mouseenter', function(){ clearInterval(timer); });
+            wrap.addEventListener('mouseleave', function(){ timer = setInterval(function(){ window.beresHeroGo(1); }, 5000); });
+
+            var startX = 0;
+            track.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
+            track.addEventListener('touchend',   function(e){ var dx = e.changedTouches[0].clientX - startX; if (Math.abs(dx) > 40) window.beresHeroGo(dx < 0 ? 1 : -1); }, {passive:true});
+        }
+        // Delay sedikit supaya jalan SETELAH Vue selesai mount & render DOM
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function(){ setTimeout(initBeresHero, 100); });
+        } else {
+            setTimeout(initBeresHero, 100);
+        }
+    })();
+
     // Wire Add to Cart form ke Bagisto API endpoint
     window.beresAddToCart = async function (form) {
         const btn      = form.querySelector('button[type="submit"]');
@@ -256,56 +310,7 @@
         @endif
     </section>
 
-    <style>
-        .beres-hero{position:relative;width:100vw;margin-left:calc(50% - 50vw);overflow:hidden;background:#000;}
-        .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);}
-        .beres-hero__slide{flex:0 0 100%;width:100vw;aspect-ratio:16/7;background:#111;}
-        .beres-hero__slide img{width:100%;height:100%;object-fit:cover;display:block;}
-        @media (max-width:768px){.beres-hero__slide{aspect-ratio:4/5;}}
-        .beres-hero__nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:rgba(255,255,255,.85);color:#1A3E1A;border:0;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.15);}
-        .beres-hero__nav:hover{background:#fff;}
-        .beres-hero__nav--prev{left:16px;}
-        .beres-hero__nav--next{right:16px;}
-        .beres-hero__dots{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2;}
-        .beres-hero__dot{width:10px;height:10px;border-radius:999px;background:rgba(255,255,255,.5);border:0;cursor:pointer;padding:0;transition:all .2s;}
-        .beres-hero__dot.is-active{background:#fff;width:28px;}
-        @media (max-width:640px){.beres-hero__nav{width:36px;height:36px;font-size:14px;}.beres-hero__nav--prev{left:8px;}.beres-hero__nav--next{right:8px;}}
-    </style>
-
-    <script>
-        (function(){
-            function initBeresHero(){
-                var track = document.getElementById('beresHeroTrack');
-                if (!track) return;
-                var slides = track.querySelectorAll('.beres-hero__slide');
-                var dots   = document.querySelectorAll('.beres-hero__dot');
-                var total  = slides.length;
-                var idx    = 0;
-                if (total < 2) return;
-
-                window.beresHeroGoto = function(i){
-                    idx = (i + total) % total;
-                    track.style.transform = 'translateX(-' + (idx * 100) + '%)';
-                    dots.forEach(function(d,k){ d.classList.toggle('is-active', k === idx); });
-                };
-                window.beresHeroGo = function(dir){ window.beresHeroGoto(idx + dir); };
-
-                var timer = setInterval(function(){ window.beresHeroGo(1); }, 5000);
-                var wrap  = track.parentElement;
-                wrap.addEventListener('mouseenter', function(){ clearInterval(timer); });
-                wrap.addEventListener('mouseleave', function(){ timer = setInterval(function(){ window.beresHeroGo(1); }, 5000); });
-
-                var startX = 0;
-                track.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; }, {passive:true});
-                track.addEventListener('touchend',   function(e){ var dx = e.changedTouches[0].clientX - startX; if (Math.abs(dx) > 40) window.beresHeroGo(dx < 0 ? 1 : -1); }, {passive:true});
-            }
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initBeresHero);
-            } else {
-                initBeresHero();
-            }
-        })();
-    </script>
+    {{-- Style & script hero dipindah ke @push di bawah supaya tidak di-drop oleh Vue --}}
 
     {{-- ============ FEATURED PRODUCT SPOTLIGHT ============ --}}
     @if ($featuredProduct)
@@ -477,7 +482,6 @@
                 @endfor
             </div>
         </div>
-        <style>@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }</style>
     </section>
 
     {{-- ============ SEEDS & SUPERFOODS ============ --}}
@@ -548,10 +552,10 @@
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-8">
                 <div>
-                    <p class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Our customers' Google reviews</p>
+                    <p class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.review_title', 'Ulasan pelanggan') }}</p>
                     <p class="mt-1 text-sm" style="color:#2D5A27;">★★★★★ &nbsp; {{ $c('sections.review_eyebrow', '4.8 dari 2.400+ ulasan') }}</p>
                 </div>
-                <a href="#" class="text-sm underline text-[#2D5A27] hover:opacity-70">Leave a review</a>
+                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Tulis ulasan</a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
@@ -563,7 +567,7 @@
                             $revText    = $review->comment ?? $review->title ?? '';
                             $revStars   = str_repeat('★', (int) ($review->rating ?? 5)) . str_repeat('☆', 5 - (int) ($review->rating ?? 5));
                         @endphp
-                        <div class="p-5 md:p-6 bg-white">
+                        <div class="p-5 md:p-6 bg-white beres-card" style="border-radius:16px;">
                             <p class="text-sm" style="color:#2D5A27;">{{ $revStars }}</p>
                             <p class="mt-3 text-sm md:text-base text-[#404040] leading-relaxed">"{{ $revText }}"</p>
                             <div class="mt-5 flex items-center gap-3">
@@ -574,7 +578,7 @@
                     @endforeach
                 @else
                     @foreach ([['A','Ahmad Rizky','Sayurannya benar-benar segar seperti baru dipetik. Pengiriman tepat waktu di pagi hari.'],['S','Siti Nurhaliza','Kualitas dagingnya konsisten. Berlangganan 6 bulan tanpa kecewa.'],['B','Budi Santoso','Kopinya harum dan segar, terasa baru di-roasting. Harga wajar untuk single origin.']] as [$initial, $name, $text])
-                        <div class="p-5 md:p-6 bg-white">
+                        <div class="p-5 md:p-6 bg-white beres-card" style="border-radius:16px;">
                             <p class="text-sm" style="color:#2D5A27;">★★★★★</p>
                             <p class="mt-3 text-sm md:text-base text-[#404040] leading-relaxed">"{{ $text }}"</p>
                             <div class="mt-5 flex items-center gap-3">
@@ -587,7 +591,7 @@
             </div>
 
             <div class="mt-6 text-center">
-                <a href="#" class="text-sm underline text-[#2D5A27] hover:opacity-70">See all reviews</a>
+                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat semua ulasan</a>
             </div>
         </div>
     </section>
@@ -599,12 +603,12 @@
 
             <div class="space-y-3">
                 @foreach ($faqs as $i => [$q, $a])
-                    <details class="group border" style="border-color:#E8F0E5;" @if($i === 0) open @endif>
-                        <summary class="flex items-center justify-between cursor-pointer list-none px-5 py-4 hover:bg-[#F5F9F3]">
+                    <details class="group border overflow-hidden transition-all hover:border-[#2D5A27]" style="border-color:#E8F0E5; border-radius:14px;" @if($i === 0) open @endif>
+                        <summary class="flex items-center justify-between cursor-pointer list-none px-5 md:px-6 py-4 md:py-5 hover:bg-[#F5F9F3] transition-colors">
                             <span class="text-sm md:text-base text-[#171717] pr-4" style="font-weight:500;">{{ $q }}</span>
-                            <span class="text-2xl transition-transform group-open:rotate-45 shrink-0 leading-none" style="color:#2D5A27;">+</span>
+                            <span class="text-2xl transition-transform duration-300 group-open:rotate-45 shrink-0 leading-none" style="color:#2D5A27;">+</span>
                         </summary>
-                        <p class="px-5 pb-4 text-sm md:text-base text-[#404040] leading-relaxed">{{ $a }}</p>
+                        <p class="px-5 md:px-6 pb-4 md:pb-5 text-sm md:text-base text-[#404040] leading-relaxed">{{ $a }}</p>
                     </details>
                 @endforeach
             </div>
@@ -614,11 +618,12 @@
     {{-- ============ BLOG CTA BANNER ============ --}}
     <section class="bg-white pb-4 md:pb-6 beres-reveal">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14">
-            <div class="text-white p-8 md:p-12 lg:p-16 relative overflow-hidden" style="background-color:#2D5A27;">
+            @php $blogCtaImg = $c('blog_cta.image'); $blogCtaLink = $c('blog_cta.link', route('shop.search.index')); @endphp
+            <div class="text-white p-8 md:p-12 lg:p-16 relative overflow-hidden" style="background-color:#2D5A27; border-radius:20px; @if($blogCtaImg) background-image:linear-gradient(rgba(45,90,39,.75),rgba(45,90,39,.75)),url('{{ $blogCtaImg }}'); background-size:cover; background-position:center; @endif">
                 <h2 class="text-2xl md:text-3xl lg:text-4xl max-w-2xl" style="font-weight:600; letter-spacing:-0.01em;">
                     {!! nl2br(e($c('blog_cta.title', "Baca tips produk favorit\nuntuk gaya hidup lebih sehat."))) !!}
                 </h2>
-                <a href="#" class="mt-6 inline-block px-6 py-3 text-[13px] tracking-[0.14em] uppercase bg-white text-[#2D5A27] hover:bg-[#E8F0E5] transition-colors" style="font-weight:600; border-radius:999px;">
+                <a href="{{ $blogCtaLink }}" class="beres-btn mt-6 inline-block px-6 py-3 text-[13px] tracking-[0.14em] uppercase bg-white text-[#2D5A27] hover:bg-[#E8F0E5] transition-colors" style="font-weight:600; border-radius:999px;">
                     {{ $c('blog_cta.button', 'Lihat semua blog') }}
                 </a>
             </div>
