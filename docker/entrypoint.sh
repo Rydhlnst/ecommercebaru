@@ -38,6 +38,10 @@ fi
 # Migrate (idempotent)
 php artisan migrate --force || echo "Migration skipped/failed"
 
+# Mark as installed (skip Bagisto installer redirect)
+touch storage/installed
+chown www-data:www-data storage/installed 2>/dev/null || true
+
 # Cache config for prod (non-fatal)
 php artisan config:cache || true
 php artisan route:cache || true
