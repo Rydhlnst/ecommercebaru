@@ -489,7 +489,7 @@
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex items-center justify-between mb-6 md:mb-8">
                 <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Our Seeds and Superfoods</h2>
-                <a href="#" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All</a>
+                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All</a>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
@@ -635,7 +635,7 @@
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex items-center justify-between mb-6 md:mb-8">
                 <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Latest Blogs</h2>
-                <a href="#" class="text-sm underline text-[#2D5A27] hover:opacity-70">Browse Wellness Blogs</a>
+                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Browse Wellness Blogs</a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -658,7 +658,7 @@
                 @else
                     @foreach ([['High Fiber Breakfast','Sarapan berserat tinggi untuk energi seharian.'],['High Protein Breakfast','Menu cepat & tinggi protein untuk yang sibuk.'],['Best Healthy Foods','Rangkuman bahan sarapan sehat wajib.']] as $i => [$title, $excerpt])
                         <article class="group">
-                            <a href="#" class="block">
+                            <a href="{{ route('shop.search.index') }}" class="block">
                                 <div class="aspect-[16/10] overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]" style="background-color:{{ $bgPick($i) }};"></div>
                                 <p class="mt-4 text-[11px] tracking-[0.14em] uppercase" style="color:#2D5A27;">Baca artikel</p>
                                 <h3 class="mt-2 text-lg md:text-xl text-[#171717] group-hover:text-[#2D5A27] transition-colors" style="font-weight:600;">{{ $title }}</h3>

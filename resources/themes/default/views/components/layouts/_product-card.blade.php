@@ -20,7 +20,9 @@
         } catch (\Throwable $e) {}
         $isNew    = $product->created_at && $product->created_at->diffInDays(now()) <= 14;
         $variants = [];
-        $href     = route('shop.product_or_category.index', $product->url_key ?? '#');
+        $href     = $product->url_key
+                        ? route('shop.product_or_category.index', $product->url_key)
+                        : route('shop.search.index');
         $prodId   = $product->id;
         $image    = product_image()->getProductBaseImage($product)['small_image_url'] ?? null;
     } else {
@@ -28,7 +30,7 @@
         $price    = $price    ?? '';
         $compare  = $compare  ?? null;
         $variants = $variants ?? [];
-        $href     = $href     ?? '#';
+        $href     = $href     ?? route('shop.search.index');
         $prodId   = null;
         $image    = null;
     }
