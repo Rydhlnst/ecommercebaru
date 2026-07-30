@@ -280,29 +280,25 @@
 
         @stack('scripts')
 
-        {{-- Global scroll-reveal observer --}}
+        {{-- Global scroll-reveal observer — defined globally so mountApp() can call it AFTER Vue re-renders the DOM --}}
         <script>
-            (function(){
-                function initReveal(){
-                    var els = document.querySelectorAll('.beres-reveal');
-                    if (!els.length) return;
-                    if (!('IntersectionObserver' in window)) {
-                        els.forEach(function(e){ e.classList.add('is-visible'); });
-                        return;
-                    }
-                    var io = new IntersectionObserver(function(entries){
-                        entries.forEach(function(en){
-                            if (en.isIntersecting) {
-                                en.target.classList.add('is-visible');
-                                io.unobserve(en.target);
-                            }
-                        });
-                    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
-                    els.forEach(function(e){ io.observe(e); });
+            window.initReveal = function(){
+                var els = document.querySelectorAll('.beres-reveal');
+                if (!els.length) return;
+                if (!('IntersectionObserver' in window)) {
+                    els.forEach(function(e){ e.classList.add('is-visible'); });
+                    return;
                 }
-                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initReveal);
-                else initReveal();
-            })();
+                var io = new IntersectionObserver(function(entries){
+                    entries.forEach(function(en){
+                        if (en.isIntersecting) {
+                            en.target.classList.add('is-visible');
+                            io.unobserve(en.target);
+                        }
+                    });
+                }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+                els.forEach(function(e){ io.observe(e); });
+            };
         </script>
 
         {!! view_render_event('bagisto.shop.layout.vue-app-mount.before') !!}
@@ -317,6 +313,9 @@
              */
             function mountApp() {
                 app.mount("#app");
+                // Run reveal AFTER Vue has cleared and re-rendered #app, so the
+                // IntersectionObserver watches the live DOM elements, not stale ones.
+                if (typeof window.initReveal === 'function') window.initReveal();
             }
 
             if (document.readyState === "loading") {

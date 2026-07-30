@@ -129,19 +129,27 @@
     </div>
 
     {{-- Row 2: horizontal category nav --}}
-    <nav class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 pb-4">
+    @php
+        $navPath    = request()->path();
+        $isNavHome  = ($navPath === '/' || $navPath === '');
+        $navActive  = 'text-[#2D5A27] border-b-2 border-[#2D5A27] pb-1 font-semibold';
+        $navInactive= 'text-stone hover:text-[#2D5A27] transition-colors';
+
+        $navItems = [
+            ['Featured',         route('shop.home.index'),         $isNavHome],
+            ['Buah & Sayur',     route('shop.search.index', ['category' => 'buah-sayur']),   str_contains($navPath, 'buah')   || str_contains($navPath, 'sayur')],
+            ['Daging & Seafood', route('shop.search.index', ['category' => 'daging']),       str_contains($navPath, 'daging') || str_contains($navPath, 'seafood')],
+            ['Roti & Bakery',    route('shop.search.index', ['category' => 'roti']),         str_contains($navPath, 'roti')   || str_contains($navPath, 'bakery')],
+            ['Minuman',          route('shop.search.index', ['category' => 'minuman']),      str_contains($navPath, 'minuman')],
+            ['Bumbu & Rempah',   route('shop.search.index', ['category' => 'bumbu']),        str_contains($navPath, 'bumbu')  || str_contains($navPath, 'rempah')],
+            ['Snack Sehat',      route('shop.search.index', ['category' => 'snack']),        str_contains($navPath, 'snack')],
+        ];
+    @endphp
+    <nav class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 pb-4" aria-label="Category navigation">
         <ul class="flex items-center gap-8 lg:gap-12 text-[14px] text-ink">
-            @foreach ([
-                ['Featured',           true],
-                ['Buah & Sayur',       false],
-                ['Daging & Seafood',   false],
-                ['Roti & Bakery',      false],
-                ['Minuman',            false],
-                ['Bumbu & Rempah',     false],
-                ['Snack Sehat',        false],
-            ] as [$label, $active])
+            @foreach ($navItems as [$label, $href, $active])
                 <li>
-                    <a href="#" class="{{ $active ? 'text-clay border-b-2 border-clay pb-1' : 'hover:text-clay transition-colors' }}">
+                    <a href="{{ $href }}" class="{{ $active ? $navActive : $navInactive }}">
                         {{ $label }}
                     </a>
                 </li>
