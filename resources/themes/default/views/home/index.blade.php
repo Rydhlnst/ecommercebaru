@@ -13,10 +13,11 @@
     $bgPool = ['#E8F0E5','#DCE8D6','#F0F5EC','#EAF1E4','#F5F9F3','#C8DBBE'];
     $bgPick = fn(int $i) => $bgPool[$i % count($bgPool)];
 
-    // ============ NEW ARRIVALS — Bagisto Product terbaru ============
+    // ============ NEW ARRIVALS — produk standalone (bukan child variant) ============
     try {
         $newProductsDb = app(ProductRepository::class)->getModel()::query()
-            ->where('type', 'simple')
+            ->whereIn('type', ['simple', 'configurable', 'bundle', 'virtual'])
+            ->whereDoesntHave('parent')
             ->orderBy('created_at', 'desc')
             ->limit(4)->get();
     } catch (\Throwable $e) {
@@ -30,6 +31,7 @@
     try {
         $bundlesDb = app(ProductRepository::class)->getModel()::query()
             ->where('type', 'bundle')
+            ->whereDoesntHave('parent')
             ->orderBy('created_at', 'desc')
             ->limit(4)->get();
     } catch (\Throwable $e) {
@@ -41,7 +43,8 @@
         $bestSellersDb = app(ProductRepository::class)->getModel()::query()
             ->leftJoin('order_items', 'products.id', '=', 'order_items.product_id')
             ->select('products.*', \DB::raw('COALESCE(SUM(order_items.qty_ordered),0) as total_sold'))
-            ->where('products.type', 'simple')
+            ->whereIn('products.type', ['simple', 'configurable', 'bundle', 'virtual'])
+            ->whereDoesntHave('parent')
             ->groupBy('products.id')
             ->orderByDesc('total_sold')
             ->limit(4)->get();
@@ -49,10 +52,11 @@
         $bestSellersDb = collect();
     }
 
-    // ============ SEEDS & SUPERFOODS — dari kategori tertentu (fallback: 5 random) ============
+    // ============ SEEDS & SUPERFOODS — produk standalone random ============
     try {
         $superfoodsDb = app(ProductRepository::class)->getModel()::query()
-            ->where('type', 'simple')
+            ->whereIn('type', ['simple', 'configurable', 'virtual'])
+            ->whereDoesntHave('parent')
             ->inRandomOrder()
             ->limit(5)->get();
     } catch (\Throwable $e) {
