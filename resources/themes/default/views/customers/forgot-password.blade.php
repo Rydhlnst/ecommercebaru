@@ -13,7 +13,7 @@
     <div class="min-h-screen bg-cream flex flex-col items-center justify-center px-6 py-10">
         <a href="{{ route('shop.home.index') }}" class="text-2xl text-ink mb-8"
            style="font-weight: 600; letter-spacing: -0.02em;" aria-label="{{ config('app.name') }}">
-            ECommerce
+            Ankish Mart
         </a>
 
         <div class="w-full max-w-sm bg-cream border border-mist p-7">

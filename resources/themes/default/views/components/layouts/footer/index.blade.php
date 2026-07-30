@@ -71,7 +71,7 @@
     <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-16">
         <div class="grid gap-10 md:grid-cols-4">
             <div class="md:col-span-1">
-                <p class="text-3xl leading-none" style="font-weight: 600; letter-spacing: -0.02em;">ECommerce</p>
+                <p class="text-3xl leading-none" style="font-weight: 600; letter-spacing: -0.02em;">Ankish Mart</p>
                 <p class="mt-4 text-sm text-mist max-w-xs">
                     Pasar online untuk bahan segar dan pantry esensial. Langsung dari petani dan produsen lokal, diantar hari itu juga.
                 </p>
@@ -126,7 +126,7 @@
                 @if (core()->getConfigData('general.content.footer.copyright_content'))
                     {!! core()->getConfigData('general.content.footer.copyright_content') !!}
                 @else
-                    &copy; {{ date('Y') }} ECommerce. Hak cipta dilindungi.
+                    &copy; {{ date('Y') }} Ankish Mart. Hak cipta dilindungi.
                 @endif
             </p>
 

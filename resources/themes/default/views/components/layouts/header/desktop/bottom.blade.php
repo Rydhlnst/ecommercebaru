@@ -10,7 +10,7 @@
             aria-label="{{ config('app.name') }}"
             class="font-serif text-3xl leading-none text-ink tracking-tight shrink-0"
         >
-            ECommerce
+            Ankish Mart
         </a>
 
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.after') !!}

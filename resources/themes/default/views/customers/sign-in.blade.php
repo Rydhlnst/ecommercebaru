@@ -17,7 +17,7 @@
             style="font-weight: 600; letter-spacing: -0.02em;"
             aria-label="{{ config('app.name') }}"
         >
-            ECommerce
+            Ankish Mart
         </a>
 
         <div class="w-full max-w-sm bg-cream border border-mist p-7">
