@@ -68,6 +68,157 @@ class AttributeOptionTableSeeder extends Seeder
                 'sort_order' => 4,
                 'attribute_id' => 24,
             ],
+            /**
+             * Spice Level Options (attribute_id = 33)
+             */
+            [
+                'id' => 10,
+                'admin_name' => 'Mild',
+                'sort_order' => 1,
+                'attribute_id' => 33,
+            ], [
+                'id' => 11,
+                'admin_name' => 'Medium',
+                'sort_order' => 2,
+                'attribute_id' => 33,
+            ], [
+                'id' => 12,
+                'admin_name' => 'Hot',
+                'sort_order' => 3,
+                'attribute_id' => 33,
+            ], [
+                'id' => 13,
+                'admin_name' => 'Extra Hot',
+                'sort_order' => 4,
+                'attribute_id' => 33,
+            ],
+            /**
+             * Dietary Information Options (attribute_id = 36)
+             */
+            [
+                'id' => 14,
+                'admin_name' => 'Vegetarian',
+                'sort_order' => 1,
+                'attribute_id' => 36,
+            ], [
+                'id' => 15,
+                'admin_name' => 'Vegan',
+                'sort_order' => 2,
+                'attribute_id' => 36,
+            ], [
+                'id' => 16,
+                'admin_name' => 'Gluten-Free',
+                'sort_order' => 3,
+                'attribute_id' => 36,
+            ], [
+                'id' => 17,
+                'admin_name' => 'Dairy-Free',
+                'sort_order' => 4,
+                'attribute_id' => 36,
+            ], [
+                'id' => 18,
+                'admin_name' => 'Nut-Free',
+                'sort_order' => 5,
+                'attribute_id' => 36,
+            ], [
+                'id' => 19,
+                'admin_name' => 'Halal',
+                'sort_order' => 6,
+                'attribute_id' => 36,
+            ], [
+                'id' => 20,
+                'admin_name' => 'Kosher',
+                'sort_order' => 7,
+                'attribute_id' => 36,
+            ],
+            /**
+             * Flavor Profile Options (attribute_id = 41)
+             */
+            [
+                'id' => 21,
+                'admin_name' => 'Earthy',
+                'sort_order' => 1,
+                'attribute_id' => 41,
+            ], [
+                'id' => 22,
+                'admin_name' => 'Citrusy',
+                'sort_order' => 2,
+                'attribute_id' => 41,
+            ], [
+                'id' => 23,
+                'admin_name' => 'Smoky',
+                'sort_order' => 3,
+                'attribute_id' => 41,
+            ], [
+                'id' => 24,
+                'admin_name' => 'Sweet',
+                'sort_order' => 4,
+                'attribute_id' => 41,
+            ], [
+                'id' => 25,
+                'admin_name' => 'Spicy',
+                'sort_order' => 5,
+                'attribute_id' => 41,
+            ], [
+                'id' => 26,
+                'admin_name' => 'Savory',
+                'sort_order' => 6,
+                'attribute_id' => 41,
+            ], [
+                'id' => 27,
+                'admin_name' => 'Bitter',
+                'sort_order' => 7,
+                'attribute_id' => 41,
+            ], [
+                'id' => 28,
+                'admin_name' => 'Umami',
+                'sort_order' => 8,
+                'attribute_id' => 41,
+            ],
+            /**
+             * Cuisine Type Options (attribute_id = 42)
+             */
+            [
+                'id' => 29,
+                'admin_name' => 'Indian',
+                'sort_order' => 1,
+                'attribute_id' => 42,
+            ], [
+                'id' => 30,
+                'admin_name' => 'Thai',
+                'sort_order' => 2,
+                'attribute_id' => 42,
+            ], [
+                'id' => 31,
+                'admin_name' => 'Mexican',
+                'sort_order' => 3,
+                'attribute_id' => 42,
+            ], [
+                'id' => 32,
+                'admin_name' => 'Mediterranean',
+                'sort_order' => 4,
+                'attribute_id' => 42,
+            ], [
+                'id' => 33,
+                'admin_name' => 'Chinese',
+                'sort_order' => 5,
+                'attribute_id' => 42,
+            ], [
+                'id' => 34,
+                'admin_name' => 'Japanese',
+                'sort_order' => 6,
+                'attribute_id' => 42,
+            ], [
+                'id' => 35,
+                'admin_name' => 'Korean',
+                'sort_order' => 7,
+                'attribute_id' => 42,
+            ], [
+                'id' => 36,
+                'admin_name' => 'Middle Eastern',
+                'sort_order' => 8,
+                'attribute_id' => 42,
+            ],
         ]);
 
         $locales = $parameters['allowed_locales'] ?? [$defaultLocale];

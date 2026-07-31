@@ -45,6 +45,7 @@ class ProductTableSeeder extends Seeder
         'sleeve',
         'select_size_female_footwear',
         'select_size_male_footwear',
+        'spice_level',
     ];
 
     /**
@@ -136,7 +137,34 @@ class ProductTableSeeder extends Seeder
      */
     public function run($parameters = [])
     {
-        DB::table('products')->delete();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        foreach ([
+            'product_attribute_values',
+            'product_channels',
+            'product_super_attributes',
+            'product_grouped_products',
+            'product_bundle_option_translations',
+            'product_bundle_option_products',
+            'product_bundle_options',
+            'product_downloadable_link_translations',
+            'product_downloadable_links',
+            'product_downloadable_sample_translations',
+            'product_downloadable_samples',
+            'product_customer_group_prices',
+            'product_categories',
+            'product_inventories',
+            'product_images',
+            'product_videos',
+            'product_up_sells',
+            'product_cross_sells',
+            'product_relations',
+            'product_flat',
+            'products',
+        ] as $table) {
+            DB::table($table)->delete();
+        }
+        DB::statement('ALTER TABLE products AUTO_INCREMENT = 1');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         $this->now = Carbon::now();
         $this->timestamp = $this->now->format('Y-m-d H:i:s');
@@ -167,7 +195,12 @@ class ProductTableSeeder extends Seeder
         $localeProductsData = $this->buildProductsDataByLocale();
 
         $products = collect($localeProductsData[$defaultLocale])
-            ->map(fn ($row) => Arr::only($row, ['parent_id', 'sku', 'type', 'attribute_family_id', 'created_at', 'updated_at']))
+            ->map(function ($row) {
+                $data = Arr::only($row, ['parent_id', 'sku', 'type', 'attribute_family_id', 'created_at', 'updated_at']);
+                // Explicitly set the id so attribute_values can reference the expected product_id
+                $data['id'] = $row['product_id'];
+                return $data;
+            })
             ->all();
 
         DB::table('products')->insert($products);
@@ -258,7 +291,8 @@ class ProductTableSeeder extends Seeder
                         continue;
                     }
 
-                    if ($locale !== 'en' && ! in_array($code, self::LOCALE_SPECIFIC_ATTRIBUTES)) {
+                    // Non-locale-specific attributes should only be written once (for the default locale)
+                    if ($locale !== $this->defaultLocale && ! in_array($code, self::LOCALE_SPECIFIC_ATTRIBUTES)) {
                         continue;
                     }
 
@@ -334,10 +368,33 @@ class ProductTableSeeder extends Seeder
 
     /**
      * Seed configurable product super attributes.
+     *
+     * The JSON super_attributes has a nested shape:
+     * { id, code, products: [product_id, ...], options: [...] }
+     * which must be expanded into product_super_attributes (product_id, attribute_id) pairs.
      */
     protected function seedConfigurableProducts(): void
     {
-        $this->insertFromJson('super_attributes', 'product_super_attributes');
+        $data = $this->loadJsonData();
+
+        if (blank($data['super_attributes'] ?? [])) {
+            return;
+        }
+
+        $rows = [];
+
+        foreach ($data['super_attributes'] as $attr) {
+            foreach ((array) ($attr['products'] ?? []) as $productId) {
+                $rows[] = [
+                    'product_id'   => (int) $productId,
+                    'attribute_id' => (int) $attr['id'],
+                ];
+            }
+        }
+
+        if (! empty($rows)) {
+            DB::table('product_super_attributes')->insert($rows);
+        }
     }
 
     /**
@@ -514,6 +571,71 @@ class ProductTableSeeder extends Seeder
         $this->seedAttributeGroups($data);
         $this->seedAttributeGroupMappings($data);
         $this->seedAttributeOptions($data);
+
+        // Copy standard attribute groups (family 1) into every non-default family
+        // so attributes like name, price, status, url_key can be resolved.
+        $this->ensureStandardGroupsInCustomFamilies($data);
+    }
+
+    /**
+     * Ensure non-default attribute families have the standard groups from family 1.
+     *
+     * Without this, Bagisto's checkInLoadedFamilyAttributes() cannot find core
+     * attributes (name, price, status, url_key) on products assigned to custom
+     * families, causing them to render as "Product", "Rp 0.00", SOLD OUT.
+     */
+    protected function ensureStandardGroupsInCustomFamilies(array $data): void
+    {
+        $customFamilyIds = collect($data['attribute_families'] ?? [])
+            ->pluck('id')
+            ->filter(fn ($id) => $id != 1)
+            ->values()
+            ->all();
+
+        if (empty($customFamilyIds)) {
+            return;
+        }
+
+        $standardGroups = DB::table('attribute_groups')
+            ->where('attribute_family_id', 1)
+            ->get();
+
+        if ($standardGroups->isEmpty()) {
+            return;
+        }
+
+        foreach ($customFamilyIds as $familyId) {
+            // Use a high offset to avoid ID collisions: family_id * 100 + original_group_id
+            foreach ($standardGroups as $group) {
+                $newGroupId = $familyId * 100 + $group->id;
+
+                if (DB::table('attribute_groups')->where('id', $newGroupId)->exists()) {
+                    continue;
+                }
+
+                DB::table('attribute_groups')->insert([
+                    'id'                  => $newGroupId,
+                    'attribute_family_id' => $familyId,
+                    'name'                => $group->name,
+                    'code'                => $group->code . '_f' . $familyId,
+                    'column'              => $group->column,
+                    'position'            => $group->position,
+                    'is_user_defined'     => 0,
+                ]);
+
+                $mappings = DB::table('attribute_group_mappings')
+                    ->where('attribute_group_id', $group->id)
+                    ->get();
+
+                foreach ($mappings as $mapping) {
+                    DB::table('attribute_group_mappings')->insertOrIgnore([
+                        'attribute_id'       => $mapping->attribute_id,
+                        'attribute_group_id' => $newGroupId,
+                        'position'           => $mapping->position,
+                    ]);
+                }
+            }
+        }
     }
 
     /**

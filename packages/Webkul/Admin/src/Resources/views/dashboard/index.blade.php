@@ -7,11 +7,11 @@
     <div class="flex items-center justify-between gap-4 mb-5 max-sm:flex-wrap">
         <div class="grid gap-1.5">
             <p class="text-xl font-bold !leading-normal text-gray-800 dark:text-white" v-pre>
-                @lang('admin::app.dashboard.index.user-name', ['user_name' => auth()->guard('admin')->user()->name])
+                Welcome, {{ auth()->guard('admin')->user()->name }}!
             </p>
 
             <p class="!leading-normal text-gray-600 dark:text-gray-300">
-                @lang('admin::app.dashboard.index.user-info')
+                Here's what's happening with your spice store today.
             </p>
         </div>
 

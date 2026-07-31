@@ -28,7 +28,7 @@
             >
                 <img
                     class="block"
-                    src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
+                    src="/images/ankesh-mart-logo.png"
                     alt="{{ config('app.name') }}"
                     width="131"
                     height="29"
@@ -41,6 +41,23 @@
         <!-- Right Navigation -->
         <div>
             <div class="flex items-center gap-x-5 max-md:gap-x-4">
+                <!-- EN/ID Language Toggle (Google Translate) -->
+                <div class="flex items-center gap-0.5 text-xs select-none">
+                    <button
+                        type="button"
+                        data-gt-lang="en"
+                        onclick="setGoogleTranslateLang('en')"
+                        class="px-1 py-0.5 transition-colors hover:text-ink"
+                    >EN</button>
+                    <span class="text-stone">/</span>
+                    <button
+                        type="button"
+                        data-gt-lang="id"
+                        onclick="setGoogleTranslateLang('id')"
+                        class="px-1 py-0.5 transition-colors hover:text-ink"
+                    >ID</button>
+                </div>
+
                 {!! view_render_event('bagisto.shop.components.layouts.header.mobile.compare.before') !!}
 
                 @if($showCompare)
@@ -248,7 +265,7 @@
                     <div class="flex items-center justify-between">
                         <a href="{{ route('shop.home.index') }}">
                             <img
-                                src="{{ core()->getCurrentChannel()->logo_url ?? bagisto_asset('images/logo.svg') }}"
+                                src="/images/ankesh-mart-logo.png"
                                 alt="{{ config('app.name') }}"
                                 width="131"
                                 height="29"

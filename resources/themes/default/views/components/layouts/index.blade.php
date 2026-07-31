@@ -109,9 +109,7 @@
 
         @stack('meta')
 
-        @if ($favicon = core()->getCurrentChannel()->favicon_url)
-            <link rel="icon" sizes="16x16" href="{{ $favicon }}" />
-        @endif
+        <link rel="icon" type="image/png" href="/images/ankesh-mart-logo.png" />
 
         @bagistoVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'])
 
@@ -141,6 +139,12 @@
 
         <style>
             {!! core()->getConfigData('general.content.custom_scripts.custom_css') !!}
+        </style>
+
+        <!-- Google Translate: hide the default banner bar -->
+        <style>
+            .goog-te-banner-frame, .goog-te-gadget, #goog-gt-tt { display: none !important; }
+            body { top: 0 !important; }
         </style>
 
         <style>
@@ -330,5 +334,40 @@
         <script type="text/javascript">
             {!! core()->getConfigData('general.content.custom_scripts.custom_javascript') !!}
         </script>
+
+        <!-- Google Translate -->
+        <div id="google_translate_element" style="display:none"></div>
+        <script>
+            function googleTranslateElementInit() {
+                new google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,id',
+                    autoDisplay: false
+                }, 'google_translate_element');
+            }
+
+            function setGoogleTranslateLang(lang) {
+                var expires = new Date();
+                expires.setFullYear(expires.getFullYear() + 1);
+                var val = '/auto/' + lang;
+                document.cookie = 'googtrans=' + val + '; expires=' + expires.toUTCString() + '; path=/';
+                document.cookie = 'googtrans=' + val + '; expires=' + expires.toUTCString() + '; path=/; domain=.' + location.hostname;
+                location.reload();
+            }
+
+            (function() {
+                var match = document.cookie.match(/googtrans=\/auto\/([a-z]+)/);
+                var currentLang = match ? match[1] : 'en';
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('[data-gt-lang]').forEach(function(btn) {
+                        var active = btn.dataset.gtLang === currentLang;
+                        btn.classList.toggle('font-bold', active);
+                        btn.classList.toggle('text-ink', active);
+                        btn.classList.toggle('text-stone', !active);
+                    });
+                });
+            })();
+        </script>
+        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
     </body>
 </html>

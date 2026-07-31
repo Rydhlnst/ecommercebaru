@@ -46,11 +46,7 @@
 
         @stack('meta')
 
-        <link
-            rel="icon"
-            sizes="16x16"
-            href="{{ core()->getCurrentChannel()->favicon_url ?? bagisto_asset('images/favicon.ico') }}"
-        />
+        <link rel="icon" type="image/png" href="/images/ankesh-mart-logo.png" />
 
         @bagistoVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'])
 
@@ -80,6 +76,12 @@
 
         <style>
             {!! core()->getConfigData('general.content.custom_scripts.custom_css') !!}
+        </style>
+
+        <!-- Google Translate: hide the default banner bar -->
+        <style>
+            .goog-te-banner-frame, .goog-te-gadget { display: none !important; }
+            body { top: 0 !important; }
         </style>
 
         @if(core()->getConfigData('general.content.speculation_rules.enabled'))
@@ -176,5 +178,41 @@
         <script type="text/javascript">
             {!! core()->getConfigData('general.content.custom_scripts.custom_javascript') !!}
         </script>
+
+        <!-- Google Translate -->
+        <div id="google_translate_element" style="display:none"></div>
+        <script>
+            function googleTranslateElementInit() {
+                new google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,id',
+                    autoDisplay: false
+                }, 'google_translate_element');
+            }
+
+            function setGoogleTranslateLang(lang) {
+                var expires = new Date();
+                expires.setFullYear(expires.getFullYear() + 1);
+                var cookieVal = '/auto/' + lang;
+                document.cookie = 'googtrans=' + cookieVal + '; expires=' + expires.toUTCString() + '; path=/';
+                document.cookie = 'googtrans=' + cookieVal + '; expires=' + expires.toUTCString() + '; path=/; domain=.' + location.hostname;
+                location.reload();
+            }
+
+            // Highlight active language button
+            (function() {
+                var match = document.cookie.match(/googtrans=\/auto\/([a-z]+)/);
+                var currentLang = match ? match[1] : 'en';
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.querySelectorAll('[data-gt-lang]').forEach(function(btn) {
+                        var isActive = btn.dataset.gtLang === currentLang;
+                        btn.classList.toggle('font-bold', isActive);
+                        btn.classList.toggle('text-ink', isActive);
+                        btn.classList.toggle('text-stone', !isActive);
+                    });
+                });
+            })();
+        </script>
+        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
     </body>
 </html>

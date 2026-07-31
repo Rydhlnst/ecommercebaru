@@ -29,6 +29,13 @@ class AttributeFamilyTableSeeder extends Seeder
                 'status' => 0,
                 'is_user_defined' => 1,
             ],
+            [
+                'id' => 2,
+                'code' => 'food_product',
+                'name' => 'Food Product',
+                'status' => 1,
+                'is_user_defined' => 0,
+            ],
         ]);
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');

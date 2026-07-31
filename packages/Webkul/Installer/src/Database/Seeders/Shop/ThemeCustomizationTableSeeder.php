@@ -398,6 +398,12 @@ class ThemeCustomizationTableSeeder extends Seeder
 
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 
+        // Clear before re-seeding to make this idempotent
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::table('theme_customization_translations')->delete();
+        DB::table('theme_customizations')->whereIn('id', [9, 10, 11, 12, 13])->delete();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
         DB::table('theme_customizations')
             ->insert([
                 [

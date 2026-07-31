@@ -82,7 +82,7 @@ class AttributeGroupTableSeeder extends Seeder
                 'is_user_defined' => 0,
                 'position' => 4,
                 'attribute_family_id' => 1,
-            ], [
+            ],             [
                 'id' => 8,
                 'code' => 'rma',
                 'name' => trans('installer::app.seeders.attribute.attribute-groups.rma', [], $defaultLocale),
@@ -90,6 +90,27 @@ class AttributeGroupTableSeeder extends Seeder
                 'is_user_defined' => 0,
                 'position' => 5,
                 'attribute_family_id' => 1,
+            ],
+            /**
+             * Food Details Group (for food products)
+             */
+            [
+                'id' => 9,
+                'code' => 'food_details',
+                'name' => 'Food Details',
+                'column' => 1,
+                'is_user_defined' => 0,
+                'position' => 4,
+                'attribute_family_id' => 2,
+            ],
+            [
+                'id' => 10,
+                'code' => 'food_instructions',
+                'name' => 'Food Instructions',
+                'column' => 2,
+                'is_user_defined' => 0,
+                'position' => 6,
+                'attribute_family_id' => 2,
             ],
         ]);
 
@@ -252,6 +273,64 @@ class AttributeGroupTableSeeder extends Seeder
                 'attribute_id' => 30,
                 'attribute_group_id' => 8,
                 'position' => 2,
+            ],
+
+            /**
+             * Food Details group attributes.
+             */
+            [
+                'attribute_id' => 31,
+                'attribute_group_id' => 9,
+                'position' => 1,
+            ], [
+                'attribute_id' => 32,
+                'attribute_group_id' => 9,
+                'position' => 2,
+            ], [
+                'attribute_id' => 33,
+                'attribute_group_id' => 9,
+                'position' => 3,
+            ], [
+                'attribute_id' => 34,
+                'attribute_group_id' => 9,
+                'position' => 4,
+            ], [
+                'attribute_id' => 35,
+                'attribute_group_id' => 9,
+                'position' => 5,
+            ], [
+                'attribute_id' => 36,
+                'attribute_group_id' => 9,
+                'position' => 6,
+            ], [
+                'attribute_id' => 40,
+                'attribute_group_id' => 9,
+                'position' => 7,
+            ], [
+                'attribute_id' => 41,
+                'attribute_group_id' => 9,
+                'position' => 8,
+            ], [
+                'attribute_id' => 42,
+                'attribute_group_id' => 9,
+                'position' => 9,
+            ],
+
+            /**
+             * Food Instructions group attributes.
+             */
+            [
+                'attribute_id' => 37,
+                'attribute_group_id' => 10,
+                'position' => 1,
+            ], [
+                'attribute_id' => 38,
+                'attribute_group_id' => 10,
+                'position' => 2,
+            ], [
+                'attribute_id' => 39,
+                'attribute_group_id' => 10,
+                'position' => 3,
             ],
         ]);
 

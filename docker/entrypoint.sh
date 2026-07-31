@@ -58,11 +58,17 @@ php artisan migrate --force || echo "Migration skipped/failed"
 if [ "$FIRST_RUN" = "true" ]; then
   echo "First run: seeding database with demo data..."
   php artisan db:seed --force || echo "Seed skipped/failed"
+  echo "Building product indices..."
+  php artisan indexer:index --mode=full || echo "Indexer skipped/failed"
 fi
 
 # Mark as installed (skip Bagisto installer redirect)
 touch storage/installed
 chown www-data:www-data storage/installed 2>/dev/null || true
+
+# Clear stale compiled views and response cache before re-caching
+php artisan view:clear || true
+php artisan responsecache:clear || true
 
 # Cache config for prod (non-fatal)
 php artisan config:cache || true

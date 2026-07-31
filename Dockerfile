@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1.6
 # =============================================================================
 # Beres Commerce — Production Image
-# Multi-stage: composer deps → node asset build → runtime PHP-FPM
+# Multi-stage: vendor copy → node asset build → runtime PHP-FPM
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Stage 1: Composer dependencies
+# Stage 1: PHP dependencies (copy local vendor for offline builds)
 # -----------------------------------------------------------------------------
 FROM composer:2 AS vendor
 WORKDIR /app
@@ -19,14 +19,21 @@ COPY public ./public
 COPY resources ./resources
 COPY routes ./routes
 COPY artisan ./
-RUN composer install \
-        --no-dev \
-        --no-interaction \
-        --no-progress \
-        --prefer-dist \
-        --optimize-autoloader \
-        --no-scripts \
-        --ignore-platform-reqs
+COPY vendor ./vendor
+
+# Resolve Windows symlinks that point to D:/... paths (broken inside Linux).
+# Replace each symlink with the actual package contents from /app/packages/Beres/.
+# Vendor dirs are lowercase (account, dashboard) but packages are PascalCase (Account, Dashboard).
+RUN cd /app/vendor/beres && \
+    for item in *; do \
+        if [ -L "$item" ]; then \
+            pascal=$(ls /app/packages/Beres/ | grep -i "^${item}$" | head -1); \
+            if [ -n "$pascal" ]; then \
+                rm -f "$item" && \
+                cp -r "/app/packages/Beres/$pascal" "$item"; \
+            fi; \
+        fi; \
+    done
 
 # -----------------------------------------------------------------------------
 # Stage 2: Node asset build (Admin + Shop themes)

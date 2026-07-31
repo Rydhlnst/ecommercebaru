@@ -87,9 +87,61 @@
                     :is-selected="true"
                 >
                     <div class="container mt-[60px] max-1180:px-5">
-                        <p class="text-lg text-zinc-500 max-1180:text-sm">
+                        <div class="prose prose-lg max-w-none text-zinc-500">
                             {!! $product->description !!}
-                        </p>
+                        </div>
+
+                        <!-- Food Product Details - Grannis Kitchen Style -->
+                        @if($product->attribute_family_id == 2)
+                            <div class="mt-8 space-y-8">
+                                @if($product->ingredients)
+                                    <div class="border-t border-mist pt-6">
+                                        <h3 class="text-lg font-semibold text-ink mb-4">Nutrient-Rich Ingredients for Smarter Eating</h3>
+                                        <p class="text-zinc-500 mb-4">Every ingredient is selected to provide functional nutrition, digestive support, and satisfying flavor:</p>
+                                        <div class="text-zinc-500">
+                                            {!! $product->ingredients !!}
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if($product->usage_instructions)
+                                    <div class="border-t border-mist pt-6">
+                                        <h3 class="text-lg font-semibold text-ink mb-4">Easy Homemade Healthy Roti in Minutes</h3>
+                                        <p class="text-zinc-500 mb-4">Preparing your healthy masala roti is simple:</p>
+                                        <div class="text-zinc-500">
+                                            {!! $product->usage_instructions !!}
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if($product->storage_instructions)
+                                    <div class="border-t border-mist pt-6">
+                                        <h3 class="text-lg font-semibold text-ink mb-4">Storage Instructions</h3>
+                                        <p class="text-zinc-500">
+                                            {!! $product->storage_instructions !!}
+                                        </p>
+                                    </div>
+                                @endif
+
+                                @if($product->allergen_info)
+                                    <div class="border-t border-mist pt-6">
+                                        <h3 class="text-lg font-semibold text-ink mb-4">Allergen Information</h3>
+                                        <p class="text-zinc-500">
+                                            {!! $product->allergen_info !!}
+                                        </p>
+                                    </div>
+                                @endif
+
+                                @if($product->origin_region)
+                                    <div class="border-t border-mist pt-6">
+                                        <h3 class="text-lg font-semibold text-ink mb-4">Origin</h3>
+                                        <p class="text-zinc-500">
+                                            {{ $product->origin_region }}
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
                     </div>
                 </x-shop::tabs.item>
 
@@ -172,7 +224,61 @@
 
             <x-slot:content class="max-sm:px-0">
                 <div class="mb-5 text-lg text-zinc-500 max-1180:text-sm max-md:mb-1 max-md:px-4">
-                    {!! $product->description !!}
+                    <div class="prose prose-lg max-w-none">
+                        {!! $product->description !!}
+                    </div>
+
+                    <!-- Food Product Details (Mobile) - Grannis Kitchen Style -->
+                    @if($product->attribute_family_id == 2)
+                        <div class="mt-6 space-y-6">
+                            @if($product->ingredients)
+                                <div class="border-t border-mist pt-4">
+                                    <h3 class="text-base font-semibold text-ink mb-3">Nutrient-Rich Ingredients for Smarter Eating</h3>
+                                    <p class="text-zinc-500 text-sm mb-3">Every ingredient is selected to provide functional nutrition, digestive support, and satisfying flavor:</p>
+                                    <div class="text-zinc-500 text-sm">
+                                        {!! $product->ingredients !!}
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($product->usage_instructions)
+                                <div class="border-t border-mist pt-4">
+                                    <h3 class="text-base font-semibold text-ink mb-3">Easy Homemade Healthy Roti in Minutes</h3>
+                                    <p class="text-zinc-500 text-sm mb-3">Preparing your healthy masala roti is simple:</p>
+                                    <div class="text-zinc-500 text-sm">
+                                        {!! $product->usage_instructions !!}
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($product->storage_instructions)
+                                <div class="border-t border-mist pt-4">
+                                    <h3 class="text-base font-semibold text-ink mb-3">Storage Instructions</h3>
+                                    <p class="text-zinc-500 text-sm">
+                                        {!! $product->storage_instructions !!}
+                                    </p>
+                                </div>
+                            @endif
+
+                            @if($product->allergen_info)
+                                <div class="border-t border-mist pt-4">
+                                    <h3 class="text-base font-semibold text-ink mb-3">Allergen Information</h3>
+                                    <p class="text-zinc-500 text-sm">
+                                        {!! $product->allergen_info !!}
+                                    </p>
+                                </div>
+                            @endif
+
+                            @if($product->origin_region)
+                                <div class="border-t border-mist pt-4">
+                                    <h3 class="text-base font-semibold text-ink mb-3">Origin</h3>
+                                    <p class="text-zinc-500 text-sm">
+                                        {{ $product->origin_region }}
+                                    </p>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
                 </div>
             </x-slot>
         </x-shop::accordion>
@@ -295,27 +401,12 @@
 
                             <!-- Details -->
                             <div class="relative lg:sticky lg:top-24 lg:self-start max-w-[560px]">
+                                <!-- Product Name & Rating -->
                                 {!! view_render_event('bagisto.shop.products.name.before', ['product' => $product]) !!}
 
-                                <p class="eyebrow mb-3">Placeholder — Collection</p>
-
-                                <div class="flex justify-between gap-4 items-start">
-                                    <h1 class="font-serif text-4xl md:text-5xl leading-tight text-ink" v-pre>
-                                        {{ $product->name }}
-                                    </h1>
-
-                                    @if (core()->getConfigData('customer.settings.wishlist.wishlist_option'))
-                                        <div
-                                            class="flex items-center justify-center w-11 h-11 rounded-full border border-mist bg-cream text-xl cursor-pointer transition-colors hover:border-ink"
-                                            role="button"
-                                            aria-label="@lang('shop::app.products.view.add-to-wishlist')"
-                                            tabindex="0"
-                                            :class="isWishlist ? 'icon-heart-fill text-red-600' : 'icon-heart'"
-                                            @click="addToWishlist"
-                                        >
-                                        </div>
-                                    @endif
-                                </div>
+                                <h1 class="font-serif text-4xl md:text-5xl leading-tight text-ink" v-pre>
+                                    {{ $product->name }}
+                                </h1>
 
                                 {!! view_render_event('bagisto.shop.products.name.after', ['product' => $product]) !!}
 
@@ -323,15 +414,14 @@
                                 {!! view_render_event('bagisto.shop.products.rating.before', ['product' => $product]) !!}
 
                                 @if ($totalRatings = $reviewHelper->getTotalFeedback($product))
-                                    <!-- Scroll To Reviews Section and Activate Reviews Tab -->
                                     <div
-                                        class="mt-1 w-max cursor-pointer max-sm:mt-1.5"
+                                        class="mt-2 w-max cursor-pointer"
                                         role="button"
                                         tabindex="0"
                                         @click="scrollToReview"
                                     >
                                         <x-shop::products.ratings
-                                            class="transition-all hover:border-gray-400 max-sm:px-3 max-sm:py-1"
+                                            class="transition-all hover:border-gray-400"
                                             :average="$avgRatings"
                                             :total="$totalRatings"
                                             ::rating="true"
@@ -344,12 +434,12 @@
                                 <!-- Pricing -->
                                 {!! view_render_event('bagisto.shop.products.price.before', ['product' => $product]) !!}
 
-                                <p class="mt-6 flex items-center gap-3 text-2xl font-medium text-cocoa">
+                                <p class="mt-4 flex items-center gap-3 text-2xl font-medium text-cocoa">
                                     {!! $product->getTypeInstance()->getPriceHtml() !!}
                                 </p>
 
                                 @if (\Webkul\Tax\Facades\Tax::isInclusiveTaxProductPrices())
-                                    <span class="text-sm font-normal text-zinc-500 max-sm:text-xs">
+                                    <span class="text-sm font-normal text-zinc-500">
                                         (@lang('shop::app.products.view.tax-inclusive'))
                                     </span>
                                 @endif
@@ -366,13 +456,17 @@
 
                                 {!! view_render_event('bagisto.shop.products.price.after', ['product' => $product]) !!}
 
+                                <!-- Short Description -->
                                 {!! view_render_event('bagisto.shop.products.short_description.before', ['product' => $product]) !!}
 
-                                <div class="mt-6 text-base text-cocoa/80 leading-relaxed border-t border-mist pt-6">
+                                <div class="mt-4 text-base text-cocoa/80 leading-relaxed">
                                     {!! $product->short_description !!}
                                 </div>
 
                                 {!! view_render_event('bagisto.shop.products.short_description.after', ['product' => $product]) !!}
+
+                                <!-- Quantity Label -->
+                                <p class="mt-6 text-sm font-medium text-ink">Quantity:</p>
 
                                 @include('shop::products.view.types.simple')
 
@@ -387,7 +481,7 @@
                                 @include('shop::products.view.types.booking')
 
                                 <!-- Product Actions and Quantity Box -->
-                                <div class="mt-8 flex flex-col gap-3">
+                                <div class="mt-6 flex flex-col gap-3">
                                     <div class="flex gap-3 items-stretch">
                                         {!! view_render_event('bagisto.shop.products.view.quantity.before', ['product' => $product]) !!}
 
@@ -448,11 +542,11 @@
                                     @endif
                                 </div>
 
-                                <!-- Trust strip -->
+                                <!-- Trust strip - Grannis Kitchen Style -->
                                 <ul class="mt-8 grid grid-cols-3 gap-4 border-t border-mist pt-6 text-[11px] tracking-widelg uppercase text-stone text-center">
-                                    <li>Free shipping</li>
-                                    <li>3-year warranty</li>
-                                    <li>Easy returns</li>
+                                    <li>Fresh & Authentic</li>
+                                    <li>Lab Tested Purity</li>
+                                    <li>Fast Delivery</li>
                                 </ul>
 
                                 {!! view_render_event('bagisto.shop.products.view.additional_actions.before', ['product' => $product]) !!}

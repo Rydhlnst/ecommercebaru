@@ -99,6 +99,56 @@ return [
             ],
         ],
     ], [
+        'key' => 'general.social',
+        'name' => 'Social Media Links',
+        'info' => 'Configure social media links for the footer',
+        'icon' => 'settings/store.svg',
+        'sort' => 3,
+        'fields' => [
+            [
+                'name' => 'facebook',
+                'title' => 'Facebook URL',
+                'type' => 'text',
+                'placeholder' => 'https://facebook.com/yourpage',
+            ],
+            [
+                'name' => 'youtube',
+                'title' => 'YouTube URL',
+                'type' => 'text',
+                'placeholder' => 'https://youtube.com/yourchannel',
+            ],
+            [
+                'name' => 'instagram',
+                'title' => 'Instagram URL',
+                'type' => 'text',
+                'placeholder' => 'https://instagram.com/youraccount',
+            ],
+            [
+                'name' => 'tiktok',
+                'title' => 'TikTok URL',
+                'type' => 'text',
+                'placeholder' => 'https://tiktok.com/@youraccount',
+            ],
+            [
+                'name' => 'shopee',
+                'title' => 'Shopee URL',
+                'type' => 'text',
+                'placeholder' => 'https://shopee.co.id/yourshop',
+            ],
+            [
+                'name' => 'tokopedia',
+                'title' => 'Tokopedia URL',
+                'type' => 'text',
+                'placeholder' => 'https://tokopedia.com/yourshop',
+            ],
+            [
+                'name' => 'blibli',
+                'title' => 'BliBli URL',
+                'type' => 'text',
+                'placeholder' => 'https://blibli.com/yourshop',
+            ],
+        ],
+    ], [
         'key' => 'general.content.speculation_rules',
         'name' => 'admin::app.configuration.index.general.content.speculation-rules.title',
         'info' => 'admin::app.configuration.index.general.content.speculation-rules.info',

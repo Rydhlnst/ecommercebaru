@@ -8,9 +8,15 @@
         <a
             href="{{ route('shop.home.index') }}"
             aria-label="{{ config('app.name') }}"
-            class="font-serif text-3xl leading-none text-ink tracking-tight shrink-0"
+            class="shrink-0"
         >
-            Ankish Mart
+            <img
+                src="/images/ankesh-mart-logo.png"
+                alt="{{ config('app.name') }}"
+                width="131"
+                height="44"
+                class="block"
+            >
         </a>
 
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.after') !!}
@@ -28,6 +34,13 @@
             <a href="{{ route('shop.home.index') }}#stores" class="hidden lg:inline-block hover:text-ink transition-colors">
                 Find In-Store
             </a>
+
+            <!-- EN/ID Language Toggle -->
+            <div class="flex items-center gap-1 select-none">
+                <button type="button" data-gt-lang="en" onclick="setGoogleTranslateLang('en')" class="px-1 py-0.5 text-stone transition-colors hover:text-ink">EN</button>
+                <span class="text-stone/50 text-xs">/</span>
+                <button type="button" data-gt-lang="id" onclick="setGoogleTranslateLang('id')" class="px-1 py-0.5 text-stone transition-colors hover:text-ink">ID</button>
+            </div>
 
             {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.compare.before') !!}
             @if(core()->getConfigData('catalog.products.settings.compare_option'))

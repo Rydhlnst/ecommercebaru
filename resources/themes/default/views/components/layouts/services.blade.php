@@ -21,7 +21,7 @@
 @if ($customization)
     <div class="bg-cream border-t border-mist" v-pre>
         <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            @foreach ($customization->options['services'] as $service)
+            @foreach (($customization->options['services'] ?? []) as $service)
                 <div class="flex flex-col items-center gap-3">
                     <span
                         class="{{ $service['service_icon'] }} flex items-center justify-center w-12 h-12 rounded-full border border-ink text-2xl text-ink"
