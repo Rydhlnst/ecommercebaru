@@ -49,6 +49,26 @@ class ProductTableSeeder extends Seeder
     ];
 
     /**
+     * Food-product attribute codes that live at the product level in the JSON
+     * (not inside translations). These need to be copied into the attribute
+     * value rows during seeding.
+     *
+     * @var string[]
+     */
+    const FOOD_ATTRIBUTE_CODES = [
+        'net_weight',
+        'organic_certified',
+        'dietary_info',
+        'origin_region',
+        'flavor_profile',
+        'cuisine_type',
+        'ingredients',
+        'usage_instructions',
+        'storage_instructions',
+        'allergen_info',
+    ];
+
+    /**
      * Product columns excluded from attribute-value processing.
      *
      * @var string[]
@@ -265,6 +285,12 @@ class ProductTableSeeder extends Seeder
         ];
 
         foreach (self::SELECT_ATTRIBUTE_CODES as $code) {
+            if (Arr::has($product, $code)) {
+                $result[$code] = $product[$code];
+            }
+        }
+
+        foreach (self::FOOD_ATTRIBUTE_CODES as $code) {
             if (Arr::has($product, $code)) {
                 $result[$code] = $product[$code];
             }

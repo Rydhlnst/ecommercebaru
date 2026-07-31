@@ -72,6 +72,10 @@
             "origin_region": "Punjab, Pakistan",
             "flavor_profile": "25,26",
             "cuisine_type": "29",
+            "ingredients": "<ul><li>Quinoa Powder</li><li>Besan (Gram Flour)</li><li>Daal Mong Powder</li><li>Flax Seeds (Flex Seeds)</li><li>Dehydrated Vegetables (Onion, Garlic, Tomato, Curry Leaves)</li><li>Masala Seasoning (Cumin, Coriander, Turmeric, Black Pepper, Red Chili, Fenugreek)</li><li>Salt</li></ul>",
+            "usage_instructions": "<ol><li>Take 2 cups of Masala Diabetic Roti Powder in a bowl</li><li>Add warm water gradually and knead into a soft dough</li><li>Let the dough rest for 10-15 minutes</li><li>Divide into equal-sized balls</li><li>Roll out into thin rotis using a rolling pin</li><li>Cook on a hot tawa (griddle) until golden brown spots appear on both sides</li><li>Drizzle with ghee and serve hot</li></ol><p><strong>Tip:</strong> For best results, consume within 15 minutes of cooking. Pairs well with yogurt, pickles, or any curry.</p>",
+            "storage_instructions": "Store in a cool, dry place away from direct sunlight. Once opened, transfer to an airtight container and consume within 30 days. Refrigerate for extended freshness up to 60 days.",
+            "allergen_info": "Contains: Gluten-free. May contain traces of nuts. Produced in a facility that also processes wheat, soy, and dairy products.",
             "translations": {
                 "en": {
                     "name": "Masala Diabetic Roti Powder",
@@ -102,6 +106,10 @@
             "parent_id": 2,
             "visible_individually": 0,
             "net_weight": "500g",
+            "ingredients": "<ul><li>Quinoa Powder</li><li>Besan (Gram Flour)</li><li>Daal Mong Powder</li><li>Flax Seeds</li><li>Dehydrated Vegetables</li><li>Masala Seasoning</li><li>Salt</li></ul>",
+            "usage_instructions": "<ol><li>Take 1 cup of Masala Diabetic Roti Powder</li><li>Add warm water and knead into soft dough</li><li>Rest for 10 minutes, then roll and cook on hot tawa</li></ol>",
+            "storage_instructions": "Store in a cool, dry place. Once opened, use within 30 days.",
+            "allergen_info": "Gluten-free. May contain traces of nuts.",
             "translations": {
                 "en": {
                     "name": "Masala Diabetic Roti Powder - 500g",
@@ -129,6 +137,10 @@
             "parent_id": 2,
             "visible_individually": 0,
             "net_weight": "1000g",
+            "ingredients": "<ul><li>Quinoa Powder</li><li>Besan (Gram Flour)</li><li>Daal Mong Powder</li><li>Flax Seeds</li><li>Dehydrated Vegetables</li><li>Masala Seasoning</li><li>Salt</li></ul>",
+            "usage_instructions": "<ol><li>Take 2 cups of Masala Diabetic Roti Powder</li><li>Add warm water and knead into soft dough</li><li>Rest for 10 minutes, then roll and cook on hot tawa</li></ol>",
+            "storage_instructions": "Store in a cool, dry place. Once opened, use within 30 days.",
+            "allergen_info": "Gluten-free. May contain traces of nuts.",
             "translations": {
                 "en": {
                     "name": "Masala Diabetic Roti Powder - 1000g",
@@ -162,6 +174,10 @@
             "origin_region": "Pakistan",
             "flavor_profile": "24,26",
             "cuisine_type": "29",
+            "ingredients": "<ul><li>Steel Cut Oats</li><li>Almonds (Sliced)</li><li>Cashews (Chopped)</li><li>Walnuts (Pieces)</li><li>Raisins</li><li>Pumpkin Seeds</li><li>Sunflower Seeds</li></ul>",
+            "usage_instructions": "<ol><li>Take 1/2 cup of Steel Cut Oats With Nuts</li><li>Add 1 cup of water or milk (dairy or plant-based)</li><li>Cook on medium heat for 5-7 minutes, stirring occasionally</li><li>Until creamy and grains are tender</li><li>Serve hot with honey, fresh fruits, or a drizzle of ghee</li></ol><p><strong>Tip:</strong> For overnight oats, mix with yogurt and refrigerate for 6-8 hours. Top with fresh berries in the morning.</p>",
+            "storage_instructions": "Store in an airtight container in a cool, dry place. Best consumed within 60 days of opening. Do not refrigerate uncooked oats.",
+            "allergen_info": "Contains: Tree nuts (almonds, cashews, walnuts). May contain traces of peanuts, soy, and dairy. Produced in a facility that handles multiple allergens.",
             "translations": {
                 "en": {
                     "name": "Steel Cut Oats With Nuts",
@@ -198,6 +214,10 @@
             "origin_region": "Punjab, Pakistan",
             "flavor_profile": "25,26,28",
             "cuisine_type": "29",
+            "ingredients": "<ul><li>Coriander Seeds</li><li>Cumin Seeds</li><li>Turmeric Powder</li><li>Fenugreek Seeds</li><li>Black Pepper</li><li>Red Chili</li><li>Green Cardamom</li><li>Cinnamon Bark</li><li>Cloves</li><li>Nutmeg</li></ul>",
+            "usage_instructions": "<ol><li>Heat 1-2 tablespoons of oil in a pan</li><li>Add 2 tablespoons of Curry Powder and sauté for 30 seconds</li><li>Add your choice of vegetables, meat, or legumes</li><li>Cook until done, stirring occasionally</li><li>Adjust salt to taste</li></ol><p><strong>Tip:</strong> For a richer flavor, bloom the curry powder in hot oil before adding other ingredients. Use 1-2 tablespoons per serving.</p>",
+            "storage_instructions": "Store in a cool, dry place away from direct sunlight. Keep the container tightly sealed after each use. Best used within 6 months for optimal flavor.",
+            "allergen_info": "No common allergens. 100% plant-based. Gluten-free, vegan, and nut-free.",
             "translations": {
                 "en": {
                     "name": "Curry Powder - Original",
@@ -234,6 +254,10 @@
             "origin_region": "Himalayan Region, Pakistan",
             "flavor_profile": "26",
             "cuisine_type": "29,30,31,32",
+            "ingredients": "<ul><li>100% Pure Himalayan Pink Salt</li></ul><p>Unrefined, chemical-free, and hand-mined from ancient salt deposits in the Himalayan mountains. Contains 84+ trace minerals including potassium, magnesium, calcium, and iron.</p>",
+            "usage_instructions": "<ul><li><strong>Cooking:</strong> Use as you would regular table salt for seasoning during cooking</li><li><strong>Finishing:</strong> Sprinkle over finished dishes for a burst of mineral-rich flavor</li><li><strong>Brine:</strong> Dissolve in warm water to make sole water for daily wellness drinks</li><li><strong>Soaking:</strong> Add to bath water for mineral-rich soaking (use coarse grain)</li></ul>",
+            "storage_instructions": "Store in a dry place. Pink salt is naturally moisture-resistant. Keep container sealed to prevent clumping. Does not expire when stored properly.",
+            "allergen_info": "No allergens. 100% natural and unrefined. Free from additives, anti-caking agents, and iodine supplements.",
             "translations": {
                 "en": {
                     "name": "Himalayan Pink Salt",
@@ -270,6 +294,10 @@
             "origin_region": "Punjab, Pakistan",
             "flavor_profile": "24,26",
             "cuisine_type": "29",
+            "ingredients": "<ul><li>100% Pure Cow Ghee (from grass-fed cows)</li></ul><p>Made using the traditional bilona (churning) method. Milk cream is churned to extract butter, then slow-cooked to produce golden, aromatic ghee. No additives, preservatives, or artificial flavors.</p>",
+            "usage_instructions": "<ul><li><strong>Cooking:</strong> Use 1-2 tablespoons for sautéing, frying, or tempering</li><li><strong>Baking:</strong> Substitute for butter at a 1:1 ratio in recipes</li><li><strong>Roti/Naan:</strong> Brush freshly cooked bread with ghee for authentic flavor</li><li><strong>Rice:</strong> Add a teaspoon to steamed rice for aroma and taste</li><li><strong>Hot Beverages:</strong> Add a small amount to tea or coffee for richness</li></ul>",
+            "storage_instructions": "Store at room temperature in a cool, dry place. Ghee has a long shelf life of 12+ months without refrigeration. Use a clean, dry spoon每次 to prevent contamination. Do not introduce water into the container.",
+            "allergen_info": "Contains: Dairy (milk). Suitable for lactose-intolerant individuals as ghee contains negligible lactose. Not suitable for vegans.",
             "translations": {
                 "en": {
                     "name": "Pure Cow Ghee",
@@ -306,6 +334,10 @@
             "origin_region": "Mexico",
             "flavor_profile": "26",
             "cuisine_type": "29,30,32",
+            "ingredients": "<ul><li>100% Organic Chia Seeds (Salvia hispanica)</li></ul><p>Whole, raw chia seeds sourced from certified organic farms. Rich in omega-3 fatty acids (ALA), dietary fiber, plant-based protein, calcium, magnesium, and iron.</p>",
+            "usage_instructions": "<ol><li><strong>Chia Pudding:</strong> Mix 3 tablespoons chia seeds with 1 cup milk. Refrigerate overnight. Top with fruits and honey.</li><li><strong>Smoothies:</strong> Add 1-2 tablespoons to your favorite smoothie blend.</li><li><strong>Baking:</strong> Use as an egg replacer (1 tbsp chia + 3 tbsp water = 1 egg).</li><li><strong>Yogurt/Oatmeal:</strong> Sprinkle 1-2 tablespoons on top for extra nutrition.</li><li><strong>Water Soak:</strong> Soak 1 tbsp in a glass of water for 15 minutes before drinking.</li></ol>",
+            "storage_instructions": "Store in a cool, dry place. For extended freshness, refrigerate after opening. Chia seeds have a long shelf life of 2+ years when stored properly.",
+            "allergen_info": "No common allergens. 100% organic, gluten-free, vegan, and non-GMO. Produced in a nut-free facility.",
             "translations": {
                 "en": {
                     "name": "Organic Chia Seeds",
@@ -342,6 +374,10 @@
             "origin_region": "Punjab, Pakistan",
             "flavor_profile": "25,26,28",
             "cuisine_type": "29",
+            "ingredients": "<ul><li>Rice Flour</li><li>Corn Starch</li><li>Red Chili Powder</li><li>Coriander Powder</li><li>Cumin Powder</li><li>Garlic Powder</li><li>Ginger Powder</li><li>Turmeric</li><li>Black Pepper</li><li>Carom Seeds (Ajwain)</li><li>Salt</li><li>Baking Soda</li></ul>",
+            "usage_instructions": "<ol><li>Take 100g of fry mix masala in a plate</li><li>Add 1 tablespoon of oil and mix well to create a crumbly texture</li><li>Marinate chicken, fish, or paneer with ginger-garlic paste and lemon juice</li><li>Coat the marinated pieces evenly with the fry mix</li><li>Let it rest for 15-20 minutes for the coating to set</li><li>Deep fry in hot oil (180°C) until golden brown and crispy</li><li>Drain on paper towels and serve hot</li></ol><p><strong>Tip:</strong> For extra crispiness, double-coat by dipping in batter and applying fry mix twice.</p>",
+            "storage_instructions": "Store in an airtight container in a cool, dry place. Use within 60 days of opening for best results. Keep away from moisture to maintain crispiness.",
+            "allergen_info": "May contain traces of gluten (wheat). Produced in a facility that processes wheat, soy, and dairy products. Not suitable for celiac diets.",
             "translations": {
                 "en": {
                     "name": "Non-Veg Fry Mix Masala",
