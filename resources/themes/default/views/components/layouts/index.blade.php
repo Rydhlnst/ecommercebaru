@@ -147,6 +147,15 @@
             body { top: 0 !important; }
         </style>
 
+        <!-- Custom scrollbar -->
+        <style>
+            ::-webkit-scrollbar { width: 6px; height: 6px; }
+            ::-webkit-scrollbar-track { background: var(--cream); }
+            ::-webkit-scrollbar-thumb { background: var(--mist); border-radius: 3px; }
+            ::-webkit-scrollbar-thumb:hover { background: var(--clay); }
+            * { scrollbar-width: thin; scrollbar-color: var(--mist) var(--cream); }
+        </style>
+
         <style>
             /* Bellroy-inspired tokens */
             :root {
