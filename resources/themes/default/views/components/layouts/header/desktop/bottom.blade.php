@@ -27,7 +27,7 @@
 
             <form
                 action="{{ route('shop.search.index') }}"
-                class="relative max-w-4xl"
+                class="relative w-full"
                 role="search"
                 toolname="search_products"
                 tooldescription="{{ trans('shop::app.components.layouts.webmcp.search-products') }}"
@@ -57,9 +57,6 @@
                     aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.submit')"
                 ></button>
 
-                @if (core()->getConfigData('catalog.products.settings.image_search'))
-                    @include('shop::search.images.index')
-                @endif
             </form>
 
             {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.search_bar.after') !!}
@@ -190,7 +187,7 @@
             ['Snack Sehat',      route('shop.search.index', ['category' => 'snack']),        str_contains($navPath, 'snack')],
         ];
     @endphp
-    <nav class="w-full px-6 md:px-10 lg:px-14 pb-4 border-t border-mist" aria-label="Category navigation">
+    <nav class="w-full px-6 md:px-10 lg:px-14 pt-2 pb-4 border-t border-mist" aria-label="Category navigation">
         <ul class="flex items-center gap-8 lg:gap-12 text-[14px] text-ink">
             @foreach ($navItems as [$label, $href, $active])
                 <li>
