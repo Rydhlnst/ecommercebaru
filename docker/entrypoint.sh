@@ -40,6 +40,10 @@ if [ -d /var/www/html/.public-snapshot ]; then
     cp -a /var/www/html/.public-snapshot/. /var/www/html/public/
 fi
 
+# Clear stale bootstrap cache that may reference dev-only classes
+# (image is built with --no-dev; cached packages.php may still list dev providers)
+rm -f bootstrap/cache/packages.php bootstrap/cache/services.php bootstrap/cache/config.php
+
 # Storage symlink
 [ ! -L public/storage ] && php artisan storage:link || true
 
