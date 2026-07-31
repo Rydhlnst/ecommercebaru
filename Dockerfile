@@ -82,6 +82,10 @@ COPY docker/php.ini /usr/local/etc/php/conf.d/zz-app.ini
 WORKDIR /var/www/html
 COPY --from=assets --chown=www-data:www-data /app /var/www/html
 
+# Snapshot of built public assets — entrypoint.sh syncs this into the
+# app_public volume on every container start so deploys always get fresh assets.
+RUN cp -a /var/www/html/public /var/www/html/.public-snapshot
+
 RUN mkdir -p storage/framework/{sessions,views,cache} storage/logs bootstrap/cache \
  && chown -R www-data:www-data storage bootstrap/cache \
  && chmod -R 775 storage bootstrap/cache

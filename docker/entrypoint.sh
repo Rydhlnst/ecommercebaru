@@ -32,11 +32,29 @@ if ! grep -qE '^APP_KEY=base64:' .env 2>/dev/null; then
   php artisan key:generate --force || true
 fi
 
+# Sync built assets from image into the app_public volume.
+# The named volume persists between deploys, so without this sync
+# a rebuilt image's new CSS/JS would never reach the volume.
+if [ -d /var/www/html/.public-snapshot ]; then
+    echo "Syncing public assets from image snapshot..."
+    cp -a /var/www/html/.public-snapshot/. /var/www/html/public/
+fi
+
 # Storage symlink
 [ ! -L public/storage ] && php artisan storage:link || true
 
+# Detect first run before touching the installed flag
+FIRST_RUN=false
+[ ! -f storage/installed ] && FIRST_RUN=true
+
 # Migrate (idempotent)
 php artisan migrate --force || echo "Migration skipped/failed"
+
+# Seed on first run
+if [ "$FIRST_RUN" = "true" ]; then
+  echo "First run: seeding database with demo data..."
+  php artisan db:seed --force || echo "Seed skipped/failed"
+fi
 
 # Mark as installed (skip Bagisto installer redirect)
 touch storage/installed
