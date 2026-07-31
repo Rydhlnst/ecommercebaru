@@ -1,8 +1,8 @@
 {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.before') !!}
 
 <div class="w-full bg-cream">
-    {{-- Row 1: logo | nav | utilities --}}
-    <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 flex items-center gap-10 pt-5 pb-3">
+    {{-- Row 1: logo | search bar | icons --}}
+    <div class="w-full px-6 md:px-10 lg:px-14 flex items-center gap-6 pt-5 pb-3">
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.before') !!}
 
         <a
@@ -21,20 +21,52 @@
 
         {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.logo.after') !!}
 
-        {{-- Right utilities --}}
-        <div class="ml-auto flex items-center gap-6 text-[13px] text-stone shrink-0">
-            <span class="hidden lg:inline-block">
-                {{ core()->getConfigData('general.content.header_offer.title') ?: 'Free shipping available on most items' }}
-            </span>
+        {{-- Search bar --}}
+        <div class="flex-1">
+            {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.search_bar.before') !!}
 
-            <a href="{{ route('shop.home.index') }}#help" class="hidden lg:inline-block hover:text-ink transition-colors">
-                Need help?
-            </a>
+            <form
+                action="{{ route('shop.search.index') }}"
+                class="relative max-w-4xl"
+                role="search"
+                toolname="search_products"
+                tooldescription="{{ trans('shop::app.components.layouts.webmcp.search-products') }}"
+                toolautosubmit
+            >
+                <label for="organic-search" class="sr-only">@lang('shop::app.components.layouts.header.desktop.bottom.search')</label>
 
-            <a href="{{ route('shop.home.index') }}#stores" class="hidden lg:inline-block hover:text-ink transition-colors">
-                Find In-Store
-            </a>
+                <input
+                    id="organic-search"
+                    type="text"
+                    name="query"
+                    value="{{ request('query') }}"
+                    toolparamdescription="{{ trans('shop::app.components.layouts.webmcp.search-products-query') }}"
+                    class="block w-full text-[14px] text-ink placeholder:text-stone bg-transparent border border-mist rounded-none px-5 py-3 pr-14 transition-colors hover:border-ink focus:border-ink focus:ring-0 focus:outline-none"
+                    minlength="{{ core()->getConfigData('catalog.products.search.min_query_length') }}"
+                    maxlength="{{ core()->getConfigData('catalog.products.search.max_query_length') }}"
+                    placeholder="What are you looking for?"
+                    aria-label="Search"
+                    aria-required="true"
+                    pattern="[^\\]+"
+                    required
+                >
 
+                <button
+                    type="submit"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 icon-search text-2xl text-stone hover:text-ink transition-colors"
+                    aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.submit')"
+                ></button>
+
+                @if (core()->getConfigData('catalog.products.settings.image_search'))
+                    @include('shop::search.images.index')
+                @endif
+            </form>
+
+            {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.search_bar.after') !!}
+        </div>
+
+        {{-- Right icons --}}
+        <div class="flex items-center gap-5 shrink-0">
             <!-- EN/ID Language Toggle -->
             <div class="flex items-center gap-1 select-none">
                 <button type="button" data-gt-lang="en" onclick="setGoogleTranslateLang('en')" class="px-1 py-0.5 text-stone transition-colors hover:text-ink">EN</button>
@@ -104,7 +136,7 @@
                     <x-slot:content class="!p-0">
                         <div class="grid gap-2.5 p-5 pb-0">
                             <p class="font-serif text-xl" v-pre>
-                                @lang('shop::app.components.layouts.header.desktop.bottom.welcome')’
+                                @lang('shop::app.components.layouts.header.desktop.bottom.welcome')'
                                 {{ auth()->guard('customer')->user()->first_name }}
                             </p>
                             <p class="text-sm text-stone">
@@ -158,7 +190,7 @@
             ['Snack Sehat',      route('shop.search.index', ['category' => 'snack']),        str_contains($navPath, 'snack')],
         ];
     @endphp
-    <nav class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 pb-4" aria-label="Category navigation">
+    <nav class="w-full px-6 md:px-10 lg:px-14 pb-4 border-t border-mist" aria-label="Category navigation">
         <ul class="flex items-center gap-8 lg:gap-12 text-[14px] text-ink">
             @foreach ($navItems as [$label, $href, $active])
                 <li>
@@ -169,50 +201,6 @@
             @endforeach
         </ul>
     </nav>
-
-    {{-- Row 3: full-width search bar --}}
-    <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 pb-5 border-b border-mist">
-        {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.search_bar.before') !!}
-
-        <form
-            action="{{ route('shop.search.index') }}"
-            class="relative max-w-3xl mx-auto"
-            role="search"
-            toolname="search_products"
-            tooldescription="{{ trans('shop::app.components.layouts.webmcp.search-products') }}"
-            toolautosubmit
-        >
-            <label for="organic-search" class="sr-only">@lang('shop::app.components.layouts.header.desktop.bottom.search')</label>
-
-            <input
-                id="organic-search"
-                type="text"
-                name="query"
-                value="{{ request('query') }}"
-                toolparamdescription="{{ trans('shop::app.components.layouts.webmcp.search-products-query') }}"
-                class="block w-full text-[14px] text-ink placeholder:text-stone bg-transparent border border-mist rounded-none px-5 py-3 pr-14 transition-colors hover:border-ink focus:border-ink focus:ring-0 focus:outline-none"
-                minlength="{{ core()->getConfigData('catalog.products.search.min_query_length') }}"
-                maxlength="{{ core()->getConfigData('catalog.products.search.max_query_length') }}"
-                placeholder="What are you looking for?"
-                aria-label="Search"
-                aria-required="true"
-                pattern="[^\\]+"
-                required
-            >
-
-            <button
-                type="submit"
-                class="absolute right-3 top-1/2 -translate-y-1/2 icon-search text-2xl text-stone hover:text-ink transition-colors"
-                aria-label="@lang('shop::app.components.layouts.header.desktop.bottom.submit')"
-            ></button>
-
-            @if (core()->getConfigData('catalog.products.settings.image_search'))
-                @include('shop::search.images.index')
-            @endif
-        </form>
-
-        {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.search_bar.after') !!}
-    </div>
 
 </div>
 

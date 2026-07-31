@@ -184,9 +184,15 @@
                                             </a>
                                         @else
                                             <div class="grid">
-                                                <p class="text-base text-zinc-500">
-                                                    {{ $customAttributeValue['value'] }}
-                                                </p>
+                                                @if (in_array($customAttributeValue['type'], ['textarea']))
+                                                    <div class="text-base text-zinc-500 prose prose-sm max-w-none">
+                                                        {!! $customAttributeValue['value'] !!}
+                                                    </div>
+                                                @else
+                                                    <p class="text-base text-zinc-500">
+                                                        {{ $customAttributeValue['value'] }}
+                                                    </p>
+                                                @endif
                                             </div>
                                         @endif
                                     @endif
