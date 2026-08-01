@@ -414,6 +414,16 @@
     </section>
 
     {{-- ============ SHOP BY CATEGORY ============ --}}
+    @php
+        $homeCats = [
+            ['name' => 'Himalayan Salt & Gourmet Sea Salt', 'slug' => 'spices-and-salts'],
+            ['name' => 'Spices & Seasoning', 'slug' => 'recipe-mix-masalas'],
+            ['name' => 'Leather Goods', 'slug' => 'root'],
+            ['name' => 'Nuts & Seeds', 'slug' => 'seeds-and-super-foods'],
+            ['name' => 'Pure Himalayan Honey', 'slug' => 'grannis-signature-kits'],
+            ['name' => 'Coffee & Tea', 'slug' => 'oats-with-nuts'],
+        ];
+    @endphp
     <section class="bg-white beres-reveal">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex items-center justify-between mb-6 md:mb-8">
@@ -421,35 +431,15 @@
                 <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All Categories</a>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-3 md:gap-4">
-                @if ($categoriesDb->isNotEmpty())
-                    @foreach ($categoriesDb as $i => $cat)
-                        @php
-                            $catName = $cat->name ?? $cat->translations->first()->name ?? 'Category';
-                            $catUrl  = route('shop.product_or_category.index', $cat->slug ?? $cat->url_path ?? '#');
-                            $catImg  = $cat->image_url ?? null;
-                        @endphp
-                        <a href="{{ $catUrl }}" class="group block">
-                            <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.03]" style="background-color:{{ $bgPick($i) }};">
-                                @if ($catImg)
-                                    <img src="{{ $catImg }}" alt="{{ $catName }}" class="w-full h-full object-cover" loading="lazy">
-                                @endif
-                            </div>
-                            <p class="mt-2 text-center text-[11px] md:text-xs text-white px-3 py-2" style="background-color:#2D5A27; font-weight:500; border-radius:999px;">
-                                {{ $catName }}
-                            </p>
-                        </a>
-                    @endforeach
-                @else
-                    @foreach ($dummyCategories as $i => $label)
-                        <a href="{{ route('shop.search.index') }}" class="group block">
-                            <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.03]" style="background-color:{{ $bgPick($i) }};"></div>
-                            <p class="mt-2 text-center text-[11px] md:text-xs text-white px-3 py-2" style="background-color:#2D5A27; font-weight:500; border-radius:999px;">
-                                {{ $label }}
-                            </p>
-                        </a>
-                    @endforeach
-                @endif
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+                @foreach ($homeCats as $i => $cat)
+                    <a href="{{ route('shop.product_or_category.index', $cat['slug']) }}" class="group block">
+                        <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.03]" style="background-color:{{ $bgPick($i) }};"></div>
+                        <p class="mt-2 text-center text-[11px] md:text-xs text-white px-3 py-2" style="background-color:#2D5A27; font-weight:500; border-radius:999px;">
+                            {{ $cat['name'] }}
+                        </p>
+                    </a>
+                @endforeach
             </div>
         </div>
     </section>
