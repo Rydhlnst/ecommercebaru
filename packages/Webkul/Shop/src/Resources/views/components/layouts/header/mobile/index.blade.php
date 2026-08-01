@@ -43,10 +43,11 @@
             <div class="flex items-center gap-x-5 max-md:gap-x-4">
                 <!-- Language Dropdown -->
                 <div class="relative">
-                    <select onchange="setGoogleTranslateLang(this.value)" class="appearance-none bg-transparent border border-mist text-xs text-ink px-2 py-1 pr-6 rounded-none cursor-pointer focus:outline-none focus:border-ink">
+                    <select onchange="setGoogleTranslateLang(this.value)" class="appearance-none bg-transparent border border-mist text-xs text-ink pl-7 pr-5 py-1 rounded-none cursor-pointer focus:outline-none focus:border-ink">
                         <option value="en">EN</option>
                         <option value="id">ID</option>
                     </select>
+                    <svg class="w-4 h-2.5 rounded-sm absolute left-1.5 top-1/2 -translate-y-1/2 pointer-events-none" viewBox="0 0 640 480"><path fill="#012169" d="M0 0h640v480H0z"/><path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 80 480H0v-60l239-178L0 64V0z"/><path fill="#C8102E" d="m424 0 244 181 32-1h78v62L457 241l217 158v61h-80L377 301 240 480h-20v-60l239-178L0 64V0z"/><path fill="#FFF" d="M241 0v480h160V0zM0 160v160h640V160z"/><path fill="#C8102E" d="M0 193v96h640v-96zM273 0v480h96V0z"/></svg>
                     <span class="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 icon-arrow-down text-[8px] text-stone"></span>
                 </div>
 

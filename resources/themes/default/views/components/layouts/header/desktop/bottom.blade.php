@@ -68,19 +68,20 @@
             <!-- Language Dropdown -->
             <x-shop::dropdown position="bottom-right">
                 <x-slot:toggle>
-                    <span class="flex items-center gap-1 cursor-pointer text-stone hover:text-ink transition-colors text-sm select-none">
-                        <span class="icon-globe text-lg"></span>
-                        <span id="current-lang-label">EN</span>
+                    <span class="flex items-center gap-1.5 cursor-pointer text-stone hover:text-ink transition-colors text-sm select-none">
+                        <svg id="current-lang-flag" class="w-5 h-3.5 rounded-sm" viewBox="0 0 640 480"><path fill="#012169" d="M0 0h640v480H0z"/><path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 80 480H0v-60l239-178L0 64V0z"/><path fill="#C8102E" d="m424 0 244 181 32-1h78v62L457 241l217 158v61h-80L377 301 240 480h-20v-60l239-178L0 64V0z"/><path fill="#FFF" d="M241 0v480h160V0zM0 160v160h640V160z"/><path fill="#C8102E" d="M0 193v96h640v-96zM273 0v480h96V0z"/></svg>
                         <span class="icon-arrow-down text-[10px]"></span>
                     </span>
                 </x-slot>
 
-                <x-slot:content class="!p-1 min-w-[120px]">
+                <x-slot:content class="!p-1 min-w-[160px]">
                     <button type="button" data-gt-lang="en" onclick="setGoogleTranslateLang('en')" class="w-full text-left px-3 py-2 text-sm hover:bg-canvas rounded transition-colors flex items-center gap-2">
-                        <span class="text-xs">🇬🇧</span> English
+                        <svg class="w-5 h-3.5 rounded-sm" viewBox="0 0 640 480"><path fill="#012169" d="M0 0h640v480H0z"/><path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 80 480H0v-60l239-178L0 64V0z"/><path fill="#C8102E" d="m424 0 244 181 32-1h78v62L457 241l217 158v61h-80L377 301 240 480h-20v-60l239-178L0 64V0z"/><path fill="#FFF" d="M241 0v480h160V0zM0 160v160h640V160z"/><path fill="#C8102E" d="M0 193v96h640v-96zM273 0v480h96V0z"/></svg>
+                        English
                     </button>
                     <button type="button" data-gt-lang="id" onclick="setGoogleTranslateLang('id')" class="w-full text-left px-3 py-2 text-sm hover:bg-canvas rounded transition-colors flex items-center gap-2">
-                        <span class="text-xs">🇮🇩</span> Bahasa Indonesia
+                        <svg class="w-5 h-3.5 rounded-sm" viewBox="0 0 640 480"><path fill="#e70011" d="M0 0h640v240H0z"/><path fill="#fff" d="M0 240h640v240H0z"/></svg>
+                        Bahasa Indonesia
                     </button>
                 </x-slot>
             </x-shop::dropdown>
