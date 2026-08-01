@@ -193,6 +193,7 @@
                                     <option value="column_1">1</option>
                                     <option value="column_2">2</option>
                                     <option value="column_3">3</option>
+                                    <option value="column_4">4 (Social Media)</option>
                                 </x-admin::form.control-group.control>
 
                                 <x-admin::form.control-group.error control-name="column" />
@@ -290,7 +291,7 @@
                     this.footerLinks = {};
                 }
 
-                for (let i = 1; i <= 3; i++) {
+                for (let i = 1; i <= 4; i++) {
                     if (!this.footerLinks.hasOwnProperty(`column_${i}`)) {
                         this.footerLinks[`column_${i}`] = [];
                     }
