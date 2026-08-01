@@ -8,7 +8,7 @@
     $isNew    = false;
 
     if ($product) {
-        $name     = $product->name ?? $product->url_key ?? 'Product';
+        $name     = $product->name ?? $product->url_key ?? 'Produk';
         $minPrice = 0;
         try { $minPrice = $product->getTypeInstance()->getMinimalPrice() ?? 0; } catch (\Throwable $e) {}
         $price    = core()->currency($minPrice);
@@ -45,10 +45,10 @@
         {{-- Badges --}}
         <div class="absolute top-3 left-3 flex flex-col gap-1.5">
             @if ($compare)
-                <span class="text-white text-[10px] tracking-[0.14em] uppercase px-2.5 py-1" style="background-color:#B91C1C; border-radius:999px; font-weight:600;">Sale</span>
+                <span class="text-white text-[10px] tracking-[0.14em] uppercase px-2.5 py-1" style="background-color:#B91C1C; border-radius:999px; font-weight:600;">Diskon</span>
             @endif
             @if ($isNew && !$compare)
-                <span class="text-white text-[10px] tracking-[0.14em] uppercase px-2.5 py-1" style="background-color:#2D5A27; border-radius:999px; font-weight:600;">New</span>
+                <span class="text-white text-[10px] tracking-[0.14em] uppercase px-2.5 py-1" style="background-color:#2D5A27; border-radius:999px; font-weight:600;">Baru</span>
             @endif
         </div>
 
@@ -58,7 +58,7 @@
                     onclick="event.preventDefault(); event.stopPropagation(); beresToggleWishlist(this, {{ $prodId }});"
                     class="absolute top-3 right-3 w-9 h-9 flex items-center justify-center bg-white/90 hover:bg-white transition-colors shadow-sm opacity-0 group-hover:opacity-100"
                     style="border-radius:999px;"
-                    aria-label="Add to wishlist">
+                    aria-label="Tambah ke wishlist">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2D5A27" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
                 </svg>
@@ -68,7 +68,7 @@
         {{-- Out of stock overlay --}}
         @if (!$inStock)
             <div class="absolute inset-0 flex items-center justify-center bg-black/40">
-                <span class="text-white text-xs tracking-[0.2em] uppercase px-4 py-2" style="background-color:rgba(0,0,0,0.7); border-radius:999px; font-weight:600;">Sold Out</span>
+                <span class="text-white text-xs tracking-[0.2em] uppercase px-4 py-2" style="background-color:rgba(0,0,0,0.7); border-radius:999px; font-weight:600;">Habis</span>
             </div>
         @endif
     </a>
@@ -112,22 +112,22 @@
                 <input type="hidden" name="product_id" value="{{ $prodId }}">
 
                 <div class="flex items-center border" style="border-color:#E8F0E5; border-radius:999px;">
-                    <button type="button" class="beres-btn w-7 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3]" style="border-radius:999px 0 0 999px;" onclick="beresQty(this, -1)" aria-label="Decrease">−</button>
-                    <input type="number" name="quantity" value="1" min="1" max="99" class="w-8 text-center text-[11px] border-0 focus:outline-none bg-transparent" style="font-weight:600; color:#171717;" aria-label="Quantity">
-                    <button type="button" class="beres-btn w-7 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3]" style="border-radius:0 999px 999px 0;" onclick="beresQty(this, 1)" aria-label="Increase">+</button>
+                    <button type="button" class="beres-btn w-7 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3]" style="border-radius:999px 0 0 999px;" onclick="beresQty(this, -1)" aria-label="Kurangi">−</button>
+                    <input type="number" name="quantity" value="1" min="1" max="99" class="w-8 text-center text-[11px] border-0 focus:outline-none bg-transparent" style="font-weight:600; color:#171717;" aria-label="Jumlah">
+                    <button type="button" class="beres-btn w-7 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3]" style="border-radius:0 999px 999px 0;" onclick="beresQty(this, 1)" aria-label="Tambah">+</button>
                 </div>
 
                 <button type="submit"
                         class="beres-btn flex-1 py-2.5 text-[11px] tracking-[0.14em] uppercase text-white hover:opacity-90"
                         style="background-color:#2D5A27; font-weight:600; border-radius:999px;">
-                    Add to Cart
+                    Tambah ke Keranjang
                 </button>
             </form>
         @elseif ($prodId && !$inStock)
             <button type="button" disabled
                     class="mt-3 w-full py-2.5 text-[11px] tracking-[0.14em] uppercase text-[#737373] cursor-not-allowed"
                     style="background-color:#F5F5F5; border-radius:999px; font-weight:600;">
-                Sold Out
+                Habis
             </button>
         @else
             <a href="{{ $href }}"

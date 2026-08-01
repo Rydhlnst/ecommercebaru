@@ -363,7 +363,7 @@
         <script>
             function googleTranslateElementInit() {
                 new google.translate.TranslateElement({
-                    pageLanguage: 'en',
+                    pageLanguage: 'id',
                     includedLanguages: 'en,id',
                     autoDisplay: false
                 }, 'google_translate_element');
@@ -380,7 +380,7 @@
 
             (function() {
                 var match = document.cookie.match(/googtrans=\/auto\/([a-z]+)/);
-                var currentLang = match ? match[1] : 'en';
+                var currentLang = match ? match[1] : 'id';
                 var flags = {
                     en: '<svg class="w-5 h-3.5 rounded-sm" viewBox="0 0 640 480"><path fill="#012169" d="M0 0h640v480H0z"/><path fill="#FFF" d="m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 80 480H0v-60l239-178L0 64V0z"/><path fill="#C8102E" d="m424 0 244 181 32-1h78v62L457 241l217 158v61h-80L377 301 240 480h-20v-60l239-178L0 64V0z"/><path fill="#FFF" d="M241 0v480h160V0zM0 160v160h640V160z"/><path fill="#C8102E" d="M0 193v96h640v-96zM273 0v480h96V0z"/></svg>',
                     id: '<svg class="w-5 h-3.5 rounded-sm" viewBox="0 0 640 480"><path fill="#e70011" d="M0 0h640v240H0z"/><path fill="#fff" d="M0 240h640v240H0z"/></svg>'

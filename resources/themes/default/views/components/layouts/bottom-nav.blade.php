@@ -4,25 +4,25 @@
 
     $items = [
         [
-            'label'  => core()->getConfigData('beres_storefront.bottom_nav.label_shop') ?: 'Shop',
+            'label'  => core()->getConfigData('beres_storefront.bottom_nav.label_shop') ?: 'Beranda',
             'href'   => route('shop.home.index'),
             'active' => $current === '/' || $current === '' || $isActive(['products', 'categories']),
             'svg'    => '<path d="M3 3h5v5H3zM10 3h5v5h-5zM17 3h4v5h-4zM3 10h5v5H3zM10 10h5v5h-5zM17 10h4v5h-4zM3 17h5v4H3zM10 17h5v4h-5zM17 17h4v4h-4z"/>',
         ],
         [
-            'label'  => core()->getConfigData('beres_storefront.bottom_nav.label_cart') ?: 'Cart',
+            'label'  => core()->getConfigData('beres_storefront.bottom_nav.label_cart') ?: 'Keranjang',
             'href'   => route('shop.checkout.cart.index'),
             'active' => $isActive(['checkout/cart', 'checkout']),
             'svg'    => '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>',
         ],
         [
-            'label'  => core()->getConfigData('beres_storefront.bottom_nav.label_account') ?: 'Account',
+            'label'  => core()->getConfigData('beres_storefront.bottom_nav.label_account') ?: 'Akun',
             'href'   => auth('customer')->check() ? route('shop.customers.account.profile.index') : route('shop.customer.session.create'),
             'active' => $isActive(['customer', 'account']),
             'svg'    => '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>',
         ],
         [
-            'label'  => core()->getConfigData('beres_storefront.bottom_nav.label_search') ?: 'Search',
+            'label'  => core()->getConfigData('beres_storefront.bottom_nav.label_search') ?: 'Cari',
             'href'   => route('shop.search.index'),
             'active' => $isActive(['search']),
             'svg'    => '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',

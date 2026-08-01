@@ -102,10 +102,10 @@
 
     // Trust badges (editable via admin)
     $trustBadges = [
-        [core()->getConfigData('beres_storefront.trust.badge1_title') ?: 'Pick Up',         core()->getConfigData('beres_storefront.trust.badge1_desc') ?: 'Ambil di gerai fisik kami'],
-        [core()->getConfigData('beres_storefront.trust.badge2_title') ?: 'Fastest Delivery',core()->getConfigData('beres_storefront.trust.badge2_desc') ?: 'Sameday area Jakarta'],
-        [core()->getConfigData('beres_storefront.trust.badge3_title') ?: 'Best Offer Zone', core()->getConfigData('beres_storefront.trust.badge3_desc') ?: 'Promo harian & bundle hemat'],
-        [core()->getConfigData('beres_storefront.trust.badge4_title') ?: 'Best Quality',    core()->getConfigData('beres_storefront.trust.badge4_desc') ?: '100% natural & lab certified'],
+        [core()->getConfigData('beres_storefront.trust.badge1_title') ?: 'Ambil di Toko',       core()->getConfigData('beres_storefront.trust.badge1_desc') ?: 'Ambil di gerai fisik kami'],
+        [core()->getConfigData('beres_storefront.trust.badge2_title') ?: 'Pengiriman Tercepat',core()->getConfigData('beres_storefront.trust.badge2_desc') ?: 'Sameday area Jakarta'],
+        [core()->getConfigData('beres_storefront.trust.badge3_title') ?: 'Zona Penawaran Terbaik', core()->getConfigData('beres_storefront.trust.badge3_desc') ?: 'Promo harian & bundle hemat'],
+        [core()->getConfigData('beres_storefront.trust.badge4_title') ?: 'Kualitas Terbaik',    core()->getConfigData('beres_storefront.trust.badge4_desc') ?: '100% alami & bersertifikat lab'],
     ];
 
     // FAQ dari config admin
@@ -293,7 +293,7 @@
         }
     @endphp
 
-    <section class="beres-hero" aria-label="Hero carousel">
+    <section class="beres-hero" aria-label="Carousel hero">
         <div class="beres-hero__track" id="beresHeroTrack">
             @foreach ($heroSlides as $i => $img)
                 <div class="beres-hero__slide" data-idx="{{ $i }}">
@@ -303,8 +303,8 @@
         </div>
 
         @if (count($heroSlides) > 1)
-            <button type="button" class="beres-hero__nav beres-hero__nav--prev" aria-label="Previous slide" onclick="beresHeroGo(-1)">&#10094;</button>
-            <button type="button" class="beres-hero__nav beres-hero__nav--next" aria-label="Next slide" onclick="beresHeroGo(1)">&#10095;</button>
+            <button type="button" class="beres-hero__nav beres-hero__nav--prev" aria-label="Slide sebelumnya" onclick="beresHeroGo(-1)">&#10094;</button>
+            <button type="button" class="beres-hero__nav beres-hero__nav--next" aria-label="Slide berikutnya" onclick="beresHeroGo(1)">&#10095;</button>
 
             <div class="beres-hero__dots" role="tablist">
                 @foreach ($heroSlides as $i => $img)
@@ -350,14 +350,14 @@
                             <input type="hidden" name="product_id" value="{{ $featuredProduct->id }}">
                             <input type="hidden" name="quantity" value="1">
                             <button type="submit" class="px-8 py-3 text-[13px] tracking-[0.14em] uppercase text-white hover:opacity-90 transition-opacity" style="background-color:#2D5A27; font-weight:600; border-radius:999px;">
-                                Add to Cart
+                                Tambah ke Keranjang
                             </button>
                             <a href="{{ $fpUrl }}" class="px-8 py-3 text-[13px] tracking-[0.14em] uppercase border transition-colors hover:bg-[#E8F0E5] text-center" style="border-color:#2D5A27; color:#2D5A27; font-weight:600; border-radius:999px;">
-                                Buy It Now
+                                Beli Sekarang
                             </a>
                         </form>
 
-                        <a href="{{ $fpUrl }}" class="mt-6 inline-block text-sm underline text-[#737373] hover:text-[#2D5A27]">View full details</a>
+                        <a href="{{ $fpUrl }}" class="mt-6 inline-block text-sm underline text-[#737373] hover:text-[#2D5A27]">Lihat detail lengkap</a>
                     </div>
                 </div>
             </div>
@@ -367,7 +367,7 @@
     {{-- ============ NEW ARRIVALS ============ --}}
     <section class="bg-white beres-reveal">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
-            <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.new_title', 'New Arrivals') }}</h2>
+            <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.new_title', 'Produk Terbaru') }}</h2>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 @if ($newProductsDb->isNotEmpty())
@@ -386,7 +386,7 @@
     {{-- ============ KITS & BUNDLES ============ --}}
     <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
-            <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.bundle_title', 'Kits & Bundles') }}</h2>
+            <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.bundle_title', 'Paket & Bundel') }}</h2>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 @if ($bundlesDb->isNotEmpty())
@@ -406,9 +406,9 @@
     <section class="beres-reveal" style="background-color:#2D5A27;">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-10">
             <div class="flex items-center justify-center gap-6 md:gap-16 text-white text-center">
-                <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text1', '100% NATURAL') }}</p>
+                <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text1', '100% ALAMI') }}</p>
                 <span class="text-white/40 text-2xl">✦</span>
-                <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text2', 'LAB CERTIFIED') }}</p>
+                <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text2', 'BERSERTIFIKAT LAB') }}</p>
             </div>
         </div>
     </section>
@@ -427,8 +427,8 @@
     <section class="bg-white beres-reveal">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex items-center justify-between mb-6 md:mb-8">
-                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.cat_title', 'Shop By Category') }}</h2>
-                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All Categories</a>
+                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.cat_title', 'Belanja per Kategori') }}</h2>
+                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat Semua Kategori</a>
             </div>
 
             <div class="grid grid-cols-2 gap-3 md:gap-4">
@@ -447,7 +447,7 @@
     {{-- ============ ALL TIME BEST SELLER ============ --}}
     <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
-            <h2 class="text-xl md:text-2xl text-[#171717] mb-6 md:mb-8" style="font-weight:600;">{{ $c('sections.best_title', 'All Time Best Seller') }}</h2>
+            <h2 class="text-xl md:text-2xl text-[#171717] mb-6 md:mb-8" style="font-weight:600;">{{ $c('sections.best_title', 'Produk Terlaris') }}</h2>
 
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 @if ($bestSellersDb->isNotEmpty())
@@ -482,8 +482,8 @@
     <section class="bg-white beres-reveal">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex items-center justify-between mb-6 md:mb-8">
-                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Our Seeds and Superfoods</h2>
-                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All</a>
+                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Biji & Superfood Kami</h2>
+                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat Semua</a>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
@@ -546,8 +546,8 @@
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-8">
                 <div>
-                    <p class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.review_title', 'Ulasan pelanggan') }}</p>
-                    <p class="mt-1 text-sm" style="color:#2D5A27;">★★★★★ &nbsp; {{ $c('sections.review_eyebrow', '4.8 dari 2.400+ ulasan') }}</p>
+                    <p class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.review_title', 'Ulasan Pelanggan') }}</p>
+                    <p class="mt-1 text-sm" style="color:#2D5A27;">★★★★★ &nbsp; {{ $c('sections.review_eyebrow', '4,8 dari 2.400+ ulasan') }}</p>
                 </div>
                 <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Tulis ulasan</a>
             </div>
@@ -556,7 +556,7 @@
                 @if ($reviewsDb->isNotEmpty())
                     @foreach ($reviewsDb as $review)
                         @php
-                            $revName    = $review->name ?? 'Anonymous';
+                            $revName    = $review->name ?? 'Anonim';
                             $revInitial = strtoupper(mb_substr($revName, 0, 1));
                             $revText    = $review->comment ?? $review->title ?? '';
                             $revStars   = str_repeat('★', (int) ($review->rating ?? 5)) . str_repeat('☆', 5 - (int) ($review->rating ?? 5));
@@ -615,7 +615,7 @@
             @php $blogCtaImg = $c('blog_cta.image'); $blogCtaLink = $c('blog_cta.link', route('shop.search.index')); @endphp
             <div class="text-white p-8 md:p-12 lg:p-16 relative overflow-hidden" style="background-color:#2D5A27; border-radius:20px; @if($blogCtaImg) background-image:linear-gradient(rgba(45,90,39,.75),rgba(45,90,39,.75)),url('{{ $blogCtaImg }}'); background-size:cover; background-position:center; @endif">
                 <h2 class="text-2xl md:text-3xl lg:text-4xl max-w-2xl" style="font-weight:600; letter-spacing:-0.01em;">
-                    {!! nl2br(e($c('blog_cta.title', "Baca tips produk favorit\nuntuk gaya hidup lebih sehat."))) !!}
+                    {!! nl2br(e($c('blog_cta.title', "Baca tips produk favorit\ntuntuk gaya hidup lebih sehat."))) !!}
                 </h2>
                 <a href="{{ $blogCtaLink }}" class="beres-btn mt-6 inline-block px-6 py-3 text-[13px] tracking-[0.14em] uppercase bg-white text-[#2D5A27] hover:bg-[#E8F0E5] transition-colors" style="font-weight:600; border-radius:999px;">
                     {{ $c('blog_cta.button', 'Lihat semua blog') }}
@@ -628,8 +628,8 @@
     <section class="bg-white beres-reveal">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex items-center justify-between mb-6 md:mb-8">
-                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Latest Blogs</h2>
-                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Browse Wellness Blogs</a>
+                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Blog Terbaru</h2>
+                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Jelajahi Blog Kesehatan</a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">

@@ -43,7 +43,7 @@
                 <img src="/images/ankesh-mart-logo.png" alt="{{ config('app.name') }}" width="131" height="44" class="block mb-4 brightness-0 invert">
                 <p class="text-sm font-semibold text-cream mb-3">Newsletter</p>
                 <p class="text-sm text-mist/80 mb-6 leading-relaxed">
-                    Be the first to hear about new products, exclusive events and online offers.
+                    Jadilah yang pertama mendengar tentang produk baru, acara eksklusif, dan penawaran online.
                 </p>
                 <x-shop::form :action="route('shop.subscription.store')" class="w-full">
                     <div class="flex items-stretch">
@@ -56,7 +56,7 @@
                             :aria-label="trans('shop::app.components.layouts.footer.email')"
                         />
                         <button type="submit" class="bg-cream text-ink px-6 py-3 text-sm font-semibold hover:bg-sand transition-colors rounded-none">
-                            Join Us
+                            Gabung
                         </button>
                     </div>
                 </x-shop::form>
@@ -66,7 +66,7 @@
             @if (! empty($footerOptions['column_1']))
                 @php
                     usort($footerOptions['column_1'], fn($a, $b) => ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0));
-                    $col1Header = $footerOptions['column_1'][0]['title'] ?? 'Shop';
+                    $col1Header = $footerOptions['column_1'][0]['title'] ?? 'Belanja';
                     $col1Links = array_slice($footerOptions['column_1'], 1);
                 @endphp
                 <div>
@@ -79,7 +79,7 @@
                 </div>
             @else
                 <div>
-                    <p class="text-sm font-semibold text-cream mb-4">SHOP</p>
+                    <p class="text-sm font-semibold text-cream mb-4">BELANJA</p>
                     <ul class="grid gap-3 text-sm text-mist/80">
                         <li><a href="{{ route('shop.product_or_category.index', 'grannis-signature-kits') }}" class="hover:text-cream transition-colors">Signature Kits</a></li>
                         <li><a href="{{ route('shop.product_or_category.index', 'oats-with-nuts') }}" class="hover:text-cream transition-colors">Oats With Nuts</a></li>
@@ -96,7 +96,7 @@
             @if (! empty($footerOptions['column_2']))
                 @php
                     usort($footerOptions['column_2'], fn($a, $b) => ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0));
-                    $col2Header = $footerOptions['column_2'][0]['title'] ?? 'Useful Links';
+                    $col2Header = $footerOptions['column_2'][0]['title'] ?? 'Tautan Berguna';
                     $col2Links = array_slice($footerOptions['column_2'], 1);
                 @endphp
                 <div>
@@ -109,12 +109,12 @@
                 </div>
             @else
                 <div>
-                    <p class="text-sm font-semibold text-cream mb-4">USEFUL LINKS</p>
+                    <p class="text-sm font-semibold text-cream mb-4">TAUTAN BERGUNA</p>
                     <ul class="grid gap-3 text-sm text-mist/80">
-                        <li><a href="#" class="hover:text-cream transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-cream transition-colors">Refund Policy</a></li>
-                        <li><a href="#" class="hover:text-cream transition-colors">Shipping Policy</a></li>
-                        <li><a href="#" class="hover:text-cream transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-cream transition-colors">Kebijakan Privasi</a></li>
+                        <li><a href="#" class="hover:text-cream transition-colors">Kebijakan Pengembalian</a></li>
+                        <li><a href="#" class="hover:text-cream transition-colors">Kebijakan Pengiriman</a></li>
+                        <li><a href="#" class="hover:text-cream transition-colors">Syarat Layanan</a></li>
                     </ul>
                 </div>
             @endif
@@ -123,7 +123,7 @@
             @if (! empty($footerOptions['column_3']))
                 @php
                     usort($footerOptions['column_3'], fn($a, $b) => ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0));
-                    $col3Header = $footerOptions['column_3'][0]['title'] ?? 'Contact Details';
+                    $col3Header = $footerOptions['column_3'][0]['title'] ?? 'Detail Kontak';
                     $col3Links = array_slice($footerOptions['column_3'], 1);
                 @endphp
                 <div>
@@ -152,9 +152,9 @@
                 </div>
             @else
                 <div>
-                    <p class="text-sm font-semibold text-cream mb-4">CONTACT DETAILS</p>
+                    <p class="text-sm font-semibold text-cream mb-4">DETAIL KONTAK</p>
                     <div class="text-sm text-mist/80 space-y-4">
-                        <p>&copy; {{ date('Y') }} {{ config('app.name') }}.<br>Managed and Marketed by <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a></p>
+                        <p>&copy; {{ date('Y') }} {{ config('app.name') }}.<br>Dikelola dan Dipasarkan oleh <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a></p>
                         <div class="flex items-start gap-3">
                             <span class="icon-location text-lg mt-0.5 text-mist/80"></span>
                             <p>235 ABBAS BLOCK<br>MUSTAFA TOWN</p>
@@ -175,7 +175,7 @@
             @if (! empty($footerOptions['column_4']))
                 @php
                     usort($footerOptions['column_4'], fn($a, $b) => ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0));
-                    $col4Header = $footerOptions['column_4'][0]['title'] ?? 'Follow us';
+                    $col4Header = $footerOptions['column_4'][0]['title'] ?? 'Ikuti kami';
                     $col4Links = array_slice($footerOptions['column_4'], 1);
                 @endphp
                 <div>
@@ -197,7 +197,7 @@
                 </div>
             @else
                 <div>
-                    <p class="text-sm font-semibold text-cream mb-4">Follow us</p>
+                    <p class="text-sm font-semibold text-cream mb-4">Ikuti kami</p>
                     <div class="flex items-center gap-4">
                         <a href="#" class="text-mist/80 hover:text-cream transition-colors" aria-label="Facebook">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -221,7 +221,7 @@
     {{-- Bottom bar --}}
     <div class="border-t border-white/10">
         <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-5 text-center text-sm text-mist/60">
-            &copy; {{ date('Y') }}, {{ config('app.name') }} Managed and Marketed by <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a>
+            &copy; {{ date('Y') }}, {{ config('app.name') }} Dikelola dan Dipasarkan oleh <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a>
         </div>
     </div>
 </footer>

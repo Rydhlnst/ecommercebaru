@@ -44,7 +44,7 @@
                     class="block w-full text-[14px] text-ink placeholder:text-stone bg-transparent border border-mist rounded-none px-5 py-3 pr-14 transition-colors hover:border-ink focus:border-ink focus:ring-0 focus:outline-none"
                     minlength="{{ core()->getConfigData('catalog.products.search.min_query_length') }}"
                     maxlength="{{ core()->getConfigData('catalog.products.search.max_query_length') }}"
-                    placeholder="What are you looking for?"
+                    placeholder="Apa yang Anda cari?"
                     aria-label="Search"
                     aria-required="true"
                     pattern="[^\\]+"
@@ -193,7 +193,7 @@
         $navInactive= 'text-stone hover:text-[#2D5A27] transition-colors';
 
         $navItems = [
-            ['Featured',         route('shop.home.index'),         $isNavHome],
+            ['Unggulan',         route('shop.home.index'),         $isNavHome],
             ['Buah & Sayur',     route('shop.search.index', ['category' => 'buah-sayur']),   str_contains($navPath, 'buah')   || str_contains($navPath, 'sayur')],
             ['Daging & Seafood', route('shop.search.index', ['category' => 'daging']),       str_contains($navPath, 'daging') || str_contains($navPath, 'seafood')],
             ['Roti & Bakery',    route('shop.search.index', ['category' => 'roti']),         str_contains($navPath, 'roti')   || str_contains($navPath, 'bakery')],

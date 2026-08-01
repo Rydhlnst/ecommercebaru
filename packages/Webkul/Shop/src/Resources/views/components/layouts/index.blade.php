@@ -184,7 +184,7 @@
         <script>
             function googleTranslateElementInit() {
                 new google.translate.TranslateElement({
-                    pageLanguage: 'en',
+                    pageLanguage: 'id',
                     includedLanguages: 'en,id',
                     autoDisplay: false
                 }, 'google_translate_element');
@@ -202,7 +202,7 @@
             // Highlight active language button
             (function() {
                 var match = document.cookie.match(/googtrans=\/auto\/([a-z]+)/);
-                var currentLang = match ? match[1] : 'en';
+                var currentLang = match ? match[1] : 'id';
                 document.addEventListener('DOMContentLoaded', function() {
                     document.querySelectorAll('[data-gt-lang]').forEach(function(btn) {
                         var isActive = btn.dataset.gtLang === currentLang;
