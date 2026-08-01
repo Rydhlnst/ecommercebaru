@@ -427,15 +427,16 @@
     <section class="bg-white beres-reveal">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <div class="flex items-center justify-between mb-6 md:mb-8">
-                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.cat_title', 'Belanja per Kategori') }}</h2>
-                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat Semua Kategori</a>
+                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.cat_title', 'All Kitchen Needs') }}</h2>
+                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All Categories</a>
             </div>
 
-            <div class="grid grid-cols-2 gap-3 md:gap-4">
+            {{-- Horizontal scroll row — single row on desktop --}}
+            <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
                 @foreach ($homeCats as $i => $cat)
-                    <a href="{{ route('shop.product_or_category.index', $cat['slug']) }}" class="group block">
-                        <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.03]" style="background-color:{{ $bgPick($i) }};"></div>
-                        <p class="mt-2 text-center text-[11px] md:text-xs text-white px-3 py-2" style="background-color:#2D5A27; font-weight:500; border-radius:999px;">
+                    <a href="{{ route('shop.product_or_category.index', $cat['slug']) }}" class="group block shrink-0 w-[140px] sm:w-[160px] md:w-[180px]">
+                        <div class="aspect-[3/4] overflow-hidden transition-transform duration-500 group-hover:scale-[1.03] rounded-lg" style="background-color:{{ $bgPick($i) }};"></div>
+                        <p class="mt-2 text-center text-[11px] md:text-xs text-white px-2 py-1.5" style="background-color:#2D5A27; font-weight:500; border-radius:999px;">
                             {{ $cat['name'] }}
                         </p>
                     </a>
