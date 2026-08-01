@@ -718,6 +718,7 @@ class AttributeTableSeeder extends Seeder
                 'code' => 'net_weight',
                 'admin_name' => 'Weight',
                 'type' => 'select',
+                'swatch_type' => 'text',
                 'validation' => null,
                 'position' => 34,
                 'is_required' => 0,
