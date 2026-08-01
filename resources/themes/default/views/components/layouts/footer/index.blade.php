@@ -81,17 +81,17 @@
                     <p>&copy; {{ date('Y') }} Grannis Kitchen.<br>Managed and Marketed by <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a></p>
 
                     <div class="flex items-start gap-3">
-                        <span class="text-lg mt-0.5">📍</span>
+                        <span class="icon-location text-lg mt-0.5 text-mist/80"></span>
                         <p>235 ABBAS BLOCK<br>MUSTAFA TOWN</p>
                     </div>
 
                     <div class="flex items-start gap-3">
-                        <span class="text-lg mt-0.5">📞</span>
+                        <span class="icon-support text-lg mt-0.5 text-mist/80"></span>
                         <p>042-33100001, +92 321 3246279, 03000974396</p>
                     </div>
 
                     <div class="flex items-start gap-3">
-                        <span class="text-lg mt-0.5">✉️</span>
+                        <span class="icon-email text-lg mt-0.5 text-mist/80"></span>
                         <p>granniskitchenofficial@gmail.com</p>
                     </div>
                 </div>
