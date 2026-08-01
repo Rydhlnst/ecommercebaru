@@ -431,7 +431,7 @@
                 <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All Categories</a>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+            <div class="grid grid-cols-2 gap-3 md:gap-4">
                 @foreach ($homeCats as $i => $cat)
                     <a href="{{ route('shop.product_or_category.index', $cat['slug']) }}" class="group block">
                         <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.03]" style="background-color:{{ $bgPick($i) }};"></div>
