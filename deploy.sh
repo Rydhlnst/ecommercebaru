@@ -30,15 +30,18 @@ sleep 35
 echo ""
 echo "[6/8] Seed database..."
 docker compose exec app php artisan migrate:fresh --force
+docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Attribute\DatabaseSeeder" --force
+docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Category\CategoryTableSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Core\LocalesTableSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Core\CurrencyTableSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Core\CountriesTableSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Core\StatesTableSeeder" --force
-docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Attribute\DatabaseSeeder" --force
-docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Category\CategoryTableSeeder" --force
-docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Core\ChannelTableSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Core\ConfigTableSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Customer\CustomerGroupTableSeeder" --force
+docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Inventory\InventorySourceTableSeeder" --force
+docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Core\ChannelTableSeeder" --force
+docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\User\RolesTableSeeder" --force
+docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\User\AdminsTableSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Shop\ThemeCustomizationTableSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\ProductTableSeeder" --force
 
