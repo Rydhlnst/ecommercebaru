@@ -13,7 +13,7 @@
     ]);
 @endphp
 
-<footer class="text-cream" style="background: linear-gradient(135deg, #1a0a0a 0%, #3d1a1a 30%, #6b2a1a 60%, #4a1a1a 100%);">
+<footer class="text-cream" style="background-color:#2D5A27;">
     {{-- Newsletter + Links --}}
     <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-16">
         <div class="grid gap-12 lg:grid-cols-5">
@@ -119,7 +119,7 @@
     </div>
 
     {{-- Bottom bar --}}
-    <div class="border-t border-cream/10">
+    <div class="border-t border-white/10">
         <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-5 text-center text-sm text-mist/60">
             &copy; {{ date('Y') }}, {{ config('app.name') }} Managed and Marketed by <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a>
         </div>
