@@ -329,6 +329,20 @@
                 // Run reveal AFTER Vue has cleared and re-rendered #app, so the
                 // IntersectionObserver watches the live DOM elements, not stale ones.
                 if (typeof window.initReveal === 'function') window.initReveal();
+
+                // Re-trigger Google Translate after Vue renders dynamic content
+                var match = document.cookie.match(/googtrans=\/auto\/([a-z]+)/);
+                if (match && match[1] !== 'en') {
+                    setTimeout(function() {
+                        var gtFrame = document.querySelector('.goog-te-menu-frame');
+                        if (gtFrame) {
+                            var val = '/auto/' + match[1];
+                            document.cookie = 'googtrans=' + val + '; expires=Thu, 01 Jan 2030 00:00:00 UTC; path=/';
+                            document.cookie = 'googtrans=' + val + '; expires=Thu, 01 Jan 2030 00:00:00 UTC; path=/; domain=.' + location.hostname;
+                            location.reload();
+                        }
+                    }, 2000);
+                }
             }
 
             if (document.readyState === "loading") {
