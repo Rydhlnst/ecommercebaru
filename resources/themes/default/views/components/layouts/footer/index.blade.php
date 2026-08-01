@@ -11,6 +11,8 @@
         'theme_code' => $channel->theme,
         'channel_id' => $channel->id,
     ]);
+
+    $footerOptions = $customization?->translate(app()->getLocale())['options'] ?? [];
 @endphp
 
 <footer class="text-cream" style="background-color:#2D5A27;">
@@ -47,56 +49,130 @@
                 </x-shop::form>
             </div>
 
-            {{-- Shop Links --}}
-            <div>
-                <p class="text-sm font-semibold text-cream mb-4">SHOP</p>
-                <ul class="grid gap-3 text-sm text-mist/80">
-                    <li><a href="{{ route('shop.product_or_category.index', 'grannis-signature-kits') }}" class="hover:text-cream transition-colors">Signature Kits</a></li>
-                    <li><a href="{{ route('shop.product_or_category.index', 'oats-with-nuts') }}" class="hover:text-cream transition-colors">Oats With Nuts</a></li>
-                    <li><a href="{{ route('shop.product_or_category.index', 'recipe-mix-masalas') }}" class="hover:text-cream transition-colors">Recipe Mix Masalas</a></li>
-                    <li><a href="{{ route('shop.product_or_category.index', 'seeds-and-super-foods') }}" class="hover:text-cream transition-colors">Seeds And Super Foods</a></li>
-                    <li><a href="{{ route('shop.product_or_category.index', 'spices-and-salts') }}" class="hover:text-cream transition-colors">Spices And Salts</a></li>
-                    <li><a href="{{ route('shop.product_or_category.index', 'desi-ghee') }}" class="hover:text-cream transition-colors">Desi Ghee</a></li>
-                    <li><a href="{{ route('shop.product_or_category.index', 'fry-mix-masala') }}" class="hover:text-cream transition-colors">Fry Mix Masala</a></li>
-                    <li><a href="#" class="hover:text-cream transition-colors">Contact Us</a></li>
-                    <li><a href="#" class="hover:text-cream transition-colors">Awards and Certificates</a></li>
-                    <li><a href="#" class="hover:text-cream transition-colors">Blogs</a></li>
-                </ul>
-            </div>
+            {{-- Column 1 — Shop Links (editable from admin) --}}
+            @if (! empty($footerOptions['column_1']))
+                <div>
+                    @php
+                        usort($footerOptions['column_1'], fn($a, $b) => ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0));
+                        $col1Header = $footerOptions['column_1'][0]['title'] ?? 'Shop';
+                        $col1Links = array_slice($footerOptions['column_1'], 1);
+                    @endphp
+                    <p class="text-sm font-semibold text-cream mb-4">{{ $col1Header }}</p>
+                    <ul class="grid gap-3 text-sm text-mist/80">
+                        @foreach ($col1Links as $link)
+                            <li>
+                                <a href="{{ $link['url'] }}" class="hover:text-cream transition-colors">
+                                    {{ $link['title'] }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @else
+                {{-- Fallback: default shop links --}}
+                <div>
+                    <p class="text-sm font-semibold text-cream mb-4">SHOP</p>
+                    <ul class="grid gap-3 text-sm text-mist/80">
+                        <li><a href="{{ route('shop.product_or_category.index', 'grannis-signature-kits') }}" class="hover:text-cream transition-colors">Signature Kits</a></li>
+                        <li><a href="{{ route('shop.product_or_category.index', 'oats-with-nuts') }}" class="hover:text-cream transition-colors">Oats With Nuts</a></li>
+                        <li><a href="{{ route('shop.product_or_category.index', 'recipe-mix-masalas') }}" class="hover:text-cream transition-colors">Recipe Mix Masalas</a></li>
+                        <li><a href="{{ route('shop.product_or_category.index', 'seeds-and-super-foods') }}" class="hover:text-cream transition-colors">Seeds And Super Foods</a></li>
+                        <li><a href="{{ route('shop.product_or_category.index', 'spices-and-salts') }}" class="hover:text-cream transition-colors">Spices And Salts</a></li>
+                        <li><a href="{{ route('shop.product_or_category.index', 'desi-ghee') }}" class="hover:text-cream transition-colors">Desi Ghee</a></li>
+                        <li><a href="{{ route('shop.product_or_category.index', 'fry-mix-masala') }}" class="hover:text-cream transition-colors">Fry Mix Masala</a></li>
+                        <li><a href="#" class="hover:text-cream transition-colors">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-cream transition-colors">Awards and Certificates</a></li>
+                        <li><a href="#" class="hover:text-cream transition-colors">Blogs</a></li>
+                    </ul>
+                </div>
+            @endif
 
-            {{-- Useful Links --}}
-            <div>
-                <p class="text-sm font-semibold text-cream mb-4">USEFUL LINKS</p>
-                <ul class="grid gap-3 text-sm text-mist/80">
-                    <li><a href="#" class="hover:text-cream transition-colors">Privacy Policy</a></li>
-                    <li><a href="#" class="hover:text-cream transition-colors">Refund Policy</a></li>
-                    <li><a href="#" class="hover:text-cream transition-colors">Shipping Policy</a></li>
-                    <li><a href="#" class="hover:text-cream transition-colors">Terms of Service</a></li>
-                </ul>
-            </div>
+            {{-- Column 2 — Useful Links (editable from admin) --}}
+            @if (! empty($footerOptions['column_2']))
+                <div>
+                    @php
+                        usort($footerOptions['column_2'], fn($a, $b) => ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0));
+                        $col2Header = $footerOptions['column_2'][0]['title'] ?? 'Useful Links';
+                        $col2Links = array_slice($footerOptions['column_2'], 1);
+                    @endphp
+                    <p class="text-sm font-semibold text-cream mb-4">{{ $col2Header }}</p>
+                    <ul class="grid gap-3 text-sm text-mist/80">
+                        @foreach ($col2Links as $link)
+                            <li>
+                                <a href="{{ $link['url'] }}" class="hover:text-cream transition-colors">
+                                    {{ $link['title'] }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @else
+                {{-- Fallback: default useful links --}}
+                <div>
+                    <p class="text-sm font-semibold text-cream mb-4">USEFUL LINKS</p>
+                    <ul class="grid gap-3 text-sm text-mist/80">
+                        <li><a href="#" class="hover:text-cream transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-cream transition-colors">Refund Policy</a></li>
+                        <li><a href="#" class="hover:text-cream transition-colors">Shipping Policy</a></li>
+                        <li><a href="#" class="hover:text-cream transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+            @endif
 
-            {{-- Contact Details --}}
-            <div>
-                <p class="text-sm font-semibold text-cream mb-4">CONTACT DETAILS</p>
-                <div class="text-sm text-mist/80 space-y-4">
-                    <p>&copy; {{ date('Y') }} Ankesh Mart.<br>Managed and Marketed by <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a></p>
-
-                    <div class="flex items-start gap-3">
-                        <span class="icon-location text-lg mt-0.5 text-mist/80"></span>
-                        <p>235 ABBAS BLOCK<br>MUSTAFA TOWN</p>
-                    </div>
-
-                    <div class="flex items-start gap-3">
-                        <span class="icon-support text-lg mt-0.5 text-mist/80"></span>
-                        <p>042-33100001, +92 321 3246279, 03000974396</p>
-                    </div>
-
-                    <div class="flex items-start gap-3">
-                        <span class="icon-email text-lg mt-0.5 text-mist/80"></span>
-                        <p>granniskitchenofficial@gmail.com</p>
+            {{-- Column 3 — Contact Details (editable from admin) --}}
+            @if (! empty($footerOptions['column_3']))
+                <div>
+                    @php
+                        usort($footerOptions['column_3'], fn($a, $b) => ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0));
+                        $col3Header = $footerOptions['column_3'][0]['title'] ?? 'Contact Details';
+                        $col3Links = array_slice($footerOptions['column_3'], 1);
+                    @endphp
+                    <p class="text-sm font-semibold text-cream mb-4">{{ $col3Header }}</p>
+                    <div class="text-sm text-mist/80 space-y-4">
+                        @foreach ($col3Links as $link)
+                            @if (str_starts_with($link['url'] ?? '', 'mailto:'))
+                                <div class="flex items-start gap-3">
+                                    <span class="icon-email text-lg mt-0.5 text-mist/80"></span>
+                                    <a href="{{ $link['url'] }}" class="hover:text-cream transition-colors">{{ $link['title'] }}</a>
+                                </div>
+                            @elseif (str_starts_with($link['url'] ?? '', 'tel:'))
+                                <div class="flex items-start gap-3">
+                                    <span class="icon-support text-lg mt-0.5 text-mist/80"></span>
+                                    <a href="{{ $link['url'] }}" class="hover:text-cream transition-colors">{{ $link['title'] }}</a>
+                                </div>
+                            @else
+                                <div class="flex items-start gap-3">
+                                    <span class="icon-location text-lg mt-0.5 text-mist/80"></span>
+                                    <p>{!! nl2br(e($link['title'])) !!}</p>
+                                </div>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
-            </div>
+            @else
+                {{-- Fallback: default contact details --}}
+                <div>
+                    <p class="text-sm font-semibold text-cream mb-4">CONTACT DETAILS</p>
+                    <div class="text-sm text-mist/80 space-y-4">
+                        <p>&copy; {{ date('Y') }} {{ config('app.name') }}.<br>Managed and Marketed by <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a></p>
+
+                        <div class="flex items-start gap-3">
+                            <span class="icon-location text-lg mt-0.5 text-mist/80"></span>
+                            <p>235 ABBAS BLOCK<br>MUSTAFA TOWN</p>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="icon-support text-lg mt-0.5 text-mist/80"></span>
+                            <p>042-33100001, +92 321 3246279, 03000974396</p>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <span class="icon-email text-lg mt-0.5 text-mist/80"></span>
+                            <p>granniskitchenofficial@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             {{-- Follow Us --}}
             <div>
