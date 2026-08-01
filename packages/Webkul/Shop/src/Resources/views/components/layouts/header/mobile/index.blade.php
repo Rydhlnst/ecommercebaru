@@ -41,21 +41,13 @@
         <!-- Right Navigation -->
         <div>
             <div class="flex items-center gap-x-5 max-md:gap-x-4">
-                <!-- EN/ID Language Toggle (Google Translate) -->
-                <div class="flex items-center gap-0.5 text-xs select-none">
-                    <button
-                        type="button"
-                        data-gt-lang="en"
-                        onclick="setGoogleTranslateLang('en')"
-                        class="px-1 py-0.5 transition-colors hover:text-ink"
-                    >EN</button>
-                    <span class="text-stone">/</span>
-                    <button
-                        type="button"
-                        data-gt-lang="id"
-                        onclick="setGoogleTranslateLang('id')"
-                        class="px-1 py-0.5 transition-colors hover:text-ink"
-                    >ID</button>
+                <!-- Language Dropdown -->
+                <div class="relative">
+                    <select onchange="setGoogleTranslateLang(this.value)" class="appearance-none bg-transparent border border-mist text-xs text-ink px-2 py-1 pr-6 rounded-none cursor-pointer focus:outline-none focus:border-ink">
+                        <option value="en">EN</option>
+                        <option value="id">ID</option>
+                    </select>
+                    <span class="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 icon-arrow-down text-[8px] text-stone"></span>
                 </div>
 
                 {!! view_render_event('bagisto.shop.components.layouts.header.mobile.compare.before') !!}

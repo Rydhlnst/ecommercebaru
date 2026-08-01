@@ -367,12 +367,13 @@
             (function() {
                 var match = document.cookie.match(/googtrans=\/auto\/([a-z]+)/);
                 var currentLang = match ? match[1] : 'en';
+                var langLabels = { en: 'EN', id: 'ID' };
                 document.addEventListener('DOMContentLoaded', function() {
-                    document.querySelectorAll('[data-gt-lang]').forEach(function(btn) {
-                        var active = btn.dataset.gtLang === currentLang;
-                        btn.classList.toggle('font-bold', active);
-                        btn.classList.toggle('text-ink', active);
-                        btn.classList.toggle('text-stone', !active);
+                    var label = document.getElementById('current-lang-label');
+                    if (label) label.textContent = langLabels[currentLang] || 'EN';
+
+                    document.querySelectorAll('select[data-lang-select]').forEach(function(sel) {
+                        sel.value = currentLang;
                     });
                 });
             })();

@@ -65,11 +65,25 @@
         {{-- Right icons --}}
         <div class="flex items-center gap-5 shrink-0">
             <!-- EN/ID Language Toggle -->
-            <div class="flex items-center gap-1 select-none">
-                <button type="button" data-gt-lang="en" onclick="setGoogleTranslateLang('en')" class="px-1 py-0.5 text-stone transition-colors hover:text-ink">EN</button>
-                <span class="text-stone/50 text-xs">/</span>
-                <button type="button" data-gt-lang="id" onclick="setGoogleTranslateLang('id')" class="px-1 py-0.5 text-stone transition-colors hover:text-ink">ID</button>
-            </div>
+            <!-- Language Dropdown -->
+            <x-shop::dropdown position="bottom-right">
+                <x-slot:toggle>
+                    <span class="flex items-center gap-1 cursor-pointer text-stone hover:text-ink transition-colors text-sm select-none">
+                        <span class="icon-globe text-lg"></span>
+                        <span id="current-lang-label">EN</span>
+                        <span class="icon-arrow-down text-[10px]"></span>
+                    </span>
+                </x-slot>
+
+                <x-slot:content class="!p-1 min-w-[120px]">
+                    <button type="button" data-gt-lang="en" onclick="setGoogleTranslateLang('en')" class="w-full text-left px-3 py-2 text-sm hover:bg-canvas rounded transition-colors flex items-center gap-2">
+                        <span class="text-xs">🇬🇧</span> English
+                    </button>
+                    <button type="button" data-gt-lang="id" onclick="setGoogleTranslateLang('id')" class="w-full text-left px-3 py-2 text-sm hover:bg-canvas rounded transition-colors flex items-center gap-2">
+                        <span class="text-xs">🇮🇩</span> Bahasa Indonesia
+                    </button>
+                </x-slot>
+            </x-shop::dropdown>
 
             {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.compare.before') !!}
             @if(core()->getConfigData('catalog.products.settings.compare_option'))

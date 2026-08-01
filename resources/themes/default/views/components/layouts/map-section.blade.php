@@ -87,7 +87,7 @@
             </div>
 
             {{-- Map embed --}}
-            <div class="relative w-full aspect-[4/3] md:aspect-[16/12] overflow-hidden bg-[#DCE8D6]" style="border-radius:16px;">
+            <div class="relative w-full aspect-[4/5] md:aspect-[3/5] overflow-hidden bg-[#DCE8D6]" style="border-radius:16px;">
                 <iframe
                     src="https://www.google.com/maps?q={{ urlencode($mapQuery) }}&output=embed"
                     class="absolute inset-0 w-full h-full border-0"
