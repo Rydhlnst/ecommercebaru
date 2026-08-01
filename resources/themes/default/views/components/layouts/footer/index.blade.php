@@ -19,6 +19,7 @@
         <div class="grid gap-12 lg:grid-cols-5">
             {{-- Newsletter --}}
             <div class="lg:col-span-1">
+                <img src="/images/ankesh-mart-logo.png" alt="{{ config('app.name') }}" width="131" height="44" class="block mb-4 brightness-0 invert">
                 <p class="text-sm font-semibold text-cream mb-3">Newsletter</p>
                 <p class="text-sm text-mist/80 mb-6 leading-relaxed">
                     Be the first to hear about new products, exclusive events and online offers.
