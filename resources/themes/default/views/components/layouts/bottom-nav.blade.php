@@ -79,7 +79,7 @@
 </nav>
 
 {{-- Spacer supaya konten tidak ke-tumpuk bottom nav (mobile only) --}}
-<div class="beres-bottom-nav-spacer" style="display:none; height:68px;" aria-hidden="true"></div>
+<div class="beres-bottom-nav-spacer" style="display:none; height:0;" aria-hidden="true"></div>
 
 @push('scripts')
 <style>
