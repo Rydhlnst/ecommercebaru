@@ -34,31 +34,13 @@
     </x-slot>
 
     {{-- HERO --}}
-    <section class="relative w-full bg-canvas overflow-hidden">
-        <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-20 md:py-28 grid gap-10 lg:grid-cols-2 items-center">
-            <div class="max-w-xl">
-                <p class="eyebrow mb-5">Premium Quality Spices</p>
-                <h1 class="font-serif text-5xl md:text-6xl lg:text-7xl leading-[1.02] text-ink">
-                    Authentic <em class="italic text-clay">Desi</em> Flavors.
-                </h1>
-                <p class="mt-6 text-base md:text-lg text-cocoa/80 max-w-md">
-                    Discover our premium collection of spices, salts, ghee, and healthy food products. Traditional recipes, modern quality.
-                </p>
-                <div class="mt-8 flex flex-wrap gap-4">
-                    <a href="{{ route('shop.product_or_category.index', 'grannis-signature-kits') }}" class="primary-button">Shop Now</a>
-                    <a href="{{ route('shop.product_or_category.index', 'spices-and-salts') }}" class="ghost-button">Explore Spices</a>
-                </div>
-            </div>
-
-            <div class="relative aspect-[4/5] lg:aspect-[5/6] bg-mist overflow-hidden">
-                <img
-                    src="https://placehold.co/900x1080/EDE6D8/3C2E22?text=Grannis+Kitchen"
-                    alt="Grannis Kitchen - Premium Spices"
-                    class="absolute inset-0 w-full h-full object-cover"
-                    loading="eager"
-                >
-            </div>
-        </div>
+    <section class="relative w-full overflow-hidden">
+        <img
+            src="/images/hero-products.jpg"
+            alt="Ankesh Mart - Himalayan Salt, Chia Seeds, Almonds & More"
+            class="w-full h-auto object-cover max-h-[600px]"
+            loading="eager"
+        >
     </section>
 
     {{-- Category tiles quick-links --}}
@@ -72,22 +54,21 @@
                 <a href="{{ route('shop.product_or_category.index', 'root') }}" class="hidden md:inline-block ghost-button">View all →</a>
             </div>
 
-            <div class="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3">
                 @php
                     $homeCategories = [
                         ['name' => 'Himalayan Salt & Gourmet Sea Salt', 'slug' => 'spices-and-salts', 'icon' => '🧂'],
                         ['name' => 'Spices & Seasoning', 'slug' => 'recipe-mix-masalas', 'icon' => '🌶️'],
+                        ['name' => 'Leather Goods', 'slug' => 'root', 'icon' => '👜'],
                         ['name' => 'Nuts & Seeds', 'slug' => 'seeds-and-super-foods', 'icon' => '🥜'],
                         ['name' => 'Pure Himalayan Honey', 'slug' => 'grannis-signature-kits', 'icon' => '🍯'],
                         ['name' => 'Coffee & Tea', 'slug' => 'oats-with-nuts', 'icon' => '☕'],
-                        ['name' => 'Desi Ghee', 'slug' => 'desi-ghee', 'icon' => '🥛'],
-                        ['name' => 'Fry Mix Masala', 'slug' => 'fry-mix-masala', 'icon' => '🍳'],
                     ];
                 @endphp
 
                 @foreach ($homeCategories as $category)
                     <a href="{{ route('shop.product_or_category.index', $category['slug']) }}" class="group block">
-                        <div class="relative aspect-square bg-canvas overflow-hidden rounded-lg">
+                        <div class="relative aspect-[4/3] bg-canvas overflow-hidden rounded-lg">
                             <div class="absolute inset-0 flex items-center justify-center text-6xl">
                                 {{ $category['icon'] }}
                             </div>
