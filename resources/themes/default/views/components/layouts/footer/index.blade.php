@@ -13,7 +13,7 @@
     ]);
 @endphp
 
-<footer class="text-cream mt-0" style="background: linear-gradient(135deg, #1a0a0a 0%, #3d1a1a 30%, #6b2a1a 60%, #4a1a1a 100%);">
+<footer class="text-cream" style="background: linear-gradient(135deg, #1a0a0a 0%, #3d1a1a 30%, #6b2a1a 60%, #4a1a1a 100%);">
     {{-- Newsletter + Links --}}
     <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-16">
         <div class="grid gap-12 lg:grid-cols-5">

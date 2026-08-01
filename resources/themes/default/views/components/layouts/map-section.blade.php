@@ -13,7 +13,7 @@
 
 {{-- Store location + map — muncul di semua page di atas footer --}}
 <section id="lokasi" style="background-color:#F5F9F3;">
-    <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-14 md:py-20">
+    <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-14">
         <div class="grid gap-8 md:gap-12 lg:grid-cols-2 items-start">
 
             {{-- Info kolom --}}

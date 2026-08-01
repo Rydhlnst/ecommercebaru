@@ -20,7 +20,7 @@
 <!-- Features -->
 @if ($customization)
     <div class="bg-cream border-t border-mist" v-pre>
-        <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-12 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-8 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             @foreach (($customization->options['services'] ?? []) as $service)
                 <div class="flex flex-col items-center gap-3">
                     <span
