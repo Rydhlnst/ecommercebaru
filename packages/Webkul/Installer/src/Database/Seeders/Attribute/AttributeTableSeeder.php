@@ -718,7 +718,6 @@ class AttributeTableSeeder extends Seeder
                 'code' => 'net_weight',
                 'admin_name' => 'Weight',
                 'type' => 'select',
-                'swatch_type' => 'text',
                 'validation' => null,
                 'position' => 34,
                 'is_required' => 0,
@@ -883,6 +882,9 @@ class AttributeTableSeeder extends Seeder
                 'updated_at' => $now,
             ],
         ]);
+
+        // Set swatch_type for configurable attributes (can't be in bulk insert due to column mismatch)
+        DB::table('attributes')->where('code', 'net_weight')->update(['swatch_type' => 'text']);
 
         $locales = $parameters['allowed_locales'] ?? [$defaultLocale];
 
