@@ -83,9 +83,11 @@
 
 @push('scripts')
 <style>
+    .beres-bottom-nav { display: none !important; }
+    .beres-bottom-nav-spacer { display: none !important; height: 0 !important; margin: 0 !important; padding: 0 !important; }
     @media (max-width: 767px) {
         .beres-bottom-nav { display: block !important; }
-        .beres-bottom-nav-spacer { display: block !important; }
+        .beres-bottom-nav-spacer { display: block !important; height: 62px !important; }
     }
 </style>
 @endpush
