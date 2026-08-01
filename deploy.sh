@@ -8,27 +8,28 @@ echo "  DEPLOY: Grannis Kitchen Ecommerce"
 echo "========================================="
 
 echo ""
-echo "[1/8] Pull latest code..."
+echo "[1/9] Pull latest code..."
 git pull origin master
 
 echo ""
-echo "[2/8] Build Docker image (no cache)..."
+echo "[2/9] Build Docker image (no cache)..."
 docker compose build --no-cache app
 
 echo ""
-echo "[3/8] Stop & remove all containers, volumes..."
-docker compose down -v
+echo "[3/9] Stop ALL docker containers to free port 80..."
+docker stop $(docker ps -q) 2>/dev/null || true
+docker compose down -v --remove-orphans 2>/dev/null || true
 
 echo ""
-echo "[4/8] Start containers..."
+echo "[4/9] Start containers..."
 docker compose up -d
 
 echo ""
-echo "[5/8] Wait for MySQL to be healthy..."
+echo "[5/9] Wait for MySQL to be healthy..."
 sleep 35
 
 echo ""
-echo "[6/8] Seed database..."
+echo "[6/9] Seed database..."
 docker compose exec app php artisan migrate:fresh --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Attribute\DatabaseSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Category\CategoryTableSeeder" --force
@@ -46,8 +47,11 @@ docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\S
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\ProductTableSeeder" --force
 
 echo ""
-echo "[7/8] Build search index + clear all cache..."
+echo "[7/9] Build search index..."
 docker compose exec app php artisan indexer:index --mode=full
+
+echo ""
+echo "[8/9] Clear all cache..."
 docker compose exec app php artisan config:clear
 docker compose exec app php artisan cache:clear
 docker compose exec app php artisan view:clear
@@ -58,7 +62,7 @@ docker compose exec app php artisan config:cache
 docker compose exec app php artisan route:cache
 
 echo ""
-echo "[8/8] Verify..."
+echo "[9/9] Verify..."
 echo -n "  HTTP Status:      "
 curl -o /dev/null -s -w "%{http_code}" http://localhost/
 echo ""
