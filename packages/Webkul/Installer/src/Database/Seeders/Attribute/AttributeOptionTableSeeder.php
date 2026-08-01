@@ -219,6 +219,40 @@ class AttributeOptionTableSeeder extends Seeder
                 'sort_order' => 8,
                 'attribute_id' => 42,
             ],
+            /**
+             * Net Weight / Size Options (attribute_id = 35)
+             */
+            [
+                'id' => 37,
+                'admin_name' => '200g',
+                'sort_order' => 1,
+                'attribute_id' => 35,
+            ], [
+                'id' => 38,
+                'admin_name' => '250g',
+                'sort_order' => 2,
+                'attribute_id' => 35,
+            ], [
+                'id' => 39,
+                'admin_name' => '500g',
+                'sort_order' => 3,
+                'attribute_id' => 35,
+            ], [
+                'id' => 40,
+                'admin_name' => '500ml',
+                'sort_order' => 4,
+                'attribute_id' => 35,
+            ], [
+                'id' => 41,
+                'admin_name' => '1000g',
+                'sort_order' => 5,
+                'attribute_id' => 35,
+            ], [
+                'id' => 42,
+                'admin_name' => '1 KG',
+                'sort_order' => 6,
+                'attribute_id' => 35,
+            ],
         ]);
 
         $locales = $parameters['allowed_locales'] ?? [$defaultLocale];
@@ -261,6 +295,32 @@ class AttributeOptionTableSeeder extends Seeder
                     'locale' => $locale,
                     'label' => trans('installer::app.seeders.attribute.attribute-options.xl', [], $locale),
                     'attribute_option_id' => 9,
+                ],
+                // Net Weight translations
+                [
+                    'locale' => $locale,
+                    'label' => '200g',
+                    'attribute_option_id' => 37,
+                ], [
+                    'locale' => $locale,
+                    'label' => '250g',
+                    'attribute_option_id' => 38,
+                ], [
+                    'locale' => $locale,
+                    'label' => '500g',
+                    'attribute_option_id' => 39,
+                ], [
+                    'locale' => $locale,
+                    'label' => '500ml',
+                    'attribute_option_id' => 40,
+                ], [
+                    'locale' => $locale,
+                    'label' => '1000g',
+                    'attribute_option_id' => 41,
+                ], [
+                    'locale' => $locale,
+                    'label' => '1 KG',
+                    'attribute_option_id' => 42,
                 ],
             ]);
         }
