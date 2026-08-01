@@ -50,7 +50,7 @@
             <div>
                 <p class="text-sm font-semibold text-cream mb-4">SHOP</p>
                 <ul class="grid gap-3 text-sm text-mist/80">
-                    <li><a href="{{ route('shop.product_or_category.index', 'grannis-signature-kits') }}" class="hover:text-cream transition-colors">Grannis Signature Kits</a></li>
+                    <li><a href="{{ route('shop.product_or_category.index', 'grannis-signature-kits') }}" class="hover:text-cream transition-colors">Signature Kits</a></li>
                     <li><a href="{{ route('shop.product_or_category.index', 'oats-with-nuts') }}" class="hover:text-cream transition-colors">Oats With Nuts</a></li>
                     <li><a href="{{ route('shop.product_or_category.index', 'recipe-mix-masalas') }}" class="hover:text-cream transition-colors">Recipe Mix Masalas</a></li>
                     <li><a href="{{ route('shop.product_or_category.index', 'seeds-and-super-foods') }}" class="hover:text-cream transition-colors">Seeds And Super Foods</a></li>
@@ -78,7 +78,7 @@
             <div>
                 <p class="text-sm font-semibold text-cream mb-4">CONTACT DETAILS</p>
                 <div class="text-sm text-mist/80 space-y-4">
-                    <p>&copy; {{ date('Y') }} Grannis Kitchen.<br>Managed and Marketed by <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a></p>
+                    <p>&copy; {{ date('Y') }} Ankesh Mart.<br>Managed and Marketed by <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a></p>
 
                     <div class="flex items-start gap-3">
                         <span class="icon-location text-lg mt-0.5 text-mist/80"></span>
