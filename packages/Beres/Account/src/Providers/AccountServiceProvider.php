@@ -22,7 +22,14 @@ class AccountServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-account');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        $viewsPath = __DIR__ . '/../Resources/views';
+        if (is_dir($viewsPath)) {
+            $this->loadViewsFrom($viewsPath, 'beres-account');
+        }
+
+        $routes = __DIR__ . '/../Routes/web.php';
+        if (file_exists($routes)) {
+            $this->loadRoutesFrom($routes);
+        }
     }
 }

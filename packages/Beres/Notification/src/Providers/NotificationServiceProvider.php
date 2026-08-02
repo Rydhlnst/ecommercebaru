@@ -20,7 +20,10 @@ class NotificationServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-notification');
+        $views = __DIR__ . '/../Resources/views';
+        if (is_dir($views)) {
+            $this->loadViewsFrom($views, 'beres-notification');
+        }
 
         $this->applyMailSettings();
 
@@ -51,8 +54,8 @@ class NotificationServiceProvider extends ServiceProvider
             config(['services.resend.key' => $apiKey]);
 
             // Only switch the mail driver if the Resend transport package is installed.
-            // Without the class, Laravel would throw when trying to resolve the mailer.
-            if (class_exists(\Resend\Laravel\Transport\ResendTransport::class)) {
+            // Without the factory class, Laravel would throw when trying to resolve the mailer.
+            if (class_exists(\Resend\Laravel\Transport\ResendTransportFactory::class)) {
                 config(['mail.default' => 'resend']);
             }
         }

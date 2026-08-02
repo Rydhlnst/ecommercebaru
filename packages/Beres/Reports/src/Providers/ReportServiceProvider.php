@@ -2,6 +2,7 @@
 
 namespace Beres\Reports\Providers;
 
+use Beres\Reports\Services\ReportService;
 use Illuminate\Support\ServiceProvider;
 
 class ReportServiceProvider extends ServiceProvider
@@ -21,7 +22,14 @@ class ReportServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-reports');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/admin.php');
+        $views = __DIR__ . '/../Resources/views';
+        if (is_dir($views)) {
+            $this->loadViewsFrom($views, 'beres-reports');
+        }
+
+        $routes = __DIR__ . '/../Routes/admin.php';
+        if (file_exists($routes)) {
+            $this->loadRoutesFrom($routes);
+        }
     }
 }

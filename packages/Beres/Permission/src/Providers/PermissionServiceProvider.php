@@ -2,6 +2,7 @@
 
 namespace Beres\Permission\Providers;
 
+use Beres\Permission\Services\PermissionService;
 use Illuminate\Support\ServiceProvider;
 
 class PermissionServiceProvider extends ServiceProvider
@@ -21,8 +22,19 @@ class PermissionServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-permission');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/admin.php');
-        $this->mergeConfigFrom(__DIR__ . '/../Config/permissions.php', 'beres-permission');
+        $views = __DIR__ . '/../Resources/views';
+        if (is_dir($views)) {
+            $this->loadViewsFrom($views, 'beres-permission');
+        }
+
+        $routes = __DIR__ . '/../Routes/admin.php';
+        if (file_exists($routes)) {
+            $this->loadRoutesFrom($routes);
+        }
+
+        $permissionsConfig = __DIR__ . '/../Config/permissions.php';
+        if (file_exists($permissionsConfig)) {
+            $this->mergeConfigFrom($permissionsConfig, 'beres-permission');
+        }
     }
 }

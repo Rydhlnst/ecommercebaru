@@ -31,12 +31,26 @@ class ProductServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-product');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/admin.php');
+        $migrations = __DIR__ . '/../Database/Migrations';
+        if (is_dir($migrations)) {
+            $this->loadMigrationsFrom($migrations);
+        }
 
-        $this->publishes([
-            __DIR__ . '/../Config/system.php' => config_path('system.php'),
-        ], 'beres-product-config');
+        $views = __DIR__ . '/../Resources/views';
+        if (is_dir($views)) {
+            $this->loadViewsFrom($views, 'beres-product');
+        }
+
+        $routes = __DIR__ . '/../Routes/admin.php';
+        if (file_exists($routes)) {
+            $this->loadRoutesFrom($routes);
+        }
+
+        $systemConfig = __DIR__ . '/../Config/system.php';
+        if (file_exists($systemConfig)) {
+            $this->publishes([
+                $systemConfig => config_path('system.php'),
+            ], 'beres-product-config');
+        }
     }
 }

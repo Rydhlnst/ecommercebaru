@@ -27,8 +27,19 @@ class CheckoutServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-checkout');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        $migrations = __DIR__ . '/../Database/Migrations';
+        if (is_dir($migrations)) {
+            $this->loadMigrationsFrom($migrations);
+        }
+
+        $views = __DIR__ . '/../Resources/views';
+        if (is_dir($views)) {
+            $this->loadViewsFrom($views, 'beres-checkout');
+        }
+
+        $routes = __DIR__ . '/../Routes/web.php';
+        if (file_exists($routes)) {
+            $this->loadRoutesFrom($routes);
+        }
     }
 }

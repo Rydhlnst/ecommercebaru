@@ -39,8 +39,19 @@ class CustomerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-customer');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/admin.php');
+        $migrations = __DIR__ . '/../Database/Migrations';
+        if (is_dir($migrations)) {
+            $this->loadMigrationsFrom($migrations);
+        }
+
+        $views = __DIR__ . '/../Resources/views';
+        if (is_dir($views)) {
+            $this->loadViewsFrom($views, 'beres-customer');
+        }
+
+        $routes = __DIR__ . '/../Routes/admin.php';
+        if (file_exists($routes)) {
+            $this->loadRoutesFrom($routes);
+        }
     }
 }

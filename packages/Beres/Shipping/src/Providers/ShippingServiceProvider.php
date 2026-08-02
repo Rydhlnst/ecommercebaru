@@ -38,9 +38,20 @@ class ShippingServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-shipping');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/api.php');
+        $migrationsPath = __DIR__ . '/../Database/Migrations';
+        if (is_dir($migrationsPath)) {
+            $this->loadMigrationsFrom($migrationsPath);
+        }
+
+        $viewsPath = __DIR__ . '/../Resources/views';
+        if (is_dir($viewsPath)) {
+            $this->loadViewsFrom($viewsPath, 'beres-shipping');
+        }
+
+        $apiRoutes = __DIR__ . '/../Routes/api.php';
+        if (file_exists($apiRoutes)) {
+            $this->loadRoutesFrom($apiRoutes);
+        }
 
         // Register RajaOngkir into Bagisto's shipping carriers registry.
         // Merges with flatrate / free — existing carriers stay untouched.

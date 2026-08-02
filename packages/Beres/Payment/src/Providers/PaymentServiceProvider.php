@@ -45,20 +45,35 @@ class PaymentServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
-        $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-payment');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/admin.php');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/api.php');
+        $migrations = __DIR__ . '/../Database/Migrations';
+        if (is_dir($migrations)) {
+            $this->loadMigrationsFrom($migrations);
+        }
+
+        $views = __DIR__ . '/../Resources/views';
+        if (is_dir($views)) {
+            $this->loadViewsFrom($views, 'beres-payment');
+        }
+
+        foreach (['admin.php', 'api.php'] as $routeFile) {
+            $r = __DIR__ . '/../Routes/' . $routeFile;
+            if (file_exists($r)) {
+                $this->loadRoutesFrom($r);
+            }
+        }
 
         // Register MidtransSnap into Bagisto's payment_methods registry.
         // Merges — cashondelivery / moneytransfer / etc. stay untouched.
-        $this->mergeConfigFrom(
-            __DIR__ . '/../Config/payment-methods.php',
-            'payment_methods'
-        );
+        $paymentMethodsConfig = __DIR__ . '/../Config/payment-methods.php';
+        if (file_exists($paymentMethodsConfig)) {
+            $this->mergeConfigFrom($paymentMethodsConfig, 'payment_methods');
+        }
 
-        $this->publishes([
-            __DIR__ . '/../Config/midtrans.php' => config_path('midtrans.php'),
-        ], 'beres-payment-config');
+        $midtransConfig = __DIR__ . '/../Config/midtrans.php';
+        if (file_exists($midtransConfig)) {
+            $this->publishes([
+                $midtransConfig => config_path('midtrans.php'),
+            ], 'beres-payment-config');
+        }
     }
 }
