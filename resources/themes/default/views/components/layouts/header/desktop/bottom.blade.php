@@ -61,6 +61,14 @@
 
         {{-- Right icons --}}
         <div class="flex items-center gap-5 shrink-0">
+            <!-- Quick Search Overlay Trigger -->
+            <button
+                type="button"
+                onclick="window.__searchOverlayOpen && window.__searchOverlayOpen()"
+                class="text-xl cursor-pointer icon-search text-ink hover:text-[#2D5A27] transition-colors"
+                aria-label="Quick search"
+            ></button>
+
             <!-- EN/ID Language Toggle -->
             <!-- Language Dropdown -->
             <x-shop::dropdown position="bottom-right">
