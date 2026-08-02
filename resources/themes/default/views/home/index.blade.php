@@ -399,7 +399,7 @@
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 @if ($newProductsDb->isNotEmpty())
                     @foreach ($newProductsDb as $i => $product)
-                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i)])
+                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
                     @endforeach
                 @else
                     @foreach ($dummyProducts as $i => [$name, $price, $compare, $variants])
@@ -418,7 +418,7 @@
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 @if ($bundlesDb->isNotEmpty())
                     @foreach ($bundlesDb as $i => $product)
-                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i)])
+                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
                     @endforeach
                 @else
                     @foreach ($dummyProducts as $i => [$name, $price, $compare, $variants])
@@ -480,7 +480,7 @@
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 @if ($bestSellersDb->isNotEmpty())
                     @foreach ($bestSellersDb as $i => $product)
-                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i)])
+                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
                     @endforeach
                 @else
                     @foreach ($dummyProducts as $i => [$name, $price, $compare, $variants])

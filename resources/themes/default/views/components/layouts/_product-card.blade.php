@@ -2,9 +2,11 @@
     // Accept: $product (Bagisto Product model) ATAU plain args (name, price, compare, variants, bg, href)
     $product  = $product ?? null;
     $bg       = $bg      ?? '#E8F0E5';
+    $index    = $index   ?? 0;
 
     $inStock  = true;
     $compare  = null;
+    $salePrice = null;
     $isNew    = false;
 
     if ($product) {
@@ -13,13 +15,17 @@
         try { $minPrice = $product->getTypeInstance()->getMinimalPrice() ?? 0; } catch (\Throwable $e) {}
         $price    = core()->currency($minPrice);
         try { $inStock = $product->getTypeInstance()->isSaleable(); } catch (\Throwable $e) {}
+
         // Special price detection
         try {
             $regularPrice = $product->getTypeInstance()->getRegularPrice() ?? null;
-            if ($regularPrice && $regularPrice > $minPrice) $compare = core()->currency($regularPrice);
+            if ($regularPrice && $regularPrice > $minPrice) {
+                $compare = core()->currency($regularPrice);
+                $salePrice = $price;
+            }
         } catch (\Throwable $e) {}
+
         $isNew    = $product->created_at && $product->created_at->diffInDays(now()) <= 14;
-        $variants = [];
         $href     = $product->url_key
                         ? route('shop.product_or_category.index', $product->url_key)
                         : route('shop.search.index');
@@ -36,7 +42,9 @@
                     $childVariants[] = [
                         'id'    => $child->id,
                         'label' => $child->name,
-                        'price' => core()->currency($child->price),
+                        'price' => core()->currency($child->getTypeInstance()->getMinimalPrice() ?? $child->price),
+                        'regular_price' => $child->getTypeInstance()->getRegularPrice() ?? null,
+                        'special_price' => $child->getTypeInstance()->getMinimalPrice() ?? null,
                     ];
                 }
             } catch (\Throwable $e) {}
@@ -54,34 +62,41 @@
     }
 @endphp
 
-<div class="beres-card group border overflow-hidden bg-white" style="border-color:#E8F0E5; border-radius:16px;">
-    <a href="{{ $href }}" class="block relative aspect-square overflow-hidden" style="background-color:{{ $bg }};">
+<div class="beres-card group bg-white overflow-hidden" style="border:1px solid #E8F0E5; border-radius:16px;">
+    {{-- Product Image --}}
+    <a href="{{ $href }}" class="block relative aspect-[4/5] overflow-hidden" style="background-color:{{ $bg }};">
         @if ($image)
-            <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" loading="lazy">
+            <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy">
         @endif
 
-        {{-- Badges --}}
-        <div class="absolute top-3 left-3 flex flex-col gap-1.5">
-            @if ($compare)
-                <span class="text-white text-[10px] tracking-[0.14em] uppercase px-2.5 py-1" style="background-color:#B91C1C; border-radius:999px; font-weight:600;">Diskon</span>
-            @endif
-            @if ($isNew && !$compare)
-                <span class="text-white text-[10px] tracking-[0.14em] uppercase px-2.5 py-1" style="background-color:#2D5A27; border-radius:999px; font-weight:600;">Baru</span>
-            @endif
-        </div>
+        {{-- Numbered badge --}}
+        <span class="absolute top-3 left-3 w-7 h-7 flex items-center justify-center bg-white text-[#171717] text-xs font-bold" style="border-radius:999px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">
+            {{ $index + 1 }}
+        </span>
 
-        {{-- Wishlist button --}}
+        {{-- Quick view button --}}
         @if ($prodId)
             <button type="button"
-                    onclick="event.preventDefault(); event.stopPropagation(); beresToggleWishlist(this, {{ $prodId }});"
-                    class="absolute top-3 right-3 w-9 h-9 flex items-center justify-center bg-white/90 hover:bg-white transition-colors shadow-sm opacity-0 group-hover:opacity-100"
+                    onclick="event.preventDefault(); event.stopPropagation(); window.location.href='{{ $href }}';"
+                    class="absolute top-3 right-3 w-9 h-9 flex items-center justify-center bg-white/90 hover:bg-white transition-colors shadow-sm"
                     style="border-radius:999px;"
-                    aria-label="Tambah ke wishlist">
+                    aria-label="Lihat produk">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2D5A27" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
                 </svg>
             </button>
         @endif
+
+        {{-- Left arrow for carousel --}}
+        <button type="button"
+                class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center bg-white/80 hover:bg-white transition-colors shadow-sm opacity-0 group-hover:opacity-100"
+                style="border-radius:999px;"
+                aria-label="Sebelumnya">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2D5A27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
+        </button>
 
         {{-- Out of stock overlay --}}
         @if (!$inStock)
@@ -91,56 +106,56 @@
         @endif
     </a>
 
-    <div class="p-3 md:p-4">
+    {{-- Product Info --}}
+    <div class="p-4">
+        {{-- Product Name --}}
         <a href="{{ $href }}" class="block">
-            <p class="text-xs md:text-sm text-[#171717] leading-snug min-h-[2.5em] line-clamp-2 transition-colors group-hover:text-[#2D5A27]" style="font-weight:500;">{{ $name }}</p>
+            <h3 class="text-base font-semibold text-[#171717] leading-snug transition-colors hover:text-[#2D5A27]">{{ $name }}</h3>
         </a>
 
-        <p class="mt-1.5 text-sm" style="font-weight:600;">
-            <span style="color:#2D5A27;">{{ $price }}</span>
+        {{-- Price with sale --}}
+        <div class="mt-2 flex items-center gap-2">
             @if ($compare)
-                <span class="text-[#737373] line-through ml-1.5 text-xs" style="font-weight:400;">{{ $compare }}</span>
+                {{-- Sale price --}}
+                <span class="text-xl font-bold text-[#171717]">{{ $salePrice }}</span>
+                <span class="text-sm text-[#737373] line-through">{{ $compare }}</span>
+                <span class="text-[10px] tracking-[0.14em] uppercase px-2 py-0.5 text-white font-bold" style="background-color:#B91C1C; border-radius:4px;">Sale</span>
+            @else
+                <span class="text-xl font-bold text-[#171717]">{{ $price }}</span>
             @endif
-        </p>
+        </div>
 
-        {{-- Weight variant selector for configurable products --}}
+        {{-- Quantity Grams selector --}}
         @if (count($childVariants))
-            <div class="mt-2">
-                <p class="text-[10px] tracking-wide text-[#737373] mb-1">Ukuran</p>
-                <div class="flex flex-wrap gap-1">
+            <div class="mt-3">
+                <p class="text-sm font-medium text-[#171717] mb-2">Quantity Grams</p>
+                <div class="flex items-center gap-2">
                     @foreach ($childVariants as $i => $v)
+                        @php
+                            $vSale = false;
+                            if ($v['regular_price'] && $v['special_price'] && $v['regular_price'] > $v['special_price']) {
+                                $vSale = true;
+                            }
+                        @endphp
                         <button type="button"
-                                class="beres-btn px-3 py-1 text-[10px] border transition-colors
-                                {{ $i === 0 ? 'text-white' : 'text-[#737373] hover:border-[#2D5A27] hover:text-[#2D5A27]' }}"
-                                style="{{ $i === 0 ? 'background-color:#2D5A27; border-color:#2D5A27;' : 'border-color:#E8F0E5;' }} border-radius:999px;"
-                                onclick="beresSelectVariant(this, {{ $v['id'] }}, '{{ $v['price'] }}')"
+                                class="beres-btn px-4 py-2 text-sm font-medium border transition-all
+                                {{ $i === 0 ? 'text-white border-[#8B4513]' : 'text-[#171717] border-[#E8F0E5] hover:border-[#8B4513]' }}"
+                                style="{{ $i === 0 ? 'background-color:#8B4513;' : '' }} border-radius:8px;"
+                                onclick="beresSelectVariant(this, {{ $v['id'] }}, '{{ $v['price'] }}', @json($vSale))"
                                 data-variant-id="{{ $v['id'] }}">
                             {{ $v['label'] }}
                         </button>
                     @endforeach
                 </div>
             </div>
-        @elseif (count($variants))
-            <div class="mt-2">
-                <p class="text-[10px] tracking-wide text-[#737373] mb-1">Ukuran</p>
-                <div class="flex flex-wrap gap-1">
-                    @foreach ($variants as $i => $v)
-                        <button type="button" class="beres-btn px-3 py-1 text-[10px] border transition-colors
-                            {{ $i === 0 ? 'text-white' : 'text-[#737373] hover:border-[#2D5A27] hover:text-[#2D5A27]' }}"
-                            style="{{ $i === 0 ? 'background-color:#2D5A27; border-color:#2D5A27;' : 'border-color:#E8F0E5;' }} border-radius:999px;">
-                            {{ $v }}
-                        </button>
-                    @endforeach
-                </div>
-            </div>
         @endif
 
+        {{-- Quantity counter + Add to Cart --}}
         @if ($prodId && $inStock)
-            {{-- Qty stepper + Add to Cart --}}
             <form
                 action="{{ route('shop.api.checkout.cart.store') }}"
                 method="POST"
-                class="mt-3 flex items-stretch gap-2"
+                class="mt-3"
                 onsubmit="event.preventDefault(); beresAddToCart(this);"
             >
                 @csrf
@@ -149,29 +164,33 @@
                     <input type="hidden" name="selected_configurable_option" value="{{ $childVariants[0]['id'] }}" class="beres-variant-input">
                 @endif
 
-                <div class="flex items-center border" style="border-color:#E8F0E5; border-radius:999px;">
-                    <button type="button" class="beres-btn w-7 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3]" style="border-radius:999px 0 0 999px;" onclick="beresQty(this, -1)" aria-label="Kurangi">−</button>
-                    <input type="number" name="quantity" value="1" min="1" max="99" class="w-8 text-center text-[11px] border-0 focus:outline-none bg-transparent" style="font-weight:600; color:#171717;" aria-label="Jumlah">
-                    <button type="button" class="beres-btn w-7 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3]" style="border-radius:0 999px 999px 0;" onclick="beresQty(this, 1)" aria-label="Tambah">+</button>
-                </div>
+                {{-- Quantity label + stepper --}}
+                <p class="text-sm font-medium text-[#171717] mb-2">Quantity</p>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center border border-[#E8F0E5] rounded-lg overflow-hidden">
+                        <button type="button" class="w-10 h-10 flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-lg" onclick="beresQty(this, -1)" aria-label="Kurangi">−</button>
+                        <input type="number" name="quantity" value="1" min="1" max="99" class="w-12 h-10 text-center text-sm border-0 border-x border-[#E8F0E5] focus:outline-none bg-transparent font-semibold" aria-label="Jumlah">
+                        <button type="button" class="w-10 h-10 flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-lg" onclick="beresQty(this, 1)" aria-label="Tambah">+</button>
+                    </div>
 
-                <button type="submit"
-                        class="beres-btn flex-1 py-2.5 text-[11px] tracking-[0.14em] uppercase text-white hover:opacity-90"
-                        style="background-color:#2D5A27; font-weight:600; border-radius:999px;">
-                    Tambah ke Keranjang
-                </button>
+                    <button type="submit"
+                            class="flex-1 h-10 text-sm font-semibold tracking-[0.05em] uppercase text-white hover:opacity-90 transition-opacity"
+                            style="background-color:#8B4513; border-radius:8px;">
+                        Add To Cart
+                    </button>
+                </div>
             </form>
         @elseif ($prodId && !$inStock)
             <button type="button" disabled
-                    class="mt-3 w-full py-2.5 text-[11px] tracking-[0.14em] uppercase text-[#737373] cursor-not-allowed"
-                    style="background-color:#F5F5F5; border-radius:999px; font-weight:600;">
+                    class="mt-3 w-full h-10 text-sm font-semibold tracking-[0.05em] uppercase text-[#737373] cursor-not-allowed"
+                    style="background-color:#F5F5F5; border-radius:8px;">
                 Habis
             </button>
         @else
             <a href="{{ $href }}"
-               class="beres-btn mt-3 block w-full py-2.5 text-[11px] tracking-[0.14em] uppercase text-white hover:opacity-90 text-center"
-               style="background-color:#2D5A27; font-weight:600; border-radius:999px;">
-                Lihat produk
+               class="beres-btn mt-3 block w-full h-10 text-sm font-semibold tracking-[0.05em] uppercase text-white hover:opacity-90 text-center transition-opacity"
+               style="background-color:#8B4513; border-radius:8px;">
+                Lihat Produk
             </a>
         @endif
     </div>

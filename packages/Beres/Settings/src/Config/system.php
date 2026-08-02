@@ -166,6 +166,12 @@ return [
             ['name' => 'email',        'title' => 'Email',             'type' => 'text',     'default' => 'halo@ecommerce.beres.io'],
             ['name' => 'map_query',    'title' => 'Query maps (search)','type'=> 'text',     'default' => 'Pasar Modern BSD, Serpong, Tangerang',
              'channel_based' => false],
+            ['name' => 'google_review_url', 'title' => 'Google Review URL', 'type' => 'text', 'default' => 'https://www.google.com/search?hl=id-ID&gl=id&q=Ankesh+Online+Store&ludocid=15094669346839031336#lrd=0x391905e546039a5b:0xd17b09cbc4516e28,3',
+             'channel_based' => false],
+            ['name' => 'google_place_id',   'title' => 'Google Place ID',   'type' => 'text',  'default' => '',
+             'channel_based' => false],
+            ['name' => 'google_api_key',    'title' => 'Google Places API Key', 'type' => 'password', 'default' => '',
+             'channel_based' => false],
         ],
     ],
 
