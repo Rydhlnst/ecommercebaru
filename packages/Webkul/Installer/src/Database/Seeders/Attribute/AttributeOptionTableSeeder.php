@@ -252,6 +252,21 @@ class AttributeOptionTableSeeder extends Seeder
                 'admin_name' => '1 KG',
                 'sort_order' => 6,
                 'attribute_id' => 35,
+            ], [
+                'id' => 43,
+                'admin_name' => '2kg',
+                'sort_order' => 7,
+                'attribute_id' => 35,
+            ], [
+                'id' => 44,
+                'admin_name' => '250ml',
+                'sort_order' => 8,
+                'attribute_id' => 35,
+            ], [
+                'id' => 45,
+                'admin_name' => '1L',
+                'sort_order' => 9,
+                'attribute_id' => 35,
             ],
         ]);
 
@@ -321,6 +336,18 @@ class AttributeOptionTableSeeder extends Seeder
                     'locale' => $locale,
                     'label' => '1 KG',
                     'attribute_option_id' => 42,
+                ], [
+                    'locale' => $locale,
+                    'label' => '2kg',
+                    'attribute_option_id' => 43,
+                ], [
+                    'locale' => $locale,
+                    'label' => '250ml',
+                    'attribute_option_id' => 44,
+                ], [
+                    'locale' => $locale,
+                    'label' => '1L',
+                    'attribute_option_id' => 45,
                 ],
             ]);
         }

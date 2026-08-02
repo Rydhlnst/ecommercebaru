@@ -32,23 +32,41 @@
         $prodId   = $product->id;
         $image    = product_image()->getProductBaseImage($product)['small_image_url'] ?? null;
 
-        // For configurable products: get child variants (weight options)
+        // For configurable products: read child variants via the `variants` relation.
+        // (Bagisto's Configurable type does NOT expose getChildrenItems() — use the model relation instead.)
         $isConfigurable = $product->type === 'configurable';
         $childVariants  = [];
         $superAttrId    = null;
         if ($isConfigurable) {
             try {
-                $children = $product->getTypeInstance()->getChildrenItems();
-                foreach ($children as $child) {
+                foreach ($product->variants as $child) {
+                    $childType = $child->getTypeInstance();
+                    $minPrice  = 0;
+                    $regPrice  = null;
+                    try {
+                        $minPrice = $childType->getMinimalPrice() ?? $child->price ?? 0;
+                        $regPrice = $childType->getRegularPrice();
+                    } catch (\Throwable $e) {}
+
+                    // Label: net_weight attribute returns the option's admin_name (e.g. "500g")
+                    // directly on the model. Fall back to the last dash-segment of child name
+                    // ("Product Name - 500g" → "500g"), then finally the full name.
+                    $label = $child->name;
+                    if (! empty($child->net_weight) && ! is_numeric($child->net_weight)) {
+                        $label = $child->net_weight;
+                    } elseif (str_contains($child->name, ' - ')) {
+                        $parts = explode(' - ', $child->name);
+                        $label = trim(end($parts));
+                    }
+
                     $childVariants[] = [
-                        'id'    => $child->id,
-                        'label' => $child->name,
-                        'price' => core()->currency($child->getTypeInstance()->getMinimalPrice() ?? $child->price),
-                        'regular_price' => $child->getTypeInstance()->getRegularPrice() ?? null,
-                        'special_price' => $child->getTypeInstance()->getMinimalPrice() ?? null,
+                        'id'            => $child->id,
+                        'label'         => $label,
+                        'price'         => core()->currency($minPrice),
+                        'regular_price' => $regPrice,
+                        'special_price' => $minPrice,
                     ];
                 }
-                // Get super attribute ID (net_weight = 35)
                 $superAttrs = $product->super_attributes()->first();
                 if ($superAttrs) $superAttrId = $superAttrs->attribute_id ?? $superAttrs->id ?? 35;
             } catch (\Throwable $e) {}
@@ -130,7 +148,7 @@
             @endif
         </div>
 
-        {{-- Quantity Grams selector --}}
+        {{-- Weight variant selector (configurable products only) --}}
         @if (count($childVariants))
             <div class="mt-3">
                 <p class="text-sm font-medium text-[#171717] mb-2">Quantity Grams</p>
