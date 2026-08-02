@@ -14,8 +14,67 @@ class RajaOngkirService
     public function __construct(
         protected RajaOngkirCacheRepositoryInterface $cacheRepository
     ) {
-        $this->apiKey = (string) config('rajaongkir.api_key', '');
-        $this->baseUrl = (string) config('rajaongkir.base_url', 'https://api.rajaongkir.com/starter');
+        $this->apiKey  = $this->readApiKey();
+        $this->baseUrl = $this->readBaseUrl();
+    }
+
+    /**
+     * Read API key: admin dashboard first, package config fallback.
+     */
+    protected function readApiKey(): string
+    {
+        $adminKey = (string) core()->getConfigData('beres_storefront.shipping.api_key');
+        if ($adminKey !== '') {
+            return $adminKey;
+        }
+        return (string) config('rajaongkir.api_key', '');
+    }
+
+    /**
+     * Build base URL from api_type (starter / basic / pro). Pro uses a different host.
+     */
+    protected function readBaseUrl(): string
+    {
+        $adminType = (string) core()->getConfigData('beres_storefront.shipping.api_type');
+        $type      = $adminType !== '' ? $adminType : 'starter';
+
+        return match ($type) {
+            'pro'   => 'https://pro.rajaongkir.com/api',
+            'basic' => 'https://api.rajaongkir.com/basic',
+            default => (string) config('rajaongkir.base_url', 'https://api.rajaongkir.com/starter'),
+        };
+    }
+
+    /**
+     * Check if RajaOngkir is enabled by admin.
+     */
+    public function isActive(): bool
+    {
+        return (bool) core()->getConfigData('beres_storefront.shipping.active');
+    }
+
+    /**
+     * Origin city ID (from admin dashboard, fallback package config).
+     */
+    public function getOriginCity(): int
+    {
+        $admin = (string) core()->getConfigData('beres_storefront.shipping.origin_city');
+        if ($admin !== '') {
+            return (int) $admin;
+        }
+        return (int) config('rajaongkir.origin_city', 501);
+    }
+
+    /**
+     * Enabled couriers (comma-separated in admin, returns array).
+     */
+    public function getEnabledCouriers(): array
+    {
+        $raw = (string) core()->getConfigData('beres_storefront.shipping.couriers');
+        if ($raw === '') {
+            return (array) config('rajaongkir.couriers', ['jne', 'jnt', 'sicepat']);
+        }
+        return array_values(array_filter(array_map('trim', explode(',', $raw))));
     }
 
     /**

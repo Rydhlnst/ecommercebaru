@@ -22,7 +22,47 @@ class NotificationServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__ . '/../Resources/views', 'beres-notification');
 
+        $this->applyMailSettings();
+
         $this->registerEventListeners();
+    }
+
+    /**
+     * Override runtime mail config with values from admin dashboard
+     * (Configure → Storefront → Email). Admin fields win over .env.
+     * Only switches Laravel's mail driver to `resend` if an API key is set.
+     */
+    protected function applyMailSettings(): void
+    {
+        // core() may not be bound in some early bootstrap paths (e.g. artisan package:discover).
+        if (! function_exists('core')) {
+            return;
+        }
+
+        try {
+            $apiKey    = (string) core()->getConfigData('beres_storefront.email.api_key');
+            $fromEmail = (string) core()->getConfigData('beres_storefront.email.from_email');
+            $fromName  = (string) core()->getConfigData('beres_storefront.email.from_name');
+        } catch (\Throwable $e) {
+            return;
+        }
+
+        if ($apiKey !== '') {
+            config(['services.resend.key' => $apiKey]);
+
+            // Only switch the mail driver if the Resend transport package is installed.
+            // Without the class, Laravel would throw when trying to resolve the mailer.
+            if (class_exists(\Resend\Laravel\Transport\ResendTransport::class)) {
+                config(['mail.default' => 'resend']);
+            }
+        }
+
+        if ($fromEmail !== '') {
+            config(['mail.from.address' => $fromEmail]);
+        }
+        if ($fromName !== '') {
+            config(['mail.from.name' => $fromName]);
+        }
     }
 
     /**

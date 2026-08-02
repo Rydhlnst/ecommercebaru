@@ -176,6 +176,21 @@ return [
     ],
 
     /* =========================
+     | HEADER CATEGORY NAV
+     ========================= */
+    [
+        'key' => 'beres_storefront.header_nav',
+        'name' => 'Header Category Nav',
+        'info' => '7 kategori di baris atas header. Format tiap baris: "Label|slug-atau-url". Baris pertama biasanya beranda ("Unggulan|/"). URL bisa slug kategori (buah-sayur) atau path absolut (/blog).',
+        'sort' => 6,
+        'fields' => [
+            ['name' => 'items', 'title' => 'Menu (satu per baris)', 'type' => 'textarea', 'channel_based' => false,
+                'default' => "Unggulan|/\nBuah & Sayur|buah-sayur\nDaging & Seafood|daging\nRoti & Bakery|roti\nMinuman|minuman\nBumbu & Rempah|bumbu\nSnack Sehat|snack",
+                'info' => 'Format: "Label|slug". Slug = kategori Bagisto, atau path (/blog). Baris kosong diabaikan.'],
+        ],
+    ],
+
+    /* =========================
      | BOTTOM NAV LABELS (mobile)
      ========================= */
     [

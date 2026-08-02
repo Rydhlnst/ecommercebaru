@@ -16,15 +16,47 @@ class MidtransService
     }
 
     /**
+     * Read a Midtrans setting: admin dashboard first, package config fallback.
+     */
+    protected function setting(string $key, $default = null)
+    {
+        $value = core()->getConfigData("beres_storefront.midtrans.$key");
+        if ($value !== null && $value !== '') {
+            return $value;
+        }
+        return config("midtrans.$key", $default);
+    }
+
+    /**
      * Configure Midtrans SDK.
      */
     protected function configure(): void
     {
-        Config::$serverKey = config('midtrans.server_key');
-        Config::$clientKey = config('midtrans.client_key');
-        Config::$isProduction = config('midtrans.environment') === 'production';
+        Config::$serverKey = (string) $this->setting('server_key', '');
+        Config::$clientKey = (string) $this->setting('client_key', '');
+        Config::$isProduction = $this->setting('environment', 'sandbox') === 'production';
         Config::$isSanitized = true;
         Config::$is3ds = true;
+    }
+
+    /**
+     * Check if Midtrans is enabled by admin.
+     */
+    public function isActive(): bool
+    {
+        return (bool) core()->getConfigData('beres_storefront.midtrans.active');
+    }
+
+    /**
+     * Get enabled payment types (comma-separated in admin, returns array).
+     */
+    public function getPaymentTypes(): array
+    {
+        $raw = (string) core()->getConfigData('beres_storefront.midtrans.payment_types');
+        if ($raw === '') {
+            return ['credit_card', 'bca_va', 'bni_va', 'bri_va', 'mandiri_va', 'gopay', 'shopeepay', 'qris'];
+        }
+        return array_values(array_filter(array_map('trim', explode(',', $raw))));
     }
 
     /**
@@ -133,7 +165,7 @@ class MidtransService
             $orderId = $notification->order_id;
             $statusCode = $notification->status_code;
             $grossAmount = $notification->gross_amount;
-            $serverKey = config('midtrans.server_key');
+            $serverKey = (string) $this->setting('server_key', '');
 
             // Build verification string
             $orderId . $statusCode . $grossAmount . $serverKey;
@@ -153,7 +185,7 @@ class MidtransService
      */
     public function getClientKey(): string
     {
-        return config('midtrans.client_key');
+        return (string) $this->setting('client_key', '');
     }
 
     /**
@@ -161,6 +193,6 @@ class MidtransService
      */
     public function isProduction(): bool
     {
-        return config('midtrans.environment') === 'production';
+        return $this->setting('environment', 'sandbox') === 'production';
     }
 }

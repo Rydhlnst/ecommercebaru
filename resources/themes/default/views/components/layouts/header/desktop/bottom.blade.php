@@ -182,22 +182,35 @@
         </div>
     </div>
 
-    {{-- Row 2: horizontal category nav --}}
+    {{-- Row 2: horizontal category nav (editable via admin → Configure → Storefront → Header Category Nav) --}}
     @php
         $navPath    = request()->path();
-        $isNavHome  = ($navPath === '/' || $navPath === '');
         $navActive  = 'text-[#2D5A27] border-b-2 border-[#2D5A27] pb-1 font-semibold';
         $navInactive= 'text-stone hover:text-[#2D5A27] transition-colors';
 
-        $navItems = [
-            ['Unggulan',         route('shop.home.index'),         $isNavHome],
-            ['Buah & Sayur',     route('shop.search.index', ['category' => 'buah-sayur']),   str_contains($navPath, 'buah')   || str_contains($navPath, 'sayur')],
-            ['Daging & Seafood', route('shop.search.index', ['category' => 'daging']),       str_contains($navPath, 'daging') || str_contains($navPath, 'seafood')],
-            ['Roti & Bakery',    route('shop.search.index', ['category' => 'roti']),         str_contains($navPath, 'roti')   || str_contains($navPath, 'bakery')],
-            ['Minuman',          route('shop.search.index', ['category' => 'minuman']),      str_contains($navPath, 'minuman')],
-            ['Bumbu & Rempah',   route('shop.search.index', ['category' => 'bumbu']),        str_contains($navPath, 'bumbu')  || str_contains($navPath, 'rempah')],
-            ['Snack Sehat',      route('shop.search.index', ['category' => 'snack']),        str_contains($navPath, 'snack')],
-        ];
+        $rawNav = (string) (core()->getConfigData('beres_storefront.header_nav.items') ?: "Unggulan|/\nBuah & Sayur|buah-sayur\nDaging & Seafood|daging\nRoti & Bakery|roti\nMinuman|minuman\nBumbu & Rempah|bumbu\nSnack Sehat|snack");
+
+        $navItems = [];
+        foreach (preg_split("/\r?\n/", $rawNav) as $line) {
+            $line = trim($line);
+            if ($line === '') continue;
+            [$label, $target] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
+            if ($label === '') continue;
+
+            // Build href: '/' → home, starts with '/' → absolute path, else → category slug
+            if ($target === '' || $target === '/') {
+                $href   = route('shop.home.index');
+                $active = ($navPath === '/' || $navPath === '');
+            } elseif (str_starts_with($target, '/')) {
+                $href   = url($target);
+                $active = str_starts_with('/' . $navPath, $target);
+            } else {
+                $href   = route('shop.search.index', ['category' => $target]);
+                $active = str_contains($navPath, $target);
+            }
+
+            $navItems[] = [$label, $href, $active];
+        }
     @endphp
     <nav class="w-full px-6 md:px-10 lg:px-14 pt-2 pb-4 border-t border-mist" aria-label="Category navigation">
         <ul class="flex items-center gap-8 lg:gap-12 text-[14px] text-ink">

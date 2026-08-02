@@ -595,7 +595,7 @@
                     <p class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.review_title', 'Ulasan Pelanggan') }}</p>
                     <p class="mt-1 text-sm" style="color:#2D5A27;">★★★★★ &nbsp; {{ $c('sections.review_eyebrow', '4,8 dari 2.400+ ulasan') }}</p>
                 </div>
-                <a href="https://www.google.com/search?hl=id-ID&gl=id&q=Ankesh+Online+Store&ludocid=15094669346839031336#lrd=0x391905e546039a5b:0xd17b09cbc4516e28,3" target="_blank" rel="noopener" class="text-sm underline text-[#2D5A27] hover:opacity-70">Tulis ulasan</a>
+                <a href="{{ $c('contact.google_review_url', 'https://www.google.com/search?q=Ankesh+Online+Store') }}" target="_blank" rel="noopener" class="text-sm underline text-[#2D5A27] hover:opacity-70">Tulis ulasan</a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
@@ -631,7 +631,7 @@
             </div>
 
             <div class="mt-6 text-center">
-                <a href="https://www.google.com/search?hl=id-ID&gl=id&q=Ankesh+Online+Store&ludocid=15094669346839031336#lrd=0x391905e546039a5b:0xd17b09cbc4516e28,3" target="_blank" rel="noopener" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat semua ulasan</a>
+                <a href="{{ $c('contact.google_review_url', 'https://www.google.com/search?q=Ankesh+Online+Store') }}" target="_blank" rel="noopener" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat semua ulasan</a>
             </div>
         </div>
     </section>

@@ -50,6 +50,13 @@ class PaymentServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../Routes/admin.php');
         $this->loadRoutesFrom(__DIR__ . '/../Routes/api.php');
 
+        // Register MidtransSnap into Bagisto's payment_methods registry.
+        // Merges — cashondelivery / moneytransfer / etc. stay untouched.
+        $this->mergeConfigFrom(
+            __DIR__ . '/../Config/payment-methods.php',
+            'payment_methods'
+        );
+
         $this->publishes([
             __DIR__ . '/../Config/midtrans.php' => config_path('midtrans.php'),
         ], 'beres-payment-config');
