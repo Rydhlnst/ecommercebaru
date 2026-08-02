@@ -233,6 +233,33 @@
         input.value = v;
     };
 
+    // Variant selector for configurable products
+    window.beresSelectVariant = function(btn, variantId, price) {
+        const card = btn.closest('.beres-card');
+        if (!card) return;
+
+        // Update hidden input
+        const hiddenInput = card.querySelector('.beres-variant-input');
+        if (hiddenInput) hiddenInput.value = variantId;
+
+        // Update button styles
+        const siblings = btn.parentElement.querySelectorAll('button');
+        siblings.forEach(b => {
+            b.style.backgroundColor = '';
+            b.style.borderColor = '#E8F0E5';
+            b.classList.remove('text-white');
+            b.classList.add('text-[#737373]');
+        });
+        btn.style.backgroundColor = '#2D5A27';
+        btn.style.borderColor = '#2D5A27';
+        btn.classList.add('text-white');
+        btn.classList.remove('text-[#737373]');
+
+        // Update price display
+        const priceEl = card.querySelector('.mt-1\\.5 span:first-child');
+        if (priceEl && price) priceEl.textContent = price;
+    };
+
     // Wishlist toggle → Bagisto API
     window.beresToggleWishlist = async function(btn, productId) {
         const token = document.querySelector('meta[name="csrf-token"]')?.content;
@@ -550,7 +577,7 @@
                     <p class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.review_title', 'Ulasan Pelanggan') }}</p>
                     <p class="mt-1 text-sm" style="color:#2D5A27;">★★★★★ &nbsp; {{ $c('sections.review_eyebrow', '4,8 dari 2.400+ ulasan') }}</p>
                 </div>
-                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Tulis ulasan</a>
+                <a href="https://www.google.com/search?hl=id-ID&gl=id&q=Ankesh+Online+Store&ludocid=15094669346839031336#lrd=0x391905e546039a5b:0xd17b09cbc4516e28,3" target="_blank" rel="noopener" class="text-sm underline text-[#2D5A27] hover:opacity-70">Tulis ulasan</a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
@@ -586,7 +613,7 @@
             </div>
 
             <div class="mt-6 text-center">
-                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat semua ulasan</a>
+                <a href="https://www.google.com/search?hl=id-ID&gl=id&q=Ankesh+Online+Store&ludocid=15094669346839031336#lrd=0x391905e546039a5b:0xd17b09cbc4516e28,3" target="_blank" rel="noopener" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat semua ulasan</a>
             </div>
         </div>
     </section>

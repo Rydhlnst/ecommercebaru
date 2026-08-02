@@ -115,6 +115,7 @@
                         <li><a href="#" class="hover:text-cream transition-colors">Kebijakan Pengembalian</a></li>
                         <li><a href="#" class="hover:text-cream transition-colors">Kebijakan Pengiriman</a></li>
                         <li><a href="#" class="hover:text-cream transition-colors">Syarat Layanan</a></li>
+                        <li><a href="/blog" class="hover:text-cream transition-colors">Blog</a></li>
                     </ul>
                 </div>
             @endif

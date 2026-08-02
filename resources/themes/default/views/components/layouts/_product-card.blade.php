@@ -25,6 +25,22 @@
                         : route('shop.search.index');
         $prodId   = $product->id;
         $image    = product_image()->getProductBaseImage($product)['small_image_url'] ?? null;
+
+        // For configurable products: get child variants (weight options)
+        $isConfigurable = $product->type === 'configurable';
+        $childVariants  = [];
+        if ($isConfigurable) {
+            try {
+                $children = $product->getTypeInstance()->getChildrenItems();
+                foreach ($children as $child) {
+                    $childVariants[] = [
+                        'id'    => $child->id,
+                        'label' => $child->name,
+                        'price' => core()->currency($child->price),
+                    ];
+                }
+            } catch (\Throwable $e) {}
+        }
     } else {
         $name     = $name     ?? '';
         $price    = $price    ?? '';
@@ -33,6 +49,8 @@
         $href     = $href     ?? route('shop.search.index');
         $prodId   = null;
         $image    = null;
+        $isConfigurable = false;
+        $childVariants  = [];
     }
 @endphp
 
@@ -85,7 +103,24 @@
             @endif
         </p>
 
-        @if (count($variants))
+        {{-- Weight variant selector for configurable products --}}
+        @if (count($childVariants))
+            <div class="mt-2">
+                <p class="text-[10px] tracking-wide text-[#737373] mb-1">Ukuran</p>
+                <div class="flex flex-wrap gap-1">
+                    @foreach ($childVariants as $i => $v)
+                        <button type="button"
+                                class="beres-btn px-3 py-1 text-[10px] border transition-colors
+                                {{ $i === 0 ? 'text-white' : 'text-[#737373] hover:border-[#2D5A27] hover:text-[#2D5A27]' }}"
+                                style="{{ $i === 0 ? 'background-color:#2D5A27; border-color:#2D5A27;' : 'border-color:#E8F0E5;' }} border-radius:999px;"
+                                onclick="beresSelectVariant(this, {{ $v['id'] }}, '{{ $v['price'] }}')"
+                                data-variant-id="{{ $v['id'] }}">
+                            {{ $v['label'] }}
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+        @elseif (count($variants))
             <div class="mt-2">
                 <p class="text-[10px] tracking-wide text-[#737373] mb-1">Ukuran</p>
                 <div class="flex flex-wrap gap-1">
@@ -110,6 +145,9 @@
             >
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $prodId }}">
+                @if (count($childVariants))
+                    <input type="hidden" name="selected_configurable_option" value="{{ $childVariants[0]['id'] }}" class="beres-variant-input">
+                @endif
 
                 <div class="flex items-center border" style="border-color:#E8F0E5; border-radius:999px;">
                     <button type="button" class="beres-btn w-7 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3]" style="border-radius:999px 0 0 999px;" onclick="beresQty(this, -1)" aria-label="Kurangi">−</button>
