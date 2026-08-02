@@ -23,10 +23,9 @@
         ],
         [
             'label'  => core()->getConfigData('beres_storefront.bottom_nav.label_search') ?: 'Cari',
-            'href'   => '#',
+            'href'   => route('shop.search.index'),
             'active' => $isActive(['search']),
             'svg'    => '<circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
-            'is_search' => true,
         ],
     ];
 @endphp
@@ -49,56 +48,31 @@
     <ul style="display: grid; grid-template-columns: repeat(4, 1fr); margin: 0; padding: 0; list-style: none;">
         @foreach ($items as $item)
             <li style="text-align: center;">
-                @if ($item['is_search'] ?? false)
-                    <a
-                        href="#"
-                        onclick="event.preventDefault(); window.__searchOverlayOpen && window.__searchOverlayOpen();"
-                        style="
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                            gap: 4px;
-                            padding: 10px 4px;
-                            text-decoration: none;
-                            font-size: 10px;
-                            letter-spacing: 0.02em;
-                            position: relative;
-                            color: {{ $item['active'] ? '#2D5A27' : '#404040' }};
-                            font-weight: {{ $item['active'] ? '600' : '500' }};
-                        "
-                        aria-label="{{ $item['label'] }}"
-                    >
-                        <svg style="width:22px; height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $item['svg'] !!}</svg>
-                        <span>{{ $item['label'] }}</span>
-                    </a>
-                @else
-                    <a
-                        href="{{ $item['href'] }}"
-                        style="
-                            display: flex;
-                            flex-direction: column;
-                            align-items: center;
-                            justify-content: center;
-                            gap: 4px;
-                            padding: 10px 4px;
-                            text-decoration: none;
-                            font-size: 10px;
-                            letter-spacing: 0.02em;
-                            position: relative;
-                            color: {{ $item['active'] ? '#2D5A27' : '#404040' }};
-                            font-weight: {{ $item['active'] ? '600' : '500' }};
-                        "
-                        aria-label="{{ $item['label'] }}"
-                        aria-current="{{ $item['active'] ? 'page' : 'false' }}"
-                    >
-                        <svg style="width:22px; height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $item['svg'] !!}</svg>
-                        <span>{{ $item['label'] }}</span>
-                        @if ($item['active'])
-                            <span style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:28px; height:2px; background:#2D5A27; border-radius:0 0 2px 2px;"></span>
-                        @endif
-                    </a>
-                @endif
+                <a
+                    href="{{ $item['href'] }}"
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 4px;
+                        padding: 10px 4px;
+                        text-decoration: none;
+                        font-size: 10px;
+                        letter-spacing: 0.02em;
+                        position: relative;
+                        color: {{ $item['active'] ? '#2D5A27' : '#404040' }};
+                        font-weight: {{ $item['active'] ? '600' : '500' }};
+                    "
+                    aria-label="{{ $item['label'] }}"
+                    aria-current="{{ $item['active'] ? 'page' : 'false' }}"
+                >
+                    <svg style="width:22px; height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $item['svg'] !!}</svg>
+                    <span>{{ $item['label'] }}</span>
+                    @if ($item['active'])
+                        <span style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:28px; height:2px; background:#2D5A27; border-radius:0 0 2px 2px;"></span>
+                    @endif
+                </a>
             </li>
         @endforeach
     </ul>
