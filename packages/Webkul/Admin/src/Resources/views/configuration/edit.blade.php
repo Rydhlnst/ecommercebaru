@@ -147,6 +147,30 @@
                     @endforeach
                 </div>
             @endforeach
+
+            @if ($activeConfiguration->haveChildren() === false && $activeConfiguration->getFields()->isNotEmpty())
+                <div class="grid content-start gap-2.5">
+                    <p class="leading-[140%] text-gray-600 dark:text-gray-300">
+                        {!! $activeConfiguration->getInfo() !!}
+                    </p>
+                </div>
+
+                <div class="box-shadow rounded bg-white p-4 dark:bg-gray-900">
+                    @foreach ($activeConfiguration->getFields() as $field)
+                        @php
+                            $child = $activeConfiguration;
+                        @endphp
+                        @if (
+                            $field->getType() == 'blade'
+                            && view()->exists($path = $field->getPath())
+                        )
+                            {!! view($path, compact('field', 'child'))->render() !!}
+                        @else 
+                            @include ('admin::configuration.field-type')
+                        @endif
+                    @endforeach
+                </div>
+            @endif
         </div>
     </x-admin::form>
 </x-admin::layouts>
