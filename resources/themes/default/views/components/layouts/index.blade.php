@@ -219,6 +219,48 @@
             main#main { animation: beresFadeIn .4s ease-out; }
         </style>
 
+        {{-- Search debounce + normalize (case-insensitive, strip symbols) --}}
+        <script>
+        (function() {
+            var debounceTimer;
+            function normalizeQuery(q) {
+                return q.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('form[role="search"]').forEach(function(form) {
+                    var input = form.querySelector('input[name="query"]');
+                    if (!input) return;
+
+                    form.addEventListener('submit', function(e) {
+                        var val = normalizeQuery(input.value);
+                        if (!val) { e.preventDefault(); return; }
+                        input.value = val;
+                    });
+
+                    var timer;
+                    input.addEventListener('input', function() {
+                        clearTimeout(timer);
+                        timer = setTimeout(function() {
+                            var val = normalizeQuery(input.value);
+                            if (val && val.length >= 2) {
+                                input.value = val;
+                                form.submit();
+                            }
+                        }, 500);
+                    });
+
+                    input.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter') {
+                            clearTimeout(timer);
+                            var val = normalizeQuery(input.value);
+                            if (val) { input.value = val; }
+                        }
+                    });
+                });
+            });
+        })();
+        </script>
+
         @if(core()->getConfigData('general.content.speculation_rules.enabled'))
             <script type="speculationrules">
                 @json(core()->getSpeculationRules(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)

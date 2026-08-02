@@ -35,6 +35,7 @@
         // For configurable products: get child variants (weight options)
         $isConfigurable = $product->type === 'configurable';
         $childVariants  = [];
+        $superAttrId    = null;
         if ($isConfigurable) {
             try {
                 $children = $product->getTypeInstance()->getChildrenItems();
@@ -47,6 +48,9 @@
                         'special_price' => $child->getTypeInstance()->getMinimalPrice() ?? null,
                     ];
                 }
+                // Get super attribute ID (net_weight = 35)
+                $superAttrs = $product->super_attributes()->first();
+                if ($superAttrs) $superAttrId = $superAttrs->attribute_id ?? $superAttrs->id ?? 35;
             } catch (\Throwable $e) {}
         }
     } else {
@@ -59,10 +63,11 @@
         $image    = null;
         $isConfigurable = false;
         $childVariants  = [];
+        $superAttrId    = null;
     }
 @endphp
 
-<div class="beres-card group bg-white overflow-hidden" style="border:1px solid #E8F0E5; border-radius:16px;">
+<div class="beres-card group bg-white overflow-hidden" style="border:1px solid #E8F0E5; border-radius:16px;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
     {{-- Product Image --}}
     <a href="{{ $href }}" class="block relative aspect-[4/5] overflow-hidden" style="background-color:{{ $bg }};">
         @if ($image)

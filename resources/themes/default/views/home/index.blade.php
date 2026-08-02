@@ -192,6 +192,25 @@
         const token     = document.querySelector('meta[name="csrf-token"]')?.content
                        || form.querySelector('[name="_token"]')?.value;
 
+        // Check if configurable product — send selected variant
+        const variantInput = form.querySelector('.beres-variant-input');
+        const selectedVariantId = variantInput ? parseInt(variantInput.value, 10) : null;
+
+        const payload = { product_id: productId, quantity };
+
+        // For configurable products, send super_attribute
+        if (selectedVariantId && !isNaN(selectedVariantId)) {
+            const product = form.closest('.beres-card');
+            const attrId = product?.dataset?.superAttrId;
+            if (attrId) {
+                payload.selected_configurable_option = selectedVariantId;
+                payload['super_attribute[' + attrId + ']'] = selectedVariantId;
+            } else {
+                // Fallback: try to find from form
+                payload.selected_configurable_option = selectedVariantId;
+            }
+        }
+
         try {
             const res = await fetch(form.action, {
                 method: 'POST',
@@ -202,12 +221,11 @@
                     'X-CSRF-TOKEN': token,
                 },
                 credentials: 'same-origin',
-                body: JSON.stringify({ product_id: productId, quantity }),
+                body: JSON.stringify(payload),
             });
 
             if (res.ok) {
                 if (btn) btn.textContent = '✓ Ditambahkan';
-                // Notify Vue root (cart drawer) kalau ada
                 document.dispatchEvent(new CustomEvent('cart:updated'));
                 setTimeout(() => {
                     if (btn) { btn.disabled = false; btn.textContent = original; }
@@ -242,21 +260,21 @@
         const hiddenInput = card.querySelector('.beres-variant-input');
         if (hiddenInput) hiddenInput.value = variantId;
 
-        // Update button styles
+        // Update button styles (highlight selected)
         const siblings = btn.parentElement.querySelectorAll('button');
         siblings.forEach(b => {
-            b.style.backgroundColor = '';
+            b.style.backgroundColor = '#8B4513';
             b.style.borderColor = '#E8F0E5';
             b.classList.remove('text-white');
-            b.classList.add('text-[#737373]');
+            b.classList.add('text-[#171717]');
         });
-        btn.style.backgroundColor = '#2D5A27';
-        btn.style.borderColor = '#2D5A27';
+        btn.style.backgroundColor = '#8B4513';
+        btn.style.borderColor = '#8B4513';
         btn.classList.add('text-white');
-        btn.classList.remove('text-[#737373]');
+        btn.classList.remove('text-[#171717]');
 
         // Update price display
-        const priceEl = card.querySelector('.mt-1\\.5 span:first-child');
+        const priceEl = card.querySelector('.text-xl.font-bold');
         if (priceEl && price) priceEl.textContent = price;
     };
 

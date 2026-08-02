@@ -29,9 +29,7 @@
                 action="{{ route('shop.search.index') }}"
                 class="relative w-full"
                 role="search"
-                toolname="search_products"
-                tooldescription="{{ trans('shop::app.components.layouts.webmcp.search-products') }}"
-                toolautosubmit
+                id="desktop-search-form"
             >
                 <label for="organic-search" class="sr-only">@lang('shop::app.components.layouts.header.desktop.bottom.search')</label>
 
@@ -40,14 +38,13 @@
                     type="text"
                     name="query"
                     value="{{ request('query') }}"
-                    toolparamdescription="{{ trans('shop::app.components.layouts.webmcp.search-products-query') }}"
                     class="block w-full text-[14px] text-ink placeholder:text-stone bg-transparent border border-mist rounded-none px-5 py-3 pr-14 transition-colors hover:border-ink focus:border-ink focus:ring-0 focus:outline-none"
                     minlength="{{ core()->getConfigData('catalog.products.search.min_query_length') }}"
                     maxlength="{{ core()->getConfigData('catalog.products.search.max_query_length') }}"
                     placeholder="Apa yang Anda cari?"
                     aria-label="Search"
                     aria-required="true"
-                    pattern="[^\\]+"
+                    autocomplete="off"
                     required
                 >
 
