@@ -225,8 +225,8 @@ return [
                 'channel_based' => false],
             ['name' => 'environment',   'title' => 'Environment',       'type' => 'select',   'default' => 'sandbox',
                 'options' => [
-                    ['label' => 'Sandbox (Testing)', 'value' => 'sandbox'],
-                    ['label' => 'Production',        'value' => 'production'],
+                    ['title' => 'Sandbox (Testing)', 'value' => 'sandbox'],
+                    ['title' => 'Production',        'value' => 'production'],
                 ],
                 'channel_based' => false],
             ['name' => 'payment_types', 'title' => 'Tipe Pembayaran',   'type' => 'textarea', 'default' => 'credit_card,bca_va,bni_va,bri_va,mandiri_va,gopay,shopeepay,qris,indomaret,alfamart',
@@ -250,9 +250,9 @@ return [
                 'info' => 'API Key dari dashboard RajaOngkir. Starter = gratis 10.000 request/bulan.', 'channel_based' => false],
             ['name' => 'api_type',      'title' => 'Tipe API',            'type' => 'select',   'default' => 'starter',
                 'options' => [
-                    ['label' => 'Starter (Gratis)', 'value' => 'starter'],
-                    ['label' => 'Basic (Premium)',  'value' => 'basic'],
-                    ['label' => 'Pro (Enterprise)',  'value' => 'pro'],
+                    ['title' => 'Starter (Gratis)', 'value' => 'starter'],
+                    ['title' => 'Basic (Premium)',  'value' => 'basic'],
+                    ['title' => 'Pro (Enterprise)',  'value' => 'pro'],
                 ],
                 'channel_based' => false],
             ['name' => 'origin_city',   'title' => 'ID Kota Asal',       'type' => 'text',     'default' => '152',
