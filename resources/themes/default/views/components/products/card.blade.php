@@ -75,16 +75,6 @@
                         ></button>
                     @endif
                     {!! view_render_event('bagisto.shop.components.products.card.wishlist_option.after') !!}
-
-                    {!! view_render_event('bagisto.shop.components.products.card.compare_option.before') !!}
-                    @if (core()->getConfigData('catalog.products.settings.compare_option'))
-                        <button
-                            class="icon-compare w-9 h-9 rounded-full bg-cream/95 flex items-center justify-center text-lg text-ink hover:bg-cream transition-colors"
-                            @click="addToCompare(product.id)"
-                            :aria-label="'@lang('shop::app.components.products.card.add-to-compare')'"
-                        ></button>
-                    @endif
-                    {!! view_render_event('bagisto.shop.components.products.card.compare_option.after') !!}
                 </div>
 
                 <!-- Quick add-to-cart bar (desktop hover) -->
@@ -99,6 +89,20 @@
                             @lang('shop::app.components.products.card.add-to-cart')
                         </button>
                         {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.after') !!}
+                    </div>
+                @endif
+
+                <!-- Quick add-to-cart icon (mobile/tablet) -->
+                @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
+                    <div class="absolute bottom-3 right-3 min-md:hidden">
+                        <button
+                            class="w-10 h-10 bg-[#2D5A27] text-white rounded-full flex items-center justify-center hover:bg-[#1E3D1A] transition-colors disabled:opacity-60 shadow-md"
+                            :disabled="! product.is_saleable || isAddingToCart"
+                            @click="addToCart()"
+                            aria-label="@lang('shop::app.components.products.card.add-to-cart')"
+                        >
+                            <span class="icon-cart text-lg"></span>
+                        </button>
                     </div>
                 @endif
             </div>
@@ -206,11 +210,12 @@
                     @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
                         {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.before') !!}
                         <button
-                            class="primary-button"
+                            class="primary-button max-sm:w-10 max-sm:h-10 max-sm:p-0 max-sm:rounded-full max-sm:flex max-sm:items-center max-sm:justify-center"
                             :disabled="! product.is_saleable || isAddingToCart"
                             @click="addToCart()"
                         >
-                            @lang('shop::app.components.products.card.add-to-cart')
+                            <span class="max-sm:hidden">@lang('shop::app.components.products.card.add-to-cart')</span>
+                            <span class="icon-cart text-lg sm:hidden"></span>
                         </button>
                         {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.after') !!}
                     @endif

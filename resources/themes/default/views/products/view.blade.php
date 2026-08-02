@@ -400,7 +400,7 @@
                                 <div class="mt-7 flex flex-col gap-3">
 
                                     {{-- Qty + Add to Cart row --}}
-                                    <div class="flex gap-3 items-stretch">
+                                    <div class="flex gap-3 items-center">
                                         {!! view_render_event('bagisto.shop.products.view.quantity.before', ['product' => $product]) !!}
 
                                         @if ($product->getTypeInstance()->showQuantityBox())
@@ -418,20 +418,20 @@
 
                                             <button
                                                 type="submit"
-                                                class="pdp-btn-primary flex-1"
+                                                class="pdp-btn-primary flex-1 !w-auto"
                                                 :disabled="isStoring.addToCart || {{ $product->isSaleable(1) ? 'false' : 'true' }}"
                                                 @click="is_buy_now=0;"
                                             >
                                                 <span v-if="isStoring.addToCart">
-                                                    <svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" opacity=".25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/></svg>
+                                                    <svg class="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" opacity=".25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/></svg>
                                                 </span>
-                                                <span v-else>@lang('shop::app.products.view.add-to-cart')</span>
+                                                <span v-else class="icon-cart text-xl"></span>
                                             </button>
 
                                             {!! view_render_event('bagisto.shop.products.view.add_to_cart.after', ['product' => $product]) !!}
                                         @else
-                                            <button type="button" class="pdp-btn-primary flex-1" @click="$refs.contactUsModal.open()">
-                                                @lang('shop::app.components.layouts.footer.contact-us')
+                                            <button type="button" class="pdp-btn-primary flex-1 !w-auto" @click="$refs.contactUsModal.open()">
+                                                <span class="icon-cart text-xl"></span>
                                             </button>
                                         @endif
                                     </div>
@@ -504,23 +504,8 @@
 
                                 {!! view_render_event('bagisto.shop.products.view.additional_actions.before', ['product' => $product]) !!}
 
-                                {{-- Compare + Share row --}}
+                                {{-- Share row --}}
                                 <div class="mt-6 flex items-center gap-6 text-sm text-stone flex-wrap">
-                                    {!! view_render_event('bagisto.shop.products.view.compare.before', ['product' => $product]) !!}
-
-                                    @if (core()->getConfigData('catalog.products.settings.compare_option'))
-                                        <div
-                                            class="flex items-center gap-2 cursor-pointer hover:text-ink transition-colors"
-                                            role="button"
-                                            tabindex="0"
-                                            @click="is_buy_now=0; addToCompare({{ $product->id }})"
-                                        >
-                                            <span class="icon-compare text-xl" role="presentation"></span>
-                                            @lang('shop::app.products.view.compare')
-                                        </div>
-                                    @endif
-
-                                    {!! view_render_event('bagisto.shop.products.view.compare.after', ['product' => $product]) !!}
                                 </div>
 
                                 {!! view_render_event('bagisto.shop.products.view.additional_actions.after', ['product' => $product]) !!}

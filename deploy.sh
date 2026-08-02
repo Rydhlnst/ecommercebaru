@@ -3,6 +3,27 @@ set -e
 
 cd ~/ecommercebaru
 
+# Quick cache clear mode: bash deploy.sh clear
+if [ "$1" = "clear" ]; then
+    echo "========================================="
+    echo "  CLEARING ALL CACHES..."
+    echo "========================================="
+    docker compose exec app php artisan view:clear
+    docker compose exec app php artisan config:clear
+    docker compose exec app php artisan route:clear
+    docker compose exec app php artisan cache:clear
+    docker compose exec app php artisan responsecache:clear
+    docker compose exec app rm -f storage/framework/cache/data/* 2>/dev/null || true
+    docker compose exec app rm -f bootstrap/cache/packages.php bootstrap/cache/services.php bootstrap/cache/config.php 2>/dev/null || true
+    docker compose exec app php artisan config:cache
+    docker compose exec app php artisan route:cache
+    docker compose exec app php artisan view:cache
+    echo "========================================="
+    echo "  ALL CACHES CLEARED & REBUILT!"
+    echo "========================================="
+    exit 0
+fi
+
 echo "========================================="
 echo "  DEPLOY: Ankesh Mart Ecommerce"
 echo "========================================="
@@ -125,5 +146,7 @@ echo "    • Pengiriman (RajaOngkir) → isi api_key, api_type, origin_city, ak
 echo "    • Email (Resend)    → isi api_key, from_email, from_name"
 echo "    • Header Category Nav → sesuaikan menu 7 kategori"
 echo "    • Kontak & Lokasi   → isi google_review_url"
-echo "  Then run: docker compose exec app php artisan cache:clear"
+echo ""
+echo "  QUICK CACHE CLEAR (no full deploy):"
+echo "    bash deploy.sh clear"
 echo "========================================="

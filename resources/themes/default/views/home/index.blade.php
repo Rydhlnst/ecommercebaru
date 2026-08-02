@@ -128,6 +128,42 @@
 @push('styles')
 <style>
     @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* Custom scrollbar for horizontal product scroll */
+    .product-scroll-mobile {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: #2D5A27 #E8F0E5;
+        padding-bottom: 1rem;
+        gap: 1rem;
+    }
+    .product-scroll-mobile > * {
+        flex: 0 0 calc((100% - 2rem) / 3);
+        scroll-snap-align: start;
+    }
+    @media (max-width: 767px) {
+        .product-scroll-mobile > * {
+            flex: 0 0 calc(70%);
+        }
+    }
+    /* Webkit scrollbar (Chrome, Safari, Edge) */
+    .product-scroll-mobile::-webkit-scrollbar {
+        height: 6px;
+    }
+    .product-scroll-mobile::-webkit-scrollbar-track {
+        background: #E8F0E5;
+        border-radius: 10px;
+    }
+    .product-scroll-mobile::-webkit-scrollbar-thumb {
+        background: #2D5A27;
+        border-radius: 10px;
+    }
+    .product-scroll-mobile::-webkit-scrollbar-thumb:hover {
+        background: #1E3D1A;
+    }
     .beres-hero{position:relative;width:100%;overflow:hidden;background:#000;}
     .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform;}
     .beres-hero__slide{flex:0 0 100%;width:100%;aspect-ratio:16/7;background:#111;}
@@ -260,16 +296,18 @@
         const hiddenInput = card.querySelector('.beres-variant-input');
         if (hiddenInput) hiddenInput.value = variantId;
 
-        // Update button styles (highlight selected)
+        // Reset ALL sibling buttons to default state
         const siblings = btn.parentElement.querySelectorAll('button');
         siblings.forEach(b => {
-            b.style.backgroundColor = '#8B4513';
+            b.style.backgroundColor = '';
             b.style.borderColor = '#E8F0E5';
             b.classList.remove('text-white');
             b.classList.add('text-[#171717]');
         });
-        btn.style.backgroundColor = '#8B4513';
-        btn.style.borderColor = '#8B4513';
+
+        // Highlight ONLY the selected button
+        btn.style.backgroundColor = '#2D5A27';
+        btn.style.borderColor = '#2D5A27';
         btn.classList.add('text-white');
         btn.classList.remove('text-[#171717]');
 
@@ -414,7 +452,7 @@
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.new_title', 'Produk Terbaru') }}</h2>
 
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div class="product-scroll-mobile">
                 @if ($newProductsDb->isNotEmpty())
                     @foreach ($newProductsDb as $i => $product)
                         @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
@@ -433,7 +471,7 @@
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.bundle_title', 'Paket & Bundel') }}</h2>
 
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div class="product-scroll-mobile">
                 @if ($bundlesDb->isNotEmpty())
                     @foreach ($bundlesDb as $i => $product)
                         @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
@@ -495,7 +533,7 @@
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
             <h2 class="text-xl md:text-2xl text-[#171717] mb-6 md:mb-8" style="font-weight:600;">{{ $c('sections.best_title', 'Produk Terlaris') }}</h2>
 
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div class="product-scroll-mobile">
                 @if ($bestSellersDb->isNotEmpty())
                     @foreach ($bestSellersDb as $i => $product)
                         @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
@@ -532,7 +570,7 @@
                 <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat Semua</a>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            <div class="product-scroll-mobile">
                 @if ($superfoodsDb->isNotEmpty())
                     @foreach ($superfoodsDb as $i => $product)
                         @php
@@ -655,27 +693,12 @@
         </div>
     </section>
 
-    {{-- ============ BLOG CTA BANNER ============ --}}
-    <section class="bg-white pb-4 md:pb-6 beres-reveal">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14">
-            @php $blogCtaImg = $c('blog_cta.image'); $blogCtaLink = $c('blog_cta.link', route('shop.search.index')); @endphp
-            <div class="text-white p-8 md:p-12 lg:p-16 relative overflow-hidden" style="background-color:#2D5A27; border-radius:20px; @if($blogCtaImg) background-image:linear-gradient(rgba(45,90,39,.75),rgba(45,90,39,.75)),url('{{ $blogCtaImg }}'); background-size:cover; background-position:center; @endif">
-                <h2 class="text-2xl md:text-3xl lg:text-4xl max-w-2xl" style="font-weight:600; letter-spacing:-0.01em;">
-                    {!! nl2br(e($c('blog_cta.title', "Baca tips produk favorit\ntuntuk gaya hidup lebih sehat."))) !!}
-                </h2>
-                <a href="{{ $blogCtaLink }}" class="beres-btn mt-6 inline-block px-6 py-3 text-[13px] tracking-[0.14em] uppercase bg-white text-[#2D5A27] hover:bg-[#E8F0E5] transition-colors" style="font-weight:600; border-radius:999px;">
-                    {{ $c('blog_cta.button', 'Lihat semua blog') }}
-                </a>
-            </div>
-        </div>
-    </section>
-
     {{-- ============ LATEST BLOGS ============ --}}
     <section class="bg-white beres-reveal">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
-            <div class="flex items-center justify-between mb-6 md:mb-8">
-                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Blog Terbaru</h2>
-                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Jelajahi Blog Kesehatan</a>
+            <div class="flex items-center justify-between mb-8 md:mb-10">
+                <h2 class="text-2xl md:text-3xl text-[#171717]" style="font-weight:700;">Latest Blogs</h2>
+                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Browse Wellness Blogs</a>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -685,29 +708,76 @@
                             $blogTitle   = $page->page_title ?? $page->translations->first()->page_title ?? 'Untitled';
                             $blogExcerpt = \Illuminate\Support\Str::limit(strip_tags($page->html_content ?? $page->translations->first()->html_content ?? ''), 120);
                             $blogUrl     = route('shop.cms.page', $page->url_key ?? '');
+                            $blogDate    = $page->created_at ? $page->created_at->format('d M Y') : '';
                         @endphp
-                        <article class="group">
+                        <article class="group bg-white overflow-hidden" style="border-radius:16px; border:1px solid #E8F0E5;">
+                            {{-- Banner Image --}}
                             <a href="{{ $blogUrl }}" class="block">
-                                <div class="aspect-[16/10] overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]" style="background-color:{{ $bgPick($i) }};"></div>
-                                <p class="mt-4 text-[11px] tracking-[0.14em] uppercase" style="color:#2D5A27;">Baca artikel</p>
-                                <h3 class="mt-2 text-lg md:text-xl text-[#171717] group-hover:text-[#2D5A27] transition-colors" style="font-weight:600;">{{ $blogTitle }}</h3>
-                                <p class="mt-2 text-sm text-[#404040] leading-relaxed">{{ $blogExcerpt }}</p>
+                                <div class="relative aspect-[16/10] overflow-hidden" style="background: linear-gradient(135deg, #F5F9F3 0%, #E8F0E5 100%);">
+                                    <div class="absolute inset-0 flex items-center justify-between p-6">
+                                        <div class="flex-1">
+                                            <p class="text-xs text-[#2D5A27] mb-2" style="font-weight:500;">Grannis Kitchen</p>
+                                            <h3 class="text-xl md:text-2xl text-[#171717] leading-tight" style="font-weight:700;">{{ $blogTitle }}</h3>
+                                        </div>
+                                        <div class="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 ml-4">
+                                            <div class="w-full h-full rounded-lg" style="background-color: #D4A574;"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </a>
+
+                            {{-- Content --}}
+                            <div class="p-5 md:p-6">
+                                @if ($blogDate)
+                                    <div class="flex items-center gap-2 text-xs text-[#737373] mb-3">
+                                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                        </svg>
+                                        <span>{{ strtoupper($blogDate) }}</span>
+                                    </div>
+                                @endif
+                                <a href="{{ $blogUrl }}" class="block">
+                                    <h4 class="text-base md:text-lg text-[#171717] group-hover:text-[#2D5A27] transition-colors line-clamp-2" style="font-weight:600;">{{ $blogTitle }}</h4>
+                                </a>
+                                <p class="mt-2 text-sm text-[#737373] leading-relaxed line-clamp-2">{{ $blogExcerpt }}</p>
+                            </div>
                         </article>
                     @endforeach
                 @else
-                    @foreach ([['High Fiber Breakfast','Sarapan berserat tinggi untuk energi seharian.'],['High Protein Breakfast','Menu cepat & tinggi protein untuk yang sibuk.'],['Best Healthy Foods','Rangkuman bahan sarapan sehat wajib.']] as $i => [$title, $excerpt])
-                        <article class="group">
+                    @foreach ([['High Fiber Breakfast Ideas for Healthy Living','Adding high-fiber food to breakfast is the simplest of methods to make the meal more nutritious.'],['High Protein Breakfast Ideas for Busy Professionals','Many professionals have to rush to get to work in the morning. With all the preparations for a healthy start...'],['Best Healthy Breakfast Foods for Everyone','The most effective breakfast meal can definitely make a difference in everything from your energy levels...']] as $i => [$title, $excerpt])
+                        <article class="group bg-white overflow-hidden" style="border-radius:16px; border:1px solid #E8F0E5;">
                             <a href="{{ route('shop.search.index') }}" class="block">
-                                <div class="aspect-[16/10] overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]" style="background-color:{{ $bgPick($i) }};"></div>
-                                <p class="mt-4 text-[11px] tracking-[0.14em] uppercase" style="color:#2D5A27;">Baca artikel</p>
-                                <h3 class="mt-2 text-lg md:text-xl text-[#171717] group-hover:text-[#2D5A27] transition-colors" style="font-weight:600;">{{ $title }}</h3>
-                                <p class="mt-2 text-sm text-[#404040] leading-relaxed">{{ $excerpt }}</p>
+                                <div class="relative aspect-[16/10] overflow-hidden" style="background: linear-gradient(135deg, #F5F9F3 0%, #E8F0E5 100%);">
+                                    <div class="absolute inset-0 flex items-center justify-between p-6">
+                                        <div class="flex-1">
+                                            <p class="text-xs text-[#2D5A27] mb-2" style="font-weight:500;">Grannis Kitchen</p>
+                                            <h3 class="text-xl md:text-2xl text-[#171717] leading-tight" style="font-weight:700;">{{ $title }}</h3>
+                                        </div>
+                                        <div class="w-24 h-24 md:w-32 md:h-32 flex-shrink-0 ml-4">
+                                            <div class="w-full h-full rounded-lg" style="background-color: #D4A574;"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </a>
+                            <div class="p-5 md:p-6">
+                                <div class="flex items-center gap-2 text-xs text-[#737373] mb-3">
+                                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                    </svg>
+                                    <span>{{ strtoupper(now()->subDays($i * 6)->format('d M Y')) }}</span>
+                                </div>
+                                <a href="{{ route('shop.search.index') }}" class="block">
+                                    <h4 class="text-base md:text-lg text-[#171717] group-hover:text-[#2D5A27] transition-colors line-clamp-2" style="font-weight:600;">{{ $title }}</h4>
+                                </a>
+                                <p class="mt-2 text-sm text-[#737373] leading-relaxed line-clamp-2">{{ $excerpt }}</p>
+                            </div>
                         </article>
                     @endforeach
                 @endif
             </div>
         </div>
     </section>
+
+    {{-- ============ MAP & CONTACT ============ --}}
+    @include('shop::components.layouts.map-section')
 </x-shop::layouts>

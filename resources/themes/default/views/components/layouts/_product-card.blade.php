@@ -162,8 +162,8 @@
                         @endphp
                         <button type="button"
                                 class="beres-btn px-4 py-2 text-sm font-medium border transition-all
-                                {{ $i === 0 ? 'text-white border-[#8B4513]' : 'text-[#171717] border-[#E8F0E5] hover:border-[#8B4513]' }}"
-                                style="{{ $i === 0 ? 'background-color:#8B4513;' : '' }} border-radius:8px;"
+                                {{ $i === 0 ? 'text-white border-[#2D5A27]' : 'text-[#171717] border-[#E8F0E5] hover:border-[#2D5A27]' }}"
+                                style="{{ $i === 0 ? 'background-color:#2D5A27;' : '' }} border-radius:8px;"
                                 onclick="beresSelectVariant(this, {{ $v['id'] }}, '{{ $v['price'] }}', @json($vSale))"
                                 data-variant-id="{{ $v['id'] }}">
                             {{ $v['label'] }}
@@ -189,17 +189,18 @@
 
                 {{-- Quantity label + stepper --}}
                 <p class="text-sm font-medium text-[#171717] mb-2">Quantity</p>
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center border border-[#E8F0E5] rounded-lg overflow-hidden">
-                        <button type="button" class="w-10 h-10 flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-lg" onclick="beresQty(this, -1)" aria-label="Kurangi">−</button>
-                        <input type="number" name="quantity" value="1" min="1" max="99" class="w-12 h-10 text-center text-sm border-0 border-x border-[#E8F0E5] focus:outline-none bg-transparent font-semibold" aria-label="Jumlah">
-                        <button type="button" class="w-10 h-10 flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-lg" onclick="beresQty(this, 1)" aria-label="Tambah">+</button>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center border border-[#E8F0E5] rounded-lg overflow-hidden h-10">
+                        <button type="button" class="w-10 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-lg leading-none" onclick="beresQty(this, -1)" aria-label="Kurangi">−</button>
+                        <input type="number" name="quantity" value="1" min="1" max="99" class="w-10 h-full text-center text-sm border-0 border-x border-[#E8F0E5] focus:outline-none bg-transparent font-semibold leading-none" aria-label="Jumlah">
+                        <button type="button" class="w-10 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-lg leading-none" onclick="beresQty(this, 1)" aria-label="Tambah">+</button>
                     </div>
 
                     <button type="submit"
-                            class="flex-1 h-10 text-sm font-semibold tracking-[0.05em] uppercase text-white hover:opacity-90 transition-opacity"
-                            style="background-color:#8B4513; border-radius:8px;">
-                        Add To Cart
+                            class="flex-1 h-10 text-sm font-semibold tracking-[0.05em] uppercase text-white hover:opacity-90 transition-opacity max-sm:w-10 max-sm:h-10 max-sm:p-0 max-sm:flex max-sm:items-center max-sm:justify-center max-sm:text-base"
+                            style="background-color:#2D5A27; border-radius:8px;">
+                        <span class="max-sm:hidden">Add To Cart</span>
+                        <span class="icon-cart text-lg sm:hidden"></span>
                     </button>
                 </div>
             </form>
@@ -212,7 +213,7 @@
         @else
             <a href="{{ $href }}"
                class="beres-btn mt-3 block w-full h-10 text-sm font-semibold tracking-[0.05em] uppercase text-white hover:opacity-90 text-center transition-opacity"
-               style="background-color:#8B4513; border-radius:8px;">
+               style="background-color:#2D5A27; border-radius:8px;">
                 Lihat Produk
             </a>
         @endif

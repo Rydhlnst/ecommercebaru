@@ -9,93 +9,62 @@
     $phone    = $c('phone',       '+62 21 555 1234');
     $email    = $c('email',       'halo@ecommerce.beres.io');
     $mapQuery = $c('map_query',   'Pasar Modern BSD, Serpong, Tangerang');
+    $country  = $c('country',     'Indonesia');
 @endphp
 
-{{-- Store location + map --}}
+{{-- Store location + map — compact horizontal layout --}}
 <section id="lokasi" class="bg-white">
     <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-14">
-        <div class="grid gap-8 md:gap-12 lg:grid-cols-2 items-start">
+        <div class="grid gap-6 md:gap-8 lg:grid-cols-5 items-start">
 
-            {{-- Info kolom --}}
-            <div>
-                <p class="text-[11px] tracking-[0.14em] uppercase mb-3 text-[#2D5A27]">{{ $eyebrow }}</p>
-                <h2 class="text-3xl sm:text-4xl md:text-5xl text-[#171717]" style="font-weight:600; letter-spacing:-0.02em;">
-                    {{ $title }}
-                </h2>
-                <p class="mt-4 text-sm md:text-base text-[#404040] leading-relaxed max-w-md">
-                    {{ $desc }}
-                </p>
-
-                <dl class="mt-8 space-y-5">
-                    <div class="flex gap-3">
-                        <span class="shrink-0 mt-0.5 text-[#2D5A27]">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/>
-                                <circle cx="12" cy="10" r="3"/>
-                            </svg>
-                        </span>
-                        <div>
-                            <dt class="text-xs tracking-[0.14em] uppercase text-[#737373] mb-1">Alamat</dt>
-                            <dd class="text-sm md:text-base text-[#171717] leading-relaxed">
-                                {!! nl2br(e($address)) !!}
-                            </dd>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-3">
-                        <span class="shrink-0 mt-0.5 text-[#2D5A27]">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="12" cy="12" r="10"/>
-                                <path d="M12 6v6l4 2"/>
-                            </svg>
-                        </span>
-                        <div>
-                            <dt class="text-xs tracking-[0.14em] uppercase text-[#737373] mb-1">Jam operasional</dt>
-                            <dd class="text-sm md:text-base text-[#171717] leading-relaxed">
-                                {!! nl2br(e($hours)) !!}
-                            </dd>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-3">
-                        <span class="shrink-0 mt-0.5 text-[#2D5A27]">
-                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.6a2 2 0 01-.5 2.1L8 9.6a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.5c.8.3 1.7.5 2.6.6a2 2 0 011.7 2z"/>
-                            </svg>
-                        </span>
-                        <div>
-                            <dt class="text-xs tracking-[0.14em] uppercase text-[#737373] mb-1">Kontak</dt>
-                            <dd class="text-sm md:text-base text-[#171717] leading-relaxed">
-                                <a href="tel:{{ preg_replace('/\D/', '', $phone) }}" class="hover:text-[#2D5A27] transition-colors">{{ $phone }}</a><br>
-                                <a href="mailto:{{ $email }}" class="hover:text-[#2D5A27] transition-colors">{{ $email }}</a>
-                            </dd>
-                        </div>
-                    </div>
-                </dl>
-
-                <a
-                    href="https://www.google.com/maps/search/?api=1&query={{ urlencode($mapQuery) }}"
-                    target="_blank" rel="noopener"
-                    class="mt-8 inline-flex items-center gap-2 px-6 py-3 text-[13px] tracking-[0.14em] uppercase text-white bg-[#2D5A27] transition-colors hover:opacity-90"
-                    style="border-radius:999px;"
-                >
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="13.5" y1="4.5" x2="21" y2="12"/><polyline points="21,12 13.5,19.5"/><line x1="21" y1="12" x2="3" y2="12"/>
-                    </svg>
-                    Buka di Google Maps
-                </a>
-            </div>
-
-            {{-- Map embed --}}
-            <div class="relative w-full aspect-video overflow-hidden">
+            {{-- Map embed — takes 3/5 width --}}
+            <div class="relative w-full overflow-hidden lg:col-span-3" style="border-radius:16px;">
                 <iframe
                     src="https://www.google.com/maps?q={{ urlencode($mapQuery) }}&output=embed"
                     class="absolute inset-0 w-full h-full border-0"
+                    style="min-height:320px;"
                     loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
                     title="{{ $title }}"
                     allowfullscreen
                 ></iframe>
+                {{-- Open in Maps button --}}
+                <a
+                    href="https://www.google.com/maps/search/?api=1&query={{ urlencode($mapQuery) }}"
+                    target="_blank" rel="noopener"
+                    class="absolute top-4 left-4 inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-[#171717] bg-white hover:bg-gray-50 transition-colors shadow-md"
+                    style="border-radius:8px;"
+                >
+                    <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                    Open in Maps
+                </a>
+            </div>
+
+            {{-- Contact info — takes 2/5 width --}}
+            <div class="lg:col-span-2 px-2">
+                <h2 class="text-2xl md:text-3xl text-[#171717] mb-6" style="font-weight:700;">{{ $country }}</h2>
+
+                <div class="space-y-5">
+                    {{-- Address --}}
+                    <div>
+                        <p class="text-sm font-semibold text-[#171717] mb-1">Address</p>
+                        <p class="text-sm text-[#404040] leading-relaxed">{!! nl2br(e($address)) !!}</p>
+                    </div>
+
+                    {{-- Phone & Email in 2 columns --}}
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm font-semibold text-[#171717] mb-1">Phone</p>
+                            <a href="tel:{{ preg_replace('/\D/', '', $phone) }}" class="text-sm text-[#404040] hover:text-[#2D5A27] transition-colors break-all">{{ $phone }}</a>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-[#171717] mb-1">Email</p>
+                            <a href="mailto:{{ $email }}" class="text-sm text-[#404040] hover:text-[#2D5A27] transition-colors break-all">{{ $email }}</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
