@@ -326,6 +326,9 @@
 
             <!-- Mobile Bottom Navigation -->
             @include('shop::components.layouts.bottom-nav')
+
+            <!-- Fullscreen Search Overlay (mobile-first, also works on desktop) -->
+            <v-search-overlay></v-search-overlay>
         </div>
 
         {!! view_render_event('bagisto.shop.layout.body.after') !!}
@@ -357,7 +360,451 @@
         </script>
 
         {!! view_render_event('bagisto.shop.layout.vue-app-mount.before') !!}
+
+        {{-- ═══════════════════════════════════════════════════════════════
+             Fullscreen Search Overlay — Alpine-free, pure Vue 3 component
+             ═══════════════════════════════════════════════════════════════ --}}
+        <script type="text/x-template" id="v-search-overlay-template">
+            <div
+                v-show="isOpen"
+                class="search-overlay"
+                @keydown.escape.window="close"
+            >
+                {{-- Overlay backdrop --}}
+                <div class="search-overlay__backdrop" @click="close"></div>
+
+                {{-- Overlay panel --}}
+                <div class="search-overlay__panel">
+                    {{-- Search header --}}
+                    <div class="search-overlay__header">
+                        <div class="search-overlay__input-wrap">
+                            <svg class="search-overlay__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="7"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input
+                                ref="searchInput"
+                                v-model="query"
+                                type="text"
+                                placeholder="Cari produk..."
+                                class="search-overlay__input"
+                                @input="onInput"
+                                @keydown.enter.prevent="goToSearch"
+                                autocomplete="off"
+                            />
+                            <button
+                                v-if="query.length > 0"
+                                @click="query = ''; results = []; suggestions = []"
+                                class="search-overlay__clear"
+                                aria-label="Hapus"
+                            >&times;</button>
+                        </div>
+                        <button @click="close" class="search-overlay__close" aria-label="Tutup">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    {{-- Results body --}}
+                    <div class="search-overlay__body" ref="resultsBody">
+                        {{-- Loading --}}
+                        <div v-if="isLoading" class="search-overlay__loading">
+                            <div class="search-overlay__spinner"></div>
+                        </div>
+
+                        {{-- Suggestions (typo correction) --}}
+                        <div v-else-if="suggestions.length" class="search-overlay__suggestions">
+                            <p class="text-sm text-[#737373] mb-3">
+                                Mungkin yang Anda maksud:
+                                <button
+                                    v-for="s in suggestions"
+                                    :key="s"
+                                    @click="query = s; doSearch()"
+                                    class="ml-2 text-[#2D5A27] font-semibold hover:underline"
+                                >@{{ s }}</button>
+                            </p>
+                        </div>
+
+                        {{-- Product results --}}
+                        <div v-else-if="results.length" class="search-overlay__products">
+                            <div
+                                v-for="product in results"
+                                :key="product.id"
+                                class="search-overlay__product"
+                                @click="goToProduct(product)"
+                            >
+                                <div class="search-overlay__product-img">
+                                    <img
+                                        :src="product.base_image?.small_image_url || product.base_image?.medium_image_url || ''"
+                                        :alt="product.name"
+                                        loading="lazy"
+                                    />
+                                </div>
+                                <div class="search-overlay__product-info">
+                                    <p class="search-overlay__product-name">@{{ product.name }}</p>
+                                    <p class="search-overlay__product-price" v-html="product.price_html || product.min_price"></p>
+                                </div>
+                                <svg class="search-overlay__product-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </div>
+
+                            {{-- View all results link --}}
+                            <button
+                                @click="goToSearch"
+                                class="search-overlay__view-all"
+                            >
+                                Lihat semua hasil untuk "<span class="font-semibold">@{{ query }}</span>"
+                            </button>
+                        </div>
+
+                        {{-- Empty state --}}
+                        <div v-else-if="query.length >= 2 && !isLoading" class="search-overlay__empty">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#D4D4D4" stroke-width="1.5" width="48" height="48">
+                                <circle cx="11" cy="11" r="7"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <p class="text-[#737373] mt-3">Produk tidak ditemukan</p>
+                        </div>
+
+                        {{-- Initial hint --}}
+                        <div v-else class="search-overlay__hint">
+                            <p class="text-sm text-[#737373]">Ketik untuk mulai mencari</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+
+        {{-- ═══════════════════════════════════════════════════════════════
+             Search Overlay Styles
+             ═══════════════════════════════════════════════════════════════ --}}
+        <style>
+            .search-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 9999;
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+            }
+            .search-overlay__backdrop {
+                position: absolute;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.45);
+                animation: searchFadeIn .2s ease-out;
+            }
+            .search-overlay__panel {
+                position: relative;
+                width: 100%;
+                max-width: 640px;
+                height: 100dvh;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                animation: searchSlideIn .25s cubic-bezier(.2,.7,.2,1);
+                box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+            }
+            @media (max-width: 640px) {
+                .search-overlay__panel {
+                    max-width: 100%;
+                }
+            }
+            .search-overlay__header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 16px 20px;
+                border-bottom: 1px solid #E8F0E5;
+                background: #fff;
+                flex-shrink: 0;
+            }
+            .search-overlay__input-wrap {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                background: #F4F4F4;
+                border-radius: 12px;
+                padding: 0 14px;
+                height: 48px;
+            }
+            .search-overlay__icon {
+                width: 20px;
+                height: 20px;
+                flex-shrink: 0;
+                color: #737373;
+            }
+            .search-overlay__input {
+                flex: 1;
+                border: none;
+                background: none;
+                outline: none;
+                font-size: 16px;
+                color: #171717;
+                font-family: inherit;
+                padding: 0;
+            }
+            .search-overlay__input::placeholder {
+                color: #A3A3A3;
+            }
+            .search-overlay__clear {
+                width: 24px;
+                height: 24px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #D4D4D4;
+                border: none;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 14px;
+                color: #fff;
+                line-height: 1;
+                flex-shrink: 0;
+                transition: background .15s;
+            }
+            .search-overlay__clear:hover {
+                background: #A3A3A3;
+            }
+            .search-overlay__close {
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: none;
+                border: 1px solid #E8F0E5;
+                border-radius: 10px;
+                cursor: pointer;
+                color: #404040;
+                flex-shrink: 0;
+                transition: background .15s, border-color .15s;
+            }
+            .search-overlay__close:hover {
+                background: #F4F4F4;
+                border-color: #D4D4D4;
+            }
+            .search-overlay__body {
+                flex: 1;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+                padding: 16px 20px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .search-overlay__loading {
+                display: flex;
+                justify-content: center;
+                padding: 40px 0;
+            }
+            .search-overlay__spinner {
+                width: 28px;
+                height: 28px;
+                border: 3px solid #E8F0E5;
+                border-top-color: #2D5A27;
+                border-radius: 50%;
+                animation: searchSpin .6s linear infinite;
+            }
+            .search-overlay__products {
+                display: flex;
+                flex-direction: column;
+            }
+            .search-overlay__product {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 12px;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: background .15s;
+            }
+            .search-overlay__product:hover {
+                background: #F5F9F3;
+            }
+            .search-overlay__product-img {
+                width: 52px;
+                height: 52px;
+                border-radius: 10px;
+                overflow: hidden;
+                flex-shrink: 0;
+                background: #E8F0E5;
+            }
+            .search-overlay__product-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .search-overlay__product-info {
+                flex: 1;
+                min-width: 0;
+            }
+            .search-overlay__product-name {
+                font-size: 14px;
+                font-weight: 600;
+                color: #171717;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin: 0;
+            }
+            .search-overlay__product-price {
+                font-size: 13px;
+                color: #2D5A27;
+                font-weight: 600;
+                margin: 2px 0 0;
+            }
+            .search-overlay__product-arrow {
+                width: 16px;
+                height: 16px;
+                flex-shrink: 0;
+                color: #D4D4D4;
+            }
+            .search-overlay__view-all {
+                display: block;
+                width: 100%;
+                text-align: center;
+                padding: 14px;
+                margin-top: 8px;
+                background: #F5F9F3;
+                border: 1px solid #E8F0E5;
+                border-radius: 12px;
+                cursor: pointer;
+                font-size: 14px;
+                color: #2D5A27;
+                font-weight: 500;
+                transition: background .15s, border-color .15s;
+            }
+            .search-overlay__view-all:hover {
+                background: #E8F0E5;
+                border-color: #C8DBBE;
+            }
+            .search-overlay__empty,
+            .search-overlay__hint,
+            .search-overlay__suggestions {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 60px 20px;
+                text-align: center;
+            }
+            @keyframes searchFadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes searchSlideIn {
+                from { transform: translateY(-20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            @keyframes searchSpin {
+                to { transform: rotate(360deg); }
+            }
+        </style>
+
+        @pushOnce('scripts')
+        <script type="module">
+            app.component('v-search-overlay', {
+                template: '#v-search-overlay-template',
+
+                data() {
+                    return {
+                        isOpen: false,
+                        query: '',
+                        results: [],
+                        suggestions: [],
+                        isLoading: false,
+                        debounceTimer: null,
+                        abortController: null,
+                    };
+                },
+
+                methods: {
+                    open() {
+                        this.isOpen = true;
+                        this.$nextTick(() => {
+                            if (this.$refs.searchInput) {
+                                this.$refs.searchInput.focus();
+                            }
+                        });
+                        document.body.style.overflow = 'hidden';
+                    },
+
+                    close() {
+                        this.isOpen = false;
+                        this.query = '';
+                        this.results = [];
+                        this.suggestions = [];
+                        this.isLoading = false;
+                        document.body.style.overflow = '';
+                    },
+
+                    onInput() {
+                        clearTimeout(this.debounceTimer);
+                        if (this.abortController) {
+                            this.abortController.abort();
+                        }
+                        if (this.query.length < 2) {
+                            this.results = [];
+                            this.suggestions = [];
+                            return;
+                        }
+                        this.isLoading = true;
+                        this.debounceTimer = setTimeout(() => {
+                            this.doSearch();
+                        }, 350);
+                    },
+
+                    doSearch() {
+                        this.isLoading = true;
+                        this.results = [];
+                        this.suggestions = [];
+
+                        if (this.abortController) {
+                            this.abortController.abort();
+                        }
+                        this.abortController = new AbortController();
+
+                        const url = `{{ route('shop.api.products.index') }}?query=${encodeURIComponent(this.query)}&limit=8`;
+
+                        fetch(url, {
+                            signal: this.abortController.signal,
+                            headers: { 'Accept': 'application/json' }
+                        })
+                        .then(r => r.json())
+                        .then(data => {
+                            this.isLoading = false;
+                            this.results = data.data || [];
+                        })
+                        .catch(err => {
+                            if (err.name !== 'AbortError') {
+                                this.isLoading = false;
+                            }
+                        });
+                    },
+
+                    goToProduct(product) {
+                        const urlKey = product.url_key || product.sku;
+                        window.location.href = '/' + urlKey;
+                    },
+
+                    goToSearch() {
+                        if (this.query.trim()) {
+                            window.location.href = `{{ route('shop.search.index') }}?query=${encodeURIComponent(this.query.trim())}`;
+                        }
+                    },
+                },
+
+                mounted() {
+                    window.__searchOverlayOpen = () => this.open();
+                },
+            });
+        </script>
+        @endPushOnce
+
         <script>
+
             /**
              * Mount the application as soon as the DOM is ready instead of waiting
              * for the `load` event. All `Vue` components are registered through

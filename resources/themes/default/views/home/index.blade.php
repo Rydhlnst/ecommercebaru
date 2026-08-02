@@ -228,23 +228,18 @@
         const token     = document.querySelector('meta[name="csrf-token"]')?.content
                        || form.querySelector('[name="_token"]')?.value;
 
-        // Check if configurable product — send selected variant
+        // Configurable product: send the selected child variant.
+        // Bagisto's Configurable::prepareForCart() reads ONLY
+        // `selected_configurable_option` (the child product id) and derives
+        // the weight attribute/option automatically from the child. Sending
+        // super_attribute[...] is unnecessary and, with a child id, wrong.
         const variantInput = form.querySelector('.beres-variant-input');
         const selectedVariantId = variantInput ? parseInt(variantInput.value, 10) : null;
 
         const payload = { product_id: productId, quantity };
 
-        // For configurable products, send super_attribute
         if (selectedVariantId && !isNaN(selectedVariantId)) {
-            const product = form.closest('.beres-card');
-            const attrId = product?.dataset?.superAttrId;
-            if (attrId) {
-                payload.selected_configurable_option = selectedVariantId;
-                payload['super_attribute[' + attrId + ']'] = selectedVariantId;
-            } else {
-                // Fallback: try to find from form
-                payload.selected_configurable_option = selectedVariantId;
-            }
+            payload.selected_configurable_option = selectedVariantId;
         }
 
         try {
