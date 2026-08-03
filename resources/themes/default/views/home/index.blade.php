@@ -494,12 +494,12 @@
     {{-- ============ SHOP BY CATEGORY ============ --}}
     @php
         $homeCats = [
-            ['name' => 'Himalayan Salt & Gourmet Sea Salt', 'slug' => 'spices-and-salts'],
-            ['name' => 'Spices & Seasoning', 'slug' => 'recipe-mix-masalas'],
-            ['name' => 'Leather Goods', 'slug' => 'root'],
-            ['name' => 'Nuts & Seeds', 'slug' => 'seeds-and-super-foods'],
-            ['name' => 'Pure Himalayan Honey', 'slug' => 'grannis-signature-kits'],
-            ['name' => 'Coffee & Tea', 'slug' => 'oats-with-nuts'],
+            ['name' => 'Fruits & Vegetables', 'slug' => 'fruits-vegetables'],
+            ['name' => 'Meat & Seafood', 'slug' => 'meat-seafood'],
+            ['name' => 'Bread & Bakery', 'slug' => 'bread-bakery'],
+            ['name' => 'Drink', 'slug' => 'drink'],
+            ['name' => 'Spices & Herbs', 'slug' => 'spices-herbs'],
+            ['name' => 'Healthy Snacks', 'slug' => 'healthy-snacks'],
         ];
     @endphp
     <section class="bg-white beres-reveal">
@@ -546,7 +546,7 @@
     <section class="overflow-hidden beres-reveal" style="background-color:#2D5A27;">
         <div class="py-4 md:py-5">
             <div class="flex whitespace-nowrap animate-[marquee_35s_linear_infinite] text-white gap-10 md:gap-14">
-                @php $tickerItems = ['Signature Kits','Oats With Nuts','Spices and Salts','Seeds and Superfoods','Fry Mix Masala','Desi Ghee','Recipe Mix Masalas']; @endphp
+                @php $tickerItems = ['Fruits & Vegetables','Meat & Seafood','Bread & Bakery','Drink','Spices & Herbs','Healthy Snacks','Kitchen Essentials']; @endphp
                 @for ($rep = 0; $rep < 4; $rep++)
                     @foreach ($tickerItems as $t)
                         <span class="text-sm md:text-base tracking-[0.12em] uppercase" style="font-weight:500;">{{ $t }}</span>

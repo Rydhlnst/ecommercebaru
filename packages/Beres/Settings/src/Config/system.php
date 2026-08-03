@@ -185,7 +185,7 @@ return [
         'sort' => 6,
         'fields' => [
             ['name' => 'items', 'title' => 'Menu (satu per baris)', 'type' => 'textarea', 'channel_based' => false,
-                'default' => "Unggulan|/\nBuah & Sayur|buah-sayur\nDaging & Seafood|daging\nRoti & Bakery|roti\nMinuman|minuman\nBumbu & Rempah|bumbu\nSnack Sehat|snack",
+                'default' => "Unggulan|/\nFruits & Vegetables|fruits-vegetables\nMeat & Seafood|meat-seafood\nBread & Bakery|bread-bakery\nDrink|drink\nSpices & Herbs|spices-herbs\nHealthy Snacks|healthy-snacks",
                 'info' => 'Format: "Label|slug". Slug = kategori Bagisto, atau path (/blog). Baris kosong diabaikan.'],
         ],
     ],
