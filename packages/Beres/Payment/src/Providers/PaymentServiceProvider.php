@@ -55,7 +55,9 @@ class PaymentServiceProvider extends ServiceProvider
             $this->loadViewsFrom($views, 'beres-payment');
         }
 
-        foreach (['admin.php', 'api.php'] as $routeFile) {
+        // 'admin.php' disabled — Beres admin consolidated onto the standalone /admin panel.
+        // Keep 'api.php' for the Midtrans payment webhook/notification (storefront-critical).
+        foreach (['api.php'] as $routeFile) {
             $r = __DIR__ . '/../Routes/' . $routeFile;
             if (file_exists($r)) {
                 $this->loadRoutesFrom($r);

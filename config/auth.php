@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Webkul\Customer\Models\Customer;
 use Webkul\User\Models\Admin;
 
@@ -48,6 +49,16 @@ return [
             'driver' => 'session',
             'provider' => 'admins',
         ],
+
+        /**
+         * Guard for the custom standalone admin panel (App\Http\Controllers\Admin).
+         * Backed by the `users` table via App\Models\User + the `is_admin` flag.
+         * Kept separate from Bagisto's `customer` and `admin` guards.
+         */
+        'web' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
     /*
@@ -76,6 +87,11 @@ return [
         'admins' => [
             'driver' => 'eloquent',
             'model' => Admin::class,
+        ],
+
+        'users' => [
+            'driver' => 'eloquent',
+            'model' => User::class,
         ],
     ],
 

@@ -1,0 +1,27 @@
+{
+    "name": "beres/highlight",
+    "description": "Beres Commerce Homepage Highlights Manager",
+    "type": "bagisto-package",
+    "keywords": ["laravel", "bagisto", "homepage", "highlights"],
+    "license": "proprietary",
+    "require": {
+        "php": "^8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Beres\\Highlight\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Beres\\Highlight\\Providers\\HighlightServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

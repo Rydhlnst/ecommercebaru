@@ -2,6 +2,8 @@
 
 namespace Webkul\Shop\Http\Controllers;
 
+use App\Models\AdminCategory as AdminCategoryModel;
+use App\Models\AdminProduct;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Webkul\Category\Repositories\CategoryRepository;
@@ -92,6 +94,23 @@ class ProductsCategoriesProxyController extends Controller
             }
 
             return view('shop::products.view', compact('product'));
+        }
+
+        // --- AdminProduct lookup (custom simple products) ---
+        $adminProduct = AdminProduct::with('category', 'images', 'variations')
+            ->where('slug', $slugOrURLKey)
+            ->where('status', 'active')
+            ->first();
+
+        if ($adminProduct) {
+            return redirect()->route('shop.admin_product.show', $slugOrURLKey);
+        }
+
+        // --- AdminCategory lookup (custom simple categories) ---
+        $adminCategory = AdminCategoryModel::where('slug', $slugOrURLKey)->first();
+
+        if ($adminCategory) {
+            return redirect()->route('shop.admin_category.show', $slugOrURLKey);
         }
 
         /**

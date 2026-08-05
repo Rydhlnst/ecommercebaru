@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AdminAuth;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Cookie\Middleware\EncryptCookies as BaseEncryptCookies;
@@ -18,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->alias([
+            'admin.auth' => AdminAuth::class,
+        ]);
         /**
          * Remove the default Laravel middleware that prevents requests during maintenance mode. There are three
          * middlewares in the shop that need to be loaded before this middleware. Therefore, we need to remove this

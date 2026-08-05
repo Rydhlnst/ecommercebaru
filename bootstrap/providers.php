@@ -1,6 +1,20 @@
 <?php
 
 use App\Providers\AppServiceProvider;
+use Beres\Account\Providers\AccountServiceProvider;
+use Beres\Checkout\Providers\CheckoutServiceProvider as BeresCheckoutServiceProvider;
+use Beres\Customer\Providers\CustomerServiceProvider as BeresCustomerServiceProvider;
+use Beres\Dashboard\Providers\DashboardServiceProvider;
+use Beres\Highlight\Providers\HighlightServiceProvider;
+use Beres\Inventory\Providers\InventoryServiceProvider as BeresInventoryServiceProvider;
+use Beres\Notification\Providers\NotificationServiceProvider as BeresNotificationServiceProvider;
+use Beres\Order\Providers\OrderServiceProvider;
+use Beres\Payment\Providers\PaymentServiceProvider as BeresPaymentServiceProvider;
+use Beres\Permission\Providers\PermissionServiceProvider;
+use Beres\Product\Providers\ProductServiceProvider as BeresProductServiceProvider;
+use Beres\Reports\Providers\ReportServiceProvider;
+use Beres\Settings\Providers\SettingServiceProvider;
+use Beres\Shipping\Providers\ShippingServiceProvider as BeresShippingServiceProvider;
 use Webkul\Admin\Providers\AdminServiceProvider;
 use Webkul\Attribute\Providers\AttributeServiceProvider;
 use Webkul\BookingProduct\Providers\BookingProductServiceProvider;
@@ -42,20 +56,6 @@ use Webkul\Stripe\Providers\StripeServiceProvider;
 use Webkul\Tax\Providers\TaxServiceProvider;
 use Webkul\Theme\Providers\ThemeServiceProvider;
 use Webkul\User\Providers\UserServiceProvider;
-
-use Beres\Dashboard\Providers\DashboardServiceProvider;
-use Beres\Product\Providers\ProductServiceProvider as BeresProductServiceProvider;
-use Beres\Customer\Providers\CustomerServiceProvider as BeresCustomerServiceProvider;
-use Beres\Order\Providers\OrderServiceProvider;
-use Beres\Inventory\Providers\InventoryServiceProvider as BeresInventoryServiceProvider;
-use Beres\Payment\Providers\PaymentServiceProvider as BeresPaymentServiceProvider;
-use Beres\Shipping\Providers\ShippingServiceProvider as BeresShippingServiceProvider;
-use Beres\Checkout\Providers\CheckoutServiceProvider as BeresCheckoutServiceProvider;
-use Beres\Account\Providers\AccountServiceProvider;
-use Beres\Notification\Providers\NotificationServiceProvider as BeresNotificationServiceProvider;
-use Beres\Permission\Providers\PermissionServiceProvider;
-use Beres\Reports\Providers\ReportServiceProvider;
-use Beres\Settings\Providers\SettingServiceProvider;
 
 return [
     /**
@@ -124,4 +124,5 @@ return [
     PermissionServiceProvider::class,
     ReportServiceProvider::class,
     SettingServiceProvider::class,
+    HighlightServiceProvider::class,
 ];

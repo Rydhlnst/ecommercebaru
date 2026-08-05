@@ -1,8 +1,7 @@
 @php
-    use Webkul\Product\Repositories\ProductRepository;
-    use Webkul\Category\Repositories\CategoryRepository;
-    use Webkul\Product\Repositories\ProductReviewRepository;
-    use Webkul\CMS\Repositories\CmsRepository;
+    use App\Models\AdminCategory;
+    use App\Models\AdminReview;
+    use App\Models\BlogPost;
 
     $channel = core()->getCurrentChannel();
 
@@ -13,79 +12,46 @@
     $bgPool = ['#E8F0E5','#DCE8D6','#F0F5EC','#EAF1E4','#F5F9F3','#C8DBBE'];
     $bgPick = fn(int $i) => $bgPool[$i % count($bgPool)];
 
-    // ============ NEW ARRIVALS — produk standalone (bukan child variant) ============
+    // ============ HOMEPAGE HIGHLIGHTS — via HomepageHighlightService ============
+    $highlightService = app(\Beres\Highlight\Services\HomepageHighlightService::class);
+
     try {
-        $newProductsDb = app(ProductRepository::class)->getModel()::query()
-            ->whereIn('type', ['simple', 'configurable', 'bundle', 'virtual'])
-            ->whereDoesntHave('parent')
-            ->orderBy('created_at', 'desc')
-            ->limit(4)->get();
+        $newProductsDb   = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_NEW_ARRIVALS, 4);
+        $featuredProduct = $highlightService->getFeaturedProduct();
+        $bundlesDb       = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_KITS_BUNDLES, 4);
+        $bestSellersDb   = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_BEST_SELLERS, 4);
+        $superfoodsDb    = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_SEEDS, 5);
     } catch (\Throwable $e) {
-        $newProductsDb = collect();
+        $newProductsDb   = collect();
+        $featuredProduct = null;
+        $bundlesDb       = collect();
+        $bestSellersDb   = collect();
+        $superfoodsDb    = collect();
     }
 
-    // ============ FEATURED PRODUCT — produk terbaru pertama ============
-    $featuredProduct = $newProductsDb->first();
-
-    // ============ KITS & BUNDLES — Bagisto product type 'bundle' ============
+    // ============ CATEGORIES — from admin_categories ============
     try {
-        $bundlesDb = app(ProductRepository::class)->getModel()::query()
-            ->where('type', 'bundle')
-            ->whereDoesntHave('parent')
-            ->orderBy('created_at', 'desc')
-            ->limit(4)->get();
+        $categoriesDb = $highlightService->getCategories(8);
     } catch (\Throwable $e) {
-        $bundlesDb = collect();
+        $categoriesDb = AdminCategory::withCount('products')->orderByDesc('products_count')->limit(8)->get()
+            ->map(fn ($cat) => ['id' => $cat->id, 'name' => $cat->name, 'slug' => $cat->slug, 'image' => $cat->image ? asset('storage/'.$cat->image) : null]);
     }
 
-    // ============ BEST SELLERS — join dengan order_items untuk hitung penjualan ============
+    // ============ REVIEWS — from admin_reviews (approved only) ============
     try {
-        $bestSellersDb = app(ProductRepository::class)->getModel()::query()
-            ->leftJoin('order_items', 'products.id', '=', 'order_items.product_id')
-            ->select('products.*', \DB::raw('COALESCE(SUM(order_items.qty_ordered),0) as total_sold'))
-            ->whereIn('products.type', ['simple', 'configurable', 'bundle', 'virtual'])
-            ->whereDoesntHave('parent')
-            ->groupBy('products.id')
-            ->orderByDesc('total_sold')
-            ->limit(4)->get();
-    } catch (\Throwable $e) {
-        $bestSellersDb = collect();
-    }
-
-    // ============ SEEDS & SUPERFOODS — produk standalone random ============
-    try {
-        $superfoodsDb = app(ProductRepository::class)->getModel()::query()
-            ->whereIn('type', ['simple', 'configurable', 'virtual'])
-            ->whereDoesntHave('parent')
-            ->inRandomOrder()
-            ->limit(5)->get();
-    } catch (\Throwable $e) {
-        $superfoodsDb = collect();
-    }
-
-    // ============ CATEGORIES — dari CategoryRepository ============
-    try {
-        $categoriesDb = app(CategoryRepository::class)->getVisibleCategoryTree($channel->root_category_id ?? 1);
-        // Cap 8 root kategori pertama untuk grid
-        $categoriesDb = collect($categoriesDb)->take(8);
-    } catch (\Throwable $e) {
-        $categoriesDb = collect();
-    }
-
-    // ============ REVIEWS — dari product reviews approved ============
-    try {
-        $reviewsDb = app(ProductReviewRepository::class)->getModel()::query()
-            ->where('status', 'approved')
+        $reviewsDb = AdminReview::with('product')
+            ->where('is_approved', true)
             ->orderBy('created_at', 'desc')
             ->limit(3)->get();
     } catch (\Throwable $e) {
         $reviewsDb = collect();
     }
 
-    // ============ BLOGS — dari CMS Pages Bagisto ============
+    // ============ BLOGS — from blog_posts (published only) ============
     try {
-        $blogsDb = app(CmsRepository::class)->getModel()::query()
-            ->orderBy('id', 'desc')
+        $blogsDb = BlogPost::with('category')
+            ->where('is_published', true)
+            ->orderBy('published_at', 'desc')
             ->limit(3)->get();
     } catch (\Throwable $e) {
         $blogsDb = collect();
@@ -493,14 +459,8 @@
 
     {{-- ============ SHOP BY CATEGORY ============ --}}
     @php
-        $homeCats = [
-            ['name' => 'Fruits & Vegetables', 'slug' => 'fruits-vegetables'],
-            ['name' => 'Meat & Seafood', 'slug' => 'meat-seafood'],
-            ['name' => 'Bread & Bakery', 'slug' => 'bread-bakery'],
-            ['name' => 'Drink', 'slug' => 'drink'],
-            ['name' => 'Spices & Herbs', 'slug' => 'spices-herbs'],
-            ['name' => 'Healthy Snacks', 'slug' => 'healthy-snacks'],
-        ];
+        $homeCats = app(\Beres\Highlight\Services\HomepageHighlightService::class)
+            ->getCategories(6, $channel->root_category_id ?? 1);
     @endphp
     <section class="bg-white beres-reveal">
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">

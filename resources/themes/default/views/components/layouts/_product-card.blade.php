@@ -1,5 +1,5 @@
 @php
-    // Accept: $product (Bagisto Product model) ATAU plain args (name, price, compare, variants, bg, href)
+    // Accept: $product (Bagisto Product OR AdminProduct) ATAU plain args
     $product  = $product ?? null;
     $bg       = $bg      ?? '#E8F0E5';
     $index    = $index   ?? 0;
@@ -10,66 +10,97 @@
     $isNew    = false;
 
     if ($product) {
-        $name     = $product->name ?? $product->url_key ?? 'Produk';
-        $minPrice = 0;
-        try { $minPrice = $product->getTypeInstance()->getMinimalPrice() ?? 0; } catch (\Throwable $e) {}
-        $price    = core()->currency($minPrice);
-        try { $inStock = $product->getTypeInstance()->isSaleable(); } catch (\Throwable $e) {}
+        // Detect model type: AdminProduct vs Bagisto Product
+        $isAdminProduct = $product instanceof \App\Models\AdminProduct;
 
-        // Special price detection
-        try {
-            $regularPrice = $product->getTypeInstance()->getRegularPrice() ?? null;
-            if ($regularPrice && $regularPrice > $minPrice) {
-                $compare = core()->currency($regularPrice);
-                $salePrice = $price;
-            }
-        } catch (\Throwable $e) {}
-
-        $isNew    = $product->created_at && $product->created_at->diffInDays(now()) <= 14;
-        $href     = $product->url_key
-                        ? route('shop.product_or_category.index', $product->url_key)
-                        : route('shop.search.index');
+        $name     = $product->name ?? 'Produk';
         $prodId   = $product->id;
-        $image    = product_image()->getProductBaseImage($product)['small_image_url'] ?? null;
+        $isNew    = $product->created_at && $product->created_at->diffInDays(now()) <= 14;
 
-        // For configurable products: read child variants via the `variants` relation.
-        // (Bagisto's Configurable type does NOT expose getChildrenItems() — use the model relation instead.)
-        $isConfigurable = $product->type === 'configurable';
-        $childVariants  = [];
-        $superAttrId    = null;
-        if ($isConfigurable) {
-            try {
-                foreach ($product->variants as $child) {
-                    $childType = $child->getTypeInstance();
-                    $minPrice  = 0;
-                    $regPrice  = null;
-                    try {
-                        $minPrice = $childType->getMinimalPrice() ?? $child->price ?? 0;
-                        $regPrice = $childType->getRegularPrice();
-                    } catch (\Throwable $e) {}
+        if ($isAdminProduct) {
+            // --- AdminProduct (simple model) ---
+            $price    = core()->currency($product->price ?? 0);
+            $inStock  = ($product->stock ?? 0) > 0;
+            $href     = route('shop.product_or_category.index', $product->slug);
+            $image    = $product->images->count()
+                            ? asset('storage/'.$product->images->first()->image_path)
+                            : null;
 
-                    // Label: net_weight attribute returns the option's admin_name (e.g. "500g")
-                    // directly on the model. Fall back to the last dash-segment of child name
-                    // ("Product Name - 500g" → "500g"), then finally the full name.
-                    $label = $child->name;
-                    if (! empty($child->net_weight) && ! is_numeric($child->net_weight)) {
-                        $label = $child->net_weight;
-                    } elseif (str_contains($child->name, ' - ')) {
-                        $parts = explode(' - ', $child->name);
-                        $label = trim(end($parts));
-                    }
+            // Badge
+            $badge = $product->badge ?? null;
 
+            // Variations
+            $childVariants = [];
+            if ($product->has_variations && $product->variations->count()) {
+                foreach ($product->variations as $i => $var) {
+                    $vSale = false;
                     $childVariants[] = [
-                        'id'            => $child->id,
-                        'label'         => $label,
-                        'price'         => core()->currency($minPrice),
-                        'regular_price' => $regPrice,
-                        'special_price' => $minPrice,
+                        'id'            => $var->id,
+                        'label'         => $var->weight ? $var->weight.'kg' : 'Var '.($i+1),
+                        'price'         => core()->currency($var->price),
+                        'regular_price' => null,
+                        'special_price' => $var->price,
                     ];
                 }
-                $superAttrs = $product->super_attributes()->first();
-                if ($superAttrs) $superAttrId = $superAttrs->attribute_id ?? $superAttrs->id ?? 35;
+            }
+
+            $isConfigurable = false;
+            $superAttrId    = null;
+        } else {
+            // --- Bagisto Product (EAV model) ---
+            $minPrice = 0;
+            try { $minPrice = $product->getTypeInstance()->getMinimalPrice() ?? 0; } catch (\Throwable $e) {}
+            $price    = core()->currency($minPrice);
+            try { $inStock = $product->getTypeInstance()->isSaleable(); } catch (\Throwable $e) {}
+
+            try {
+                $regularPrice = $product->getTypeInstance()->getRegularPrice() ?? null;
+                if ($regularPrice && $regularPrice > $minPrice) {
+                    $compare = core()->currency($regularPrice);
+                    $salePrice = $price;
+                }
             } catch (\Throwable $e) {}
+
+            $href     = $product->url_key
+                            ? route('shop.product_or_category.index', $product->url_key)
+                            : route('shop.search.index');
+            $image    = product_image()->getProductBaseImage($product)['small_image_url'] ?? null;
+            $badge    = null;
+
+            $isConfigurable = $product->type === 'configurable';
+            $childVariants  = [];
+            $superAttrId    = null;
+            if ($isConfigurable) {
+                try {
+                    foreach ($product->variants as $child) {
+                        $childType = $child->getTypeInstance();
+                        $minPrice  = 0;
+                        $regPrice  = null;
+                        try {
+                            $minPrice = $childType->getMinimalPrice() ?? $child->price ?? 0;
+                            $regPrice = $childType->getRegularPrice();
+                        } catch (\Throwable $e) {}
+
+                        $label = $child->name;
+                        if (! empty($child->net_weight) && ! is_numeric($child->net_weight)) {
+                            $label = $child->net_weight;
+                        } elseif (str_contains($child->name, ' - ')) {
+                            $parts = explode(' - ', $child->name);
+                            $label = trim(end($parts));
+                        }
+
+                        $childVariants[] = [
+                            'id'            => $child->id,
+                            'label'         => $label,
+                            'price'         => core()->currency($minPrice),
+                            'regular_price' => $regPrice,
+                            'special_price' => $minPrice,
+                        ];
+                    }
+                    $superAttrs = $product->super_attributes()->first();
+                    if ($superAttrs) $superAttrId = $superAttrs->attribute_id ?? $superAttrs->id ?? 35;
+                } catch (\Throwable $e) {}
+            }
         }
     } else {
         $name     = $name     ?? '';
@@ -79,6 +110,7 @@
         $href     = $href     ?? route('shop.search.index');
         $prodId   = null;
         $image    = null;
+        $badge    = null;
         $isConfigurable = false;
         $childVariants  = [];
         $superAttrId    = null;
@@ -135,6 +167,14 @@
         <a href="{{ $href }}" class="block">
             <h3 class="text-base font-semibold text-[#171717] leading-snug transition-colors hover:text-[#2D5A27]">{{ $name }}</h3>
         </a>
+
+        {{-- Badge --}}
+        @if($badge)
+            <span class="inline-block mt-1 text-[10px] tracking-[0.14em] uppercase px-2 py-0.5 text-white font-bold"
+                  style="border-radius:4px; background-color:{{ $badge === 'sale' ? '#B91C1C' : ($badge === 'habis_terjual' ? '#737373' : '#2D5A27') }};">
+                {{ $badge === 'new' ? 'New' : ($badge === 'sale' ? 'Sale' : 'Habis') }}
+            </span>
+        @endif
 
         {{-- Price with sale --}}
         <div class="mt-2 flex items-center gap-2">

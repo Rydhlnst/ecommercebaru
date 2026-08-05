@@ -55,3 +55,96 @@ Route::get('/deploy/chmod', [DeployController::class, 'fixPermissions'])
 
 Route::get('/deploy/run', [DeployController::class, 'run'])
     ->middleware('throttle:3,1');
+
+/*
+|--------------------------------------------------------------------------
+| Frontend Product/Category Routes for Admin Products
+|--------------------------------------------------------------------------
+*/
+
+use App\Models\AdminCategory;
+use App\Models\AdminProduct;
+
+Route::get('/product/{slug}', function (string $slug) {
+    $product = AdminProduct::with('category', 'images', 'variations')
+        ->where('slug', $slug)
+        ->where('status', 'active')
+        ->firstOrFail();
+
+    return view('admin.frontend.product-detail', compact('product'));
+})->name('shop.admin_product.show');
+
+Route::get('/category/{slug}', function (string $slug) {
+    $category = AdminCategory::withCount('products')->where('slug', $slug)->firstOrFail();
+    $products = AdminProduct::with('images')
+        ->where('category_id', $category->id)
+        ->where('status', 'active')
+        ->paginate(12);
+
+    return view('admin.frontend.category-detail', compact('category', 'products'));
+})->name('shop.admin_category.show');
+
+/*
+|--------------------------------------------------------------------------
+| Panel Routes (admin CRUD)
+|--------------------------------------------------------------------------
+*/
+
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminBlogController;
+use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminFaqController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminProductController;
+use App\Http\Controllers\Admin\AdminReviewController;
+use App\Http\Controllers\Admin\AdminSettingController;
+use App\Http\Controllers\Admin\AdminShowcaseController;
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
+    Route::middleware(['web', 'admin.auth'])->group(function () {
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+        Route::resource('categories', AdminCategoryController::class)->parameters([
+            'categories' => 'category',
+        ]);
+
+        Route::resource('products', AdminProductController::class)->parameters([
+            'products' => 'product',
+        ]);
+
+        Route::get('/showcase', [AdminShowcaseController::class, 'index'])->name('showcase.index');
+        Route::post('/showcase', [AdminShowcaseController::class, 'store'])->name('showcase.store');
+
+        Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'destroy']);
+        Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+        Route::get('/blog', [AdminBlogController::class, 'index'])->name('blog.index');
+        Route::get('/blog/create', [AdminBlogController::class, 'create'])->name('blog.create');
+        Route::post('/blog', [AdminBlogController::class, 'store'])->name('blog.store');
+        Route::get('/blog/{post}/edit', [AdminBlogController::class, 'edit'])->name('blog.edit');
+        Route::put('/blog/{post}', [AdminBlogController::class, 'update'])->name('blog.update');
+        Route::delete('/blog/{post}', [AdminBlogController::class, 'destroy'])->name('blog.destroy');
+        Route::post('/blog/upload-image', [AdminBlogController::class, 'uploadImage'])->name('blog.uploadImage');
+        Route::post('/blog/categories', [AdminBlogController::class, 'storeCategory'])->name('blog.storeCategory');
+        Route::put('/blog/categories/{category}', [AdminBlogController::class, 'updateCategory'])->name('blog.updateCategory');
+        Route::delete('/blog/categories/{category}', [AdminBlogController::class, 'destroyCategory'])->name('blog.destroyCategory');
+
+        Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
+        Route::post('/reviews/{review}/approve', [AdminReviewController::class, 'approve'])->name('reviews.approve');
+        Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('reviews.destroy');
+
+        Route::resource('faqs', AdminFaqController::class)->parameters([
+            'faqs' => 'faq',
+        ]);
+
+        Route::get('/settings/policy', [AdminSettingController::class, 'policy'])->name('settings.policy');
+        Route::post('/settings/policy', [AdminSettingController::class, 'updatePolicy'])->name('settings.policy.update');
+        Route::get('/settings/store', [AdminSettingController::class, 'store'])->name('settings.store');
+        Route::post('/settings/store', [AdminSettingController::class, 'updateStore'])->name('settings.store.update');
+    });
+});

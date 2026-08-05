@@ -76,7 +76,12 @@ return [
     |
     */
 
-    'admin_url' => env('APP_ADMIN_URL', 'admin'),
+    /*
+     * The custom standalone admin panel (App\Http\Controllers\Admin) owns the "/admin"
+     * prefix. Bagisto's native admin is relocated to "/backend" so the two never collide.
+     * Override with APP_ADMIN_URL if needed.
+     */
+    'admin_url' => env('APP_ADMIN_URL', 'backend'),
 
     /*
     |--------------------------------------------------------------------------

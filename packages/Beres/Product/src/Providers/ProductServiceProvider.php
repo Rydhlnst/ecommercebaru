@@ -43,7 +43,8 @@ class ProductServiceProvider extends ServiceProvider
 
         $routes = __DIR__ . '/../Routes/admin.php';
         if (file_exists($routes)) {
-            $this->loadRoutesFrom($routes);
+            // Beres admin module disabled — consolidated onto the standalone /admin panel.
+            // $this->loadRoutesFrom($routes);
         }
 
         $systemConfig = __DIR__ . '/../Config/system.php';

@@ -62,5 +62,6 @@ return [
         Beres\Payment\Providers\ModuleServiceProvider::class,
         Beres\Shipping\Providers\ModuleServiceProvider::class,
         Beres\Checkout\Providers\ModuleServiceProvider::class,
+        Beres\Highlight\Providers\ModuleServiceProvider::class,
     ],
 ];
