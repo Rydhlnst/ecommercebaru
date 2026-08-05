@@ -96,7 +96,10 @@ docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\S
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\User\RolesTableSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\User\AdminsTableSeeder" --force
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\Shop\ThemeCustomizationTableSeeder" --force
-docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\ProductTableSeeder" --force
+# NOTE: Bagisto's demo ProductTableSeeder is intentionally NOT run. The storefront
+# runs entirely on the custom admin_products (seeded by AdminSeeder below); the demo
+# seeder also hard-codes old category IDs that no longer exist after the categories
+# were reduced to 7, which would fail the product_categories FK.
 
 echo ""
 echo "[8b/11] Seed custom admin panel (admin user + categories/products/blog/faq/reviews/settings)..."
