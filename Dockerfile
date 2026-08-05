@@ -35,6 +35,15 @@ RUN cd /app/vendor/beres && \
         fi; \
     done
 
+# Rebuild the optimized autoloader from the ACTUAL files present. The host-copied
+# vendor/composer/*.php can be stale (e.g. missing a Beres module added after the last
+# local dump), which surfaces at runtime as
+# "Class Beres\...\ModuleServiceProvider not found" during Concord boot. Because the
+# Beres packages are also registered in the root composer.json PSR-4 (-> packages/Beres/*/src),
+# this maps every Beres class straight from /app/packages, independent of vendor state.
+# Offline: no install, just a dump.
+RUN composer dump-autoload --optimize --no-interaction --no-scripts
+
 # -----------------------------------------------------------------------------
 # Stage 2: Node asset build (Admin + Shop themes)
 # -----------------------------------------------------------------------------
