@@ -367,7 +367,7 @@
             if ($featuredProduct instanceof \App\Models\AdminProduct) {
                 $fpPrice = core()->currency($featuredProduct->price ?? 0);
                 $fpUrl   = route('shop.product_or_category.index', $featuredProduct->slug ?? '#');
-                $fpImage = $featuredProduct->images->count()
+                $fpImage = ($featuredProduct->images && $featuredProduct->images->count())
                                 ? asset('storage/'.$featuredProduct->images->first()->image_path)
                                 : null;
             } else {
@@ -541,7 +541,7 @@
                             if ($product instanceof \App\Models\AdminProduct) {
                                 $sfPrice = core()->currency($product->price ?? 0);
                                 $sfUrl   = route('shop.product_or_category.index', $product->slug ?? '#');
-                                $sfImg   = $product->images->count()
+                                $sfImg   = ($product->images && $product->images->count())
                                                 ? asset('storage/'.$product->images->first()->image_path)
                                                 : null;
                             } else {
@@ -676,8 +676,9 @@
                 @if ($blogsDb->isNotEmpty())
                     @foreach ($blogsDb as $i => $page)
                         @php
-                            $blogTitle   = $page->page_title ?? $page->translations->first()->page_title ?? 'Untitled';
-                            $blogExcerpt = \Illuminate\Support\Str::limit(strip_tags($page->html_content ?? $page->translations->first()->html_content ?? ''), 120);
+                            $blogTranslation = $page->translations->first();
+                            $blogTitle   = $page->page_title ?? ($blogTranslation?->page_title ?? 'Untitled');
+                            $blogExcerpt = \Illuminate\Support\Str::limit(strip_tags($page->html_content ?? ($blogTranslation?->html_content ?? '')), 120);
                             $blogUrl     = route('shop.cms.page', $page->url_key ?? '');
                             $blogDate    = $page->created_at ? $page->created_at->format('d M Y') : '';
                         @endphp
