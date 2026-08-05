@@ -62,27 +62,13 @@ Route::get('/deploy/run', [DeployController::class, 'run'])
 |--------------------------------------------------------------------------
 */
 
-use App\Models\AdminCategory;
-use App\Models\AdminProduct;
+use App\Http\Controllers\CustomCatalogController;
 
-Route::get('/product/{slug}', function (string $slug) {
-    $product = AdminProduct::with('category', 'images', 'variations')
-        ->where('slug', $slug)
-        ->where('status', 'active')
-        ->firstOrFail();
+Route::get('/product/{slug}', [CustomCatalogController::class, 'product'])
+    ->name('shop.admin_product.show');
 
-    return view('admin.frontend.product-detail', compact('product'));
-})->name('shop.admin_product.show');
-
-Route::get('/category/{slug}', function (string $slug) {
-    $category = AdminCategory::withCount('products')->where('slug', $slug)->firstOrFail();
-    $products = AdminProduct::with('images')
-        ->where('category_id', $category->id)
-        ->where('status', 'active')
-        ->paginate(12);
-
-    return view('admin.frontend.category-detail', compact('category', 'products'));
-})->name('shop.admin_category.show');
+Route::get('/category/{slug}', [CustomCatalogController::class, 'category'])
+    ->name('shop.admin_category.show');
 
 /*
 |--------------------------------------------------------------------------

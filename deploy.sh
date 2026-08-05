@@ -33,6 +33,17 @@ echo "[1/11] Pull latest code..."
 git pull origin master
 
 echo ""
+echo "[1b/11] Ensure custom /admin panel owns /admin (Bagisto native admin -> /backend)..."
+# docker-compose reads env_file: .env at container start, and config:cache bakes it.
+# The custom standalone panel lives at /admin; Bagisto's native admin must sit at
+# /backend so the two never collide. Idempotent.
+if grep -q '^APP_ADMIN_URL=' .env 2>/dev/null; then
+    sed -i 's|^APP_ADMIN_URL=.*|APP_ADMIN_URL=backend|' .env
+else
+    echo 'APP_ADMIN_URL=backend' >> .env
+fi
+
+echo ""
 echo "[2/11] Install composer deps (resend/resend-laravel, midtrans, etc)..."
 # Vendor is copied into the Docker image at build time, so composer must
 # run on the host BEFORE `docker compose build`. Skips if composer not
@@ -88,6 +99,17 @@ docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\S
 docker compose exec app php artisan db:seed --class="Webkul\Installer\Database\Seeders\ProductTableSeeder" --force
 
 echo ""
+echo "[8b/11] Seed custom admin panel (admin user + categories/products/blog/faq/reviews/settings)..."
+# AdminSeeder creates admin@toko.com and the admin_* content that both the
+# standalone /admin panel and the storefront homepage (HomepageHighlightService)
+# read from. Without this the panel has no login and the homepage sections are empty.
+docker compose exec app php artisan db:seed --class="Database\Seeders\AdminSeeder" --force
+
+echo ""
+echo "[8c/11] Link storage (for admin panel product/category image uploads)..."
+docker compose exec app php artisan storage:link --force || true
+
+echo ""
 echo "[9/11] Build search index..."
 docker compose exec app php artisan indexer:index --mode=full
 
@@ -136,11 +158,28 @@ echo -n "  Resend transport:         "
 docker compose exec app php artisan tinker --execute="echo class_exists(\Resend\Laravel\Transport\ResendTransport::class) ? 'installed' : 'NOT installed (email will use smtp fallback)';"
 
 echo ""
+echo "  ---- Custom admin panel (/admin) ----"
+echo -n "  Admin users (is_admin):   "
+docker compose exec app php artisan tinker --execute="echo App\Models\User::where('is_admin', true)->count();"
+echo -n "  Admin products:           "
+docker compose exec app php artisan tinker --execute="echo App\Models\AdminProduct::count();"
+echo -n "  /admin (custom panel):    "
+curl -o /dev/null -s -w "%{http_code}" http://localhost/admin/login
+echo ""
+echo -n "  /backend (bagisto admin): "
+curl -o /dev/null -s -w "%{http_code}" http://localhost/backend
+echo ""
+
+echo ""
 echo "========================================="
 echo "  DEPLOY COMPLETE"
 echo "  Visit: http://localhost/"
 echo ""
-echo "  NEXT STEPS in admin (Configure → Storefront):"
+echo "  ADMIN URLS:"
+echo "    • Custom panel   → http://localhost/admin   (login: admin@toko.com / password)"
+echo "    • Bagisto admin  → http://localhost/backend  (storefront config only)"
+echo ""
+echo "  NEXT STEPS in Bagisto admin /backend (Configure -> Storefront):"
 echo "    • Midtrans Payment  → isi server_key, client_key, aktifkan"
 echo "    • Pengiriman (RajaOngkir) → isi api_key, api_type, origin_city, aktifkan"
 echo "    • Email (Resend)    → isi api_key, from_email, from_name"
