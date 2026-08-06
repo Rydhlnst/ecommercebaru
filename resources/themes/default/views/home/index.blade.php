@@ -676,7 +676,7 @@
                 @if ($blogsDb->isNotEmpty())
                     @foreach ($blogsDb as $i => $page)
                         @php
-                            $blogTranslation = $page->translations->first();
+                            $blogTranslation = $page->translations?->first();
                             $blogTitle   = $page->page_title ?? ($blogTranslation?->page_title ?? 'Untitled');
                             $blogExcerpt = \Illuminate\Support\Str::limit(strip_tags($page->html_content ?? ($blogTranslation?->html_content ?? '')), 120);
                             $blogUrl     = route('shop.cms.page', $page->url_key ?? '');
