@@ -679,7 +679,7 @@
                             $blogTranslation = $page->translations?->first();
                             $blogTitle   = $page->page_title ?? ($blogTranslation?->page_title ?? 'Untitled');
                             $blogExcerpt = \Illuminate\Support\Str::limit(strip_tags($page->html_content ?? ($blogTranslation?->html_content ?? '')), 120);
-                            $blogUrl     = route('shop.cms.page', $page->url_key ?? '');
+                            $blogUrl     = $page->url_key ? route('shop.cms.page', $page->url_key) : '#';
                             $blogDate    = $page->created_at ? $page->created_at->format('d M Y') : '';
                         @endphp
                         <article class="group bg-white overflow-hidden" style="border-radius:16px; border:1px solid #E8F0E5;">
