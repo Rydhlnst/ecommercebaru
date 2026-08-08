@@ -1,9 +1,6 @@
-@extends('shop::layouts.index')
-
-@section('title', $product->name)
-
-@section('content')
 <x-shop::layouts>
+    <x-slot:title>{{ $product->name }}</x-slot:title>
+
     <div class="mx-auto max-w-[1200px] px-4 py-8">
         {{-- Breadcrumb --}}
         <nav class="text-sm text-zinc-500 mb-6">
@@ -103,4 +100,3 @@
         </div>
     </div>
 </x-shop::layouts>
-@endsection

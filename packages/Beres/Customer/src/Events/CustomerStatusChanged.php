@@ -13,7 +13,7 @@ class CustomerStatusChanged
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $customer,
+        public readonly mixed $customer,
         public readonly bool $oldStatus,
         public readonly bool $newStatus
     ) {}

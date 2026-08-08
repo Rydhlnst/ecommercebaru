@@ -13,7 +13,7 @@ class LowStockAlert
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $product,
+        public readonly mixed $product,
         public readonly int $currentStock,
         public readonly int $threshold
     ) {}

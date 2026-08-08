@@ -13,7 +13,7 @@ class CheckoutFailed
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $session,
+        public readonly mixed $session,
         public readonly ?string $reason = null
     ) {}
 }

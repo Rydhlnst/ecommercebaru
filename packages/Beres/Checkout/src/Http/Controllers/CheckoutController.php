@@ -8,7 +8,7 @@ use Beres\Checkout\Services\CheckoutService;
 use Beres\Checkout\DTOs\CheckoutDTO;
 use Beres\Shipping\Services\ShippingCalculatorService;
 use Beres\Payment\Services\PaymentService;
-use Webkul\Cart\Facades\Cart as CartFacade;
+use Webkul\Checkout\Facades\Cart as CartFacade;
 use Illuminate\Support\Facades\Response;
 
 class CheckoutController extends Controller

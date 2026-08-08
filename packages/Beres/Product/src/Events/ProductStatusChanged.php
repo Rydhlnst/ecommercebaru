@@ -13,7 +13,7 @@ class ProductStatusChanged
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $product,
+        public readonly mixed $product,
         public readonly bool $oldStatus,
         public readonly bool $newStatus
     ) {}

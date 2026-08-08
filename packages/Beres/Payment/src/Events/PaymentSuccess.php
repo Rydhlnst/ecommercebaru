@@ -13,7 +13,7 @@ class PaymentSuccess
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $order,
-        public readonly $transaction
+        public readonly mixed $order,
+        public readonly mixed $transaction
     ) {}
 }

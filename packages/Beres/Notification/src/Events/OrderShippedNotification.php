@@ -13,6 +13,6 @@ class OrderShippedNotification
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $order
+        public readonly mixed $order
     ) {}
 }

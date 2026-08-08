@@ -8,7 +8,7 @@ use Beres\Checkout\DTOs\OrderSummaryDTO;
 use Beres\Checkout\Models\CheckoutSession;
 use Beres\Shipping\Services\ShippingCalculatorService;
 use Beres\Payment\Services\PaymentService;
-use Webkul\Cart\Facades\Cart as CartFacade;
+use Webkul\Checkout\Facades\Cart as CartFacade;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Sales\Models\Order;
 use Illuminate\Support\Facades\DB;

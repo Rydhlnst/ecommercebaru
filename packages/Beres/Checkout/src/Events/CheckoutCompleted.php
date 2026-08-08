@@ -13,7 +13,7 @@ class CheckoutCompleted
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $order,
-        public readonly $session
+        public readonly mixed $order,
+        public readonly mixed $session
     ) {}
 }

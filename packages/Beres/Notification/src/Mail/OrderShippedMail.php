@@ -16,7 +16,7 @@ class OrderShippedMail extends Mailable
      * Create a new message instance.
      */
     public function __construct(
-        public readonly $order
+        public readonly mixed $order
     ) {}
 
     /**

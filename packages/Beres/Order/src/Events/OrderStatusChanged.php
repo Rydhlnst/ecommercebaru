@@ -13,7 +13,7 @@ class OrderStatusChanged
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $order,
+        public readonly mixed $order,
         public readonly string $oldStatus,
         public readonly string $newStatus
     ) {}

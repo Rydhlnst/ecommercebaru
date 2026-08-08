@@ -13,8 +13,8 @@ class PaymentFailed
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $order,
-        public readonly $transaction,
+        public readonly mixed $order,
+        public readonly mixed $transaction,
         public readonly ?string $reason = null
     ) {}
 }

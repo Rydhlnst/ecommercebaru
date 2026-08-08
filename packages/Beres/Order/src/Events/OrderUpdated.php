@@ -13,7 +13,7 @@ class OrderUpdated
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $order,
+        public readonly mixed $order,
         public readonly array $oldValues = []
     ) {}
 }

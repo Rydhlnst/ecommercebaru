@@ -13,7 +13,7 @@ class StockAdjusted
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $product,
+        public readonly mixed $product,
         public readonly string $action,
         public readonly int $quantity,
         public readonly int $oldQuantity,

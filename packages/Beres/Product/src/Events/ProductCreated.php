@@ -13,6 +13,6 @@ class ProductCreated
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $product
+        public readonly mixed $product
     ) {}
 }

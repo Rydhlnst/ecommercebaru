@@ -13,6 +13,6 @@ class CustomerCreated
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $customer
+        public readonly mixed $customer
     ) {}
 }

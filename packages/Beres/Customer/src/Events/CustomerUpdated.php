@@ -13,7 +13,7 @@ class CustomerUpdated
      * Create a new event instance.
      */
     public function __construct(
-        public readonly $customer,
+        public readonly mixed $customer,
         public readonly array $oldValues = []
     ) {}
 }

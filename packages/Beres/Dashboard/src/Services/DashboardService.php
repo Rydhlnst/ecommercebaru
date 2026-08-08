@@ -6,7 +6,7 @@ use Beres\Dashboard\Contracts\DashboardCacheRepositoryInterface;
 use Beres\Dashboard\Contracts\ActivityLogRepositoryInterface;
 use Beres\Dashboard\DTOs\DashboardMetricsDTO;
 use Beres\Dashboard\Models\ActivityLog;
-use Webkul\Order\Models\Order;
+use Webkul\Sales\Models\Order;
 use Webkul\Customer\Models\Customer;
 use Webkul\Product\Models\Product;
 use Carbon\Carbon;
