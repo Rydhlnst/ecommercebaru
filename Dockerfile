@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.6
 # =============================================================================
-# Beres Commerce — Production Image
+# Ankish Mart — Production Image
 # Multi-stage: vendor copy → node asset build → runtime PHP-FPM
 # =============================================================================
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin — Beres Commerce</title>
+    <title>Login Admin — Ankish Mart</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -15,7 +15,7 @@
                 <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-store text-white text-2xl"></i>
                 </div>
-                <h1 class="text-2xl font-bold text-gray-900">Beres Commerce</h1>
+                <h1 class="text-2xl font-bold text-gray-900">Ankish Mart</h1>
                 <p class="text-gray-500 mt-1">Panel Admin</p>
             </div>
 
@@ -44,7 +44,7 @@
                 </button>
             </form>
         </div>
-        <p class="text-center text-gray-400 text-xs mt-4">&copy; {{ date('Y') }} Beres Commerce</p>
+        <p class="text-center text-gray-400 text-xs mt-4">&copy; {{ date('Y') }} Ankish Mart</p>
     </div>
 
     @if(session('error'))

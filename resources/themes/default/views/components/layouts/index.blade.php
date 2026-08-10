@@ -281,7 +281,7 @@
             Skip to main content
         </a>
 
-        <!-- Beres Commerce -->
+        <!-- Ankish Mart -->
         <div id="app">
             <!-- Flash Message Blade Component -->
             <x-shop::flash-group />
