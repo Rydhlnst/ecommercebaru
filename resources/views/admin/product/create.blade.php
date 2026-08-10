@@ -142,6 +142,7 @@
 @endsection
 
 @section('scripts')
+@verbatim
 function toggleVariations() {
     const checked = document.getElementById('toggle-variations').checked;
     document.getElementById('variation-section').classList.toggle('hidden', !checked);
@@ -191,4 +192,5 @@ function previewImages(input) {
         reader.readAsDataURL(file);
     });
 }
+@endverbatim
 @endsection
