@@ -4,18 +4,28 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class AdminSettingController extends Controller
 {
     public function policy()
     {
-        $policies = SiteSetting::getMany([
-            'policy_privacy',
-            'policy_refund',
-            'policy_shipping',
-            'policy_terms',
-        ]);
+        $policies = collect();
+
+        try {
+            if (Schema::hasTable('site_settings')) {
+                $policies = SiteSetting::getMany([
+                    'policy_privacy',
+                    'policy_refund',
+                    'policy_shipping',
+                    'policy_terms',
+                ]);
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.setting.policy', compact('policies'));
     }
@@ -38,18 +48,26 @@ class AdminSettingController extends Controller
 
     public function store()
     {
-        $settings = SiteSetting::getMany([
-            'store_whatsapp',
-            'store_maps_embed',
-            'store_country',
-            'store_address',
-            'store_phone',
-            'store_email',
-            'store_shopee',
-            'store_tokopedia',
-            'store_lazada',
-            'store_tiktok',
-        ]);
+        $settings = collect();
+
+        try {
+            if (Schema::hasTable('site_settings')) {
+                $settings = SiteSetting::getMany([
+                    'store_whatsapp',
+                    'store_maps_embed',
+                    'store_country',
+                    'store_address',
+                    'store_phone',
+                    'store_email',
+                    'store_shopee',
+                    'store_tokopedia',
+                    'store_lazada',
+                    'store_tiktok',
+                ]);
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.setting.store', compact('settings'));
     }

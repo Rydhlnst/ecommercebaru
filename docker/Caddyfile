@@ -1,0 +1,46 @@
+# Caddyfile — Beres Commerce Reverse Proxy with Auto-HTTPS
+# Place this at /etc/caddy/Caddyfile on the VPS
+# Caddy automatically provisions Let's Encrypt SSL certificates
+
+# ─── Main domain (HTTPS) ────────────────────────────────────────────────────
+your-domain.com {
+    # Reverse proxy to Docker nginx container
+    reverse_proxy localhost:280 {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    # Security headers
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        Referrer-Policy strict-origin-when-cross-origin
+        -Server
+    }
+
+    # Gzip compression
+    encode gzip zstd
+
+    # Logging
+    log {
+        output file /var/log/caddy/your-domain.com.log
+        format json
+    }
+
+    # Cache static assets
+    @static {
+        path /build/* /fonts/* /images/* /*.ico /*.svg /*.js /*.css
+    }
+    header @static Cache-Control "public, max-age=604800, immutable"
+
+    # Block sensitive paths
+    path /vendor/* /storage/* /config/* /database/* {
+        respond 403
+    }
+}
+
+# ─── WWW redirect ───────────────────────────────────────────────────────────
+www.your-domain.com {
+    redir https://your-domain.com{uri} permanent
+}

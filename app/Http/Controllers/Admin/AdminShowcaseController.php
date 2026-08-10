@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AdminProduct;
 use App\Models\HomeShowcase;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -14,8 +16,24 @@ class AdminShowcaseController extends Controller
 {
     public function index()
     {
-        $showcase = HomeShowcase::first();
-        $products = AdminProduct::all();
+        $showcase = null;
+        $products = collect();
+
+        try {
+            if (Schema::hasTable('home_showcases')) {
+                $showcase = HomeShowcase::first();
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
+
+        try {
+            if (Schema::hasTable('admin_products')) {
+                $products = AdminProduct::all();
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.showcase.index', compact('showcase', 'products'));
     }

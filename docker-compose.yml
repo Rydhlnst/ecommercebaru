@@ -65,6 +65,37 @@ services:
     networks:
       - beres
 
+  queue:
+    image: beres-commerce:latest
+    container_name: beres-queue
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file: .env
+    command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+    volumes:
+      - ./storage:/var/www/html/storage
+    networks:
+      - beres
+
+  scheduler:
+    image: beres-commerce:latest
+    container_name: beres-scheduler
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    env_file: .env
+    command: >
+      sh -c "while true; do php artisan schedule:run --verbose --no-interaction >> /dev/null 2>&1; sleep 60; done"
+    volumes:
+      - ./storage:/var/www/html/storage
+    networks:
+      - beres
+
 volumes:
   mysql_data:
   redis_data:

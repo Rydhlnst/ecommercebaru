@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminCategory;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -14,18 +17,34 @@ class AdminCategoryController extends Controller
 {
     public function index()
     {
-        $categories = AdminCategory::with('parent', 'products')
-            ->withCount('products')
-            ->withCount('children')
-            ->latest()
-            ->paginate(15);
+        $categories = new LengthAwarePaginator(collect(), 0, 15, 1);
+
+        try {
+            if (Schema::hasTable('admin_categories')) {
+                $categories = AdminCategory::with('parent', 'products')
+                    ->withCount('products')
+                    ->withCount('children')
+                    ->latest()
+                    ->paginate(15);
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.category.index', compact('categories'));
     }
 
     public function create()
     {
-        $parentCategories = AdminCategory::whereNull('parent_id')->get();
+        $parentCategories = collect();
+
+        try {
+            if (Schema::hasTable('admin_categories')) {
+                $parentCategories = AdminCategory::whereNull('parent_id')->get();
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.category.create', compact('parentCategories'));
     }

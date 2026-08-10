@@ -4,13 +4,24 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminOrder;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Schema;
 
 class AdminOrderController extends Controller
 {
     public function index()
     {
-        $orders = AdminOrder::latest()->paginate(15);
+        $orders = new LengthAwarePaginator(collect(), 0, 15, 1);
+
+        try {
+            if (Schema::hasTable('admin_orders')) {
+                $orders = AdminOrder::latest()->paginate(15);
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.order.index', compact('orders'));
     }

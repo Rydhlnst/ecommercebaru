@@ -4,13 +4,24 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Faq;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Schema;
 
 class AdminFaqController extends Controller
 {
     public function index()
     {
-        $faqs = Faq::orderBy('sort_order')->latest()->paginate(15);
+        $faqs = new LengthAwarePaginator(collect(), 0, 15, 1);
+
+        try {
+            if (Schema::hasTable('faqs')) {
+                $faqs = Faq::orderBy('sort_order')->latest()->paginate(15);
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.faq.index', compact('faqs'));
     }

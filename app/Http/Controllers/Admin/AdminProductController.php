@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\AdminCategory;
 use App\Models\AdminProduct;
 use App\Models\AdminProductImage;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -15,17 +18,33 @@ class AdminProductController extends Controller
 {
     public function index()
     {
-        $products = AdminProduct::with('category', 'images')
-            ->withCount('images')
-            ->latest()
-            ->paginate(15);
+        $products = new LengthAwarePaginator(collect(), 0, 15, 1);
+
+        try {
+            if (Schema::hasTable('admin_products')) {
+                $products = AdminProduct::with('category', 'images')
+                    ->withCount('images')
+                    ->latest()
+                    ->paginate(15);
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.product.index', compact('products'));
     }
 
     public function create()
     {
-        $categories = AdminCategory::all();
+        $categories = collect();
+
+        try {
+            if (Schema::hasTable('admin_categories')) {
+                $categories = AdminCategory::all();
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.product.create', compact('categories'));
     }

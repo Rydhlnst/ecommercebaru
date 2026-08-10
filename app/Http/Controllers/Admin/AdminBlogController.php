@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BlogCategory;
 use App\Models\BlogPost;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -15,15 +18,39 @@ class AdminBlogController extends Controller
 {
     public function index()
     {
-        $posts = BlogPost::with('category')->latest()->paginate(15);
-        $categories = BlogCategory::all();
+        $posts = new LengthAwarePaginator(collect(), 0, 15, 1);
+        $categories = collect();
+
+        try {
+            if (Schema::hasTable('blog_posts')) {
+                $posts = BlogPost::with('category')->latest()->paginate(15);
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
+
+        try {
+            if (Schema::hasTable('blog_categories')) {
+                $categories = BlogCategory::all();
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.blog.index', compact('posts', 'categories'));
     }
 
     public function create()
     {
-        $categories = BlogCategory::all();
+        $categories = collect();
+
+        try {
+            if (Schema::hasTable('blog_categories')) {
+                $categories = BlogCategory::all();
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
 
         return view('admin.blog.create', compact('categories'));
     }
