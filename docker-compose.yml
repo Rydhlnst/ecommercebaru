@@ -13,6 +13,7 @@ services:
         condition: service_started
     env_file: .env
     volumes:
+      - ./.env:/var/www/html/.env
       - ./storage:/var/www/html/storage
       - app_public:/var/www/html/public
     networks:
@@ -77,6 +78,7 @@ services:
     env_file: .env
     command: php artisan queue:work --sleep=3 --tries=3 --max-time=3600
     volumes:
+      - ./.env:/var/www/html/.env
       - ./storage:/var/www/html/storage
     networks:
       - beres
@@ -92,6 +94,7 @@ services:
     command: >
       sh -c "while true; do php artisan schedule:run --verbose --no-interaction >> /dev/null 2>&1; sleep 60; done"
     volumes:
+      - ./.env:/var/www/html/.env
       - ./storage:/var/www/html/storage
     networks:
       - beres
