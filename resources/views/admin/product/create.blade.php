@@ -93,7 +93,7 @@
                                 <div class="variation-row flex gap-3 items-end">
                                     <div class="flex-1">
                                         <label class="form-label">Berat (kg)</label>
-                                        <input type="number" name="variation_weight[]" step="0.01" value="{{ old('variation_weight'][$i] ?? '' }}" class="form-input">
+                                        <input type="number" name="variation_weight[]" step="0.01" value="{{ old('variation_weight')[$i] ?? '' }}" class="form-input">
                                     </div>
                                     <div class="flex-1">
                                         <label class="form-label">Harga (Rp)</label>
@@ -101,7 +101,7 @@
                                     </div>
                                     <div class="flex-1">
                                         <label class="form-label">Stok</label>
-                                        <input type="number" name="variation_stock[]" value="{{ old('variation_stock'][$i] ?? '' }}" class="form-input">
+                                        <input type="number" name="variation_stock[]" value="{{ old('variation_stock')[$i] ?? '' }}" class="form-input">
                                     </div>
                                     <button type="button" onclick="removeVariation(this)" class="btn-danger btn-sm mb-0.5"><i class="fas fa-times"></i></button>
                                 </div>
