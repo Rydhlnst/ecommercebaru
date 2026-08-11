@@ -23,34 +23,52 @@
                     class="mt-5"
                     v-for='(attribute, index) in childAttributes'
                 >
-                    <!-- Dropdown Options Container -->
+                    <!-- Dropdown/Standard Button Selector Container -->
                     <template v-if="! attribute.swatch_type || attribute.swatch_type == '' || attribute.swatch_type == 'dropdown'">
-                        <!-- Dropdown Label -->
-                        <h2 class="mb-4 text-xl max-sm:mb-1.5 max-sm:text-base max-sm:font-medium">
+                        <!-- Label -->
+                        <h2 class="mb-3 text-lg font-medium text-ink max-sm:text-base">
                             @{{ attribute.label }}
                         </h2>
                         
-                        <!-- Dropdown Options -->
-                        <v-field
-                            as="select"
-                            :name="'super_attribute[' + attribute.id + ']'"
-                            class="custom-select mb-3 block w-full cursor-pointer rounded-lg border border-zinc-200 bg-white px-5 py-3 text-base text-zinc-500 focus:border-blue-500 focus:ring-blue-500"
-                            :class="[errors['super_attribute[' + attribute.id + ']'] ? 'border border-red-500' : '']"
-                            :id="'attribute_' + attribute.id"
-                            v-model="attribute.selectedValue"
-                            rules="required"
-                            :label="attribute.label"
-                            :aria-label="attribute.label"
-                            :disabled="attribute.disabled"
-                            @change="configure(attribute, $event.target.value)"
-                        >
-                            <option
-                                v-for='(option, index) in attribute.options'
-                                :value="option.id"
-                            >
-                                @{{ option.label }}
-                            </option>
-                        </v-field>
+                        <!-- Button Selectors -->
+                        <div class="flex items-center gap-2.5 flex-wrap mb-4">
+                            <template v-for="(option, index) in attribute.options">
+                                <template v-if="option.id">
+                                    <label
+                                        class="group relative flex h-fit cursor-pointer items-center justify-center rounded-full border px-5 py-2.5 text-sm font-medium transition-all duration-200"
+                                        :class="[
+                                            option.id == attribute.selectedValue
+                                                ? 'border-ink bg-ink text-cream shadow-sm'
+                                                : 'border-zinc-300 bg-white text-ink hover:border-ink hover:bg-zinc-50'
+                                        ]"
+                                        :title="option.label"
+                                    >
+                                        <v-field
+                                            type="radio"
+                                            :name="'super_attribute[' + attribute.id + ']'"
+                                            :value="option.id"
+                                            v-model="attribute.selectedValue"
+                                            v-slot="{ field }"
+                                            rules="required"
+                                            :label="attribute.label"
+                                            :aria-label="attribute.label"
+                                        >
+                                            <input
+                                                type="radio"
+                                                :name="'super_attribute[' + attribute.id + ']'"
+                                                :value="option.id"
+                                                v-bind="field"
+                                                :id="'attribute_' + attribute.id + '_' + option.id"
+                                                class="peer sr-only"
+                                                @click="configure(attribute, $event.target.value)"
+                                            />
+                                        </v-field>
+
+                                        <span>@{{ option.label }}</span>
+                                    </label>
+                                </template>
+                            </template>
+                        </div>
                     </template>
 
                     <!-- Swatch Options Container -->

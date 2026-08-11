@@ -32,7 +32,9 @@ class ThemeCustomizationRepository extends Repository
         if ($data['type'] == 'static_content') {
             $config = [
                 'HTML.Allowed' => null,
-                'HTML.ForbiddenElements' => 'script,iframe,form',
+                'HTML.ForbiddenElements' => 'script,form',
+                'HTML.SafeIframe' => true,
+                'URI.SafeIframeRegexp' => '%^(https?:)?//(www\.google\.com/maps|maps\.google\.com|www\.youtube\.com|player\.vimeo\.com)%',
                 'CSS.AllowedProperties' => null,
             ];
 

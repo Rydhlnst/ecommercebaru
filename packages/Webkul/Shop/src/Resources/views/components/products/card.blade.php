@@ -140,6 +140,27 @@
                     />
                 @endif
                 {!! view_render_event('bagisto.shop.components.products.card.average_ratings.after') !!}
+
+                <!-- Quantity selector -->
+                <div class="mt-2 flex items-center justify-between gap-2" v-if="product.is_saleable">
+                    <span class="text-xs text-stone uppercase tracking-wider">Qty</span>
+                    <div class="inline-flex items-center rounded-full border border-zinc-200 bg-white">
+                        <button
+                            type="button"
+                            class="px-2.5 py-1 text-xs text-zinc-600 hover:text-ink transition-colors disabled:opacity-40"
+                            :disabled="quantity <= 1"
+                            @click="quantity > 1 ? quantity-- : null"
+                            aria-label="Decrease quantity"
+                        >-</button>
+                        <span class="px-2 text-xs font-semibold text-ink min-w-[20px] text-center">@{{ quantity }}</span>
+                        <button
+                            type="button"
+                            class="px-2.5 py-1 text-xs text-zinc-600 hover:text-ink transition-colors"
+                            @click="quantity++"
+                            aria-label="Increase quantity"
+                        >+</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -203,6 +224,23 @@
                 {!! view_render_event('bagisto.shop.components.products.card.average_ratings.after') !!}
 
                 <div class="flex items-center gap-4 mt-2">
+                    <div class="inline-flex items-center rounded-full border border-zinc-200 bg-white" v-if="product.is_saleable">
+                        <button
+                            type="button"
+                            class="px-3 py-1.5 text-sm text-zinc-600 hover:text-ink transition-colors disabled:opacity-40"
+                            :disabled="quantity <= 1"
+                            @click="quantity > 1 ? quantity-- : null"
+                            aria-label="Decrease quantity"
+                        >-</button>
+                        <span class="px-3 text-xs font-semibold text-ink min-w-[24px] text-center">@{{ quantity }}</span>
+                        <button
+                            type="button"
+                            class="px-3 py-1.5 text-sm text-zinc-600 hover:text-ink transition-colors"
+                            @click="quantity++"
+                            aria-label="Increase quantity"
+                        >+</button>
+                    </div>
+
                     @if (core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
                         {!! view_render_event('bagisto.shop.components.products.card.add_to_cart.before') !!}
                         <button
@@ -238,6 +276,7 @@
                 return {
                     isCustomer: '{{ auth()->guard('customer')->check() }}',
                     isAddingToCart: false,
+                    quantity: 1,
                 }
             },
 
@@ -297,7 +336,7 @@
                 addToCart() {
                     this.isAddingToCart = true;
                     this.$axios.post('{{ route("shop.api.checkout.cart.store") }}', {
-                            'quantity': 1,
+                            'quantity': this.quantity || 1,
                             'product_id': this.product.id,
                         })
                         .then(response => {

@@ -242,18 +242,18 @@ it('should sanitize malicious script tags from static content HTML when updating
     expect($translation->options['html'])->toContain('More safe content');
 });
 
-it('should sanitize iframe tags from static content HTML when updating theme', function () {
+it('should sanitize untrusted iframe tags while allowing safe Google Maps iframe when updating theme', function () {
     // Arrange.
     $theme = ThemeCustomization::factory()->create([
         'type' => 'static_content',
     ]);
 
-    $maliciousHtml = '<div>Content</div><iframe src="https://malicious.com"></iframe><p>More content</p>';
+    $contentHtml = '<div>Content</div><iframe src="https://malicious.com"></iframe><iframe src="https://www.google.com/maps/embed?pb=test"></iframe><p>More content</p>';
 
     $data = [
         app()->getLocale() => [
             'options' => [
-                'html' => $maliciousHtml,
+                'html' => $contentHtml,
                 'css' => '',
             ],
         ],
@@ -276,9 +276,9 @@ it('should sanitize iframe tags from static content HTML when updating theme', f
     $theme->refresh();
     $translation = $theme->translate(app()->getLocale());
 
-    // Assert that iframe tag was removed.
-    expect($translation->options['html'])->not->toContain('<iframe');
+    // Assert that malicious iframe tag was removed and Google Maps iframe was allowed.
     expect($translation->options['html'])->not->toContain('malicious.com');
+    expect($translation->options['html'])->toContain('google.com/maps');
     expect($translation->options['html'])->toContain('Content');
     expect($translation->options['html'])->toContain('More content');
 });
