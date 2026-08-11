@@ -29,6 +29,9 @@
             // Badge
             $badge = $product->badge ?? null;
 
+            // Description
+            $description = $product->description ?? null;
+
             // Variations
             $childVariants = [];
             if ($product->has_variations && $product->variations->count()) {
@@ -66,6 +69,7 @@
                             : route('shop.search.index');
             $image    = product_image()->getProductBaseImage($product)['small_image_url'] ?? null;
             $badge    = null;
+            $description = $product->short_description ?? null;
 
             $isConfigurable = $product->type === 'configurable';
             $childVariants  = [];
@@ -111,6 +115,7 @@
         $prodId   = null;
         $image    = null;
         $badge    = null;
+        $description = null;
         $isConfigurable = false;
         $childVariants  = [];
         $superAttrId    = null;
@@ -176,6 +181,11 @@
             </span>
         @endif
 
+        {{-- Description --}}
+        @if (!empty($description))
+            <p class="mt-1.5 text-xs text-[#737373] leading-relaxed line-clamp-2">{!! Str::limit(strip_tags($description), 80) !!}</p>
+        @endif
+
         {{-- Price with sale --}}
         <div class="mt-2 flex items-center gap-2">
             @if ($compare)
@@ -190,9 +200,7 @@
 
         {{-- Weight variant selector (configurable products only) --}}
         @if (count($childVariants))
-            <div class="mt-3">
-                <p class="text-sm font-medium text-[#171717] mb-2">Quantity Grams</p>
-                <div class="flex items-center gap-2">
+            <div class="mt-3 flex items-center gap-2 flex-wrap">
                     @foreach ($childVariants as $i => $v)
                         @php
                             $vSale = false;
@@ -201,15 +209,14 @@
                             }
                         @endphp
                         <button type="button"
-                                class="beres-btn px-4 py-2 text-sm font-medium border transition-all
+                                class="beres-btn px-4 py-1.5 text-sm font-medium border transition-all
                                 {{ $i === 0 ? 'text-white border-[#2D5A27]' : 'text-[#171717] border-[#E8F0E5] hover:border-[#2D5A27]' }}"
-                                style="{{ $i === 0 ? 'background-color:#2D5A27;' : '' }} border-radius:8px;"
+                                style="{{ $i === 0 ? 'background-color:#2D5A27;' : '' }} border-radius:999px;"
                                 onclick="beresSelectVariant(this, {{ $v['id'] }}, '{{ $v['price'] }}', @json($vSale))"
                                 data-variant-id="{{ $v['id'] }}">
                             {{ $v['label'] }}
                         </button>
                     @endforeach
-                </div>
             </div>
         @endif
 

@@ -397,7 +397,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('shop.api.checkout.cart.store') }}" method="POST"
+                        <form action="{{ route('cart.add') }}" method="POST"
                               class="mt-6 flex flex-col sm:flex-row gap-3"
                               onsubmit="event.preventDefault(); beresAddToCart(this);">
                             @csrf
