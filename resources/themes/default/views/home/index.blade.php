@@ -199,7 +199,7 @@
         // `selected_configurable_option` (the child product id) and derives
         // the weight attribute/option automatically from the child. Sending
         // super_attribute[...] is unnecessary and, with a child id, wrong.
-        const variantInput = form.querySelector('[name="selected_configurable_option"]');
+        const variantInput = form.querySelector('.beres-variant-input');
         const selectedVariantId = variantInput ? parseInt(variantInput.value, 10) : null;
 
         const payload = { product_id: productId, quantity };

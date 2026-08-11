@@ -160,7 +160,7 @@
             var quantity = parseInt((qtyEl ? qtyEl.value : 1) || 1, 10);
             var token = (document.querySelector('meta[name="csrf-token"]')?.content) || (form.querySelector('[name="_token"]')?.value);
 
-            var variantInput = form.querySelector('[name="selected_configurable_option"]');
+            var variantInput = form.querySelector('.beres-variant-input');
             var selectedVariantId = variantInput ? parseInt(variantInput.value, 10) : null;
 
             var payload = { product_id: productId, quantity: quantity };
@@ -207,17 +207,32 @@
         };
     }
 
-    // ---- Variant <select> dropdown price updater (product cards) ----
-    if (typeof window.beresVariantSelectChange !== 'function') {
-        window.beresVariantSelectChange = function (select) {
-            var card = select.closest('.beres-card');
+    // ---- Variant inline buttons (product cards) — updates hidden input + price ----
+    if (typeof window.beresSelectVariantInline !== 'function') {
+        window.beresSelectVariantInline = function (btn, variantId, price) {
+            var card = btn.closest('.beres-card');
             if (!card) return;
-            var opt = select.options[select.selectedIndex];
-            var price = opt ? opt.getAttribute('data-price') : null;
-            if (price) {
-                var priceEl = card.querySelector('.text-xl.font-bold');
-                if (priceEl) priceEl.textContent = price;
-            }
+
+            // Update hidden input
+            var hidden = card.querySelector('.beres-variant-input');
+            if (hidden) hidden.value = variantId;
+
+            // Toggle active state on ALL sibling buttons in the same row
+            var row = btn.parentElement;
+            row.querySelectorAll('.beres-variant-btn').forEach(function (b) {
+                b.style.backgroundColor = '#fff';
+                b.style.color = '#171717';
+                b.style.borderColor = '#E8F0E5';
+                b.classList.remove('beres-variant-active');
+            });
+            btn.style.backgroundColor = '#2D5A27';
+            btn.style.color = '#fff';
+            btn.style.borderColor = '#2D5A27';
+            btn.classList.add('beres-variant-active');
+
+            // Update displayed price
+            var priceEl = card.querySelector('.text-xl.font-bold');
+            if (priceEl && price) priceEl.textContent = price;
         };
     }
 
