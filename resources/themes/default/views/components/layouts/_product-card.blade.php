@@ -198,28 +198,6 @@
             @endif
         </div>
 
-        {{-- Weight variant selector (configurable products only) --}}
-        @if (count($childVariants))
-            <div class="mt-3 flex items-center gap-2 flex-wrap">
-                    @foreach ($childVariants as $i => $v)
-                        @php
-                            $vSale = false;
-                            if ($v['regular_price'] && $v['special_price'] && $v['regular_price'] > $v['special_price']) {
-                                $vSale = true;
-                            }
-                        @endphp
-                        <button type="button"
-                                class="beres-btn px-4 py-1.5 text-sm font-medium border transition-all
-                                {{ $i === 0 ? 'text-white border-[#2D5A27]' : 'text-[#171717] border-[#E8F0E5] hover:border-[#2D5A27]' }}"
-                                style="{{ $i === 0 ? 'background-color:#2D5A27;' : '' }} border-radius:999px;"
-                                onclick="beresSelectVariant(this, {{ $v['id'] }}, '{{ $v['price'] }}', @json($vSale))"
-                                data-variant-id="{{ $v['id'] }}">
-                            {{ $v['label'] }}
-                        </button>
-                    @endforeach
-            </div>
-        @endif
-
         {{-- Quantity counter + Add to Cart --}}
         @if ($prodId && $inStock)
             <form
@@ -230,8 +208,19 @@
             >
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $prodId }}">
+
+                {{-- Weight variant dropdown (above quantity) --}}
                 @if (count($childVariants))
-                    <input type="hidden" name="selected_configurable_option" value="{{ $childVariants[0]['id'] }}" class="beres-variant-input">
+                    <p class="text-sm font-medium text-[#171717] mb-1.5">Pilih Berat</p>
+                    <select name="selected_configurable_option"
+                            class="beres-variant-select w-full h-10 px-3 mb-3 text-sm border border-[#E8F0E5] rounded-lg focus:outline-none focus:border-[#2D5A27] bg-white"
+                            onchange="beresVariantSelectChange(this)">
+                        @foreach ($childVariants as $i => $v)
+                            <option value="{{ $v['id'] }}" data-price="{{ $v['price'] }}">
+                                {{ $v['label'] }} — {{ $v['price'] }}
+                            </option>
+                        @endforeach
+                    </select>
                 @endif
 
                 {{-- Quantity label + stepper --}}

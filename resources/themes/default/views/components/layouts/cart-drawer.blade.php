@@ -160,7 +160,7 @@
             var quantity = parseInt((qtyEl ? qtyEl.value : 1) || 1, 10);
             var token = (document.querySelector('meta[name="csrf-token"]')?.content) || (form.querySelector('[name="_token"]')?.value);
 
-            var variantInput = form.querySelector('.beres-variant-input');
+            var variantInput = form.querySelector('[name="selected_configurable_option"]');
             var selectedVariantId = variantInput ? parseInt(variantInput.value, 10) : null;
 
             var payload = { product_id: productId, quantity: quantity };
@@ -204,6 +204,20 @@
             if (v < 1) v = 1;
             if (v > 99) v = 99;
             input.value = v;
+        };
+    }
+
+    // ---- Variant <select> dropdown price updater (product cards) ----
+    if (typeof window.beresVariantSelectChange !== 'function') {
+        window.beresVariantSelectChange = function (select) {
+            var card = select.closest('.beres-card');
+            if (!card) return;
+            var opt = select.options[select.selectedIndex];
+            var price = opt ? opt.getAttribute('data-price') : null;
+            if (price) {
+                var priceEl = card.querySelector('.text-xl.font-bold');
+                if (priceEl) priceEl.textContent = price;
+            }
         };
     }
 

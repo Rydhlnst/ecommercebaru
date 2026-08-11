@@ -199,7 +199,7 @@
         // `selected_configurable_option` (the child product id) and derives
         // the weight attribute/option automatically from the child. Sending
         // super_attribute[...] is unnecessary and, with a child id, wrong.
-        const variantInput = form.querySelector('.beres-variant-input');
+        const variantInput = form.querySelector('[name="selected_configurable_option"]');
         const selectedVariantId = variantInput ? parseInt(variantInput.value, 10) : null;
 
         const payload = { product_id: productId, quantity };
@@ -372,10 +372,12 @@
                 $fpImage = ($featuredProduct->images && $featuredProduct->images->count())
                                 ? asset('storage/'.$featuredProduct->images->first()->image_path)
                                 : null;
+                $fpDesc  = $featuredProduct->description ?? null;
             } else {
                 $fpPrice = core()->currency($featuredProduct->getTypeInstance()->getMinimalPrice() ?? 0);
                 $fpUrl   = route('shop.product_or_category.index', $featuredProduct->url_key ?? '#');
                 $fpImage = product_image()->getProductBaseImage($featuredProduct)['medium_image_url'] ?? null;
+                $fpDesc  = $featuredProduct->short_description ?? null;
             }
         @endphp
         <section class="bg-white beres-reveal">
@@ -391,9 +393,13 @@
                         <h2 class="text-2xl md:text-3xl text-[#171717]" style="font-weight:600;">{{ $fpName }}</h2>
                         <p class="mt-2 text-2xl md:text-3xl" style="color:#2D5A27; font-weight:700;">{{ $fpPrice }}</p>
 
-                        @if (!empty($featuredProduct->short_description))
+                        @if (!empty($fpDesc))
                             <div class="mt-6 text-sm text-[#404040] leading-relaxed prose prose-sm max-w-none">
-                                {!! $featuredProduct->short_description !!}
+                                @if ($featuredProduct instanceof \App\Models\AdminProduct)
+                                    <p>{{ $fpDesc }}</p>
+                                @else
+                                    {!! $fpDesc !!}
+                                @endif
                             </div>
                         @endif
 
