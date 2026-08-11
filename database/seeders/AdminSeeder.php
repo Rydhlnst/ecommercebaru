@@ -99,11 +99,10 @@ class AdminSeeder extends Seeder
         ];
 
         foreach ($products as $pData) {
-            $slug = Str::slug($pData['name']).random_int(100, 999);
             $seedVariations = $pData['variations'] ?? null;
             unset($pData['variations']);
 
-            $product = AdminProduct::create(array_merge($pData, ['slug' => $slug]));
+            $product = AdminProduct::create($pData);
 
             // Sinkron dengan AdminProductController::saveVariations():
             // price = harga variasi pertama (termurah), stock = total stok variasi.

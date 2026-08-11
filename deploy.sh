@@ -434,7 +434,7 @@ setup() {
     fi
 
     $COMPOSE exec app php artisan migrate --force
-    $COMPOSE exec app php artisan db:seed --class="Database\\Seeders\\AdminSeeder" --force || warn "AdminSeeder skipped"
+    $COMPOSE exec app php artisan db:seed --force || warn "Seed skipped"
     $COMPOSE exec app touch storage/installed
     $COMPOSE exec app php artisan indexer:index --mode=full || warn "Indexer skipped"
     $COMPOSE exec app php artisan storage:link --force || true
