@@ -26,7 +26,7 @@
                     <dl class="space-y-3">
                         <div class="flex justify-between">
                             <dt class="text-sm text-gray-500">Nomor Pesanan</dt>
-                            <dd class="text-sm font-medium text-gray-900">#{{ $order->increment_id ?? $order->id }}</dd>
+                            <dd class="text-sm font-medium text-gray-900">{{ $order->order_number ?? ('#' . $order->id) }}</dd>
                         </div>
                         <div class="flex justify-between">
                             <dt class="text-sm text-gray-500">Tanggal</dt>
@@ -34,7 +34,7 @@
                         </div>
                         <div class="flex justify-between">
                             <dt class="text-sm text-gray-500">Total</dt>
-                            <dd class="text-sm font-semibold text-gray-900">{{ core()->formatPrice($order->grand_total) }}</dd>
+                            <dd class="text-sm font-semibold text-gray-900">Rp {{ number_format($order->total ?? 0, 0, ',', '.') }}</dd>
                         </div>
                         <div class="flex justify-between">
                             <dt class="text-sm text-gray-500">Status</dt>

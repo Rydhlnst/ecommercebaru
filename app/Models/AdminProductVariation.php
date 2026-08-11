@@ -21,4 +21,14 @@ class AdminProductVariation extends Model
     {
         return $this->belongsTo(AdminProduct::class, 'product_id');
     }
+
+    /**
+     * Weight stored as kg (decimal). Display as grams, e.g. 0.50 -> "500g", 1.00 -> "1000g".
+     */
+    public function getWeightLabelAttribute(): string
+    {
+        $grams = (int) round(((float) $this->weight) * 1000);
+
+        return $grams.'g';
+    }
 }

@@ -30,32 +30,47 @@ class AdminSeeder extends Seeder
         );
 
         // ─── Categories ──────────────────────────────────────────────────────
-        $makanan   = AdminCategory::create(['name' => 'Makanan', 'slug' => 'makanan']);
-        $minuman   = AdminCategory::create(['name' => 'Minuman', 'slug' => 'minuman']);
-        $sayur     = AdminCategory::create(['name' => 'Sayuran', 'slug' => 'sayuran']);
-        $buah      = AdminCategory::create(['name' => 'Buah-buahan', 'slug' => 'buah-buahan']);
-        $daging    = AdminCategory::create(['name' => 'Daging & Seafood', 'slug' => 'daging-seafood']);
-        $bumbu     = AdminCategory::create(['name' => 'Bumbu & Rempah', 'slug' => 'bumbu-rempah']);
-        $snack     = AdminCategory::create(['name' => 'Snack & Cemilan', 'slug' => 'snack-cemilan', 'parent_id' => $makanan->id]);
-        $kopi      = AdminCategory::create(['name' => 'Kopi & Teh', 'slug' => 'kopi-teh', 'parent_id' => $minuman->id]);
+        $makanan = AdminCategory::create(['name' => 'Makanan', 'slug' => 'makanan']);
+        $minuman = AdminCategory::create(['name' => 'Minuman', 'slug' => 'minuman']);
+        $sayur = AdminCategory::create(['name' => 'Sayuran', 'slug' => 'sayuran']);
+        $buah = AdminCategory::create(['name' => 'Buah-buahan', 'slug' => 'buah-buahan']);
+        $daging = AdminCategory::create(['name' => 'Daging & Seafood', 'slug' => 'daging-seafood']);
+        $bumbu = AdminCategory::create(['name' => 'Bumbu & Rempah', 'slug' => 'bumbu-rempah']);
+        $snack = AdminCategory::create(['name' => 'Snack & Cemilan', 'slug' => 'snack-cemilan', 'parent_id' => $makanan->id]);
+        $kopi = AdminCategory::create(['name' => 'Kopi & Teh', 'slug' => 'kopi-teh', 'parent_id' => $minuman->id]);
 
         // ─── Products ────────────────────────────────────────────────────────
+        // Variasi (weight in kg): 0.25 = 250g, 0.50 = 500g, 1.00 = 1000g.
+        // Urutkan ascending agar "first variant" = berat/termurah (auto-select).
         $products = [
             // Makanan
             ['name' => 'Nasi Goreng Spesial', 'category_id' => $makanan->id, 'badge' => 'new', 'price' => 35000, 'stock' => 50, 'is_featured' => true, 'has_variations' => false, 'description' => 'Nasi goreng dengan ayam, telur, sayuran, dan bumbu rahasia. Porsi besar, rasa mantap.'],
             ['name' => 'Ayam Bakar Madu', 'category_id' => $makanan->id, 'badge' => 'sale', 'price' => 45000, 'stock' => 30, 'is_featured' => true, 'has_variations' => false, 'description' => 'Ayam bakar dengan bumbu madu khas, dibakar hingga kecokelatan. Cocok dengan nasi putih hangat.'],
-            ['name' => 'Sate Ayam Madura', 'category_id' => $makanan->id, 'badge' => null, 'price' => 25000, 'stock' => 100, 'is_featured' => false, 'has_variations' => true, 'description' => 'Sate ayam 10 tusuk dengan bumbu kacang khas Madura. Saus dan lontong disertakan.'],
+            ['name' => 'Sate Ayam Madura', 'category_id' => $makanan->id, 'badge' => null, 'price' => 25000, 'stock' => 100, 'is_featured' => false, 'has_variations' => true, 'description' => 'Sate ayam 10 tusuk dengan bumbu kacang khas Madura. Saus dan lontong disertakan.', 'variations' => [
+                ['weight' => 0.50, 'price' => 25000, 'stock' => 60],
+                ['weight' => 1.00, 'price' => 45000, 'stock' => 40],
+            ]],
             ['name' => 'Rendang Daging Sapi', 'category_id' => $makanan->id, 'badge' => 'new', 'price' => 85000, 'stock' => 20, 'is_featured' => true, 'has_variations' => false, 'description' => 'Rendang daging sapi Padang autentik, dimasak perlahan dengan rempah pilihan. Tahan lama, cocok untuk stok.'],
             ['name' => 'Gado-Gado Jakarta', 'category_id' => $makanan->id, 'badge' => null, 'price' => 28000, 'stock' => 40, 'is_featured' => false, 'has_variations' => false, 'description' => 'Gado-gado dengan sayuran segar, tahu, tempe, dan bumbu kacang. Porsi lengkap.'],
 
             // Snack & Cemilan
-            ['name' => 'Keripik Tempe', 'category_id' => $snack->id, 'badge' => 'sale', 'price' => 18000, 'stock' => 80, 'is_featured' => false, 'has_variations' => true, 'description' => 'Keripik tempe renyah dengan bumbu original. Camilan ringan khas Jawa.'],
+            ['name' => 'Keripik Tempe', 'category_id' => $snack->id, 'badge' => 'sale', 'price' => 18000, 'stock' => 80, 'is_featured' => false, 'has_variations' => true, 'description' => 'Keripik tempe renyah dengan bumbu original. Camilan ringan khas Jawa.', 'variations' => [
+                ['weight' => 0.25, 'price' => 18000, 'stock' => 45],
+                ['weight' => 0.50, 'price' => 32000, 'stock' => 35],
+            ]],
             ['name' => 'Kue Lumpur Bogor', 'category_id' => $snack->id, 'badge' => 'new', 'price' => 22000, 'stock' => 35, 'is_featured' => true, 'has_variations' => false, 'description' => 'Kue lumpur khas Bogor, lembut dan manis. Isian kentang pilihan, cocok untuk teman teh.'],
             ['name' => 'Pastel Abon', 'category_id' => $snack->id, 'badge' => null, 'price' => 15000, 'stock' => 60, 'is_featured' => false, 'has_variations' => false, 'description' => 'Pastel goreng dengan isian abon sapi dan sayuran. Kulit renyah, isian melimpah.'],
 
             // Minuman
-            ['name' => 'Kopi Arabika Gayo', 'category_id' => $kopi->id, 'badge' => 'habis_terjual', 'price' => 65000, 'stock' => 0, 'is_featured' => true, 'has_variations' => false, 'description' => 'Kopi arabika Gayo single origin, roasted medium. Aroma kuat, rasa fruity.'],
-            ['name' => 'Teh Melati Wangi', 'category_id' => $kopi->id, 'badge' => null, 'price' => 35000, 'stock' => 45, 'is_featured' => false, 'has_variations' => false, 'description' => 'Teh melati pilihan, dikeringkan secara alami. Aroma harum, rasa lembut.'],
+            ['name' => 'Kopi Arabika Gayo', 'category_id' => $kopi->id, 'badge' => 'habis_terjual', 'price' => 45000, 'stock' => 0, 'is_featured' => true, 'has_variations' => true, 'description' => 'Kopi arabika Gayo single origin, roasted medium. Aroma kuat, rasa fruity.', 'variations' => [
+                ['weight' => 0.25, 'price' => 45000, 'stock' => 0],
+                ['weight' => 0.50, 'price' => 85000, 'stock' => 0],
+                ['weight' => 1.00, 'price' => 160000, 'stock' => 0],
+            ]],
+            ['name' => 'Teh Melati Wangi', 'category_id' => $kopi->id, 'badge' => null, 'price' => 35000, 'stock' => 45, 'is_featured' => false, 'has_variations' => true, 'description' => 'Teh melati pilihan, dikeringkan secara alami. Aroma harum, rasa lembut.', 'variations' => [
+                ['weight' => 0.25, 'price' => 35000, 'stock' => 25],
+                ['weight' => 0.50, 'price' => 65000, 'stock' => 20],
+            ]],
             ['name' => 'Es Jeruk Segar', 'category_id' => $minuman->id, 'badge' => 'new', 'price' => 18000, 'stock' => 100, 'is_featured' => true, 'has_variations' => false, 'description' => 'Jus jeruk peras segar tanpa pemanis buatan. Diperas langsung dari jeruk segar.'],
             ['name' => 'Jus Alpukat Kocok', 'category_id' => $minuman->id, 'badge' => 'sale', 'price' => 22000, 'stock' => 50, 'is_featured' => false, 'has_variations' => false, 'description' => 'Jus alpukat kocok dengan susu coklat dan es. Creamy dan menyegarkan.'],
 
@@ -75,13 +90,39 @@ class AdminSeeder extends Seeder
             ['name' => 'Udang Vaname 500gr', 'category_id' => $daging->id, 'badge' => null, 'price' => 75000, 'stock' => 20, 'is_featured' => false, 'has_variations' => false, 'description' => 'Udang vaname segar, ukuran besar. Cocok untuk tumis, goreng, atau bakar.'],
 
             // Bumbu & Rempah
-            ['name' => 'Rendang Instan 250gr', 'category_id' => $bumbu->id, 'badge' => 'new', 'price' => 35000, 'stock' => 40, 'is_featured' => false, 'has_variations' => false, 'description' => 'Bumbu rendang instan, tinggal campur daging. Rasa autentik Padang.'],
+            ['name' => 'Rendang Instan', 'category_id' => $bumbu->id, 'badge' => 'new', 'price' => 35000, 'stock' => 60, 'is_featured' => false, 'has_variations' => true, 'description' => 'Bumbu rendang instan, tinggal campur daging. Rasa autentik Padang.', 'variations' => [
+                ['weight' => 0.25, 'price' => 35000, 'stock' => 30],
+                ['weight' => 0.50, 'price' => 60000, 'stock' => 20],
+                ['weight' => 1.00, 'price' => 110000, 'stock' => 10],
+            ]],
             ['name' => 'Sambal Terasi Botolan', 'category_id' => $bumbu->id, 'badge' => 'sale', 'price' => 22000, 'stock' => 55, 'is_featured' => true, 'has_variations' => false, 'description' => 'Sambal terasi homemade, pedas dan gurih. Cocok untuk semua masakan.'],
         ];
 
         foreach ($products as $pData) {
-            $slug = Str::slug($pData['name']) . random_int(100, 999);
-            AdminProduct::create(array_merge($pData, ['slug' => $slug]));
+            $slug = Str::slug($pData['name']).random_int(100, 999);
+            $seedVariations = $pData['variations'] ?? null;
+            unset($pData['variations']);
+
+            $product = AdminProduct::create(array_merge($pData, ['slug' => $slug]));
+
+            // Sinkron dengan AdminProductController::saveVariations():
+            // price = harga variasi pertama (termurah), stock = total stok variasi.
+            if (! empty($seedVariations)) {
+                usort($seedVariations, fn ($a, $b) => $a['weight'] <=> $b['weight']);
+
+                foreach ($seedVariations as $v) {
+                    $product->variations()->create([
+                        'weight' => $v['weight'],
+                        'price' => $v['price'],
+                        'stock' => $v['stock'],
+                    ]);
+                }
+
+                $product->update([
+                    'price' => $seedVariations[0]['price'],
+                    'stock' => array_sum(array_column($seedVariations, 'stock')),
+                ]);
+            }
         }
 
         // ─── Orders ──────────────────────────────────────────────────────────
@@ -100,11 +141,11 @@ class AdminSeeder extends Seeder
             $subtotal = rand(50000, 500000);
             $shippingCost = rand(10000, 30000);
             $order = AdminOrder::create([
-                'order_number' => 'ORD-' . strtoupper(Str::random(8)),
+                'order_number' => 'ORD-'.strtoupper(Str::random(8)),
                 'customer_name' => $cust['name'],
                 'customer_phone' => $cust['phone'],
-                'customer_address' => 'Jl. Contoh No. ' . $i . ', Jakarta Selatan',
-                'shipping_address' => 'Jl. Contoh No. ' . $i . ', Jakarta Selatan',
+                'customer_address' => 'Jl. Contoh No. '.$i.', Jakarta Selatan',
+                'shipping_address' => 'Jl. Contoh No. '.$i.', Jakarta Selatan',
                 'shipping_courier' => 'JNE',
                 'shipping_service' => 'Regular',
                 'shipping_cost' => $shippingCost,
@@ -132,7 +173,7 @@ class AdminSeeder extends Seeder
 
         BlogPost::create([
             'title' => '5 Tips Memasak Rendang yang Empuk dan Lezat',
-            'slug' => 'tips-memasak-rendang-' . random_int(100, 999),
+            'slug' => 'tips-memasak-rendang-'.random_int(100, 999),
             'content' => '<p>Rendang adalah masakan khas Padang yang memerlukan waktu lama untuk dimasak. Berikut tips agar rendang empuk dan bumbunya meresap...</p>',
             'blog_category_id' => $blogCat1->id,
             'tags' => 'rendang,memasak,tips',
@@ -142,7 +183,7 @@ class AdminSeeder extends Seeder
 
         BlogPost::create([
             'title' => 'Resep Sambal Terasi Pedas Manis',
-            'slug' => 'resep-sambal-terasi-' . random_int(100, 999),
+            'slug' => 'resep-sambal-terasi-'.random_int(100, 999),
             'content' => '<p>Sambal terasi adalah pelengkap wajib untuk semua masakan Indonesia. Berikut resep sederhana yang bisa dicoba di rumah...</p>',
             'blog_category_id' => $blogCat2->id,
             'tags' => 'sambal,resep,pedas',
@@ -152,7 +193,7 @@ class AdminSeeder extends Seeder
 
         BlogPost::create([
             'title' => 'Manfaat Kopi Gayo untuk Kesehatan',
-            'slug' => 'manfaat-kopi-gayo-' . random_int(100, 999),
+            'slug' => 'manfaat-kopi-gayo-'.random_int(100, 999),
             'content' => '<p>Kopi Gayo dari Aceh memiliki banyak manfaat kesehatan. Kandungan antioksidannya tinggi dan dapat membantu meningkatkan metabolisme...</p>',
             'blog_category_id' => $blogCat3->id,
             'tags' => 'kopi,kesehatan,gayo',

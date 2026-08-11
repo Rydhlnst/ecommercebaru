@@ -52,17 +52,25 @@
                 <h1 class="text-2xl lg:text-3xl font-bold text-[#171717] mb-4">{{ $product->name }}</h1>
 
                 {{-- Price --}}
+                @php
+                    $pdpVariations = ($product->has_variations && $product->variations->count())
+                        ? $product->variations->values()
+                        : collect();
+                @endphp
                 <div class="mb-6">
-                    @if($product->has_variations && $product->variations->count())
+                    @if($pdpVariations->isNotEmpty())
                         <p class="text-sm text-zinc-500 mb-1">Mulai dari</p>
                     @endif
-                    <p class="pdp-price">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                    <p class="pdp-price" id="pdp-price">Rp {{ number_format($pdpVariations->isNotEmpty() ? $pdpVariations->first()->price : $product->price, 0, ',', '.') }}</p>
                 </div>
 
                 {{-- Stock --}}
-                <div class="mb-6">
-                    @if($product->stock > 0)
-                        <span class="text-sm text-green-600 font-medium">✓ Stok tersedia ({{ $product->stock }})</span>
+                <div class="mb-6" id="pdp-stock">
+                    @php
+                        $pdpStock = $pdpVariations->isNotEmpty() ? $pdpVariations->first()->stock : $product->stock;
+                    @endphp
+                    @if($pdpStock > 0)
+                        <span class="text-sm text-green-600 font-medium">✓ Stok tersedia ({{ $pdpStock }})</span>
                     @else
                         <span class="text-sm text-red-500 font-medium">✗ Stok habis</span>
                     @endif
@@ -75,12 +83,45 @@
                     </div>
                 @endif
 
+                {{-- Variants (weight) — first variant auto-selected --}}
+                @if($pdpVariations->isNotEmpty())
+                    <div class="mb-6">
+                        <p class="text-sm font-medium text-[#171717] mb-2">Pilih Berat</p>
+                        <div class="flex flex-wrap items-center gap-2" id="pdp-variants">
+                            @foreach($pdpVariations as $i => $var)
+                                <button type="button"
+                                        class="pdp-variant-btn px-5 py-2.5 text-sm font-medium border transition-all {{ $i === 0 ? 'text-white border-[#2D5A27]' : 'text-[#171717] border-[#E8F0E5] hover:border-[#2D5A27]' }}"
+                                        style="{{ $i === 0 ? 'background-color:#2D5A27;' : '' }} border-radius:8px;"
+                                        data-variant-id="{{ $var->id }}"
+                                        data-price="{{ number_format($var->price, 0, ',', '.') }}"
+                                        data-stock="{{ (int) $var->stock }}"
+                                        onclick="pdpSelectVariant(this)">
+                                    {{ $var->weight_label }}
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
                 {{-- Add to Cart --}}
                 @if($product->stock > 0)
-                    <form action="{{ route('shop.api.checkout.cart.store') }}" method="POST" class="mt-auto" onsubmit="event.preventDefault(); beresAddToCart(this);">
+                    <form action="{{ route('cart.add') }}" method="POST" class="mt-auto" id="pdp-form" onsubmit="event.preventDefault(); pdpAddToCart(this);">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        <input type="hidden" name="quantity" value="1">
+                        @if($pdpVariations->isNotEmpty())
+                            <input type="hidden" name="selected_configurable_option" value="{{ $pdpVariations->first()->id }}" class="beres-variant-input" id="pdp-variant-input">
+                        @endif
+
+                        {{-- Quantity stepper --}}
+                        <p class="text-sm font-medium text-[#171717] mb-2">Quantity</p>
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="flex items-center border border-[#E8F0E5] rounded-lg overflow-hidden h-12">
+                                <button type="button" class="w-11 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-xl leading-none" onclick="pdpQty(-1)" aria-label="Kurangi">−</button>
+                                <input type="number" name="quantity" value="1" min="1" max="99" id="pdp-qty" class="w-12 h-full text-center text-sm border-0 border-x border-[#E8F0E5] focus:outline-none bg-transparent font-semibold leading-none" aria-label="Jumlah">
+                                <button type="button" class="w-11 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-xl leading-none" onclick="pdpQty(1)" aria-label="Tambah">+</button>
+                            </div>
+                        </div>
+
                         <button type="submit" class="pdp-btn-primary">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                             Tambah ke Keranjang
@@ -99,4 +140,96 @@
             </div>
         </div>
     </div>
+
+    <script>
+        // Self-contained PDP handlers — do not depend on home-page globals.
+        window.pdpSelectVariant = function (btn) {
+            const wrap = document.getElementById('pdp-variants');
+            if (!wrap) return;
+
+            wrap.querySelectorAll('button').forEach(b => {
+                b.style.backgroundColor = '';
+                b.style.borderColor = '#E8F0E5';
+                b.classList.remove('text-white');
+                b.classList.add('text-[#171717]');
+            });
+
+            btn.style.backgroundColor = '#2D5A27';
+            btn.style.borderColor = '#2D5A27';
+            btn.classList.add('text-white');
+            btn.classList.remove('text-[#171717]');
+
+            const id = btn.getAttribute('data-variant-id');
+            const price = btn.getAttribute('data-price');
+            const stock = parseInt(btn.getAttribute('data-stock') || 0, 10);
+
+            const hidden = document.getElementById('pdp-variant-input');
+            if (hidden) hidden.value = id;
+
+            const priceEl = document.getElementById('pdp-price');
+            if (priceEl) priceEl.textContent = 'Rp ' + price;
+
+            const stockEl = document.getElementById('pdp-stock');
+            if (stockEl) {
+                stockEl.innerHTML = stock > 0
+                    ? '<span class="text-sm text-green-600 font-medium">✓ Stok tersedia (' + stock + ')</span>'
+                    : '<span class="text-sm text-red-500 font-medium">✗ Stok habis</span>';
+            }
+        };
+
+        window.pdpQty = function (delta) {
+            const input = document.getElementById('pdp-qty');
+            if (!input) return;
+            let v = parseInt(input.value || 1, 10) + delta;
+            if (v < 1) v = 1;
+            if (v > 99) v = 99;
+            input.value = v;
+        };
+
+        window.pdpAddToCart = async function (form) {
+            const btn = form.querySelector('button[type="submit"]');
+            const original = btn ? btn.textContent : '';
+            if (btn) { btn.disabled = true; btn.textContent = 'Menambahkan…'; }
+
+            const productId = form.querySelector('[name="product_id"]').value;
+            const quantity  = parseInt(document.getElementById('pdp-qty')?.value || 1, 10);
+            const token     = document.querySelector('meta[name="csrf-token"]')?.content
+                           || form.querySelector('[name="_token"]')?.value;
+
+            const payload = { product_id: productId, quantity };
+            const variantInput = document.getElementById('pdp-variant-input');
+            if (variantInput) payload.selected_configurable_option = parseInt(variantInput.value, 10);
+
+            try {
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': token,
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(payload),
+                });
+
+                const data = await res.json().catch(() => ({}));
+
+                if (res.ok && data.success) {
+                    if (data.cart && typeof beresCartRefresh === 'function') beresCartRefresh(data.cart);
+                    if (btn) btn.textContent = '✓ Ditambahkan';
+                    setTimeout(() => {
+                        if (btn) { btn.disabled = false; btn.textContent = original; }
+                        if (typeof beresCartOpen === 'function') beresCartOpen();
+                    }, 500);
+                } else {
+                    alert(data.message || 'Gagal menambahkan ke keranjang. Coba lagi.');
+                    if (btn) { btn.disabled = false; btn.textContent = original; }
+                }
+            } catch (e) {
+                alert('Gagal terhubung ke server.');
+                if (btn) { btn.disabled = false; btn.textContent = original; }
+            }
+        };
+    </script>
 </x-shop::layouts>

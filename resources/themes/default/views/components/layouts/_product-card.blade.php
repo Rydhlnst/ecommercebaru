@@ -36,7 +36,7 @@
                     $vSale = false;
                     $childVariants[] = [
                         'id'            => $var->id,
-                        'label'         => $var->weight ? $var->weight.'kg' : 'Var '.($i+1),
+                        'label'         => $var->weight ? $var->weight_label : 'Var '.($i+1),
                         'price'         => core()->currency($var->price),
                         'regular_price' => null,
                         'special_price' => $var->price,
@@ -216,7 +216,7 @@
         {{-- Quantity counter + Add to Cart --}}
         @if ($prodId && $inStock)
             <form
-                action="{{ route('shop.api.checkout.cart.store') }}"
+                action="{{ route('cart.add') }}"
                 method="POST"
                 class="mt-3"
                 onsubmit="event.preventDefault(); beresAddToCart(this);"

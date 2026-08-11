@@ -72,6 +72,20 @@ Route::get('/category/{slug}', [CustomCatalogController::class, 'category'])
 
 /*
 |--------------------------------------------------------------------------
+| Custom Session Cart (AdminProduct catalogue — independent of Bagisto cart)
+|--------------------------------------------------------------------------
+*/
+
+use App\Http\Controllers\CartController;
+
+Route::get('/api/cart', [CartController::class, 'show'])->name('cart.show');
+Route::get('/api/cart/count', [CartController::class, 'count'])->name('cart.count');
+Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+
+/*
+|--------------------------------------------------------------------------
 | Panel Routes (admin CRUD)
 |--------------------------------------------------------------------------
 */

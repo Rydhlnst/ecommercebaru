@@ -11,8 +11,9 @@
         ],
         [
             'label'  => core()->getConfigData('beres_storefront.bottom_nav.label_cart') ?: 'Keranjang',
-            'href'   => route('shop.checkout.cart.index'),
-            'active' => $isActive(['checkout/cart', 'checkout']),
+            'href'   => '#',
+            'onclick' => 'event.preventDefault(); beresCartOpen();',
+            'active' => false,
             'svg'    => '<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>',
         ],
         [
@@ -50,6 +51,7 @@
             <li style="text-align: center;">
                 <a
                     href="{{ $item['href'] }}"
+                    @if (!empty($item['onclick'])) onclick="{{ $item['onclick'] }}" @endif
                     style="
                         display: flex;
                         flex-direction: column;
@@ -67,7 +69,12 @@
                     aria-label="{{ $item['label'] }}"
                     aria-current="{{ $item['active'] ? 'page' : 'false' }}"
                 >
-                    <svg style="width:22px; height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $item['svg'] !!}</svg>
+                    <span style="position: relative; display:inline-flex;">
+                        <svg style="width:22px; height:22px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{!! $item['svg'] !!}</svg>
+                        @if (($item['label'] ?? '') === (core()->getConfigData('beres_storefront.bottom_nav.label_cart') ?: 'Keranjang'))
+                            <span class="beres-cart-count" style="position:absolute; top:-6px; right:-8px; background:#2D5A27; color:#fff; font-size:9px; font-weight:700; border-radius:999px; min-width:15px; height:15px; padding:0 3px; display:none; align-items:center; justify-content:center; line-height:1;">0</span>
+                        @endif
+                    </span>
                     <span>{{ $item['label'] }}</span>
                     @if ($item['active'])
                         <span style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:28px; height:2px; background:#2D5A27; border-radius:0 0 2px 2px;"></span>

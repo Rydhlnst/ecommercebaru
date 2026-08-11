@@ -2,109 +2,50 @@
 
 namespace Beres\Checkout\Services;
 
+use App\Models\AdminOrder;
+use App\Models\AdminOrderItem;
+use App\Services\CartService;
 use Beres\Checkout\Contracts\CheckoutSessionRepositoryInterface;
 use Beres\Checkout\DTOs\CheckoutDTO;
 use Beres\Checkout\DTOs\OrderSummaryDTO;
-use Beres\Checkout\Models\CheckoutSession;
 use Beres\Shipping\Services\ShippingCalculatorService;
-use Beres\Payment\Services\PaymentService;
-use Webkul\Checkout\Facades\Cart as CartFacade;
-use Webkul\Sales\Repositories\OrderRepository;
-use Webkul\Sales\Models\Order;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Session-cart based checkout. Creates AdminOrder + AdminOrderItem rows
+ * (the custom dashboard's order system) — fully independent of Bagisto's
+ * Webkul cart / order pipeline.
+ */
 class CheckoutService
 {
     public function __construct(
         protected CheckoutSessionRepositoryInterface $sessionRepository,
         protected ShippingCalculatorService $shippingCalculator,
-        protected PaymentService $paymentService,
-        protected OrderRepository $orderRepository
+        protected CartService $cart,
     ) {}
 
     /**
-     * Get order summary for checkout.
+     * Order summary built from the session cart.
      */
-    public function getOrderSummary(int $cartId, ?string $shippingMethod = null): OrderSummaryDTO
+    public function getOrderSummary(?string $shippingMethod = null): OrderSummaryDTO
     {
-        $cart = CartFacade::getCart();
+        $cart = $this->cart->summary();
 
-        if (!$cart) {
+        if ($cart['count'] === 0) {
             throw new \Exception('Cart is empty');
         }
 
-        $subtotal = (float) $cart->grand_total;
-        $shippingCost = 0;
-        $taxAmount = (float) $cart->tax_total;
-        $discountAmount = (float) $cart->discount_amount;
-
-        // Calculate shipping if method is provided
-        if ($shippingMethod) {
-            $shippingCost = $this->calculateShippingCost($cart, $shippingMethod);
-        }
-
-        $grandTotal = $subtotal + $shippingCost + $taxAmount - $discountAmount;
-
         return OrderSummaryDTO::fromArray([
-            'subtotal'         => $subtotal,
-            'shipping_cost'    => $shippingCost,
-            'tax_amount'       => $taxAmount,
-            'discount_amount'  => $discountAmount,
-            'grand_total'      => $grandTotal,
-            'currency'         => core()->getCurrentCurrencyCode(),
-            'items'            => $cart->items->toArray(),
+            'subtotal' => (float) $cart['subtotal'],
+            'shipping_cost' => 0.0,
+            'grand_total' => (float) $cart['subtotal'],
+            'currency' => core()->getCurrentCurrencyCode(),
+            'items' => $cart['items'],
             'shipping_address' => [],
-            'shipping_method'  => $shippingMethod,
-            'payment_method'   => '',
+            'shipping_method' => $shippingMethod,
+            'payment_method' => '',
         ]);
-    }
-
-    /**
-     * Calculate shipping cost for cart.
-     */
-    protected function calculateShippingCost($cart, string $shippingMethod): float
-    {
-        try {
-            // Get cart weight
-            $weight = 0;
-            foreach ($cart->items as $item) {
-                $weight += ($item->product->weight ?? 0) * $item->qty;
-            }
-
-            // Default origin city from config
-            $originCity = config('rajaongkir.origin_city', '501');
-
-            // Get destination from cart address
-            $destinationCity = $cart->shipping_address?->city_id ?? null;
-
-            if (!$destinationCity) {
-                return 0;
-            }
-
-            // Calculate shipping costs
-            $couriers = ['jne', 'jnt', 'sicepat'];
-            $costs = $this->shippingCalculator->calculateShippingCosts(
-                (int) $originCity,
-                (int) $destinationCity,
-                $weight,
-                $couriers
-            );
-
-            // Find matching shipping method
-            foreach ($costs as $service) {
-                foreach ($service->services as $cost) {
-                    if (strtolower($cost->service) === strtolower($shippingMethod)) {
-                        return $cost->cost;
-                    }
-                }
-            }
-
-            return 0;
-        } catch (\Exception $e) {
-            Log::error('Shipping calculation error: ' . $e->getMessage());
-            return 0;
-        }
     }
 
     /**
@@ -113,15 +54,15 @@ class CheckoutService
     public function createSession(CheckoutDTO $dto): object
     {
         return $this->sessionRepository->create([
-            'cart_id'           => $dto->cartId,
-            'customer_id'       => $dto->customerId,
-            'shipping_address'  => $dto->shippingAddress,
-            'billing_address'   => $dto->billingAddress,
-            'shipping_method'   => $dto->shippingMethod,
-            'shipping_cost'     => $dto->shippingCost,
-            'payment_method'    => $dto->paymentMethod,
-            'notes'             => $dto->notes,
-            'status'            => 'active',
+            'cart_id' => $dto->cartId,
+            'customer_id' => $dto->customerId,
+            'shipping_address' => $dto->shippingAddress,
+            'billing_address' => $dto->billingAddress,
+            'shipping_method' => $dto->shippingMethod,
+            'shipping_cost' => $dto->shippingCost,
+            'payment_method' => $dto->paymentMethod,
+            'notes' => $dto->notes,
+            'status' => 'active',
         ]);
     }
 
@@ -134,61 +75,72 @@ class CheckoutService
     }
 
     /**
-     * Place order from checkout.
+     * Place order from the session cart → AdminOrder + AdminOrderItem.
      */
-    public function placeOrder(int $sessionId): ?Order
+    public function placeOrder(int $sessionId): AdminOrder
     {
         $session = $this->sessionRepository->getById($sessionId);
 
-        if (!$session) {
+        if (! $session) {
             throw new \Exception('Checkout session not found');
         }
 
-        DB::beginTransaction();
+        $cart = $this->cart->summary();
 
-        try {
-            // Get cart
-            $cart = CartFacade::getCart();
-
-            if (!$cart) {
-                throw new \Exception('Cart is empty');
-            }
-
-            // Create order using Bagisto's order repository
-            $orderData = [
-                'cart_id'             => $cart->id,
-                'customer_id'         => $session->customer_id,
-                'customer_email'      => $cart->customer_email ?? $session->shipping_address['email'] ?? '',
-                'customer_first_name' => $cart->customer_first_name ?? $session->shipping_address['first_name'] ?? '',
-                'customer_last_name'  => $cart->customer_last_name ?? $session->shipping_address['last_name'] ?? '',
-                'shipping_method'     => $session->shipping_method,
-                'shipping_amount'     => $session->shipping_cost,
-                'payment_method'      => $session->payment_method,
-                'grand_total'         => $cart->grand_total + $session->shipping_cost,
-                'status'              => 'pending',
-            ];
-
-            // Use Bagisto's checkout to create order
-            $order = app(\Webkul\Checkout\Http\Controllers\OnepageController::class)
-                ->store($request ?? new \Illuminate\Http\Request());
-
-            if ($order) {
-                // Mark session as completed
-                $this->sessionRepository->markCompleted($sessionId);
-
-                Log::info("Order placed successfully: #{$order->id}");
-
-                DB::commit();
-
-                return $order;
-            }
-
-            throw new \Exception('Failed to create order');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Order placement failed: ' . $e->getMessage());
-            throw $e;
+        if ($cart['count'] === 0) {
+            throw new \Exception('Cart is empty');
         }
+
+        $ship = $session->shipping_address ?? [];
+
+        $fullName = trim(($ship['first_name'] ?? '').' '.($ship['last_name'] ?? ''));
+        $fullAddress = collect([
+            $ship['address1'] ?? null,
+            $ship['city'] ?? null,
+            $ship['state'] ?? null,
+            $ship['postcode'] ?? null,
+            $ship['country'] ?? null,
+        ])->filter()->implode(', ');
+
+        $subtotal = (float) $cart['subtotal'];
+        $shippingCost = (float) ($session->shipping_cost ?? 0);
+
+        $notes = trim('Metode pembayaran: '.($session->payment_method ?? '-')."\n".($session->notes ?? ''));
+
+        return DB::transaction(function () use ($session, $cart, $fullName, $fullAddress, $subtotal, $shippingCost, $notes, $sessionId) {
+            $order = AdminOrder::create([
+                'customer_name' => $fullName ?: '-',
+                'customer_phone' => $ship['phone'] ?? null,
+                'customer_address' => $fullAddress,
+                'shipping_address' => $fullAddress,
+                'shipping_courier' => $session->shipping_method,
+                'shipping_service' => $session->shipping_method,
+                'shipping_cost' => $shippingCost,
+                'subtotal' => $subtotal,
+                'total' => $subtotal + $shippingCost,
+                'status' => 'pending',
+                'payment_status' => 'pending',
+                'notes' => $notes ?: null,
+            ]);
+
+            foreach ($cart['items'] as $line) {
+                AdminOrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $line['product_id'] ?? null,
+                    'product_name' => $line['name'],
+                    'quantity' => $line['quantity'],
+                    'price' => $line['price'],
+                    'total' => $line['price'] * $line['quantity'],
+                ]);
+            }
+
+            $this->cart->clear();
+            $this->sessionRepository->markCompleted($sessionId);
+
+            Log::info("Beres order placed: #{$order->order_number}");
+
+            return $order;
+        });
     }
 
     /**

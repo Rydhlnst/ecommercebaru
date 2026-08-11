@@ -325,7 +325,7 @@ fix() {
 
     # 3. Check database tables
     log "Checking database tables..."
-    local tables=("admin_orders" "admin_products" "admin_categories" "admin_reviews" "admin_order_items" "admin_product_images" "admin_product_variations" "faqs" "blog_posts" "blog_categories" "site_settings" "home_showcases")
+    local tables=("admin_orders" "admin_products" "admin_categories" "admin_reviews" "admin_order_items" "admin_product_images" "admin_product_variations" "checkout_sessions" "faqs" "blog_posts" "blog_categories" "site_settings" "home_showcases")
     local missing_tables=0
 
     for table in "${tables[@]}"; do
@@ -434,7 +434,7 @@ setup() {
     fi
 
     $COMPOSE exec app php artisan migrate --force
-    $COMPOSE exec app php artisan db:seed --force || warn "Seed skipped"
+    $COMPOSE exec app php artisan db:seed --class="Database\\Seeders\\AdminSeeder" --force || warn "AdminSeeder skipped"
     $COMPOSE exec app touch storage/installed
     $COMPOSE exec app php artisan indexer:index --mode=full || warn "Indexer skipped"
     $COMPOSE exec app php artisan storage:link --force || true

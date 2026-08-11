@@ -327,6 +327,9 @@
             <!-- Mobile Bottom Navigation -->
             @include('shop::components.layouts.bottom-nav')
 
+            <!-- Custom session cart drawer (AdminProduct catalogue) -->
+            @include('shop::components.layouts.cart-drawer')
+
             <!-- Fullscreen Search Overlay (mobile-first, also works on desktop) -->
             <v-search-overlay></v-search-overlay>
         </div>

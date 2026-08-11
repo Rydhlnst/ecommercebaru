@@ -222,11 +222,13 @@
             });
 
             if (res.ok) {
+                const data = await res.json().catch(() => ({}));
+                if (data.cart && typeof beresCartRefresh === 'function') beresCartRefresh(data.cart);
                 if (btn) btn.textContent = '✓ Ditambahkan';
-                document.dispatchEvent(new CustomEvent('cart:updated'));
                 setTimeout(() => {
                     if (btn) { btn.disabled = false; btn.textContent = original; }
-                }, 1500);
+                    if (typeof beresCartOpen === 'function') beresCartOpen();
+                }, 500);
             } else {
                 const data = await res.json().catch(() => ({}));
                 alert(data.message || 'Gagal menambahkan ke keranjang. Coba lagi.');
@@ -750,6 +752,7 @@
         </div>
     </section>
 
-    {{-- ============ MAP & CONTACT ============ --}}
-    @include('shop::components.layouts.map-section')
+    {{-- Map & Contact section ditampilkan lewat layout utama
+         (shop::components.layouts.map-section) pada semua halaman,
+         jadi tidak perlu di-include lagi di sini. --}}
 </x-shop::layouts>

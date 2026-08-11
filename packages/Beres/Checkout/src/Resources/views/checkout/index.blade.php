@@ -183,13 +183,13 @@
 
                     <!-- Cart Items -->
                     <div class="mb-4 space-y-3">
-                        @foreach($cart->items as $item)
+                        @foreach(($cart['items'] ?? []) as $item)
                             <div class="flex items-center gap-3">
                                 <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded bg-gray-100">
-                                    @if($item->product->image)
+                                    @if(!empty($item['image_url']))
                                         <img
-                                            src="{{ asset('storage/' . $item->product->image) }}"
-                                            alt="{{ $item->product->name }}"
+                                            src="{{ $item['image_url'] }}"
+                                            alt="{{ $item['name'] }}"
                                             class="h-full w-full object-cover"
                                         />
                                     @else
@@ -201,11 +201,11 @@
                                     @endif
                                 </div>
                                 <div class="flex-1">
-                                    <p class="text-sm font-medium text-gray-900">{{ $item->product->name }}</p>
-                                    <p class="text-xs text-gray-500">Qty: {{ $item->qty }}</p>
+                                    <p class="text-sm font-medium text-gray-900">{{ $item['name'] }}</p>
+                                    <p class="text-xs text-gray-500">Qty: {{ $item['quantity'] }}</p>
                                 </div>
                                 <p class="text-sm font-medium text-gray-900">
-                                    {{ core()->formatPrice($item->total) }}
+                                    Rp {{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 1), 0, ',', '.') }}
                                 </p>
                             </div>
                         @endforeach
@@ -217,7 +217,7 @@
                     <div class="space-y-2">
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-500">Subtotal</span>
-                            <span class="text-gray-900">{{ core()->formatPrice($cart->grand_total) }}</span>
+                            <span class="text-gray-900">Rp {{ number_format($cart['subtotal'] ?? 0, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-500">Pengiriman</span>
@@ -226,7 +226,7 @@
                         <hr class="my-2" />
                         <div class="flex justify-between text-lg font-semibold">
                             <span class="text-gray-900">Total</span>
-                            <span id="grand-total" class="text-green-600">{{ core()->formatPrice($cart->grand_total) }}</span>
+                            <span id="grand-total" class="text-green-600">Rp {{ number_format($cart['subtotal'] ?? 0, 0, ',', '.') }}</span>
                         </div>
                     </div>
 

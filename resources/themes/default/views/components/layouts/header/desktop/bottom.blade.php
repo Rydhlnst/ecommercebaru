@@ -92,9 +92,17 @@
             </x-shop::dropdown>
 
             {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.mini_cart.before') !!}
-            @if(core()->getConfigData('sales.checkout.shopping_cart.cart_page'))
-                @include('shop::checkout.cart.mini-cart')
-            @endif
+
+            {{-- Custom session cart (AdminProduct catalogue) — opens beres-cart-drawer --}}
+            <button
+                type="button"
+                onclick="beresCartOpen()"
+                class="relative text-xl cursor-pointer icon-cart text-ink hover:text-[#2D5A27] transition-colors"
+                aria-label="Keranjang"
+            >
+                <span class="beres-cart-count absolute -top-2 ltr:-right-2 rtl:-left-2 bg-[#2D5A27] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style="display:none;">0</span>
+            </button>
+
             {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.mini_cart.after') !!}
 
             {!! view_render_event('bagisto.shop.components.layouts.header.desktop.bottom.profile.before') !!}

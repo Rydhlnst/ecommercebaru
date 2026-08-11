@@ -2,39 +2,41 @@
 
 namespace Beres\Checkout\Http\Controllers;
 
-use Illuminate\Routing\Controller;
-use Illuminate\Http\Request;
-use Beres\Checkout\Services\CheckoutService;
+use App\Models\AdminOrder;
+use App\Services\CartService;
 use Beres\Checkout\DTOs\CheckoutDTO;
-use Beres\Shipping\Services\ShippingCalculatorService;
+use Beres\Checkout\Services\CheckoutService;
 use Beres\Payment\Services\PaymentService;
-use Webkul\Checkout\Facades\Cart as CartFacade;
-use Illuminate\Support\Facades\Response;
+use Beres\Shipping\Services\ShippingCalculatorService;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 
 class CheckoutController extends Controller
 {
     public function __construct(
         protected CheckoutService $checkoutService,
         protected ShippingCalculatorService $shippingCalculator,
-        protected PaymentService $paymentService
+        protected PaymentService $paymentService,
+        protected CartService $cart,
     ) {}
 
     /**
-     * Display checkout page.
+     * Display checkout page — reads the session cart (custom AdminProduct
+     * catalogue), fully decoupled from Bagisto's Webkul cart.
      */
     public function index()
     {
-        $cart = CartFacade::getCart();
+        $cart = $this->cart->summary();
 
-        if (!$cart) {
-            return redirect()->route('shop.checkout.cart.index')
+        if ($cart['count'] === 0) {
+            return redirect()->route('shop.home.index')
                 ->with('warning', 'Keranjang kosong');
         }
 
         $couriers = $this->shippingCalculator->getAvailableCouriers();
 
         return view('beres-checkout::checkout.index', [
-            'cart'     => $cart,
+            'cart' => $cart,
             'couriers' => $couriers,
         ]);
     }
@@ -46,7 +48,7 @@ class CheckoutController extends Controller
     {
         $request->validate([
             'city_id' => 'required|integer',
-            'weight'  => 'required|integer|min:1',
+            'weight' => 'required|integer|min:1',
             'courier' => 'required|string',
         ]);
 
@@ -65,7 +67,7 @@ class CheckoutController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data'    => $costs,
+                'data' => $costs,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -76,7 +78,7 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Get order summary.
+     * Get order summary from the session cart.
      */
     public function getSummary(Request $request)
     {
@@ -84,89 +86,78 @@ class CheckoutController extends Controller
             'shipping_method' => 'nullable|string',
         ]);
 
-        try {
-            $cart = CartFacade::getCart();
+        $cart = $this->cart->summary();
 
-            if (!$cart) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Keranjang kosong',
-                ], 400);
-            }
-
-            $summary = $this->checkoutService->getOrderSummary(
-                $cart->id,
-                $request->input('shipping_method')
-            );
-
-            return response()->json([
-                'success' => true,
-                'data'    => $summary->toArray(),
-            ]);
-        } catch (\Exception $e) {
+        if ($cart['count'] === 0) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+                'message' => 'Keranjang kosong',
+            ], 400);
         }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'subtotal' => $cart['subtotal'],
+                'items_qty' => $cart['items_qty'],
+                'shipping_cost' => 0,
+                'grand_total' => $cart['subtotal'],
+                'currency' => core()->getCurrentCurrencyCode(),
+                'items' => $cart['items'],
+                'shipping_method' => $request->input('shipping_method'),
+            ],
+        ]);
     }
 
     /**
-     * Create checkout session.
+     * Create checkout session. No Bagisto cart required — cart_id is
+     * recorded as 0; the live session cart is read at placeOrder time.
      */
     public function createSession(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'shipping_address.first_name' => 'required|string',
-            'shipping_address.last_name'  => 'required|string',
-            'shipping_address.email'      => 'required|email',
-            'shipping_address.phone'      => 'required|string',
-            'shipping_address.address1'   => 'required|string',
-            'shipping_address.city'       => 'required|string',
-            'shipping_address.state'      => 'required|string',
-            'shipping_address.postcode'   => 'required|string',
-            'shipping_address.country'    => 'required|string',
-            'shipping_method'             => 'required|string',
-            'payment_method'              => 'required|string',
+            'shipping_address.last_name' => 'required|string',
+            'shipping_address.email' => 'required|email',
+            'shipping_address.phone' => 'required|string',
+            'shipping_address.address1' => 'required|string',
+            'shipping_address.city' => 'required|string',
+            'shipping_address.state' => 'required|string',
+            'shipping_address.postcode' => 'required|string',
+            'shipping_address.country' => 'required|string',
+            'shipping_method' => 'required|string',
+            'payment_method' => 'required|string',
+            'shipping_cost' => 'nullable|numeric',
         ]);
 
-        try {
-            $cart = CartFacade::getCart();
-
-            if (!$cart) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Keranjang kosong',
-                ], 400);
-            }
-
-            $dto = CheckoutDTO::fromArray([
-                'cart_id'           => $cart->id,
-                'customer_id'       => auth()->guard('customer')->id(),
-                'shipping_address'  => $request->input('shipping_address'),
-                'billing_address'   => $request->input('billing_address'),
-                'shipping_method'   => $request->input('shipping_method'),
-                'shipping_cost'     => $request->input('shipping_cost', 0),
-                'payment_method'    => $request->input('payment_method'),
-                'notes'             => $request->input('notes'),
-            ]);
-
-            $session = $this->checkoutService->createSession($dto);
-
-            return response()->json([
-                'success' => true,
-                'data'    => $session,
-            ]);
-        } catch (\Exception $e) {
+        if ($this->cart->count() === 0) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+                'message' => 'Keranjang kosong',
+            ], 400);
         }
+
+        $dto = CheckoutDTO::fromArray([
+            'cart_id' => 0,
+            'customer_id' => auth()->guard('customer')->id(),
+            'shipping_address' => $data['shipping_address'],
+            'billing_address' => $request->input('billing_address'),
+            'shipping_method' => $data['shipping_method'],
+            'shipping_cost' => (float) ($data['shipping_cost'] ?? 0),
+            'payment_method' => $data['payment_method'],
+            'notes' => $request->input('notes'),
+        ]);
+
+        $session = $this->checkoutService->createSession($dto);
+
+        return response()->json([
+            'success' => true,
+            'data' => $session,
+        ]);
     }
 
     /**
-     * Place order.
+     * Place order — creates an AdminOrder (+ items) from the session cart.
      */
     public function placeOrder(Request $request)
     {
@@ -177,26 +168,15 @@ class CheckoutController extends Controller
         try {
             $order = $this->checkoutService->placeOrder($request->input('session_id'));
 
-            if (!$order) {
+            if (! $order) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Gagal membuat pesanan',
                 ], 400);
             }
 
-            // Create payment if using Midtrans
-            if ($order->payment_method === 'midtrans') {
-                $paymentUrl = $this->paymentService->createPayment($order->id);
-
-                return response()->json([
-                    'success'    => true,
-                    'order_id'   => $order->id,
-                    'payment_url' => $paymentUrl,
-                ]);
-            }
-
             return response()->json([
-                'success'  => true,
+                'success' => true,
                 'order_id' => $order->id,
             ]);
         } catch (\Exception $e) {
@@ -212,9 +192,7 @@ class CheckoutController extends Controller
      */
     public function success(Request $request)
     {
-        $orderId = $request->query('order_id');
-
-        $order = \Webkul\Sales\Models\Order::find($orderId);
+        $order = AdminOrder::with('items')->find($request->query('order_id'));
 
         return view('beres-checkout::checkout.success', [
             'order' => $order,

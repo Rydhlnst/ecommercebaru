@@ -47,8 +47,8 @@ class DeployController extends Controller
 
         return [
             'exit_code' => $result->exitCode,
-            'stdout'    => $result->output(),
-            'stderr'    => $result->errorOutput(),
+            'stdout' => $result->output(),
+            'stderr' => $result->errorOutput(),
         ];
     }
 
@@ -73,11 +73,11 @@ class DeployController extends Controller
         }
 
         return $this->json(response(), 200, [
-            'status'  => 'ok',
-            'app'     => config('app.name'),
-            'env'     => config('app.env'),
-            'url'     => config('app.url'),
-            'time'    => now()->toDateTimeString(),
+            'status' => 'ok',
+            'app' => config('app.name'),
+            'env' => config('app.env'),
+            'url' => config('app.url'),
+            'time' => now()->toDateTimeString(),
         ]);
     }
 
@@ -128,7 +128,10 @@ class DeployController extends Controller
         // 10. Seed products
         $results['seed_products'] = $this->runCommand('db:seed --class="Webkul\Installer\Database\Seeders\ProductTableSeeder" --force');
 
-        // 11. Rebuild search index
+        // 11. Seed custom data (categories, products with variations, orders, reviews, blog, FAQs, settings)
+        $results['seed_admin'] = $this->runCommand('db:seed --class="Database\\Seeders\\AdminSeeder" --force');
+
+        // 12. Rebuild search index
         $results['index'] = $this->runCommand('indexer:index --mode=full');
 
         // Check for failures
@@ -140,9 +143,9 @@ class DeployController extends Controller
         }
 
         return $this->json(response(), empty($failed) ? 200 : 500, [
-            'status'  => empty($failed) ? 'ok' : 'partial_failure',
-            'steps'   => $results,
-            'failed'  => $failed,
+            'status' => empty($failed) ? 'ok' : 'partial_failure',
+            'steps' => $results,
+            'failed' => $failed,
         ]);
     }
 
@@ -161,7 +164,7 @@ class DeployController extends Controller
 
         return $this->json(response(), 200, [
             'status' => 'ok',
-            'steps'  => $results,
+            'steps' => $results,
         ]);
     }
 
@@ -180,7 +183,7 @@ class DeployController extends Controller
 
         return $this->json(response(), 200, [
             'status' => 'ok',
-            'steps'  => $results,
+            'steps' => $results,
         ]);
     }
 
@@ -199,7 +202,7 @@ class DeployController extends Controller
 
         return $this->json(response(), 200, [
             'status' => 'ok',
-            'steps'  => $results,
+            'steps' => $results,
         ]);
     }
 
@@ -214,18 +217,18 @@ class DeployController extends Controller
         }
 
         $results = [];
-        $results['view_clear']    = $this->runCommand('view:clear');
-        $results['config_clear']  = $this->runCommand('config:clear');
-        $results['route_clear']   = $this->runCommand('route:clear');
-        $results['cache_clear']   = $this->runCommand('cache:clear');
-        $results['response_clear']= $this->runCommand('responsecache:clear');
-        $results['config_cache']  = $this->runCommand('config:cache');
-        $results['route_cache']   = $this->runCommand('route:cache');
-        $results['view_cache']    = $this->runCommand('view:cache');
+        $results['view_clear'] = $this->runCommand('view:clear');
+        $results['config_clear'] = $this->runCommand('config:clear');
+        $results['route_clear'] = $this->runCommand('route:clear');
+        $results['cache_clear'] = $this->runCommand('cache:clear');
+        $results['response_clear'] = $this->runCommand('responsecache:clear');
+        $results['config_cache'] = $this->runCommand('config:cache');
+        $results['route_cache'] = $this->runCommand('route:cache');
+        $results['view_cache'] = $this->runCommand('view:cache');
 
         return $this->json(response(), 200, [
             'status' => 'ok',
-            'steps'  => $results,
+            'steps' => $results,
         ]);
     }
 
@@ -244,7 +247,7 @@ class DeployController extends Controller
 
         return $this->json(response(), 200, [
             'status' => 'ok',
-            'steps'  => $results,
+            'steps' => $results,
         ]);
     }
 
@@ -263,7 +266,7 @@ class DeployController extends Controller
 
         return $this->json(response(), 200, [
             'status' => 'ok',
-            'steps'  => $results,
+            'steps' => $results,
         ]);
     }
 
@@ -293,7 +296,7 @@ class DeployController extends Controller
 
         return $this->json(response(), 200, [
             'status' => 'ok',
-            'steps'  => $results,
+            'steps' => $results,
         ]);
     }
 
@@ -330,7 +333,7 @@ class DeployController extends Controller
 
         if (! in_array($cmdBase, $allowed, true)) {
             return $this->json(response(), 403, [
-                'error'   => 'Command "'.$cmdBase.'" is not whitelisted.',
+                'error' => 'Command "'.$cmdBase.'" is not whitelisted.',
                 'allowed' => $allowed,
             ]);
         }
@@ -343,11 +346,11 @@ class DeployController extends Controller
         $result = $this->runCommand($cmd);
 
         return $this->json(response(), $result['exit_code'] === 0 ? 200 : 500, [
-            'status'   => $result['exit_code'] === 0 ? 'ok' : 'error',
-            'command'  => $cmd,
-            'exit_code'=> $result['exit_code'],
-            'output'   => $result['stdout'],
-            'errors'   => $result['stderr'],
+            'status' => $result['exit_code'] === 0 ? 'ok' : 'error',
+            'command' => $cmd,
+            'exit_code' => $result['exit_code'],
+            'output' => $result['stdout'],
+            'errors' => $result['stderr'],
         ]);
     }
 }
