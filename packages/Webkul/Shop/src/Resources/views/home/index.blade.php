@@ -154,6 +154,31 @@
         </div>
     </section>
 
+    {{-- Google Maps Store Location Section --}}
+    <section class="bg-canvas border-t border-mist py-16 md:py-24">
+        <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14">
+            <div class="mb-8 text-center max-w-2xl mx-auto">
+                <p class="eyebrow mb-2">Visit Our Store</p>
+                <h2 class="font-serif text-3xl md:text-4xl text-ink">Store Location & Directions</h2>
+                <p class="mt-3 text-sm text-stone">Find our location easily on Google Maps below.</p>
+            </div>
+            
+            <div class="w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-lg border border-mist relative bg-mist">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.521260322283!2d106.81956135000001!3d-6.194741399999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f5390917b759%3A0x6b45e67356080477!2sJakarta!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid" 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0;" 
+                    allowfullscreen="" 
+                    loading="lazy" 
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Google Maps Store Location"
+                    class="w-full h-full border-0"
+                ></iframe>
+            </div>
+        </div>
+    </section>
+
     {{-- Value props strip --}}
     <section class="bg-cream border-t border-mist">
         <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 text-center">

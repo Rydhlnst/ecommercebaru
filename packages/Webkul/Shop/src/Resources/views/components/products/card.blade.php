@@ -141,6 +141,25 @@
                 @endif
                 {!! view_render_event('bagisto.shop.components.products.card.average_ratings.after') !!}
 
+                <!-- Super Attributes / Variant Button Selectors on Product Card -->
+                <div class="mt-2 flex flex-col gap-2" v-if="product.super_attributes && product.super_attributes.length">
+                    <div v-for="attribute in product.super_attributes" :key="attribute.id" class="flex flex-col gap-1">
+                        <span class="text-xs text-stone font-medium uppercase tracking-wider">@{{ attribute.label }}</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button
+                                v-for="option in attribute.options"
+                                :key="option.id"
+                                type="button"
+                                class="px-2.5 py-1 text-xs rounded-full border transition-all duration-200 font-medium"
+                                :class="selectedSuperAttributes[attribute.id] == option.id ? 'border-ink bg-ink text-cream shadow-sm' : 'border-zinc-300 bg-white text-ink hover:border-ink hover:bg-zinc-50'"
+                                @click="selectedSuperAttributes[attribute.id] = option.id"
+                            >
+                                @{{ option.label }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Quantity selector -->
                 <div class="mt-2 flex items-center justify-between gap-2" v-if="product.is_saleable">
                     <span class="text-xs text-stone uppercase tracking-wider">Qty</span>
@@ -207,6 +226,25 @@
                 {!! view_render_event('bagisto.shop.components.products.card.price.before') !!}
                 <div class="text-lg text-cocoa font-medium" v-html="product.price_html"></div>
                 {!! view_render_event('bagisto.shop.components.products.card.price.after') !!}
+
+                <!-- Super Attributes / Variant Button Selectors in List View -->
+                <div class="mt-1 flex flex-col gap-2" v-if="product.super_attributes && product.super_attributes.length">
+                    <div v-for="attribute in product.super_attributes" :key="attribute.id" class="flex items-center gap-2">
+                        <span class="text-xs text-stone font-medium uppercase tracking-wider">@{{ attribute.label }}:</span>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button
+                                v-for="option in attribute.options"
+                                :key="option.id"
+                                type="button"
+                                class="px-2.5 py-1 text-xs rounded-full border transition-all duration-200 font-medium"
+                                :class="selectedSuperAttributes[attribute.id] == option.id ? 'border-ink bg-ink text-cream shadow-sm' : 'border-zinc-300 bg-white text-ink hover:border-ink hover:bg-zinc-50'"
+                                @click="selectedSuperAttributes[attribute.id] = option.id"
+                            >
+                                @{{ option.label }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
                 {!! view_render_event('bagisto.shop.components.products.card.average_ratings.before') !!}
                 <div class="text-sm text-stone">
@@ -277,6 +315,17 @@
                     isCustomer: '{{ auth()->guard('customer')->check() }}',
                     isAddingToCart: false,
                     quantity: 1,
+                    selectedSuperAttributes: {},
+                }
+            },
+
+            mounted() {
+                if (this.product?.super_attributes && this.product.super_attributes.length) {
+                    this.product.super_attributes.forEach(attr => {
+                        if (attr.options && attr.options.length) {
+                            this.selectedSuperAttributes[attr.id] = attr.options[0].id;
+                        }
+                    });
                 }
             },
 
@@ -335,10 +384,17 @@
 
                 addToCart() {
                     this.isAddingToCart = true;
-                    this.$axios.post('{{ route("shop.api.checkout.cart.store") }}', {
-                            'quantity': this.quantity || 1,
-                            'product_id': this.product.id,
-                        })
+
+                    let payload = {
+                        'quantity': this.quantity || 1,
+                        'product_id': this.product.id,
+                    };
+
+                    if (this.product.super_attributes && this.product.super_attributes.length) {
+                        payload.super_attribute = this.selectedSuperAttributes;
+                    }
+
+                    this.$axios.post('{{ route("shop.api.checkout.cart.store") }}', payload)
                         .then(response => {
                             if (response.data.message) {
                                 this.$emitter.emit('update-mini-cart', response.data.data);
@@ -349,8 +405,8 @@
                             this.isAddingToCart = false;
                         })
                         .catch(error => {
-                            this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
-                            if (error.response.data.redirect_uri) {
+                            this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || 'Error adding to cart' });
+                            if (error.response?.data?.redirect_uri) {
                                 window.location.href = error.response.data.redirect_uri;
                             }
                             this.isAddingToCart = false;
