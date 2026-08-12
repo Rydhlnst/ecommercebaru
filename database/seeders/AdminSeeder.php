@@ -30,14 +30,14 @@ class AdminSeeder extends Seeder
         );
 
         // ─── Categories ──────────────────────────────────────────────────────
-        $makanan = AdminCategory::firstOrCreate(['slug' => 'makanan'], ['name' => 'Makanan']);
-        $minuman = AdminCategory::firstOrCreate(['slug' => 'minuman'], ['name' => 'Minuman']);
-        $sayur = AdminCategory::firstOrCreate(['slug' => 'sayuran'], ['name' => 'Sayuran']);
-        $buah = AdminCategory::firstOrCreate(['slug' => 'buah-buahan'], ['name' => 'Buah-buahan']);
-        $daging = AdminCategory::firstOrCreate(['slug' => 'daging-seafood'], ['name' => 'Daging & Seafood']);
-        $bumbu = AdminCategory::firstOrCreate(['slug' => 'bumbu-rempah'], ['name' => 'Bumbu & Rempah']);
-        $snack = AdminCategory::firstOrCreate(['slug' => 'snack-cemilan'], ['name' => 'Snack & Cemilan', 'parent_id' => $makanan->id]);
-        $kopi = AdminCategory::firstOrCreate(['slug' => 'kopi-teh'], ['name' => 'Kopi & Teh', 'parent_id' => $minuman->id]);
+        $makanan = AdminCategory::updateOrCreate(['name' => 'Makanan'], ['slug' => 'makanan']);
+        $minuman = AdminCategory::updateOrCreate(['name' => 'Minuman'], ['slug' => 'minuman']);
+        $sayur = AdminCategory::updateOrCreate(['name' => 'Sayuran'], ['slug' => 'sayuran']);
+        $buah = AdminCategory::updateOrCreate(['name' => 'Buah-buahan'], ['slug' => 'buah-buahan']);
+        $daging = AdminCategory::updateOrCreate(['name' => 'Daging & Seafood'], ['slug' => 'daging-seafood']);
+        $bumbu = AdminCategory::updateOrCreate(['name' => 'Bumbu & Rempah'], ['slug' => 'bumbu-rempah']);
+        $snack = AdminCategory::updateOrCreate(['name' => 'Snack & Cemilan'], ['slug' => 'snack-cemilan', 'parent_id' => $makanan->id]);
+        $kopi = AdminCategory::updateOrCreate(['name' => 'Kopi & Teh'], ['slug' => 'kopi-teh', 'parent_id' => $minuman->id]);
 
         // ─── Products ────────────────────────────────────────────────────────
         // Variasi (weight in kg): 0.25 = 250g, 0.50 = 500g, 1.00 = 1000g.
@@ -455,39 +455,45 @@ class AdminSeeder extends Seeder
         }
 
         // ─── Blog ────────────────────────────────────────────────────────────
-        $blogCat1 = BlogCategory::create(['name' => 'Tips Memasak', 'slug' => 'tips-memasak']);
-        $blogCat2 = BlogCategory::create(['name' => 'Resep', 'slug' => 'resep']);
-        $blogCat3 = BlogCategory::create(['name' => 'Gaya Hidup Sehat', 'slug' => 'gaya-hidup-sehat']);
+        $blogCat1 = BlogCategory::updateOrCreate(['slug' => 'tips-memasak'], ['name' => 'Tips Memasak']);
+        $blogCat2 = BlogCategory::updateOrCreate(['slug' => 'resep'], ['name' => 'Resep']);
+        $blogCat3 = BlogCategory::updateOrCreate(['slug' => 'gaya-hidup-sehat'], ['name' => 'Gaya Hidup Sehat']);
 
-        BlogPost::create([
-            'title' => '5 Tips Memasak Rendang yang Empuk dan Lezat',
-            'slug' => 'tips-memasak-rendang-'.random_int(100, 999),
-            'content' => '<p>Rendang adalah masakan khas Padang yang memerlukan waktu lama untuk dimasak. Berikut tips agar rendang empuk dan bumbunya meresap...</p>',
-            'blog_category_id' => $blogCat1->id,
-            'tags' => 'rendang,memasak,tips',
-            'is_published' => true,
-            'published_at' => now()->subDays(3),
-        ]);
+        BlogPost::updateOrCreate(
+            ['slug' => 'tips-memasak-rendang'],
+            [
+                'title' => '5 Tips Memasak Rendang yang Empuk dan Lezat',
+                'content' => '<p>Rendang adalah masakan khas Padang yang memerlukan waktu lama untuk dimasak. Berikut tips agar rendang empuk dan bumbunya meresap...</p>',
+                'blog_category_id' => $blogCat1->id,
+                'tags' => 'rendang,memasak,tips',
+                'is_published' => true,
+                'published_at' => now()->subDays(3),
+            ]
+        );
 
-        BlogPost::create([
-            'title' => 'Resep Sambal Terasi Pedas Manis',
-            'slug' => 'resep-sambal-terasi-'.random_int(100, 999),
-            'content' => '<p>Sambal terasi adalah pelengkap wajib untuk semua masakan Indonesia. Berikut resep sederhana yang bisa dicoba di rumah...</p>',
-            'blog_category_id' => $blogCat2->id,
-            'tags' => 'sambal,resep,pedas',
-            'is_published' => true,
-            'published_at' => now()->subDays(1),
-        ]);
+        BlogPost::updateOrCreate(
+            ['slug' => 'resep-sambal-terasi'],
+            [
+                'title' => 'Resep Sambal Terasi Pedas Manis',
+                'content' => '<p>Sambal terasi adalah pelengkap wajib untuk semua masakan Indonesia. Berikut resep sederhana yang bisa dicoba di rumah...</p>',
+                'blog_category_id' => $blogCat2->id,
+                'tags' => 'sambal,resep,pedas',
+                'is_published' => true,
+                'published_at' => now()->subDays(1),
+            ]
+        );
 
-        BlogPost::create([
-            'title' => 'Manfaat Kopi Gayo untuk Kesehatan',
-            'slug' => 'manfaat-kopi-gayo-'.random_int(100, 999),
-            'content' => '<p>Kopi Gayo dari Aceh memiliki banyak manfaat kesehatan. Kandungan antioksidannya tinggi dan dapat membantu meningkatkan metabolisme...</p>',
-            'blog_category_id' => $blogCat3->id,
-            'tags' => 'kopi,kesehatan,gayo',
-            'is_published' => true,
-            'published_at' => now()->subDays(2),
-        ]);
+        BlogPost::updateOrCreate(
+            ['slug' => 'manfaat-kopi-gayo'],
+            [
+                'title' => 'Manfaat Kopi Gayo untuk Kesehatan',
+                'content' => '<p>Kopi Gayo dari Aceh memiliki banyak manfaat kesehatan. Kandungan antioksidannya tinggi dan dapat membantu meningkatkan metabolisme...</p>',
+                'blog_category_id' => $blogCat3->id,
+                'tags' => 'kopi,kesehatan,gayo',
+                'is_published' => true,
+                'published_at' => now()->subDays(2),
+            ]
+        );
 
         // ─── Reviews ─────────────────────────────────────────────────────────
         $reviewNames = ['Rina', 'Dedi', 'Maya', 'Tono', 'Lia'];
@@ -503,23 +509,25 @@ class AdminSeeder extends Seeder
         ];
 
         $products = AdminProduct::all();
-        for ($i = 0; $i < 10; $i++) {
-            $product = $products->random();
-            AdminReview::create([
-                'product_id' => $product->id,
-                'customer_name' => $reviewNames[array_rand($reviewNames)],
-                'rating' => rand(4, 5),
-                'comment' => $reviewComments[array_rand($reviewComments)],
-                'is_approved' => rand(0, 1),
-            ]);
+        if ($products->count() && AdminReview::count() < 10) {
+            for ($i = 0; $i < 10; $i++) {
+                $product = $products->random();
+                AdminReview::create([
+                    'product_id' => $product->id,
+                    'customer_name' => $reviewNames[array_rand($reviewNames)],
+                    'rating' => rand(4, 5),
+                    'comment' => $reviewComments[array_rand($reviewComments)],
+                    'is_approved' => rand(0, 1),
+                ]);
+            }
         }
 
         // ─── FAQs ────────────────────────────────────────────────────────────
-        Faq::create(['question' => 'Apakah makanan dijamin fresh?', 'answer' => '<p>Semua makanan kami diproses dan dikirim di hari yang sama untuk menjamin kesegaran.</p>', 'is_active' => true, 'sort_order' => 1]);
-        Faq::create(['question' => 'Berapa lama pengiriman?', 'answer' => '<p>Pengiriman reguler 2-3 hari kerja. Same day delivery tersedia untuk area Jakarta.</p>', 'is_active' => true, 'sort_order' => 2]);
-        Faq::create(['question' => 'Bagaimana cara menyimpan makanan yang dikirim?', 'answer' => '<p>Untuk makanan basah, segera simpan di kulkas. Untuk kering, simpan di tempat sejuk dan kering.</p>', 'is_active' => true, 'sort_order' => 3]);
-        Faq::create(['question' => 'Apakah bisa retur makanan?', 'answer' => '<p>Karena produk makanan, retur hanya diterima jika produk rusak atau tidak sesuai pesanan dalam 1x24 jam.</p>', 'is_active' => true, 'sort_order' => 4]);
-        Faq::create(['question' => 'Metode pembayaran apa saja yang diterima?', 'answer' => '<p>Kami menerima transfer bank, e-wallet (GoPay, OVO, Dana), dan kartu kredit.</p>', 'is_active' => true, 'sort_order' => 5]);
+        Faq::firstOrCreate(['question' => 'Apakah makanan dijamin fresh?'], ['answer' => '<p>Semua makanan kami diproses dan dikirim di hari yang sama untuk menjamin kesegaran.</p>', 'is_active' => true, 'sort_order' => 1]);
+        Faq::firstOrCreate(['question' => 'Berapa lama pengiriman?'], ['answer' => '<p>Pengiriman reguler 2-3 hari kerja. Same day delivery tersedia untuk area Jakarta.</p>', 'is_active' => true, 'sort_order' => 2]);
+        Faq::firstOrCreate(['question' => 'Bagaimana cara menyimpan makanan yang dikirim?'], ['answer' => '<p>Untuk makanan basah, segera simpan di kulkas. Untuk kering, simpan di tempat sejuk dan kering.</p>', 'is_active' => true, 'sort_order' => 3]);
+        Faq::firstOrCreate(['question' => 'Apakah bisa retur makanan?'], ['answer' => '<p>Karena produk makanan, retur hanya diterima jika produk rusak atau tidak sesuai pesanan dalam 1x24 jam.</p>', 'is_active' => true, 'sort_order' => 4]);
+        Faq::firstOrCreate(['question' => 'Metode pembayaran apa saja yang diterima?'], ['answer' => '<p>Kami menerima transfer bank, e-wallet (GoPay, OVO, Dana), dan kartu kredit.</p>', 'is_active' => true, 'sort_order' => 5]);
 
         // ─── Settings ────────────────────────────────────────────────────────
         SiteSetting::setValue('policy_privacy', '<h3>Privacy Policy</h3><p>Kami menghargai privasi Anda. Data yang dikumpulkan hanya digunakan untuk keperluan transaksi.</p>');
