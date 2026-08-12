@@ -56,6 +56,14 @@
                         <p class="text-sm text-[#404040] leading-relaxed">{!! nl2br(e($address)) !!}</p>
                     </div>
 
+                    {{-- Operating Hours --}}
+                    @if (!empty($hours))
+                        <div>
+                            <p class="text-sm font-semibold text-[#171717] mb-1">Operating Hours</p>
+                            <p class="text-sm text-[#404040] leading-relaxed">{!! nl2br(e($hours)) !!}</p>
+                        </div>
+                    @endif
+
                     {{-- Phone & Email in 2 columns --}}
                     <div class="grid grid-cols-2 gap-4">
                         <div>

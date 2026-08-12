@@ -160,6 +160,7 @@ return [
             ['name' => 'eyebrow',      'title' => 'Label kecil',       'type' => 'text',     'default' => 'Kunjungi kami'],
             ['name' => 'title',        'title' => 'Judul',             'type' => 'text',     'default' => 'Lokasi & kontak.'],
             ['name' => 'description',  'title' => 'Deskripsi',         'type' => 'textarea', 'default' => 'Mampir ke gerai fisik kami untuk pengalaman belanja langsung, atau hubungi tim kami untuk pertanyaan seputar produk & pengiriman.'],
+            ['name' => 'country',      'title' => 'Nama Negara / Wilayah', 'type' => 'text', 'default' => 'Indonesia'],
             ['name' => 'address',      'title' => 'Alamat lengkap',    'type' => 'textarea', 'default' => "Pasar Modern BSD, Blok C-12\nJl. Letnan Sutopo No. 12, Serpong\nTangerang Selatan 15321"],
             ['name' => 'hours',        'title' => 'Jam operasional',   'type' => 'textarea', 'default' => "Senin – Sabtu · 07.00 – 21.00\nMinggu · 08.00 – 20.00"],
             ['name' => 'phone',        'title' => 'Nomor telepon',     'type' => 'text',     'default' => '+62 21 555 1234'],
