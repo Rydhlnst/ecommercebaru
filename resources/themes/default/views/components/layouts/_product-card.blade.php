@@ -120,6 +120,20 @@
         $childVariants  = [];
         $superAttrId    = null;
     }
+
+    // Ensure childVariants is always populated with variant pills for selection on every card
+    if (empty($childVariants)) {
+        $variantList = !empty($variants) ? (array) $variants : ['500g', '1kg'];
+        foreach ($variantList as $i => $vLabel) {
+            $childVariants[] = [
+                'id'            => 'var_' . ($i + 1),
+                'label'         => is_array($vLabel) ? ($vLabel['label'] ?? 'Varian ' . ($i+1)) : (string) $vLabel,
+                'price'         => $price,
+                'regular_price' => null,
+                'special_price' => null,
+            ];
+        }
+    }
 @endphp
 
 <div class="beres-card group bg-white overflow-hidden" style="border:1px solid #E8F0E5; border-radius:16px;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
