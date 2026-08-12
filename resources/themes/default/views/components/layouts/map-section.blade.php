@@ -18,11 +18,15 @@
         <div class="grid gap-6 md:gap-8 lg:grid-cols-5 items-start">
 
             {{-- Map embed — takes 3/5 width --}}
-            <div class="relative w-full overflow-hidden lg:col-span-3" style="border-radius:16px;">
+            <div class="relative w-full overflow-hidden lg:col-span-3 h-[360px] md:h-[420px] min-h-[320px] rounded-2xl bg-zinc-100">
+                @php
+                    $embedUrl = str_contains($mapQuery, 'pb=') || str_contains($mapQuery, 'embed')
+                        ? $mapQuery
+                        : 'https://maps.google.com/maps?q=' . urlencode($mapQuery) . '&t=&z=15&ie=UTF8&iwloc=&output=embed';
+                @endphp
                 <iframe
-                    src="https://www.google.com/maps?q={{ urlencode($mapQuery) }}&output=embed"
-                    class="absolute inset-0 w-full h-full border-0"
-                    style="min-height:320px;"
+                    src="{{ $embedUrl }}"
+                    class="w-full h-full border-0 rounded-2xl"
                     loading="lazy"
                     referrerpolicy="no-referrer-when-downgrade"
                     title="{{ $title }}"
@@ -32,8 +36,7 @@
                 <a
                     href="https://www.google.com/maps/search/?api=1&query={{ urlencode($mapQuery) }}"
                     target="_blank" rel="noopener"
-                    class="absolute top-4 left-4 inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-[#171717] bg-white hover:bg-gray-50 transition-colors shadow-md"
-                    style="border-radius:8px;"
+                    class="absolute top-4 left-4 inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-[#171717] bg-white hover:bg-gray-50 transition-colors shadow-md rounded-lg"
                 >
                     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
