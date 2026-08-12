@@ -3,96 +3,79 @@
         @lang('admin::app.dashboard.index.title')
     </x-slot>
 
-    <!-- User Details Section -->
-    <div class="flex items-center justify-between gap-4 mb-5 max-sm:flex-wrap">
-        <div class="grid gap-1.5">
-            <p class="text-xl font-bold !leading-normal text-gray-800 dark:text-white" v-pre>
-                Welcome, {{ auth()->guard('admin')->user()->name }}!
-            </p>
+    <!-- Header & Filter Bar -->
+    <div class="flex items-center justify-between gap-4 mb-6 max-sm:flex-wrap">
+        <div class="grid gap-1">
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+                <span>Welcome back, {{ auth()->guard('admin')->user()->name }}</span>
+                <span class="inline-flex items-center rounded-full bg-blue-50 dark:bg-blue-950 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300 ring-1 ring-inset ring-blue-700/10">Admin</span>
+            </h1>
 
-            <p class="!leading-normal text-gray-600 dark:text-gray-300">
-                Here's what's happening with your spice store today.
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                Here's what's happening with your store performance today.
             </p>
         </div>
 
-        <!-- Actions -->
+        <!-- Actions / Filters -->
         <v-dashboard-filters>
             <!-- Shimmer -->
-            <div class="flex gap-1.5">
-                <div class="shimmer h-[39px] w-[132px] rounded-md"></div>
-                <div class="shimmer h-[39px] w-[140px] rounded-md"></div>
-                <div class="shimmer h-[39px] w-[140px] rounded-md"></div>
+            <div class="flex gap-2">
+                <div class="shimmer h-[40px] w-[130px] rounded-lg"></div>
+                <div class="shimmer h-[40px] w-[140px] rounded-lg"></div>
+                <div class="shimmer h-[40px] w-[140px] rounded-lg"></div>
             </div>
         </v-dashboard-filters>
     </div>
 
-    <!-- Body Component -->
-    <div class="mt-3.5 flex gap-2.5 max-xl:flex-wrap">
-        <!-- Left Section -->
-        <div class="flex flex-col flex-1 gap-8 max-xl:flex-auto">
+    <!-- Body Component Grid -->
+    <div class="mt-4 flex gap-6 max-xl:flex-col">
+        <!-- Main Content Area (Left Stream) -->
+        <div class="flex flex-col flex-1 gap-6 max-xl:w-full">
             {!! view_render_event('bagisto.admin.dashboard.overall_details.before') !!}
 
             <!-- Overall Details -->
-            <div class="flex flex-col gap-2">
-                <p class="text-base font-semibold text-gray-600 dark:text-gray-300">
-                    @lang('admin::app.dashboard.index.overall-details')
-                </p>
-
-                <!-- Over All Details Section -->
+            <x-admin::card title="{{ __('admin::app.dashboard.index.overall-details') }}">
                 @include('admin::dashboard.over-all-details')
-            </div>
+            </x-admin::card>
 
             {!! view_render_event('bagisto.admin.dashboard.overall_details.after') !!}
 
             {!! view_render_event('bagisto.admin.dashboard.todays_details.before') !!}
 
-            <!-- Todays Details -->
-            <div class="flex flex-col gap-2">
-                <p class="text-base font-semibold text-gray-600 dark:text-gray-300">
-                    @lang('admin::app.dashboard.index.today-details')
-                </p>
-
-                <!-- Todays Details Section -->
+            <!-- Today's Details -->
+            <x-admin::card title="{{ __('admin::app.dashboard.index.today-details') }}">
                 @include('admin::dashboard.todays-details')
-            </div>
+            </x-admin::card>
 
             {!! view_render_event('bagisto.admin.dashboard.todays_details.after') !!}
 
             {!! view_render_event('bagisto.admin.dashboard.stock_threshold.before') !!}
 
-            <!-- Stock Threshold -->
-            <div class="flex flex-col gap-2">
-                <p class="text-base font-semibold text-gray-600 dark:text-gray-300">
-                    @lang('admin::app.dashboard.index.stock-threshold')
-                </p>
-
-                <!-- Products List -->  
+            <!-- Stock Threshold Alerts -->
+            <x-admin::card title="{{ __('admin::app.dashboard.index.stock-threshold') }}">
                 @include('admin::dashboard.stock-threshold-products')
-            </div>
+            </x-admin::card>
             
             {!! view_render_event('bagisto.admin.dashboard.stock_threshold.after') !!}
         </div>
 
-        <!-- Right Section -->
-        <div class="flex w-[360px] max-w-full flex-col gap-2 max-sm:w-full">
-            <!-- First Component -->
-            <p class="text-base font-semibold text-gray-600 dark:text-gray-300">
-                @lang('admin::app.dashboard.index.store-stats')
-            </p>
-
+        <!-- Sidebar Analytics Area (Right Stream) -->
+        <div class="flex w-[380px] max-w-full flex-col gap-6 max-xl:w-full">
             {!! view_render_event('bagisto.admin.dashboard.store_stats.before') !!}
 
-            <!-- Store Stats -->
-            <div class="bg-white rounded box-shadow dark:bg-gray-900">
-                <!-- Total Sales Details -->
-                @include('admin::dashboard.total-sales')
+            <!-- Store Stats Side Panel -->
+            <x-admin::card title="{{ __('admin::app.dashboard.index.store-stats') }}" padding="p-0">
+                <div class="divide-y divide-gray-100 dark:divide-gray-800">
+                    <!-- Total Sales Graph -->
+                    @include('admin::dashboard.total-sales')
 
-                <!-- Top Selling Products -->
-                @include('admin::dashboard.top-selling-products')
+                    <!-- Top Selling Products -->
+                    @include('admin::dashboard.top-selling-products')
 
-                <!-- Top Customers -->
-                @include('admin::dashboard.top-customers')
-            </div>
+                    <!-- Top Customers -->
+                    @include('admin::dashboard.top-customers')
+                </div>
+            </x-admin::card>
 
             {!! view_render_event('bagisto.admin.dashboard.store_stats.after') !!}
         </div>
@@ -109,24 +92,27 @@
             type="text/x-template"
             id="v-dashboard-filters-template"
         >
-            <div class="flex gap-1.5">
+            <div class="flex items-center gap-2 flex-wrap">
                 <template v-if="channels.length > 2">
                     <x-admin::dropdown position="bottom-right">
                         <x-slot:toggle>
                             <button
                                 type="button"
-                                class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-md border bg-white px-2.5 py-1.5 text-center text-sm leading-6 text-gray-600 transition-all marker:shadow hover:border-gray-400 focus:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-gray-400 dark:focus:border-gray-400"
+                                class="inline-flex w-full cursor-pointer appearance-none items-center justify-between gap-x-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
                             >
-                                @{{ channels.find(channel => channel.code == filters.channel).name }}
+                                <span class="flex items-center gap-1.5">
+                                    <span class="icon-store text-base text-gray-400"></span>
+                                    @{{ channels.find(channel => channel.code == filters.channel).name }}
+                                </span>
                                 
-                                <span class="text-2xl icon-sort-down"></span>
+                                <span class="text-xl icon-sort-down text-gray-400"></span>
                             </button>
                         </x-slot>
 
-                        <x-slot:menu class="!p-0 shadow-[0_5px_20px_rgba(0,0,0,0.15)] dark:border-gray-800">
+                        <x-slot:menu class="!p-1 shadow-lg border-gray-200 dark:border-gray-800 rounded-lg">
                             <x-admin::dropdown.menu.item
                                 v-for="channel in channels"
-                                ::class="{'bg-gray-100 dark:bg-gray-950': channel.code == filters.channel}"
+                                ::class="{'bg-blue-50 text-blue-600 font-semibold dark:bg-blue-950 dark:text-blue-300': channel.code == filters.channel}"
                                 @click="filters.channel = channel.code"
                             >
                                 @{{ channel.name }}
@@ -137,7 +123,7 @@
 
                 <x-admin::flat-picker.date class="!w-[140px]" ::allow-input="false">
                     <input
-                        class="flex min-h-[39px] w-full rounded-md border px-3 py-2 text-sm text-gray-600 transition-all hover:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-gray-400"
+                        class="flex min-h-[40px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200 dark:hover:border-gray-700"
                         v-model="filters.start"
                         placeholder="@lang('admin::app.dashboard.index.start-date')"
                     />
@@ -145,7 +131,7 @@
 
                 <x-admin::flat-picker.date class="!w-[140px]" ::allow-input="false">
                     <input
-                        class="flex min-h-[39px] w-full rounded-md border px-3 py-2 text-sm text-gray-600 transition-all hover:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300 dark:hover:border-gray-400"
+                        class="flex min-h-[40px] w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm transition-all hover:border-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-200 dark:hover:border-gray-700"
                         v-model="filters.end"
                         placeholder="@lang('admin::app.dashboard.index.end-date')"
                     />

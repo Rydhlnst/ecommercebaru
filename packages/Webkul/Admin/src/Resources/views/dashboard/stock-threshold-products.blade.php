@@ -14,92 +14,89 @@
             <x-admin::shimmer.dashboard.stock-threshold-products />
         </template>
 
-        <!-- Total Sales Section -->
+        <!-- Low Stock Alert Cards Section -->
         <template v-else>
-            <!-- Stock Threshold Products Details -->
+            <!-- Stock Threshold Products List -->
             <div
-                class="box-shadow rounded"
+                class="flex flex-col gap-3"
                 v-if="report.statistics.length"
             >
-                <!-- Single Product -->
                 <div
-                    class="relative"
                     v-for="product in report.statistics"
+                    class="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition-all hover:border-amber-300 dark:hover:border-amber-800 hover:shadow-md"
                 >
-                    <div class="row grid grid-cols-2 gap-y-6 border-b bg-white p-4 transition-all hover:bg-gray-50 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-950 max-sm:grid-cols-[1fr_auto]">
-                        <div class="flex gap-2.5">
-                            <template v-if="product.image">
-                                <div class="">
-                                    <img
-                                        class="max-h-[65px] min-h-[65px] min-w-[65px] max-w-[65px] rounded"
-                                        :src="product.image"
-                                    >
-                                </div>
-                            </template>
+                    <!-- Product Image & Details -->
+                    <div class="flex items-center gap-3">
+                        <template v-if="product.image">
+                            <img
+                                class="h-14 w-14 shrink-0 rounded-lg object-cover border border-gray-200 dark:border-gray-800"
+                                :src="product.image"
+                                :alt="product.name"
+                            >
+                        </template>
 
-                            <template v-else>
-                                <div class="relative h-[65px] max-h-[65px] w-full max-w-[65px] overflow-hidden rounded border border-dashed border-gray-300 dark:border-gray-800 dark:mix-blend-exclusion dark:invert">
-                                    <img src="{{ bagisto_asset('images/product-placeholders/front.svg')}}">
-
-                                    <p class="absolute bottom-1.5 w-full text-center text-[6px] font-semibold text-gray-400">
-                                        @lang('admin::app.dashboard.index.product-image')
-                                    </p>
-                                </div>
-                            </template>
-
-                            <div class="flex flex-col gap-1.5">
-                                <!-- Product Name -->
-                                <p class="text-base font-semibold text-gray-800 dark:text-white">
-                                    @{{ product.name }}
-                                </p>
-
-                                <!-- Product SKU -->
-                                <p class="text-gray-600 dark:text-gray-300">
-                                    @{{ "@lang('admin::app.dashboard.index.sku', ['sku' => ':replace'])".replace(':replace', product.sku) }}
-                                </p>
+                        <template v-else>
+                            <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 dark:border-gray-800 dark:bg-gray-950 text-gray-400">
+                                <span class="icon-product text-2xl"></span>
                             </div>
-                        </div>
+                        </template>
 
-                        <div class="flex items-center justify-between gap-1.5">
-                            <div class="flex flex-col gap-1.5">
-                                <!-- Product Price -->
-                                <p class="text-base font-semibold text-gray-800 dark:text-white">
+                        <div class="flex flex-col gap-0.5">
+                            <h4 class="text-sm font-semibold text-gray-900 dark:text-white line-clamp-1">
+                                @{{ product.name }}
+                            </h4>
+
+                            <div class="flex items-center gap-2">
+                                <span class="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-800 px-2 py-0.5 text-xs font-mono text-gray-600 dark:text-gray-400">
+                                    SKU: @{{ product.sku }}
+                                </span>
+
+                                <span class="text-xs font-medium text-gray-700 dark:text-gray-300">
                                     @{{ product.formatted_price }}
-                                </p>
-
-                                <!-- Total Product Stock -->
-                                <p :class="[product.total_qty > {{ core()->getConfigData('catalog.inventory.stock_options.out_of_stock_threshold') }} ? 'text-emerald-500' : 'text-red-500']">
-                                    @{{ "@lang('admin::app.dashboard.index.total-stock', ['total_stock' => ':replace'])".replace(':replace', product.total_qty) }}
-                                </p>
+                                </span>
                             </div>
-
-                            <!-- View More Icon -->
-                            <a :href="'{{ route('admin.catalog.products.edit', ':replace') }}'.replace(':replace', product.id)">
-                                <span class="icon-sort-right rtl:icon-sort-left cursor-pointer p-1.5 text-2xl hover:rounded-md hover:bg-gray-200 dark:hover:bg-gray-800 ltr:ml-1 rtl:mr-1"></span>
-                            </a>
                         </div>
+                    </div>
+
+                    <!-- Stock Status & Edit Action -->
+                    <div class="flex items-center justify-between sm:justify-end gap-4">
+                        <div class="flex flex-col items-start sm:items-end gap-1">
+                            <span 
+                                class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                                :class="[product.total_qty <= 0 ? 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400' : 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-400']"
+                            >
+                                <span class="h-1.5 w-1.5 rounded-full" :class="[product.total_qty <= 0 ? 'bg-red-500' : 'bg-amber-500']"></span>
+                                @{{ "@lang('admin::app.dashboard.index.total-stock', ['total_stock' => ':replace'])".replace(':replace', product.total_qty) }}
+                            </span>
+                        </div>
+
+                        <a 
+                            :href="'{{ route('admin.catalog.products.edit', ':replace') }}'.replace(':replace', product.id)"
+                            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 dark:border-gray-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-amber-50 hover:text-amber-600 dark:hover:bg-amber-950 dark:hover:text-amber-400"
+                            title="Edit Product"
+                        >
+                            <span class="icon-edit text-lg"></span>
+                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- Empty Product Design -->
             <div
-                class="box-shadow rounded"
+                class="flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 dark:border-gray-800 p-8 text-center bg-gray-50/50 dark:bg-gray-900/50"
                 v-else
             >
-                <div class="grid justify-center justify-items-center gap-3.5 px-2.5 py-10">
-                    <img src="{{ bagisto_asset('images/icon-add-product.svg') }}" class="h-20 w-20 dark:mix-blend-exclusion dark:invert">
-                    
-                    <div class="flex flex-col items-center">
-                        <p class="text-base font-semibold text-gray-400">
-                            @lang('admin::app.dashboard.index.empty-threshold')
-                        </p>
-    
-                        <p class="text-gray-400">
-                            @lang('admin::app.dashboard.index.empty-threshold-description')
-                        </p>
-                    </div>
+                <div class="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 mb-3">
+                    <span class="icon-uncheck text-2xl"></span>
                 </div>
+                
+                <h4 class="text-sm font-semibold text-gray-900 dark:text-white">
+                    @lang('admin::app.dashboard.index.empty-threshold')
+                </h4>
+
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    @lang('admin::app.dashboard.index.empty-threshold-description')
+                </p>
             </div>
         </template>
     </script>

@@ -16,38 +16,40 @@
 
         <!-- Total Sales Section -->
         <template v-else>
-            <div class="grid gap-4 border-b px-4 py-2 dark:border-gray-800">
-                <div class="flex justify-between gap-2">
-                    <div class="flex flex-col justify-between gap-1">
-                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">
+            <div class="p-5 flex flex-col gap-4">
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                             @lang('admin::app.dashboard.index.total-sales')
-                        </p>
+                        </span>
 
                         <!-- Total Order Revenue -->
-                        <p class="text-lg font-bold leading-none text-gray-800 dark:text-white">
+                        <span class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                             @{{ report.statistics.total_sales.formatted_total }}
-                        </p>
+                        </span>
                     </div>
 
-                    <div class="flex flex-col justify-between gap-1">
-                        <!-- Orders Time Duration -->
-                        <p class="text-right text-xs font-semibold text-gray-400 dark:text-white">
+                    <div class="flex flex-col items-end gap-1">
+                        <!-- Orders Time Duration Badge -->
+                        <span class="inline-flex items-center rounded-md bg-gray-100 dark:bg-gray-800 px-2 py-1 text-xs font-medium text-gray-600 dark:text-gray-400">
                             @{{ report.date_range }}
-                        </p>
+                        </span>
 
                         <!-- Total Orders -->
-                        <p class="text-right text-xs font-semibold text-gray-400 dark:text-white">
+                        <span class="text-xs font-medium text-gray-500 dark:text-gray-400">
                             @{{ "@lang('admin::app.dashboard.index.order')".replace(':total_orders', report.statistics.total_orders.current ?? 0) }}
-                        </p>
+                        </span>
                     </div>
                 </div>
 
                 <!-- Bar Chart -->
-                <x-admin::charts.bar
-                    ::labels="chartLabels"
-                    ::datasets="chartDatasets"
-                    ::aspect-ratio="1.41"
-                />
+                <div class="mt-2">
+                    <x-admin::charts.bar
+                        ::labels="chartLabels"
+                        ::datasets="chartDatasets"
+                        ::aspect-ratio="1.5"
+                    />
+                </div>
             </div>
         </template>
     </script>
@@ -72,8 +74,9 @@
                 chartDatasets() {
                     return [{
                         data: this.report.statistics.over_time.map(({ total }) => total),
-                        barThickness: 6,
-                        backgroundColor: '#598de6',
+                        barThickness: 8,
+                        borderRadius: 4,
+                        backgroundColor: '#3b82f6',
                     }];
                 }
             },

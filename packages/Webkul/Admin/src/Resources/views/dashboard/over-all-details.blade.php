@@ -14,173 +14,137 @@
             <x-admin::shimmer.dashboard.over-all-details />
         </template>
 
-        <!-- Total Sales Section -->
+        <!-- Total Sales Section & Grid -->
         <template v-else>
-            <div class="box-shadow rounded bg-white p-4 dark:bg-gray-900">
-                <div class="flex flex-wrap gap-4">
-                    <!-- Total Sales -->
-                    <div class="flex min-w-[200px] flex-1 gap-2.5">
-                        <div class="h-[60px] max-h-[60px] w-full max-w-[60px] dark:mix-blend-exclusion dark:invert">
-                            <img
-                                src="{{ bagisto_asset('images/total-sales.svg')}}"
-                                title="@lang('admin::app.dashboard.index.total-sales')"
-                            >
-                        </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                <!-- Total Sales Card -->
+                <div class="flex flex-col justify-between p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 shadow-sm transition-all hover:shadow-md">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                            @lang('admin::app.dashboard.index.total-sales')
+                        </span>
 
-                        <!-- Sales Stats -->
-                        <div class="grid place-content-start gap-1">
-                            <p class="text-base font-semibold leading-none text-gray-800 dark:text-white">
-                                @{{ report.statistics.total_sales.formatted_total }}
-                            </p>
-
-                            <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                                @lang('admin::app.dashboard.index.total-sales')
-                            </p>
-
-                            <!-- Sales Percentage -->
-                            <div class="flex items-center gap-0.5">
-                                <span
-                                    class="text-base text-emerald-500"
-                                    :class="[report.statistics.total_sales.progress < 0 ? 'icon-down-stat text-red-500 dark:!text-red-500' : 'icon-up-stat text-emerald-500 dark:!text-emerald-500']"
-                                ></span>
-
-                                <p
-                                    class="text-xs font-semibold text-emerald-500"
-                                    :class="[report.statistics.total_sales.progress < 0 ?  'text-red-500' : 'text-emerald-500']"
-                                >
-                                    @{{ Math.abs(report.statistics.total_sales.progress.toFixed(2)) }}%
-                                </p>
-                            </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400">
+                            <span class="icon-sales text-xl"></span>
                         </div>
                     </div>
 
-                    <!-- Total Orders -->
-                    <div class="flex min-w-[200px] flex-1 gap-2.5">
-                        <div class="h-[60px] max-h-[60px] w-full max-w-[60px] dark:mix-blend-exclusion dark:invert">
-                            <img
-                                src="{{ bagisto_asset('images/total-orders.svg')}}"
-                                title="@lang('admin::app.dashboard.index.total-orders')"
-                            >
+                    <div class="mt-3 flex items-baseline justify-between gap-2">
+                        <p class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            @{{ report.statistics.total_sales.formatted_total }}
+                        </p>
+
+                        <!-- Sales Percentage Badge -->
+                        <div
+                            class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
+                            :class="[report.statistics.total_sales.progress < 0 ? 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400']"
+                        >
+                            <span :class="[report.statistics.total_sales.progress < 0 ? 'icon-down-stat' : 'icon-up-stat']"></span>
+                            <span>@{{ Math.abs(report.statistics.total_sales.progress.toFixed(2)) }}%</span>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Orders Stats -->
-                        <div class="grid place-content-start gap-1">
-                            <p class="text-base font-semibold leading-none text-gray-800 dark:text-white">
-                                @{{ report.statistics.total_orders.current }}
-                            </p>
+                <!-- Total Orders Card -->
+                <div class="flex flex-col justify-between p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 shadow-sm transition-all hover:shadow-md">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                            @lang('admin::app.dashboard.index.total-orders')
+                        </span>
 
-                            <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                                @lang('admin::app.dashboard.index.total-orders')
-                            </p>
-
-                            <!-- Order Percentage -->
-                            <div class="flex items-center gap-0.5">
-                                <span
-                                    class="text-base text-emerald-500"
-                                    :class="[report.statistics.total_orders.progress < 0 ? 'icon-down-stat text-red-500 dark:!text-red-500' : 'icon-up-stat text-emerald-500 dark:!text-emerald-500']"
-                                ></span>
-
-                                <p
-                                    class="text-xs font-semibold text-emerald-500"
-                                    :class="[report.statistics.total_orders.progress < 0 ?  'text-red-500' : 'text-emerald-500']"
-                                >
-                                    @{{ Math.abs(report.statistics.total_orders.progress.toFixed(2)) }}%
-                                </p>
-                            </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400">
+                            <span class="icon-orders text-xl"></span>
                         </div>
                     </div>
 
-                    <!-- Total Customers -->
-                    <div class="flex min-w-[200px] flex-1 gap-2.5">
-                        <div class="h-[60px] max-h-[60px] w-full max-w-[60px] dark:mix-blend-exclusion dark:invert">
-                            <img
-                                src="{{ bagisto_asset('images/customers.svg')}}"
-                                title="@lang('admin::app.dashboard.index.total-customers')"
-                            >
+                    <div class="mt-3 flex items-baseline justify-between gap-2">
+                        <p class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            @{{ report.statistics.total_orders.current }}
+                        </p>
+
+                        <!-- Order Percentage Badge -->
+                        <div
+                            class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
+                            :class="[report.statistics.total_orders.progress < 0 ? 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400']"
+                        >
+                            <span :class="[report.statistics.total_orders.progress < 0 ? 'icon-down-stat' : 'icon-up-stat']"></span>
+                            <span>@{{ Math.abs(report.statistics.total_orders.progress.toFixed(2)) }}%</span>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Customers Stats -->
-                        <div class="grid place-content-start gap-1">
-                            <p class="text-base font-semibold leading-none text-gray-800 dark:text-white">
-                                @{{ report.statistics.total_customers.current }}
-                            </p>
+                <!-- Total Customers Card -->
+                <div class="flex flex-col justify-between p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 shadow-sm transition-all hover:shadow-md">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                            @lang('admin::app.dashboard.index.total-customers')
+                        </span>
 
-                            <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                                @lang('admin::app.dashboard.index.total-customers')
-                            </p>
-
-                            <!-- Customers Percentage -->
-                            <div class="flex items-center gap-0.5">
-                                <span
-                                    class="text-base text-emerald-500"
-                                    :class="[report.statistics.total_customers.progress < 0 ? 'icon-down-stat text-red-500 dark:!text-red-500' : 'icon-up-stat text-emerald-500 dark:!text-emerald-500']"
-                                ></span>
-
-                                <p
-                                    class="text-xs font-semibold text-emerald-500"
-                                    :class="[report.statistics.total_customers.progress < 0 ?  'text-red-500' : 'text-emerald-500']"
-                                >
-                                    @{{ Math.abs(report.statistics.total_customers.progress.toFixed(2)) }}%
-                                </p>
-                            </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400">
+                            <span class="icon-customer text-xl"></span>
                         </div>
                     </div>
 
-                    <!-- Average sales -->
-                    <div class="flex min-w-[200px] flex-1 gap-2.5">
-                        <div class="h-[60px] max-h-[60px] w-full max-w-[60px] dark:mix-blend-exclusion dark:invert">
-                            <img
-                                src="{{ bagisto_asset('images/average-orders.svg')}}"
-                                title="@lang('admin::app.dashboard.index.average-sale')"
-                            >
+                    <div class="mt-3 flex items-baseline justify-between gap-2">
+                        <p class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            @{{ report.statistics.total_customers.current }}
+                        </p>
+
+                        <!-- Customers Percentage Badge -->
+                        <div
+                            class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
+                            :class="[report.statistics.total_customers.progress < 0 ? 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400']"
+                        >
+                            <span :class="[report.statistics.total_customers.progress < 0 ? 'icon-down-stat' : 'icon-up-stat']"></span>
+                            <span>@{{ Math.abs(report.statistics.total_customers.progress.toFixed(2)) }}%</span>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Sales Stats -->
-                        <div class="grid place-content-start gap-1">
-                            <p class="text-base font-semibold leading-none text-gray-800 dark:text-white">
-                                @{{ report.statistics.avg_sales.formatted_total }}
-                            </p>
+                <!-- Average Sales Card -->
+                <div class="flex flex-col justify-between p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 shadow-sm transition-all hover:shadow-md">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                            @lang('admin::app.dashboard.index.average-sale')
+                        </span>
 
-                            <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                                @lang('admin::app.dashboard.index.average-sale')
-                            </p>
-
-                            <!-- Sales Percentage -->
-                            <div class="flex items-center gap-0.5">
-                                <span
-                                    class="text-base text-emerald-500"
-                                    :class="[report.statistics.avg_sales.progress < 0 ? 'icon-down-stat text-red-500 dark:!text-red-500' : 'icon-up-stat text-emerald-500 dark:!text-emerald-500']"
-                                ></span>
-
-                                <p
-                                    class="text-xs font-semibold"
-                                    :class="[report.statistics.avg_sales.progress < 0 ?  'text-red-500' : 'text-emerald-500']"
-                                >
-                                    @{{ Math.abs(report.statistics.avg_sales.progress).toFixed(2) }}%
-                                </p>
-
-                            </div>
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-sky-600 dark:bg-sky-950/60 dark:text-sky-400">
+                            <span class="icon-attribute text-xl"></span>
                         </div>
                     </div>
 
-                    <!-- Unpaid Invoices -->
-                    <div class="flex min-w-[200px] flex-1 gap-2.5">
-                        <div class="h-[60px] max-h-[60px] w-full max-w-[60px] dark:mix-blend-exclusion dark:invert">
-                            <img
-                                src="{{ bagisto_asset('images/unpaid-invoices.svg')}}"
-                                title="@lang('admin::app.dashboard.index.total-unpaid-invoices')"
-                            >
-                        </div>
+                    <div class="mt-3 flex items-baseline justify-between gap-2">
+                        <p class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                            @{{ report.statistics.avg_sales.formatted_total }}
+                        </p>
 
-                        <div class="grid place-content-start gap-1">
-                            <p class="text-base font-semibold leading-none text-gray-800 dark:text-white">
-                                @{{ report.statistics.total_unpaid_invoices.formatted_total }}
-                            </p>
-
-                            <p class="text-xs font-semibold text-gray-600 dark:text-gray-300">
-                                @lang('admin::app.dashboard.index.total-unpaid-invoices')
-                            </p>
+                        <!-- Avg Sales Percentage Badge -->
+                        <div
+                            class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold"
+                            :class="[report.statistics.avg_sales.progress < 0 ? 'bg-red-50 text-red-700 dark:bg-red-950/60 dark:text-red-400' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400']"
+                        >
+                            <span :class="[report.statistics.avg_sales.progress < 0 ? 'icon-down-stat' : 'icon-up-stat']"></span>
+                            <span>@{{ Math.abs(report.statistics.avg_sales.progress.toFixed(2)) }}%</span>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Unpaid Invoices Card -->
+                <div class="flex flex-col justify-between p-4 rounded-xl border border-gray-200 dark:border-gray-800 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-950 shadow-sm transition-all hover:shadow-md sm:col-span-2 lg:col-span-1">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                            @lang('admin::app.dashboard.index.total-unpaid-invoices')
+                        </span>
+
+                        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400">
+                            <span class="icon-pending text-xl"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 flex items-baseline justify-between gap-2">
+                        <p class="text-xl font-bold tracking-tight text-amber-600 dark:text-amber-400">
+                            @{{ report.statistics.total_unpaid_invoices.formatted_total }}
+                        </p>
                     </div>
                 </div>
             </div>
