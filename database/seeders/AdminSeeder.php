@@ -30,14 +30,14 @@ class AdminSeeder extends Seeder
         );
 
         // ─── Categories ──────────────────────────────────────────────────────
-        $makanan = AdminCategory::create(['name' => 'Makanan', 'slug' => 'makanan']);
-        $minuman = AdminCategory::create(['name' => 'Minuman', 'slug' => 'minuman']);
-        $sayur = AdminCategory::create(['name' => 'Sayuran', 'slug' => 'sayuran']);
-        $buah = AdminCategory::create(['name' => 'Buah-buahan', 'slug' => 'buah-buahan']);
-        $daging = AdminCategory::create(['name' => 'Daging & Seafood', 'slug' => 'daging-seafood']);
-        $bumbu = AdminCategory::create(['name' => 'Bumbu & Rempah', 'slug' => 'bumbu-rempah']);
-        $snack = AdminCategory::create(['name' => 'Snack & Cemilan', 'slug' => 'snack-cemilan', 'parent_id' => $makanan->id]);
-        $kopi = AdminCategory::create(['name' => 'Kopi & Teh', 'slug' => 'kopi-teh', 'parent_id' => $minuman->id]);
+        $makanan = AdminCategory::firstOrCreate(['slug' => 'makanan'], ['name' => 'Makanan']);
+        $minuman = AdminCategory::firstOrCreate(['slug' => 'minuman'], ['name' => 'Minuman']);
+        $sayur = AdminCategory::firstOrCreate(['slug' => 'sayuran'], ['name' => 'Sayuran']);
+        $buah = AdminCategory::firstOrCreate(['slug' => 'buah-buahan'], ['name' => 'Buah-buahan']);
+        $daging = AdminCategory::firstOrCreate(['slug' => 'daging-seafood'], ['name' => 'Daging & Seafood']);
+        $bumbu = AdminCategory::firstOrCreate(['slug' => 'bumbu-rempah'], ['name' => 'Bumbu & Rempah']);
+        $snack = AdminCategory::firstOrCreate(['slug' => 'snack-cemilan'], ['name' => 'Snack & Cemilan', 'parent_id' => $makanan->id]);
+        $kopi = AdminCategory::firstOrCreate(['slug' => 'kopi-teh'], ['name' => 'Kopi & Teh', 'parent_id' => $minuman->id]);
 
         // ─── Products ────────────────────────────────────────────────────────
         // Variasi (weight in kg): 0.25 = 250g, 0.50 = 500g, 1.00 = 1000g.
@@ -386,12 +386,17 @@ class AdminSeeder extends Seeder
             $seedVariations = $pData['variations'] ?? null;
             unset($pData['variations']);
 
-            $product = AdminProduct::create($pData);
+            $product = AdminProduct::updateOrCreate(
+                ['name' => $pData['name']],
+                $pData
+            );
 
             // Sinkron dengan AdminProductController::saveVariations():
             // price = harga variasi pertama (termurah), stock = total stok variasi.
             if (! empty($seedVariations)) {
                 usort($seedVariations, fn ($a, $b) => $a['weight'] <=> $b['weight']);
+
+                $product->variations()->delete();
 
                 foreach ($seedVariations as $v) {
                     $product->variations()->create([
