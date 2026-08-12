@@ -251,7 +251,7 @@
     };
 
     // Variant selector for configurable products
-    window.beresSelectVariant = function(btn, variantId, price) {
+    window.beresSelectVariantInline = function(btn, variantId, price) {
         const card = btn.closest('.beres-card');
         if (!card) return;
 
@@ -262,22 +262,21 @@
         // Reset ALL sibling buttons to default state
         const siblings = btn.parentElement.querySelectorAll('button');
         siblings.forEach(b => {
-            b.style.backgroundColor = '';
+            b.style.backgroundColor = '#fff';
             b.style.borderColor = '#E8F0E5';
-            b.classList.remove('text-white');
-            b.classList.add('text-[#171717]');
+            b.style.color = '#171717';
         });
 
         // Highlight ONLY the selected button
         btn.style.backgroundColor = '#2D5A27';
         btn.style.borderColor = '#2D5A27';
-        btn.classList.add('text-white');
-        btn.classList.remove('text-[#171717]');
+        btn.style.color = '#fff';
 
         // Update price display
         const priceEl = card.querySelector('.text-xl.font-bold');
         if (priceEl && price) priceEl.textContent = price;
     };
+    window.beresSelectVariant = window.beresSelectVariantInline;
 
     // Wishlist toggle → Bagisto API
     window.beresToggleWishlist = async function(btn, productId) {

@@ -212,13 +212,13 @@
                 {{-- Weight variant buttons (above quantity, horizontal scroll) --}}
                 @if (count($childVariants))
                     <input type="hidden" name="selected_configurable_option" value="{{ $childVariants[0]['id'] }}" class="beres-variant-input">
-                    <p class="text-sm font-medium text-[#171717] mb-1.5">Pilih Berat</p>
+                    <p class="text-sm font-medium text-[#171717] mb-1.5">Pilih Varian / Berat</p>
                     <div class="beres-variant-row flex items-center gap-2 mb-3 overflow-x-auto pb-1" style="scrollbar-width:none; -ms-overflow-style:none;">
                         @foreach ($childVariants as $i => $v)
                             <button type="button"
                                     class="beres-variant-btn shrink-0 px-3.5 py-1.5 text-xs font-medium border transition-all whitespace-nowrap {{ $i === 0 ? 'beres-variant-active' : '' }}"
                                     style="{{ $i === 0 ? 'background-color:#2D5A27; color:#fff; border-color:#2D5A27;' : 'background-color:#fff; color:#171717; border-color:#E8F0E5;' }} border-radius:999px;"
-                                    onclick="beresSelectVariantInline(this, {{ $v['id'] }}, '{{ $v['price'] }}')"
+                                    onclick="beresSelectVariantInline(this, '{{ $v['id'] }}', '{{ $v['price'] }}')"
                                     data-variant-id="{{ $v['id'] }}">
                                 {{ $v['label'] }}
                             </button>
