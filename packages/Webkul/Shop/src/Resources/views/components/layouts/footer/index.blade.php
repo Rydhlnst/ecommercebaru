@@ -41,21 +41,21 @@
                             :action="route('shop.subscription.store')"
                             class="w-full"
                         >
-                            <div class="flex items-center gap-3">
+                            <div class="flex items-center w-full rounded-lg overflow-hidden border border-stone bg-cocoa/30 focus-within:border-cream transition-colors">
                                 <x-shop::form.control-group.control
                                     type="email"
-                                    class="flex-1 bg-cocoa/30 border border-stone rounded-lg text-cream placeholder:text-stone py-3 px-4 focus:ring-0 focus:outline-none focus:border-cream"
+                                    class="flex-1 bg-transparent border-0 text-cream placeholder:text-stone px-4 h-11 md:h-12 text-sm focus:ring-0 focus:outline-none !mb-0"
                                     name="email"
                                     rules="required|email"
                                     label="Email"
-                                    placeholder="Email"
+                                    placeholder="E-mail"
                                 />
 
                                 <button
                                     type="submit"
-                                    class="bg-cocoa hover:bg-stone text-cream font-medium py-3 px-6 rounded-lg transition-colors"
+                                    class="h-11 md:h-12 bg-cocoa hover:bg-stone text-cream font-bold px-6 shrink-0 flex items-center justify-center transition-colors border-0 m-0"
                                 >
-                                    Join Us
+                                    Join
                                 </button>
                             </div>
 
