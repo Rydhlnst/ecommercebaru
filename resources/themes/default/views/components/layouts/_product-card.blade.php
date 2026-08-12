@@ -34,9 +34,9 @@
 
             // Variations
             $childVariants = [];
-            if ($product->has_variations && $product->variations->count()) {
-                foreach ($product->variations as $i => $var) {
-                    $vSale = false;
+            $vars = $product->variations;
+            if ($vars && $vars->count()) {
+                foreach ($vars as $i => $var) {
                     $childVariants[] = [
                         'id'            => $var->id,
                         'label'         => $var->weight ? $var->weight_label : 'Var '.($i+1),
@@ -112,7 +112,7 @@
         $compare  = $compare  ?? null;
         $variants = $variants ?? [];
         $href     = $href     ?? route('shop.search.index');
-        $prodId   = null;
+        $prodId   = 1;
         $image    = null;
         $badge    = null;
         $description = null;

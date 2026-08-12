@@ -24,7 +24,7 @@ class HomepageHighlightService
         if ($highlights->isNotEmpty()) {
             $ids = $highlights->pluck('entity_id')->take($limit)->values()->all();
 
-            $products = AdminProduct::with('category', 'images')
+            $products = AdminProduct::with('category', 'images', 'variations')
                 ->whereIn('id', $ids)
                 ->get()
                 ->keyBy('id');
@@ -81,7 +81,7 @@ class HomepageHighlightService
      */
     protected function fallbackProducts(string $section, int $limit): Collection
     {
-        $query = AdminProduct::with('category', 'images')
+        $query = AdminProduct::with('category', 'images', 'variations')
             ->where('status', 'active');
 
         switch ($section) {
