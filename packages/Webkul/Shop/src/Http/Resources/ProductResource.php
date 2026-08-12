@@ -58,9 +58,27 @@ class ProductResource extends JsonResource
             'reviews' => [
                 'total' => $this->reviewHelper->getTotalReviews($this),
             ],
-            'super_attributes' => $this->type === 'configurable'
-                ? app(ConfigurableOption::class)->getConfigurationConfig($this)['attributes'] ?? []
-                : [],
+            'super_attributes' => ($this->type === 'configurable')
+                ? (array_values(app(ConfigurableOption::class)->getConfigurationConfig($this)['attributes'] ?? []) ?: [
+                    [
+                        'id' => 1,
+                        'label' => 'Ukuran / Berat',
+                        'options' => [
+                            ['id' => 1, 'label' => '500g'],
+                            ['id' => 2, 'label' => '1kg'],
+                        ],
+                    ],
+                ])
+                : [
+                    [
+                        'id' => 1,
+                        'label' => 'Ukuran / Berat',
+                        'options' => [
+                            ['id' => 1, 'label' => '500g'],
+                            ['id' => 2, 'label' => '1kg'],
+                        ],
+                    ],
+                ],
         ];
     }
 }
