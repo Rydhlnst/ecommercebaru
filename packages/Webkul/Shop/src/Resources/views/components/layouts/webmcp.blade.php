@@ -1,5 +1,6 @@
 {!! view_render_event('bagisto.shop.layout.webmcp.before') !!}
 
+<div class="hidden" style="display:none !important;" aria-hidden="true">
 <form
     action="{{ route('shop.webmcp.product') }}"
     method="GET"
@@ -63,6 +64,7 @@
 >
     <button type="submit" class="hidden" aria-hidden="true"></button>
 </form>
+</div>
 
 {{--
     Bridge the declarative `<form toolname>` markup above to the browser WebMCP
