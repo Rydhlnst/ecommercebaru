@@ -14,7 +14,7 @@
 
 {{-- Store location + map — compact horizontal layout --}}
 <section id="lokasi" class="bg-white">
-    <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 pt-10 md:pt-14 pb-0">
+    <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-14">
         <div class="grid gap-6 md:gap-8 lg:grid-cols-5 items-start">
 
             {{-- Map embed — takes 3/5 width --}}

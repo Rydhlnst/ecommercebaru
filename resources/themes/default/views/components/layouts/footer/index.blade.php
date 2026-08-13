@@ -227,4 +227,12 @@
     </div>
 </footer>
 
+@push('scripts')
+<style>
+    html, body {
+        background-color: #2D5A27 !important;
+    }
+</style>
+@endpush
+
 {!! view_render_event('bagisto.shop.layout.footer.after') !!}
