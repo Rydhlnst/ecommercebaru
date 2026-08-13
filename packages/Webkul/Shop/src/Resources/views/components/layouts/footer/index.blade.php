@@ -41,19 +41,18 @@
                             :action="route('shop.subscription.store')"
                             class="w-full"
                         >
-                            <div class="flex items-center w-full rounded-lg overflow-hidden border border-stone bg-cocoa/30 focus-within:border-cream transition-colors">
-                                <x-shop::form.control-group.control
+                            <div class="flex items-stretch w-full h-12 rounded-lg overflow-hidden border border-cream/30 focus-within:border-cream bg-white/5 transition-colors">
+                                <input
                                     type="email"
-                                    class="flex-1 bg-transparent border-0 text-cream placeholder:text-stone px-4 h-11 md:h-12 text-sm focus:ring-0 focus:outline-none !mb-0"
                                     name="email"
-                                    rules="required|email"
-                                    label="Email"
+                                    class="flex-1 min-w-0 bg-transparent text-cream placeholder:text-mist/50 px-4 text-sm focus:outline-none focus:ring-0 border-0 m-0 rounded-none h-full"
                                     placeholder="E-mail"
+                                    required
+                                    aria-label="E-mail"
                                 />
-
                                 <button
                                     type="submit"
-                                    class="h-11 md:h-12 bg-cocoa hover:bg-stone text-cream font-bold px-6 shrink-0 flex items-center justify-center transition-colors border-0 m-0"
+                                    class="h-full px-7 bg-cream text-[#2D5A27] text-sm font-bold hover:bg-[#E8F0E5] transition-colors shrink-0 flex items-center justify-center border-0 m-0 rounded-none cursor-pointer"
                                 >
                                     Join
                                 </button>

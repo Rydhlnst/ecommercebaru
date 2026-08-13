@@ -46,16 +46,19 @@
                     Jadilah yang pertama mendengar tentang produk baru, acara eksklusif, dan penawaran online.
                 </p>
                 <x-shop::form :action="route('shop.subscription.store')" class="w-full">
-                    <div class="flex items-center w-full rounded-lg overflow-hidden border border-cream/30 bg-white/5 focus-within:border-cream transition-colors">
-                        <x-shop::form.control-group.control
+                    <div class="flex items-stretch w-full h-12 rounded-lg overflow-hidden border border-cream/30 focus-within:border-cream bg-white/5 transition-colors">
+                        <input
                             type="email"
-                            class="flex-1 bg-transparent border-0 text-cream placeholder:text-mist/50 px-4 h-11 md:h-12 text-sm focus:ring-0 focus:outline-none !mb-0"
                             name="email"
-                            rules="required|email"
+                            class="flex-1 min-w-0 bg-transparent text-cream placeholder:text-mist/50 px-4 text-sm focus:outline-none focus:ring-0 border-0 m-0 rounded-none h-full"
                             placeholder="E-mail"
-                            :aria-label="trans('shop::app.components.layouts.footer.email')"
+                            required
+                            aria-label="E-mail"
                         />
-                        <button type="submit" class="h-11 md:h-12 px-6 bg-cream text-[#2D5A27] text-sm font-bold hover:bg-sand transition-colors shrink-0 flex items-center justify-center border-0 m-0">
+                        <button
+                            type="submit"
+                            class="h-full px-7 bg-cream text-[#2D5A27] text-sm font-bold hover:bg-[#E8F0E5] transition-colors shrink-0 flex items-center justify-center border-0 m-0 rounded-none cursor-pointer"
+                        >
                             Join
                         </button>
                     </div>
