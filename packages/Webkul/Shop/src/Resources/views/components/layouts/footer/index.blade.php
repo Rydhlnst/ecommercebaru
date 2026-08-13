@@ -23,7 +23,7 @@
     ];
 @endphp
 
-<footer class="mt-24 bg-ink text-cream">
+<footer class="mt-12 md:mt-16 text-cream" style="background-color:#2D5A27;">
     <!-- Newsletter band -->
     @if (core()->getConfigData('customer.settings.newsletter.subscription'))
         <div class="border-b border-cocoa">
@@ -254,5 +254,15 @@
         </div>
     </div>
 </footer>
+
+@push('scripts')
+<style>
+    html, body, #app {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+        background-color: #2D5A27 !important;
+    }
+</style>
+@endpush
 
 {!! view_render_event('bagisto.shop.layout.footer.after') !!}
