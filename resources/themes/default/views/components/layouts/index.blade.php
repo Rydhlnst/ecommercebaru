@@ -267,6 +267,14 @@
             </script>
         @endif
 
+        <style>
+            html, body, #app {
+                margin-bottom: 0 !important;
+                padding-bottom: 0 !important;
+                background-color: #2D5A27 !important;
+            }
+        </style>
+
         {!! view_render_event('bagisto.shop.layout.head.after') !!}
 
     </head>
