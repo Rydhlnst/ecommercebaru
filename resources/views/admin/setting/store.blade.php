@@ -115,15 +115,54 @@
                 <em>(Jika dikosongkan, website akan otomatis menampilkan menu "Unggulan" dan seluruh kategori aktif dari menu Kategori).</em>
             </p>
             <div class="mb-2">
-                <textarea name="header_nav_items" rows="6" class="form-input font-mono text-sm" placeholder="Unggulan|/&#10;Buah & Sayur|/category/buah-sayur&#10;Minuman|/category/minuman">{{ old('header_nav_items', $settings['header_nav_items'] ?? '') }}</textarea>
+                <textarea name="header_nav_items" rows="5" class="form-input font-mono text-sm" placeholder="Unggulan|/&#10;Buah & Sayur|/category/buah-sayur&#10;Minuman|/category/minuman">{{ old('header_nav_items', $settings['header_nav_items'] ?? '') }}</textarea>
             </div>
             <p class="text-xs text-gray-400">
-                Contoh: <br>
-                <code>Unggulan|/</code> <br>
-                <code>Buah & Sayur|/category/buah-sayur</code> <br>
-                <code>Bumbu & Rempah|/category/bumbu-rempah</code> <br>
-                <code>Promo Spesial|/search?query=promo</code>
+                Contoh: <code>Unggulan|/</code> &bull; <code>Buah & Sayur|/category/buah-sayur</code> &bull; <code>Promo|/search?query=promo</code>
             </p>
+        </div>
+
+        {{-- Footer Link Columns Settings --}}
+        <div class="admin-panel-card lg:col-span-2">
+            <h3 class="font-semibold text-gray-900 mb-4">
+                <i class="fas fa-link mr-2 text-blue-600"></i>Kelola Menu & Link Footer (Kustom Bebas)
+            </h3>
+            <p class="text-xs text-gray-500 mb-4">
+                Anda bebas menambahkan, mengubah, atau menghapus link apa saja di kolom Footer website. Tulis <strong>1 link per baris</strong> dengan format: <code>Nama Link|URL_atau_Path</code>.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{-- Footer Column 1 --}}
+                <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                    <h4 class="font-medium text-sm text-gray-900 mb-3">Kolom Footer 1 (Contoh: About Us)</h4>
+                    <div class="mb-3">
+                        <label class="form-label text-xs">Judul Kolom</label>
+                        <input type="text" name="footer_col1_title" value="{{ old('footer_col1_title', $settings['footer_col1_title'] ?? '') }}" placeholder="About Us" class="form-input text-sm">
+                    </div>
+                    <div>
+                        <label class="form-label text-xs">Daftar Link (1 per baris: <code>Judul|URL</code>)</label>
+                        <textarea name="footer_col1_links" rows="6" class="form-input font-mono text-xs" placeholder="Contact Us|/contact-us&#10;Customer Service|/customer-service&#10;What's New|/whats-new&#10;Terms of Use|/terms&#10;Terms & Conditions|/page/terms-conditions">{{ old('footer_col1_links', $settings['footer_col1_links'] ?? '') }}</textarea>
+                    </div>
+                </div>
+
+                {{-- Footer Column 2 --}}
+                <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                    <h4 class="font-medium text-sm text-gray-900 mb-3">Kolom Footer 2 (Contoh: Privacy Policy)</h4>
+                    <div class="mb-3">
+                        <label class="form-label text-xs">Judul Kolom</label>
+                        <input type="text" name="footer_col2_title" value="{{ old('footer_col2_title', $settings['footer_col2_title'] ?? '') }}" placeholder="Privacy Policy" class="form-input text-sm">
+                    </div>
+                    <div>
+                        <label class="form-label text-xs">Daftar Link (1 per baris: <code>Judul|URL</code>)</label>
+                        <textarea name="footer_col2_links" rows="6" class="form-input font-mono text-xs" placeholder="Payment Policy|/page/payment-policy&#10;Shipping Policy|/page/shipping-policy&#10;Refund Policy|/page/refund-policy&#10;Return Policy|/page/return-policy&#10;FAQ|/faq">{{ old('footer_col2_links', $settings['footer_col2_links'] ?? '') }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="form-label text-xs">Teks Deskripsi Newsletter (Footer Kiri Bawah Logo)</label>
+                <input type="text" name="footer_newsletter_text" value="{{ old('footer_newsletter_text', $settings['footer_newsletter_text'] ?? '') }}" placeholder="Jadilah yang pertama mendengar tentang produk baru, acara eksklusif, dan penawaran online." class="form-input text-sm">
+            </div>
         </div>
     </div>
 

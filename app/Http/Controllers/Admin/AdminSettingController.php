@@ -67,6 +67,11 @@ class AdminSettingController extends Controller
                     'store_facebook',
                     'store_youtube',
                     'header_nav_items',
+                    'footer_newsletter_text',
+                    'footer_col1_title',
+                    'footer_col1_links',
+                    'footer_col2_title',
+                    'footer_col2_links',
                 ]);
             }
         } catch (QueryException $e) {
@@ -93,6 +98,11 @@ class AdminSettingController extends Controller
             'store_facebook' => 'nullable|url|max:255',
             'store_youtube' => 'nullable|url|max:255',
             'header_nav_items' => 'nullable|string',
+            'footer_newsletter_text' => 'nullable|string',
+            'footer_col1_title' => 'nullable|string|max:100',
+            'footer_col1_links' => 'nullable|string',
+            'footer_col2_title' => 'nullable|string|max:100',
+            'footer_col2_links' => 'nullable|string',
         ]);
 
         foreach ($validated as $key => $value) {

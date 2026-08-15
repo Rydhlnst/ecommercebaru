@@ -40,10 +40,10 @@
 
             {{-- Newsletter --}}
             <div class="lg:col-span-1">
-                <img src="/images/ankesh-mart-logo.png" alt="{{ config('app.name') }}" width="131" height="44" class="block mb-4 brightness-0 invert">
+                <img src="/images/ankesh-mart-logo.png" alt="{{ config('app.name', 'Ankesh Mart') }}" width="131" height="44" class="block mb-4 brightness-0 invert">
                 <p class="text-sm font-semibold text-cream mb-3">Newsletter</p>
                 <p class="text-sm text-mist/80 mb-6 leading-relaxed">
-                    Jadilah yang pertama mendengar tentang produk baru, acara eksklusif, dan penawaran online.
+                    {{ \App\Models\SiteSetting::getValue('footer_newsletter_text') ?: 'Jadilah yang pertama mendengar tentang produk baru, acara eksklusif, dan penawaran online.' }}
                 </p>
                 <x-shop::form :action="route('shop.subscription.store')" class="w-full">
                     <div class="flex items-stretch w-full h-12 rounded-lg overflow-hidden border border-cream/30 focus-within:border-cream bg-white/5 transition-colors">
@@ -65,64 +65,71 @@
                 </x-shop::form>
             </div>
 
-            {{-- Column 1 — Shop Links --}}
-            @if (! empty($footerOptions['column_1']))
-                @php
-                    usort($footerOptions['column_1'], fn($a, $b) => ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0));
-                    $col1Header = $footerOptions['column_1'][0]['title'] ?? 'Belanja';
-                    $col1Links = array_slice($footerOptions['column_1'], 1);
-                @endphp
-                <div>
-                    <p class="text-sm font-semibold text-cream mb-4">{{ $col1Header }}</p>
-                    <ul class="grid gap-3 text-sm text-mist/80">
-                        @foreach ($col1Links as $link)
-                            <li><a href="{{ $link['url'] }}" class="hover:text-cream transition-colors">{{ $link['title'] }}</a></li>
+            {{-- Column 1 — About Us / Custom Links --}}
+            @php
+                $col1Title = \App\Models\SiteSetting::getValue('footer_col1_title') ?: 'About Us';
+                $col1Raw = \App\Models\SiteSetting::getValue('footer_col1_links');
+                $col1Items = [];
+                if ($col1Raw && trim($col1Raw) !== '') {
+                    foreach (preg_split("/\r?\n/", $col1Raw) as $line) {
+                        $line = trim($line);
+                        if ($line === '') continue;
+                        [$title, $url] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
+                        if ($title !== '') {
+                            $col1Items[] = ['title' => $title, 'url' => $url ?: '#'];
+                        }
+                    }
+                }
+            @endphp
+            <div>
+                <p class="text-sm font-semibold text-cream mb-4">{{ $col1Title }}</p>
+                <ul class="grid gap-3 text-sm text-mist/80">
+                    @if(!empty($col1Items))
+                        @foreach ($col1Items as $item)
+                            <li><a href="{{ $item['url'] }}" class="hover:text-cream transition-colors">{{ $item['title'] }}</a></li>
                         @endforeach
-                    </ul>
-                </div>
-            @else
-                @php
-                    $footerCats = \App\Models\AdminCategory::whereNull('parent_id')->limit(7)->get();
-                @endphp
-                @if ($footerCats->isNotEmpty())
-                    <div>
-                        <p class="text-sm font-semibold text-cream mb-4">BELANJA</p>
-                        <ul class="grid gap-3 text-sm text-mist/80">
-                            @foreach ($footerCats as $cat)
-                                <li><a href="{{ route('shop.admin_category.show', $cat->slug) }}" class="hover:text-cream transition-colors">{{ $cat->name }}</a></li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-            @endif
+                    @else
+                        <li><a href="{{ url('/about-us') }}" class="hover:text-cream transition-colors">About Us</a></li>
+                        <li><a href="{{ url('/contact-us') }}" class="hover:text-cream transition-colors">Contact Us</a></li>
+                        <li><a href="{{ url('/customer-service') }}" class="hover:text-cream transition-colors">Customer Service</a></li>
+                        <li><a href="{{ url('/whats-new') }}" class="hover:text-cream transition-colors">What's New</a></li>
+                        <li><a href="{{ url('/page/terms-conditions') }}" class="hover:text-cream transition-colors">Terms & Conditions</a></li>
+                    @endif
+                </ul>
+            </div>
 
-            {{-- Column 2 — Useful Links / Policies --}}
-            @if (! empty($footerOptions['column_2']))
-                @php
-                    usort($footerOptions['column_2'], fn($a, $b) => ($a['sort_order'] ?? 0) - ($b['sort_order'] ?? 0));
-                    $col2Header = $footerOptions['column_2'][0]['title'] ?? 'Kebijakan & Bantuan';
-                    $col2Links = array_slice($footerOptions['column_2'], 1);
-                @endphp
-                <div>
-                    <p class="text-sm font-semibold text-cream mb-4">{{ $col2Header }}</p>
-                    <ul class="grid gap-3 text-sm text-mist/80">
-                        @foreach ($col2Links as $link)
-                            <li><a href="{{ $link['url'] }}" class="hover:text-cream transition-colors">{{ $link['title'] }}</a></li>
+            {{-- Column 2 — Privacy Policy / Custom Links --}}
+            @php
+                $col2Title = \App\Models\SiteSetting::getValue('footer_col2_title') ?: 'Privacy Policy';
+                $col2Raw = \App\Models\SiteSetting::getValue('footer_col2_links');
+                $col2Items = [];
+                if ($col2Raw && trim($col2Raw) !== '') {
+                    foreach (preg_split("/\r?\n/", $col2Raw) as $line) {
+                        $line = trim($line);
+                        if ($line === '') continue;
+                        [$title, $url] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
+                        if ($title !== '') {
+                            $col2Items[] = ['title' => $title, 'url' => $url ?: '#'];
+                        }
+                    }
+                }
+            @endphp
+            <div>
+                <p class="text-sm font-semibold text-cream mb-4">{{ $col2Title }}</p>
+                <ul class="grid gap-3 text-sm text-mist/80">
+                    @if(!empty($col2Items))
+                        @foreach ($col2Items as $item)
+                            <li><a href="{{ $item['url'] }}" class="hover:text-cream transition-colors">{{ $item['title'] }}</a></li>
                         @endforeach
-                    </ul>
-                </div>
-            @else
-                <div>
-                    <p class="text-sm font-semibold text-cream mb-4">KEBIJAKAN TOKO</p>
-                    <ul class="grid gap-3 text-sm text-mist/80">
-                        <li><a href="{{ url('/page/privacy-policy') }}" class="hover:text-cream transition-colors">Kebijakan Privasi</a></li>
-                        <li><a href="{{ url('/page/terms-conditions') }}" class="hover:text-cream transition-colors">Syarat & Ketentuan</a></li>
-                        <li><a href="{{ url('/page/return-policy') }}" class="hover:text-cream transition-colors">Kebijakan Pengembalian</a></li>
-                        <li><a href="{{ url('/page/shipping-policy') }}" class="hover:text-cream transition-colors">Kebijakan Pengiriman</a></li>
-                        <li><a href="{{ url('/faq') }}" class="hover:text-cream transition-colors">FAQ / Pertanyaan Umum</a></li>
-                    </ul>
-                </div>
-            @endif
+                    @else
+                        <li><a href="{{ url('/page/payment-policy') }}" class="hover:text-cream transition-colors">Payment Policy</a></li>
+                        <li><a href="{{ url('/page/shipping-policy') }}" class="hover:text-cream transition-colors">Shipping Policy</a></li>
+                        <li><a href="{{ url('/page/refund-policy') }}" class="hover:text-cream transition-colors">Refund Policy</a></li>
+                        <li><a href="{{ url('/page/return-policy') }}" class="hover:text-cream transition-colors">Return Policy</a></li>
+                        <li><a href="{{ url('/faq') }}" class="hover:text-cream transition-colors">FAQ</a></li>
+                    @endif
+                </ul>
+            </div>
 
             {{-- Column 3 — Contact Details --}}
             @if (! empty($footerOptions['column_3']))
