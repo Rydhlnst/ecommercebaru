@@ -212,7 +212,7 @@
             if ($dbCategories->isNotEmpty()) {
                 $rawNav = "Unggulan|/\n" . $dbCategories->map(fn($c) => "{$c->name}|/category/{$c->slug}")->implode("\n");
             } else {
-                $rawNav = (string) (core()->getConfigData('beres_storefront.header_nav.items') ?: "Unggulan|/\nBuah & Sayur|/category/buah-sayur\nDaging & Seafood|/category/daging\nRoti & Bakery|/category/roti\nMinuman|/category/minuman\nBumbu & Rempah|/category/bumbu\nSnack Sehat|/category/snack");
+                $rawNav = "Unggulan|/";
             }
         }
 
