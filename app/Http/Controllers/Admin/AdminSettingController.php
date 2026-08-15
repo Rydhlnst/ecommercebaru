@@ -50,7 +50,7 @@ class AdminSettingController extends Controller
 
     public function policy()
     {
-        $policies = collect();
+        $policies = [];
 
         try {
             if (Schema::hasTable('site_settings')) {
@@ -86,7 +86,7 @@ class AdminSettingController extends Controller
 
     public function store()
     {
-        $settings = collect();
+        $settings = [];
 
         try {
             if (Schema::hasTable('site_settings')) {
@@ -118,7 +118,7 @@ class AdminSettingController extends Controller
         }
 
         // Nilai SEO & nama tab dari core_config
-        $settings = $settings->merge([
+        $settings = array_merge($settings, [
             'seo_site_name' => (string) core()->getConfigData('beres_storefront.seo.site_name'),
             'seo_home_title' => (string) core()->getConfigData('beres_storefront.seo.home_title'),
             'seo_title_suffix' => (string) core()->getConfigData('beres_storefront.seo.title_suffix'),
@@ -222,7 +222,7 @@ class AdminSettingController extends Controller
 
     public function integrations()
     {
-        $settings = collect();
+        $settings = [];
 
         try {
             if (Schema::hasTable('site_settings')) {
