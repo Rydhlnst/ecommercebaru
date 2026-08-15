@@ -343,22 +343,13 @@
             @endif
         </section>
     @else
-        <section class="relative bg-[#2D5A27] text-white py-16 md:py-24 overflow-hidden beres-reveal">
-            <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 text-center">
-                <span class="inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/10 text-white mb-4">
-                    {{ config('app.name', 'Ankesh Mart') }}
-                </span>
-                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 max-w-3xl mx-auto leading-tight">
-                    {{ $c('hero.headline', 'Selamat Datang di ' . config('app.name', 'Ankesh Mart')) }}
-                </h1>
-                <p class="text-sm md:text-base text-white/80 max-w-xl mx-auto mb-8 leading-relaxed">
-                    {{ $c('hero.subhead', 'Pusat belanja online terpercaya untuk kebutuhan Anda.') }}
-                </p>
-                <div class="flex items-center justify-center gap-4">
-                    <a href="{{ route('shop.search.index') }}" class="px-8 py-3.5 bg-white text-[#2D5A27] font-bold text-sm uppercase tracking-wider rounded-full hover:bg-cream transition-colors shadow-sm">
-                        Belanja Sekarang
-                    </a>
-                </div>
+        {{-- Skeleton placeholder ketika belum ada gambar hero slide --}}
+        <section class="w-full overflow-hidden bg-gray-100" aria-label="Hero banner skeleton">
+            <div class="w-full aspect-[16/7] max-md:aspect-[4/5] bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse flex flex-col items-center justify-center text-gray-400 p-6">
+                <svg class="w-12 h-12 md:w-16 md:h-16 mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                <span class="text-xs md:text-sm font-medium tracking-wider uppercase text-gray-400">Banner Toko (Upload di Pengaturan)</span>
             </div>
         </section>
     @endif
@@ -660,7 +651,7 @@
                                 <span class="text-sm md:text-base text-[#171717] pr-4" style="font-weight:500;">{{ $faq->question }}</span>
                                 <span class="text-2xl transition-transform duration-300 group-open:rotate-45 shrink-0 leading-none" style="color:#2D5A27;">+</span>
                             </summary>
-                            <p class="px-5 md:px-6 pb-4 md:pb-5 text-sm md:text-base text-[#404040] leading-relaxed">{!! nl2br(e($faq->answer)) !!}</p>
+                            <div class="px-5 md:px-6 pb-4 md:pb-5 text-sm md:text-base text-[#404040] leading-relaxed prose prose-sm max-w-none">{!! $faq->answer !!}</div>
                         </details>
                     @endforeach
                 </div>
