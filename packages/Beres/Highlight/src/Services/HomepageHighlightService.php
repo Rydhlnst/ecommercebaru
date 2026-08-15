@@ -29,10 +29,14 @@ class HomepageHighlightService
                 ->get()
                 ->keyBy('id');
 
-            return collect($ids)
+            $resolved = collect($ids)
                 ->map(fn ($id) => $products->get($id))
                 ->filter()
                 ->values();
+
+            if ($resolved->isNotEmpty()) {
+                return $resolved;
+            }
         }
 
         return $this->fallbackProducts($section, $limit);

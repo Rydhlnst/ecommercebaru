@@ -184,17 +184,46 @@ class AdminProductController extends Controller
 
     private function saveImages(AdminProduct $product, array $files): void
     {
-        $manager = new ImageManager(new Driver);
+        try {
+            $manager = new ImageManager(new Driver);
+        } catch (\Throwable $e) {
+            $manager = null;
+        }
 
         foreach ($files as $index => $file) {
             $filename = time().'_'.uniqid().'_'.$index.'.webp';
             $path = 'uploads/products/'.$filename;
 
-            $img = $manager->read($file);
-            $img->resizeDown(800);
-            $encoded = $img->toWebp(80)->toString();
+            $encoded = null;
+            if ($manager) {
+                try {
+                    $img = $manager->read($file);
+                    $img->resizeDown(800);
+                    $encoded = $img->toWebp(85)->toString();
+                } catch (\Throwable $e) {
+                    $encoded = null;
+                }
+            }
+
+            if ($encoded === null) {
+                $ext = $file->getClientOriginalExtension() ?: 'jpg';
+                $filename = time().'_'.uniqid().'_'.$index.'.'.$ext;
+                $path = 'uploads/products/'.$filename;
+                $encoded = file_get_contents($file->getRealPath());
+            }
 
             Storage::disk('public')->put($path, $encoded);
+
+            // Also write directly to public/storage for cPanel environments
+            try {
+                $publicStorageDir = public_path('storage/uploads/products');
+                if (! file_exists($publicStorageDir)) {
+                    @mkdir($publicStorageDir, 0755, true);
+                }
+                @file_put_contents($publicStorageDir.'/'.$filename, $encoded);
+            } catch (\Throwable $e) {
+                // Ignore fallback error
+            }
 
             AdminProductImage::create([
                 'product_id' => $product->id,

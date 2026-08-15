@@ -143,15 +143,45 @@ class AdminCategoryController extends Controller
 
     private function compressImage($file)
     {
+        try {
+            $manager = new ImageManager(new Driver);
+        } catch (\Throwable $e) {
+            $manager = null;
+        }
+
         $filename = time().'_'.uniqid().'.webp';
         $path = 'uploads/categories/'.$filename;
 
-        $manager = new ImageManager(new Driver);
-        $img = $manager->read($file);
-        $img->resizeDown(500);
-        $encoded = $img->toWebp(80)->toString();
+        $encoded = null;
+        if ($manager) {
+            try {
+                $img = $manager->read($file);
+                $img->resizeDown(500);
+                $encoded = $img->toWebp(85)->toString();
+            } catch (\Throwable $e) {
+                $encoded = null;
+            }
+        }
+
+        if ($encoded === null) {
+            $ext = $file->getClientOriginalExtension() ?: 'jpg';
+            $filename = time().'_'.uniqid().'.'.$ext;
+            $path = 'uploads/categories/'.$filename;
+            $encoded = file_get_contents($file->getRealPath());
+        }
 
         Storage::disk('public')->put($path, $encoded);
+
+        // Also write directly to public/storage for cPanel environments
+        try {
+            $publicStorageDir = public_path('storage/uploads/categories');
+            if (! file_exists($publicStorageDir)) {
+                @mkdir($publicStorageDir, 0755, true);
+            }
+            @file_put_contents($publicStorageDir.'/'.$filename, $encoded);
+        } catch (\Throwable $e) {
+            // Ignore fallback error
+        }
 
         return $path;
     }
