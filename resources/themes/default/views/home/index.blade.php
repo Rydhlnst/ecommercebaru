@@ -58,20 +58,19 @@
     }
 
     // Trust badges (editable via admin)
-    $trustBadges = [
-        [core()->getConfigData('beres_storefront.trust.badge1_title') ?: 'Ambil di Toko',       core()->getConfigData('beres_storefront.trust.badge1_desc') ?: 'Ambil di gerai fisik kami'],
-        [core()->getConfigData('beres_storefront.trust.badge2_title') ?: 'Pengiriman Tercepat',core()->getConfigData('beres_storefront.trust.badge2_desc') ?: 'Sameday area Jakarta'],
-        [core()->getConfigData('beres_storefront.trust.badge3_title') ?: 'Zona Penawaran Terbaik', core()->getConfigData('beres_storefront.trust.badge3_desc') ?: 'Promo harian & bundle hemat'],
-        [core()->getConfigData('beres_storefront.trust.badge4_title') ?: 'Kualitas Terbaik',    core()->getConfigData('beres_storefront.trust.badge4_desc') ?: '100% alami & bersertifikat lab'],
-    ];
+    $trustBadges = array_values(array_filter([
+        [core()->getConfigData('beres_storefront.trust.badge1_title'), core()->getConfigData('beres_storefront.trust.badge1_desc')],
+        [core()->getConfigData('beres_storefront.trust.badge2_title'), core()->getConfigData('beres_storefront.trust.badge2_desc')],
+        [core()->getConfigData('beres_storefront.trust.badge3_title'), core()->getConfigData('beres_storefront.trust.badge3_desc')],
+        [core()->getConfigData('beres_storefront.trust.badge4_title'), core()->getConfigData('beres_storefront.trust.badge4_desc')],
+    ], fn($b) => !empty($b[0])));
 
-    // FAQ dari config admin
-    $faqs = [
-        [$c('faq.q1','Berapa lama produk saya dibuat & dikirim?'), $c('faq.a1','Untuk area Jakarta pesanan sebelum jam 10 pagi sampai di hari yang sama.')],
-        [$c('faq.q2','Berapa biaya pengiriman?'),                   $c('faq.a2','Gratis ongkir untuk pembelian di atas Rp 200.000 area Jabodetabek.')],
-        [$c('faq.q3','Bagaimana kalau saya tidak puas?'),           $c('faq.a3','Ganti atau refund penuh dalam 24 jam setelah barang diterima.')],
-        [$c('faq.q4','Bisa ubah alamat setelah pesan?'),            $c('faq.a4','Bisa selama status pesanan masih "Diproses". Hubungi CS via WhatsApp.')],
-    ];
+    // ============ FAQS — from faqs table in database ============
+    try {
+        $faqsDb = \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->latest()->get();
+    } catch (\Throwable $e) {
+        $faqsDb = collect();
+    }
 @endphp
 
 @php
@@ -589,29 +588,31 @@
     @endif
 
     {{-- ============ TRUST BADGES with icons ============ --}}
-    <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-14">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                @php
-                    $badgeIcons = [
-                        '<path d="M3 3h5v5H3zM3 16h5v5H3zM16 3h5v5h-5zM16 16h5v5h-5z"/>',
-                        '<path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/>',
-                        '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
-                        '<circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>',
-                    ];
-                @endphp
-                @foreach ($trustBadges as $i => [$title, $desc])
-                    <div class="p-5 md:p-6 text-center flex flex-col items-center" style="background-color:#F5F9F3;">
-                        <span class="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center mb-3" style="background-color:#E8F0E5; color:#2D5A27;">
-                            <svg class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">{!! $badgeIcons[$i] !!}</svg>
-                        </span>
-                        <p class="text-sm md:text-base text-[#171717]" style="font-weight:600;">{{ $title }}</p>
-                        <p class="mt-1 text-xs md:text-sm text-[#737373] leading-relaxed">{{ $desc }}</p>
-                    </div>
-                @endforeach
+    @if (!empty($trustBadges))
+        <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-14">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    @php
+                        $badgeIcons = [
+                            '<path d="M3 3h5v5H3zM3 16h5v5H3zM16 3h5v5h-5zM16 16h5v5h-5z"/>',
+                            '<path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/>',
+                            '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
+                            '<circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>',
+                        ];
+                    @endphp
+                    @foreach ($trustBadges as $i => [$title, $desc])
+                        <div class="p-5 md:p-6 text-center flex flex-col items-center" style="background-color:#F5F9F3;">
+                            <span class="w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center mb-3" style="background-color:#E8F0E5; color:#2D5A27;">
+                                <svg class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">{!! $badgeIcons[$i % 4] !!}</svg>
+                            </span>
+                            <p class="text-sm md:text-base text-[#171717]" style="font-weight:600;">{{ $title }}</p>
+                            <p class="mt-1 text-xs md:text-sm text-[#737373] leading-relaxed">{{ $desc }}</p>
+                        </div>
+                    @endforeach
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
            {{-- ============ CUSTOMER REVIEWS (Only show if real approved reviews exist in DB) ============ --}}
     @if ($reviewsDb->isNotEmpty())
@@ -646,24 +647,26 @@
         </section>
     @endif
 
-    {{-- ============ FAQ ============ --}}
-    <section class="bg-white beres-reveal">
-        <div class="mx-auto max-w-4xl px-4 sm:px-6 md:px-10 py-16 md:py-24">
-            <h2 class="text-2xl md:text-3xl text-[#171717] mb-8" style="font-weight:600;">{{ $c('sections.faq_title', 'FAQ') }}</h2>
+    {{-- ============ FAQ (Only show if real FAQs exist in DB) ============ --}}
+    @if ($faqsDb->isNotEmpty())
+        <section class="bg-white beres-reveal">
+            <div class="mx-auto max-w-4xl px-4 sm:px-6 md:px-10 py-16 md:py-24">
+                <h2 class="text-2xl md:text-3xl text-[#171717] mb-8" style="font-weight:600;">{{ $c('sections.faq_title', 'FAQ') }}</h2>
 
-            <div class="space-y-3">
-                @foreach ($faqs as $i => [$q, $a])
-                    <details class="group border overflow-hidden transition-all hover:border-[#2D5A27]" style="border-color:#E8F0E5; border-radius:14px;" @if($i === 0) open @endif>
-                        <summary class="flex items-center justify-between cursor-pointer list-none px-5 md:px-6 py-4 md:py-5 hover:bg-[#F5F9F3] transition-colors">
-                            <span class="text-sm md:text-base text-[#171717] pr-4" style="font-weight:500;">{{ $q }}</span>
-                            <span class="text-2xl transition-transform duration-300 group-open:rotate-45 shrink-0 leading-none" style="color:#2D5A27;">+</span>
-                        </summary>
-                        <p class="px-5 md:px-6 pb-4 md:pb-5 text-sm md:text-base text-[#404040] leading-relaxed">{{ $a }}</p>
-                    </details>
-                @endforeach
+                <div class="space-y-3">
+                    @foreach ($faqsDb as $i => $faq)
+                        <details class="group border overflow-hidden transition-all hover:border-[#2D5A27]" style="border-color:#E8F0E5; border-radius:14px;" @if($i === 0) open @endif>
+                            <summary class="flex items-center justify-between cursor-pointer list-none px-5 md:px-6 py-4 md:py-5 hover:bg-[#F5F9F3] transition-colors">
+                                <span class="text-sm md:text-base text-[#171717] pr-4" style="font-weight:500;">{{ $faq->question }}</span>
+                                <span class="text-2xl transition-transform duration-300 group-open:rotate-45 shrink-0 leading-none" style="color:#2D5A27;">+</span>
+                            </summary>
+                            <p class="px-5 md:px-6 pb-4 md:pb-5 text-sm md:text-base text-[#404040] leading-relaxed">{!! nl2br(e($faq->answer)) !!}</p>
+                        </details>
+                    @endforeach
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     {{-- ============ LATEST BLOGS & ARTICLES (Only show if real blogs exist in DB) ============ --}}
     @if ($blogsDb->isNotEmpty())
