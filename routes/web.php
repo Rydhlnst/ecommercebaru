@@ -70,6 +70,9 @@ Route::get('/product/{slug}', [CustomCatalogController::class, 'product'])
 Route::get('/category/{slug}', [CustomCatalogController::class, 'category'])
     ->name('shop.admin_category.show');
 
+Route::get('/search', [CustomCatalogController::class, 'search'])
+    ->name('shop.search.index');
+
 /*
 |--------------------------------------------------------------------------
 | Custom Session Cart (AdminProduct catalogue — independent of Bagisto cart)

@@ -36,11 +36,37 @@ class CustomCatalogController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        $products = AdminProduct::with('images')
+        $products = AdminProduct::with('images', 'category', 'variations')
             ->where('category_id', $category->id)
             ->where('status', 'active')
+            ->latest()
             ->paginate(12);
 
         return view('admin.frontend.category-detail', compact('category', 'products'));
+    }
+
+    /**
+     * Search products in the catalogue.
+     */
+    public function search(): View
+    {
+        $query = trim(request()->query('query', ''));
+
+        $productQuery = AdminProduct::with('category', 'images', 'variations')
+            ->where('status', 'active');
+
+        if ($query !== '') {
+            $productQuery->where(function ($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                    ->orWhere('description', 'like', "%{$query}%")
+                    ->orWhereHas('category', function ($cq) use ($query) {
+                        $cq->where('name', 'like', "%{$query}%");
+                    });
+            });
+        }
+
+        $products = $productQuery->latest()->paginate(12)->withQueryString();
+
+        return view('shop::search.index', compact('query', 'products'));
     }
 }
