@@ -8,6 +8,7 @@
     $compare  = null;
     $salePrice = null;
     $isNew    = false;
+    $href     = $href    ?? route('shop.search.index');
 
     if ($product) {
         // Detect model type: AdminProduct vs Bagisto Product
