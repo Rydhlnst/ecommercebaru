@@ -84,6 +84,12 @@ Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
 Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
 
+Route::get('/faq', function () {
+    $faqs = Faq::where('is_active', true)->orderBy('sort_order')->latest()->get();
+
+    return view('shop::faq', compact('faqs'));
+})->name('shop.faq');
+
 /*
 |--------------------------------------------------------------------------
 | Panel Routes (admin CRUD)
@@ -100,6 +106,7 @@ use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminShowcaseController;
+use App\Models\Faq;
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
