@@ -121,7 +121,12 @@ class HomepageHighlightService
      */
     protected function fallbackCategories(int $limit): Collection
     {
-        return AdminCategory::withCount('products')
+        return AdminCategory::whereHas('products', function ($q) {
+            $q->where('status', 'active');
+        })
+            ->withCount(['products' => function ($q) {
+                $q->where('status', 'active');
+            }])
             ->orderByDesc('products_count')
             ->limit($limit)
             ->get()
