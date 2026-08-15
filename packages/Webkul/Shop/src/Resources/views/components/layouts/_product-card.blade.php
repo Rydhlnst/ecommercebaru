@@ -21,7 +21,9 @@
         if ($isAdminProduct) {
             // --- AdminProduct (simple model) ---
             $price    = 'Rp ' . number_format($product->price ?? 0, 0, ',', '.');
-            $inStock  = ($product->stock ?? 0) > 0;
+            $vars     = $product->variations;
+            $hasVars  = $vars && $vars->count() > 0;
+            $inStock  = ($product->stock ?? 0) > 0 || ($hasVars && $vars->sum('stock') > 0);
             $href     = route('shop.admin_product.show', $product->slug);
             $image    = $product->images->count()
                             ? $product->images->first()->url
@@ -35,8 +37,7 @@
 
             // Variations
             $childVariants = [];
-            $vars = $product->variations;
-            if ($vars && $vars->count()) {
+            if ($hasVars) {
                 foreach ($vars as $i => $var) {
                     $childVariants[] = [
                         'id'            => $var->id,
@@ -45,6 +46,9 @@
                         'regular_price' => null,
                         'special_price' => $var->price,
                     ];
+                }
+                if (($product->price ?? 0) == 0 && count($childVariants)) {
+                    $price = $childVariants[0]['price'];
                 }
             }
 
@@ -166,7 +170,7 @@
         {{-- Out of stock overlay --}}
         @if (!$inStock)
             <div class="absolute inset-0 flex items-center justify-center bg-black/40">
-                <span class="text-white text-xs tracking-[0.2em] uppercase px-4 py-2" style="background-color:rgba(0,0,0,0.7); border-radius:999px; font-weight:600;">@lang('shop::app.products.out-of-stock', [], 'Habis')</span>
+                <span class="text-white text-xs tracking-wider uppercase px-4 py-2" style="background-color:rgba(0,0,0,0.7); border-radius:999px; font-weight:600;">Habis</span>
             </div>
         @endif
     </a>
@@ -182,7 +186,7 @@
             {{-- Badge --}}
             @if($badge)
                 <div class="mt-1">
-                    <span class="inline-block text-[10px] tracking-[0.14em] uppercase px-2 py-0.5 text-white font-bold"
+                    <span class="inline-block text-[10px] tracking-wider uppercase px-2 py-0.5 text-white font-bold"
                           style="width:fit-content; max-width:max-content; border-radius:4px; background-color:{{ $badge === 'sale' ? '#B91C1C' : ($badge === 'habis_terjual' ? '#737373' : '#2D5A27') }};">
                         {{ $badge === 'new' ? 'New' : ($badge === 'sale' ? 'Sale' : 'Habis') }}
                     </span>
@@ -200,7 +204,7 @@
                     {{-- Sale price --}}
                     <span class="text-xl font-bold text-[#171717]">{{ $salePrice }}</span>
                     <span class="text-sm text-[#737373] line-through">{{ $compare }}</span>
-                    <span class="text-[10px] tracking-[0.14em] uppercase px-2 py-0.5 text-white font-bold" style="background-color:#B91C1C; border-radius:4px;">Sale</span>
+                    <span class="text-[10px] tracking-wider uppercase px-2 py-0.5 text-white font-bold" style="background-color:#B91C1C; border-radius:4px;">Sale</span>
                 @else
                     <span class="text-xl font-bold text-[#171717]">{{ $price }}</span>
                 @endif
@@ -221,7 +225,7 @@
                 {{-- Weight variant buttons (above quantity, horizontal scroll) --}}
                 @if (count($childVariants))
                     <input type="hidden" name="selected_configurable_option" value="{{ $childVariants[0]['id'] }}" class="beres-variant-input">
-                    <p class="text-xs font-medium text-[#171717] mb-1">@lang('shop::app.products.select-variant', [], 'Pilih Varian / Berat')</p>
+                    <p class="text-xs font-medium text-[#171717] mb-1">Pilih Varian / Berat</p>
                     <div class="beres-variant-row flex items-center gap-1.5 mb-2 overflow-x-auto pb-1" style="scrollbar-width:none; -ms-overflow-style:none;">
                         @foreach ($childVariants as $i => $v)
                             <button type="button"
@@ -244,31 +248,30 @@
                     </div>
 
                     <button type="submit"
-                            class="flex-1 h-9 text-xs font-semibold tracking-[0.05em] uppercase text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
+                            class="flex-1 h-9 text-xs font-semibold tracking-wide uppercase text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
                             style="background-color:#2D5A27; border-radius:8px;">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                        <span>@lang('shop::app.products.add-to-cart', [], 'Add to Cart')</span>
+                        <span>Add To Cart</span>
                     </button>
                 </div>
 
                 {{-- Row 2: Buy Now direct checkout --}}
                 <button type="button"
                         onclick="beresBuyNow(this.form)"
-                        class="w-full h-8 text-[11px] font-bold tracking-[0.08em] uppercase text-[#171717] hover:text-white bg-[#E8F0E5] hover:bg-[#171717] transition-colors flex items-center justify-center gap-1.5"
+                        class="w-full h-8 text-[11px] font-bold tracking-wider uppercase text-[#171717] hover:text-white bg-[#E8F0E5] hover:bg-[#171717] transition-colors flex items-center justify-center gap-1.5"
                         style="border-radius:8px;">
                     <svg class="w-3 h-3 text-[#2D5A27]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    <span>@lang('shop::app.products.buy-now', [], 'Beli Sekarang')</span>
+                    <span>Beli Sekarang</span>
                 </button>
             </form>
         @elseif ($prodId && !$inStock)
             <button type="button" disabled
-                    class="mt-3 w-full h-10 text-sm font-semibold tracking-[0.05em] uppercase text-[#737373] cursor-not-allowed"
-                    style="background-color:#F5F5F5; border-radius:8px;">
-                @lang('shop::app.products.out-of-stock', [], 'Habis')
+                    class="mt-3 w-full h-10 text-xs font-bold tracking-wider uppercase text-zinc-500 cursor-not-allowed bg-zinc-100 rounded-lg">
+                Habis Terjual
             </button>
         @else
             <a href="{{ $href }}"
-               class="beres-btn mt-3 block w-full h-10 text-sm font-semibold tracking-[0.05em] uppercase text-white hover:opacity-90 text-center transition-opacity"
+               class="beres-btn mt-3 block w-full h-10 text-xs font-bold tracking-wider uppercase text-white hover:opacity-90 text-center transition-opacity flex items-center justify-center"
                style="background-color:#2D5A27; border-radius:8px;">
                 Lihat Produk
             </a>
