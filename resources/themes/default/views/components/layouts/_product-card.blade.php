@@ -180,10 +180,12 @@
 
             {{-- Badge --}}
             @if($badge)
-                <span class="inline-block mt-1 text-[10px] tracking-[0.14em] uppercase px-2 py-0.5 text-white font-bold"
-                      style="border-radius:4px; background-color:{{ $badge === 'sale' ? '#B91C1C' : ($badge === 'habis_terjual' ? '#737373' : '#2D5A27') }};">
-                    {{ $badge === 'new' ? 'New' : ($badge === 'sale' ? 'Sale' : 'Habis') }}
-                </span>
+                <div class="mt-1">
+                    <span class="inline-block text-[10px] tracking-[0.14em] uppercase px-2 py-0.5 text-white font-bold"
+                          style="width:fit-content; max-width:max-content; border-radius:4px; background-color:{{ $badge === 'sale' ? '#B91C1C' : ($badge === 'habis_terjual' ? '#737373' : '#2D5A27') }};">
+                        {{ $badge === 'new' ? 'New' : ($badge === 'sale' ? 'Sale' : 'Habis') }}
+                    </span>
+                </div>
             @endif
 
             {{-- Description --}}
