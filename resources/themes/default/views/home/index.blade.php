@@ -671,6 +671,10 @@
                         </div>
                         <h2 class="text-3xl md:text-4xl text-[#171717] font-bold tracking-tight">Artikel & Tips Terbaru</h2>
                     </div>
+                    <a href="{{ route('shop.blog.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-[#2D5A27] hover:text-[#1E3A1E] transition-colors group">
+                        <span>Lihat Semua Artikel</span>
+                        <span class="text-base group-hover:translate-x-1 transition-transform">→</span>
+                    </a>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -679,31 +683,47 @@
                             $blogTitle    = $page->title ?? ($page->page_title ?? 'Wellness & Healthy Living');
                             $blogCategory = $page->category?->name ?? 'Ankesh Mart';
                             $blogExcerpt  = \Illuminate\Support\Str::limit(strip_tags($page->content ?? ($page->html_content ?? '')), 120);
-                            $blogUrl      = $page->slug ? route('shop.search.index', ['query' => $page->slug]) : '#';
+                            $blogUrl      = $page->slug ? route('shop.blog.show', $page->slug) : '#';
                             $blogDate     = $page->published_at ? $page->published_at->format('d M Y') : ($page->created_at ? $page->created_at->format('d M Y') : '');
-                            $blogImage    = $page->thumbnail ?? null;
+
+                            $blogImg = null;
+                            if ($page->thumbnail) {
+                                if (file_exists(public_path('storage/' . $page->thumbnail))) {
+                                    $blogImg = asset('storage/' . $page->thumbnail);
+                                } elseif (file_exists(public_path($page->thumbnail))) {
+                                    $blogImg = asset($page->thumbnail);
+                                } else {
+                                    $blogImg = asset('storage/' . $page->thumbnail);
+                                }
+                            }
                         @endphp
-                        <article class="group flex flex-col bg-white rounded-2xl border border-[#E8F0E5] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5">
+                        <article class="group flex flex-col bg-white rounded-2xl border border-[#E8F0E5] overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5">
                             <a href="{{ $blogUrl }}" class="block relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE]">
-                                @if ($blogImage && file_exists(public_path($blogImage)))
-                                    <img src="{{ asset($blogImage) }}" alt="{{ $blogTitle }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                @if ($blogImg)
+                                    <img src="{{ $blogImg }}" alt="{{ $blogTitle }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @else
                                     <div class="absolute inset-0 flex items-center justify-between p-6 bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] group-hover:scale-105 transition-transform duration-500">
                                         <div class="flex flex-col justify-between h-full">
-                                            <span class="inline-block px-3 py-1 text-xs font-semibold text-[#2D5A27] bg-white/90 backdrop-blur-md rounded-full shadow-sm w-fit">
+                                            <span class="inline-block px-3 py-1 text-xs font-semibold text-[#2D5A27] bg-white/90 backdrop-blur-md rounded-full shadow-xs w-fit">
                                                 {{ $blogCategory }}
                                             </span>
-                                            <div class="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-md flex items-center justify-center text-[#2D5A27] shadow-sm">
+                                            <div class="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-md flex items-center justify-center text-[#2D5A27] shadow-xs">
                                                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                                             </div>
                                         </div>
                                     </div>
                                 @endif
+
+                                @if ($blogImg)
+                                    <span class="absolute top-3 left-3 px-3 py-1 text-xs font-semibold text-[#2D5A27] bg-white/90 backdrop-blur-md rounded-full shadow-xs">
+                                        {{ $blogCategory }}
+                                    </span>
+                                @endif
                             </a>
 
                             <div class="p-6 flex flex-col flex-1">
                                 @if ($blogDate)
-                                    <div class="flex items-center gap-2 text-xs font-medium text-[#737373] mb-3">
+                                    <div class="flex items-center gap-2 text-xs font-medium text-zinc-500 mb-3">
                                         <span>{{ strtoupper($blogDate) }}</span>
                                     </div>
                                 @endif
@@ -717,6 +737,11 @@
                                 <p class="mt-2.5 text-sm text-[#555555] leading-relaxed line-clamp-3">
                                     {{ $blogExcerpt }}
                                 </p>
+
+                                <div class="mt-auto pt-5 flex items-center text-xs font-bold text-[#2D5A27] group-hover:text-[#1E3A1E] transition-colors">
+                                    <span>Baca Selengkapnya</span>
+                                    <svg class="w-4 h-4 ml-1.5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                </div>
                             </div>
                         </article>
                     @endforeach

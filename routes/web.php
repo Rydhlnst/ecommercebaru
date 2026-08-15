@@ -92,6 +92,18 @@ Route::get('/faq', function () {
 
 /*
 |--------------------------------------------------------------------------
+| Blog Frontend Routes
+|--------------------------------------------------------------------------
+*/
+use App\Http\Controllers\BlogFrontendController;
+
+Route::get('/blogs', [BlogFrontendController::class, 'index'])->name('shop.blog.index');
+Route::get('/blog', [BlogFrontendController::class, 'index']);
+Route::get('/blogs/news', [BlogFrontendController::class, 'index']);
+Route::get('/blog/{slug}', [BlogFrontendController::class, 'show'])->name('shop.blog.show');
+
+/*
+|--------------------------------------------------------------------------
 | Panel Routes (admin CRUD)
 |--------------------------------------------------------------------------
 */
