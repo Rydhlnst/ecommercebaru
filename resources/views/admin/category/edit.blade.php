@@ -15,25 +15,63 @@
     <form method="POST" action="{{ route('admin.categories.update', $category) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
+
+        {{-- Category Type Selector --}}
+        @php
+            $isRoot = is_null(old('parent_id', $category->parent_id));
+        @endphp
+        <div class="mb-5">
+            <label class="form-label font-semibold text-gray-800">Tipe Kategori <span class="text-red-500">*</span></label>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                <label class="relative flex flex-col p-4 border rounded-xl cursor-pointer hover:border-blue-500 transition-all {{ $isRoot ? 'border-blue-600 bg-blue-50/50' : 'border-gray-200' }}" id="label-type-root">
+                    <div class="flex items-center gap-2 mb-1">
+                        <input type="radio" name="category_type" value="root" {{ $isRoot ? 'checked' : '' }} onchange="toggleCategoryType('root')" class="text-blue-600 focus:ring-blue-500">
+                        <span class="font-semibold text-gray-900 text-sm">📁 Kategori Induk (Utama)</span>
+                    </div>
+                    <span class="text-xs text-gray-500 pl-5">Kategori level 1 (misal: Makanan, Minuman, Sayuran). Tampil di navbar beranda.</span>
+                </label>
+
+                <label class="relative flex flex-col p-4 border rounded-xl cursor-pointer hover:border-blue-500 transition-all {{ !$isRoot ? 'border-blue-600 bg-blue-50/50' : 'border-gray-200' }}" id="label-type-sub">
+                    <div class="flex items-center gap-2 mb-1">
+                        <input type="radio" name="category_type" value="sub" {{ !$isRoot ? 'checked' : '' }} onchange="toggleCategoryType('sub')" class="text-blue-600 focus:ring-blue-500">
+                        <span class="font-semibold text-gray-900 text-sm">📂 Sub-Kategori (Turunan)</span>
+                    </div>
+                    <span class="text-xs text-gray-500 pl-5">Cabang dari kategori induk (misal: Garam Himalaya di bawah Makanan).</span>
+                </label>
+            </div>
+        </div>
+
+        {{-- Category Name --}}
         <div class="mb-4">
             <label class="form-label">Nama Kategori <span class="text-red-500">*</span></label>
             <input type="text" name="name" value="{{ old('name', $category->name) }}" required class="form-input">
             @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
-        <div class="mb-4">
-            <label class="form-label">Parent Kategori</label>
-            <select name="parent_id" class="form-input">
-                <option value="">— Tidak ada (Root) —</option>
-                @foreach($parentCategories as $cat)
-                    <option value="{{ $cat->id }}" {{ old('parent_id', $category->parent_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                @endforeach
-            </select>
-            @error('parent_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+        {{-- Parent Category Dropdown --}}
+        <div id="parent-category-group" class="mb-4 {{ $isRoot ? 'hidden' : '' }}">
+            <label class="form-label">Pilih Kategori Induk <span class="text-red-500">*</span></label>
+            @if($parentCategories->isEmpty())
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-xs flex items-center gap-2">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>Tidak ada kategori induk lain yang tersedia.</span>
+                </div>
+            @else
+                <select name="parent_id" id="parent-id-select" class="form-input">
+                    <option value="">— Pilih Kategori Induk —</option>
+                    @foreach($parentCategories as $cat)
+                        <option value="{{ $cat->id }}" {{ old('parent_id', $category->parent_id) == $cat->id ? 'selected' : '' }}>
+                            📁 {{ $cat->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('parent_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+            @endif
         </div>
 
+        {{-- Image Upload --}}
         <div class="mb-6">
-            <label class="form-label">Gambar Kategori</label>
+            <label class="form-label">Gambar Kategori (Opsional)</label>
             @if($category->image)
                 <div class="mb-2">
                     <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}" class="w-32 h-32 object-cover rounded-lg border">
@@ -48,14 +86,39 @@
             @error('image') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
 
-        <button type="submit" class="btn-primary">
-            <i class="fas fa-save mr-1"></i> Perbarui Kategori
-        </button>
+        <div class="flex items-center gap-3">
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-save mr-1"></i> Perbarui Kategori
+            </button>
+            <a href="{{ route('admin.categories.index') }}" class="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Batal</a>
+        </div>
     </form>
 </div>
 @endsection
 
 @section('scripts')
+function toggleCategoryType(type) {
+    const parentGroup = document.getElementById('parent-category-group');
+    const parentSelect = document.getElementById('parent-id-select');
+    const labelRoot = document.getElementById('label-type-root');
+    const labelSub = document.getElementById('label-type-sub');
+
+    if (type === 'root') {
+        parentGroup.classList.add('hidden');
+        if (parentSelect) parentSelect.value = '';
+        labelRoot.classList.add('border-blue-600', 'bg-blue-50/50');
+        labelRoot.classList.remove('border-gray-200');
+        labelSub.classList.remove('border-blue-600', 'bg-blue-50/50');
+        labelSub.classList.add('border-gray-200');
+    } else {
+        parentGroup.classList.remove('hidden');
+        labelSub.classList.add('border-blue-600', 'bg-blue-50/50');
+        labelSub.classList.remove('border-gray-200');
+        labelRoot.classList.remove('border-blue-600', 'bg-blue-50/50');
+        labelRoot.classList.add('border-gray-200');
+    }
+}
+
 function previewImage(input) {
     const preview = document.getElementById('image-preview');
     if (input.files && input.files[0]) {
