@@ -38,10 +38,13 @@
                         1:1 (Persegi)
                     </button>
                     <button type="button" data-ratio="0.8" onclick="window.AdminCropper.setAspectRatio(0.8, this)" class="cropper-ratio-btn px-2.5 py-1 text-xs font-semibold rounded-lg border bg-white text-slate-700 hover:border-blue-500 transition-all">
-                        4:5 (Produk)
+                        4:5 (Produk/Mobile)
+                    </button>
+                    <button type="button" data-ratio="2.2857142857142856" onclick="window.AdminCropper.setAspectRatio(16/7, this)" class="cropper-ratio-btn px-2.5 py-1 text-xs font-semibold rounded-lg border bg-white text-slate-700 hover:border-blue-500 transition-all">
+                        16:7 (Hero Banner)
                     </button>
                     <button type="button" data-ratio="1.7777777777777777" onclick="window.AdminCropper.setAspectRatio(16/9, this)" class="cropper-ratio-btn px-2.5 py-1 text-xs font-semibold rounded-lg border bg-white text-slate-700 hover:border-blue-500 transition-all">
-                        16:9 (Banner)
+                        16:9 (Blog/Banner)
                     </button>
                     <button type="button" data-ratio="NaN" onclick="window.AdminCropper.setAspectRatio(NaN, this)" class="cropper-ratio-btn px-2.5 py-1 text-xs font-semibold rounded-lg border bg-white text-slate-700 hover:border-blue-500 transition-all">
                         Bebas (Free)
