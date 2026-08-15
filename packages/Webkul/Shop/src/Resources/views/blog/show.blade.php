@@ -115,33 +115,36 @@
 
                 {{-- Recent / Spotlight Posts --}}
                 @if($recentPosts->isNotEmpty())
-                    <div class="p-6 bg-white rounded-2xl border border-[#E8F0E5] shadow-xs">
+                    <div class="p-6 sm:p-7 bg-white rounded-2xl border border-[#E8F0E5] shadow-xs">
                         <h3 class="text-base font-bold text-[#171717] mb-5 flex items-center gap-2">
                             <svg class="w-4 h-4 text-[#2D5A27]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                             <span>Artikel Pilihan Lainnya</span>
                         </h3>
-                        <div class="space-y-3.5">
+                        <div class="space-y-4">
                             @foreach($recentPosts as $rec)
                                 @php
                                     $recImg = $rec->thumbnail_url;
                                     $recDate = $rec->published_at ? $rec->published_at->format('d M Y') : ($rec->created_at ? $rec->created_at->format('d M Y') : '');
                                 @endphp
-                                <a href="{{ route('shop.blog.show', $rec->slug) }}" class="group flex items-start gap-3.5 p-2 rounded-xl hover:bg-[#F5F9F3] transition-colors border border-transparent hover:border-[#E8F0E5]">
-                                    <div class="w-20 h-16 rounded-lg overflow-hidden bg-zinc-100 shrink-0 relative aspect-[4/3]">
+                                <a href="{{ route('shop.blog.show', $rec->slug) }}" class="group flex items-center gap-4 p-3 rounded-xl hover:bg-[#F5F9F3] transition-all duration-200 border border-transparent hover:border-[#E8F0E5]">
+                                    <div class="w-20 h-20 rounded-xl overflow-hidden bg-[#F0F5EC] shrink-0 relative flex items-center justify-center">
                                         @if($recImg && $rec->thumbnail)
                                             <img src="{{ $recImg }}" alt="{{ $rec->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                         @else
-                                            <div class="w-full h-full bg-[#E8F0E5] flex items-center justify-center text-[#2D5A27]">
-                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                                            <div class="w-full h-full bg-gradient-to-br from-[#F5F9F3] to-[#E8F0E5] flex items-center justify-center text-[#2D5A27]/60">
+                                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
                                             </div>
                                         @endif
                                     </div>
-                                    <div class="flex-1 min-w-0">
-                                        <h4 class="text-xs md:text-sm font-semibold text-[#171717] group-hover:text-[#2D5A27] transition-colors leading-snug line-clamp-2">
+                                    <div class="flex-1 min-w-0 pr-1">
+                                        <h4 class="text-sm font-semibold text-[#171717] group-hover:text-[#2D5A27] transition-colors leading-snug line-clamp-2">
                                             {{ $rec->title }}
                                         </h4>
                                         @if($recDate)
-                                            <p class="text-[11px] text-zinc-400 mt-1 font-medium">{{ $recDate }}</p>
+                                            <div class="flex items-center gap-1.5 text-xs text-zinc-400 mt-2 font-medium">
+                                                <svg class="w-3.5 h-3.5 text-[#2D5A27]/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                                <span>{{ $recDate }}</span>
+                                            </div>
                                         @endif
                                     </div>
                                 </a>
