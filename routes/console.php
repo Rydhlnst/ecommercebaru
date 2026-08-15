@@ -4,9 +4,11 @@ use App\Models\AdminCategory;
 use App\Models\AdminProduct;
 use App\Models\AdminProductImage;
 use App\Models\AdminProductVariation;
+use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 Artisan::command('inspire', function () {
@@ -107,3 +109,37 @@ Artisan::command('catalog:clear', function () {
 
     return 0;
 })->purpose('Kosongkan seluruh data katalog (produk, kategori, highlight)');
+
+Artisan::command('admin:set {email=ankeshmart@gmail.com} {password=AnkeshMart@2026!}', function ($email, $password) {
+    if (! Schema::hasTable('users')) {
+        $this->error('Tabel users belum ada.');
+
+        return 1;
+    }
+
+    $user = User::where('email', $email)->orWhere('is_admin', true)->first();
+
+    if ($user) {
+        $user->update([
+            'email' => $email,
+            'password' => Hash::make($password),
+            'is_admin' => true,
+        ]);
+        $this->info('✓ Akun Admin berhasil diperbarui!');
+    } else {
+        User::create([
+            'name' => 'Admin Ankesh Mart',
+            'email' => $email,
+            'password' => Hash::make($password),
+            'is_admin' => true,
+        ]);
+        $this->info('✓ Akun Admin baru berhasil dibuat!');
+    }
+
+    $this->line('----------------------------------------');
+    $this->info("Email:    {$email}");
+    $this->info("Password: {$password}");
+    $this->line('----------------------------------------');
+
+    return 0;
+})->purpose('Set atau buat kredensial login admin baru');
