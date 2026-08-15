@@ -295,14 +295,14 @@
                         <span>Keranjang</span>
                     </button>
 
-                    {{-- Button 2: Buy Now --}}
+                    {{-- Button 2: Buy Now (Borderless White with Green Text and Muted Green Hover) --}}
                     <button type="button"
                             onclick="beresBuyNow(this.form)"
                             class="h-10 px-2 text-[11px] font-bold tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-1.5 whitespace-nowrap shadow-xs cursor-pointer"
-                            style="background-color:#E8F0E5; color:#2D5A27; border:1.5px solid #2D5A27; border-radius:10px;"
-                            onmouseover="this.style.backgroundColor='#2D5A27'; this.style.color='#ffffff'; this.style.borderColor='#2D5A27'; const s=this.querySelector('svg'); if(s){s.style.color='#ffffff'; s.style.stroke='#ffffff';}"
-                            onmouseout="this.style.backgroundColor='#E8F0E5'; this.style.color='#2D5A27'; this.style.borderColor='#2D5A27'; const s=this.querySelector('svg'); if(s){s.style.color='#2D5A27'; s.style.stroke='currentColor';}">
-                        <svg class="w-3.5 h-3.5 shrink-0 text-[#2D5A27] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            style="background-color:#FFFFFF; color:#2D5A27; border:none; border-radius:10px;"
+                            onmouseover="this.style.backgroundColor='#E8F0E5';"
+                            onmouseout="this.style.backgroundColor='#FFFFFF';">
+                        <svg class="w-3.5 h-3.5 shrink-0 text-[#2D5A27]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         <span>Beli Sekarang</span>
                     </button>
                 </div>
