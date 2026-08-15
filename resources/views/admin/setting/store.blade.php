@@ -80,6 +80,31 @@
             </div>
         </div>
 
+        <div class="admin-panel-card">
+            <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-share-alt mr-2 text-indigo-500"></i>Media Sosial (Footer Toko)</h3>
+
+            <div class="mb-4">
+                <label class="form-label">
+                    <i class="fab fa-instagram text-pink-500 mr-1"></i> Instagram URL
+                </label>
+                <input type="url" name="store_instagram" value="{{ old('store_instagram', $settings['store_instagram'] ?? '') }}" class="form-input" placeholder="https://instagram.com/ankeshmart">
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">
+                    <i class="fab fa-facebook text-blue-600 mr-1"></i> Facebook URL
+                </label>
+                <input type="url" name="store_facebook" value="{{ old('store_facebook', $settings['store_facebook'] ?? '') }}" class="form-input" placeholder="https://facebook.com/ankeshmart">
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">
+                    <i class="fab fa-youtube text-red-600 mr-1"></i> YouTube URL
+                </label>
+                <input type="url" name="store_youtube" value="{{ old('store_youtube', $settings['store_youtube'] ?? '') }}" class="form-input" placeholder="https://youtube.com/@ankeshmart">
+            </div>
+        </div>
+
         {{-- Header Navigation Menu Settings --}}
         <div class="admin-panel-card lg:col-span-2">
             <h3 class="font-semibold text-gray-900 mb-4">

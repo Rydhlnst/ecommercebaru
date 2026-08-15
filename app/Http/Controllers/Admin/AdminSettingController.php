@@ -63,6 +63,9 @@ class AdminSettingController extends Controller
                     'store_tokopedia',
                     'store_lazada',
                     'store_tiktok',
+                    'store_instagram',
+                    'store_facebook',
+                    'store_youtube',
                     'header_nav_items',
                 ]);
             }
@@ -86,6 +89,9 @@ class AdminSettingController extends Controller
             'store_tokopedia' => 'nullable|url|max:255',
             'store_lazada' => 'nullable|url|max:255',
             'store_tiktok' => 'nullable|url|max:255',
+            'store_instagram' => 'nullable|url|max:255',
+            'store_facebook' => 'nullable|url|max:255',
+            'store_youtube' => 'nullable|url|max:255',
             'header_nav_items' => 'nullable|string',
         ]);
 
