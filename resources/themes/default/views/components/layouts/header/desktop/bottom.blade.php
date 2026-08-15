@@ -196,7 +196,25 @@
         $navActive  = 'text-[#2D5A27] border-b-2 border-[#2D5A27] pb-1 font-semibold';
         $navInactive= 'text-stone hover:text-[#2D5A27] transition-colors';
 
-        $rawNav = (string) (core()->getConfigData('beres_storefront.header_nav.items') ?: "Unggulan|/\nBuah & Sayur|buah-sayur\nDaging & Seafood|daging\nRoti & Bakery|roti\nMinuman|minuman\nBumbu & Rempah|bumbu\nSnack Sehat|snack");
+        $siteNav = null;
+        try {
+            $siteNav = \App\Models\SiteSetting::getValue('header_nav_items');
+        } catch (\Throwable $e) {}
+
+        if ($siteNav !== null && trim($siteNav) !== '') {
+            $rawNav = $siteNav;
+        } else {
+            $dbCategories = collect();
+            try {
+                $dbCategories = \App\Models\AdminCategory::whereNull('parent_id')->get();
+            } catch (\Throwable $e) {}
+
+            if ($dbCategories->isNotEmpty()) {
+                $rawNav = "Unggulan|/\n" . $dbCategories->map(fn($c) => "{$c->name}|/category/{$c->slug}")->implode("\n");
+            } else {
+                $rawNav = (string) (core()->getConfigData('beres_storefront.header_nav.items') ?: "Unggulan|/\nBuah & Sayur|/category/buah-sayur\nDaging & Seafood|/category/daging\nRoti & Bakery|/category/roti\nMinuman|/category/minuman\nBumbu & Rempah|/category/bumbu\nSnack Sehat|/category/snack");
+            }
+        }
 
         $navItems = [];
         foreach (preg_split("/\r?\n/", $rawNav) as $line) {

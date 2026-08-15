@@ -6,10 +6,12 @@ use App\Models\AdminOrder;
 use App\Services\CartService;
 use Beres\Checkout\DTOs\CheckoutDTO;
 use Beres\Checkout\Services\CheckoutService;
+use Beres\Payment\Services\MidtransService;
 use Beres\Payment\Services\PaymentService;
 use Beres\Shipping\Services\ShippingCalculatorService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
@@ -166,7 +168,8 @@ class CheckoutController extends Controller
         ]);
 
         try {
-            $order = $this->checkoutService->placeOrder($request->input('session_id'));
+            $session = $this->checkoutService->getSession((int) $request->input('session_id'));
+            $order = $this->checkoutService->placeOrder((int) $request->input('session_id'));
 
             if (! $order) {
                 return response()->json([
@@ -175,9 +178,32 @@ class CheckoutController extends Controller
                 ], 400);
             }
 
+            $paymentUrl = null;
+            if ($session && $session->payment_method === 'midtrans') {
+                try {
+                    $midtransService = app(MidtransService::class);
+                    if ($midtransService->isActive()) {
+                        $params = [
+                            'transaction_details' => [
+                                'order_id' => $order->order_number,
+                                'gross_amount' => (int) $order->total,
+                            ],
+                            'customer_details' => [
+                                'first_name' => $order->customer_name,
+                                'phone' => $order->customer_phone,
+                            ],
+                        ];
+                        $paymentUrl = $midtransService->createSnapToken($params);
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Midtrans token generation error: '.$e->getMessage());
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'order_id' => $order->id,
+                'payment_url' => $paymentUrl,
             ]);
         } catch (\Exception $e) {
             return response()->json([

@@ -63,6 +63,7 @@ class AdminSettingController extends Controller
                     'store_tokopedia',
                     'store_lazada',
                     'store_tiktok',
+                    'header_nav_items',
                 ]);
             }
         } catch (QueryException $e) {
@@ -85,6 +86,7 @@ class AdminSettingController extends Controller
             'store_tokopedia' => 'nullable|url|max:255',
             'store_lazada' => 'nullable|url|max:255',
             'store_tiktok' => 'nullable|url|max:255',
+            'header_nav_items' => 'nullable|string',
         ]);
 
         foreach ($validated as $key => $value) {

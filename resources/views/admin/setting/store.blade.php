@@ -79,6 +79,27 @@
                 <input type="url" name="store_tiktok" value="{{ old('store_tiktok', $settings['store_tiktok'] ?? '') }}" class="form-input" placeholder="https://www.tiktok.com/@...">
             </div>
         </div>
+
+        {{-- Header Navigation Menu Settings --}}
+        <div class="admin-panel-card lg:col-span-2">
+            <h3 class="font-semibold text-gray-900 mb-4">
+                <i class="fas fa-bars mr-2 text-green-700"></i>Menu Navigasi Header (Kategori Atas)
+            </h3>
+            <p class="text-xs text-gray-500 mb-3">
+                Atur daftar menu/kategori yang tampil di bar navigasi atas website. Tulis <strong>1 menu per baris</strong> dengan format: <code>Nama Menu|Link_Atau_Slug</code>. <br>
+                <em>(Jika dikosongkan, website akan otomatis menampilkan menu "Unggulan" dan seluruh kategori aktif dari menu Kategori).</em>
+            </p>
+            <div class="mb-2">
+                <textarea name="header_nav_items" rows="6" class="form-input font-mono text-sm" placeholder="Unggulan|/&#10;Buah & Sayur|/category/buah-sayur&#10;Minuman|/category/minuman">{{ old('header_nav_items', $settings['header_nav_items'] ?? '') }}</textarea>
+            </div>
+            <p class="text-xs text-gray-400">
+                Contoh: <br>
+                <code>Unggulan|/</code> <br>
+                <code>Buah & Sayur|/category/buah-sayur</code> <br>
+                <code>Bumbu & Rempah|/category/bumbu-rempah</code> <br>
+                <code>Promo Spesial|/search?query=promo</code>
+            </p>
+        </div>
     </div>
 
     <div class="mt-6">
