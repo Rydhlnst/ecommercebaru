@@ -14,12 +14,22 @@ use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class AdminSeeder extends Seeder
 {
     public function run(): void
     {
+        // Update any existing Ankish names/emails in users & admins
+        User::where('email', 'like', '%ankish%')
+            ->orWhere('name', 'like', '%ankish%')
+            ->orWhere('name', 'like', '%Ankish%')
+            ->update([
+                'name' => DB::raw("REPLACE(REPLACE(name, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
+                'email' => DB::raw("REPLACE(email, 'ankish', 'ankesh')"),
+            ]);
+
         $admin = User::updateOrCreate(
             ['email' => 'ankeshmart@gmail.com'],
             [
@@ -28,6 +38,17 @@ class AdminSeeder extends Seeder
                 'is_admin' => true,
             ]
         );
+
+        if (Schema::hasTable('admins')) {
+            DB::table('admins')
+                ->where('name', 'like', '%ankish%')
+                ->orWhere('name', 'like', '%Ankish%')
+                ->orWhere('email', 'like', '%ankish%')
+                ->update([
+                    'name' => DB::raw("REPLACE(REPLACE(name, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
+                    'email' => DB::raw("REPLACE(email, 'ankish', 'ankesh')"),
+                ]);
+        }
 
         // ─── Categories ──────────────────────────────────────────────────────
         $makanan = AdminCategory::updateOrCreate(['name' => 'Makanan'], ['slug' => 'makanan']);
