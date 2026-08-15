@@ -50,6 +50,9 @@ Route::get('/deploy/index-rebuild', [DeployController::class, 'indexRebuild'])
 Route::get('/deploy/storage-link', [DeployController::class, 'storageLink'])
     ->middleware('throttle:5,1');
 
+Route::get('/deploy/storage-sync', [DeployController::class, 'storageSync'])
+    ->middleware('throttle:5,1');
+
 Route::get('/deploy/chmod', [DeployController::class, 'fixPermissions'])
     ->middleware('throttle:5,1');
 
@@ -174,3 +177,48 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/settings/store', [AdminSettingController::class, 'updateStore'])->name('settings.store.update');
     });
 });
+
+/*
+|--------------------------------------------------------------------------
+| Public Storage Fallback Route (cPanel compatibility)
+|--------------------------------------------------------------------------
+| Ensures that images uploaded in storage/app/public are served directly
+| even when symlink (php artisan storage:link) is disabled or broken on cPanel.
+*/
+Route::get('/storage/{path}', function (string $path) {
+    // 1. Try storage/app/public/$path
+    $storagePath = storage_path('app/public/'.$path);
+    if (file_exists($storagePath) && is_file($storagePath)) {
+        $mime = @mime_content_type($storagePath) ?: 'application/octet-stream';
+
+        return response()->file($storagePath, [
+            'Content-Type' => $mime,
+            'Cache-Control' => 'public, max-age=31536000',
+        ]);
+    }
+
+    // 2. Try public_path('storage/' . $path)
+    $pubStoragePath = public_path('storage/'.$path);
+    if (file_exists($pubStoragePath) && is_file($pubStoragePath)) {
+        $mime = @mime_content_type($pubStoragePath) ?: 'application/octet-stream';
+
+        return response()->file($pubStoragePath, [
+            'Content-Type' => $mime,
+            'Cache-Control' => 'public, max-age=31536000',
+        ]);
+    }
+
+    // 3. Try public_path($path)
+    $pubPath = public_path($path);
+    if (file_exists($pubPath) && is_file($pubPath)) {
+        $mime = @mime_content_type($pubPath) ?: 'application/octet-stream';
+
+        return response()->file($pubPath, [
+            'Content-Type' => $mime,
+            'Cache-Control' => 'public, max-age=31536000',
+        ]);
+    }
+
+    abort(404);
+})->where('path', '.*')->name('storage.fallback');
+

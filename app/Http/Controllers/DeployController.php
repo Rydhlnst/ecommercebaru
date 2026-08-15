@@ -271,6 +271,25 @@ class DeployController extends Controller
     }
 
     /**
+     * GET /deploy/storage-sync?key=xxx
+     * Sync storage files directly to public/storage for cPanel.
+     */
+    public function storageSync(Request $request)
+    {
+        if ($error = $this->authorize($request)) {
+            return $this->json(response(), 403, ['error' => $error]);
+        }
+
+        $results = [];
+        $results['storage_sync'] = $this->runCommand('storage:sync');
+
+        return $this->json(response(), 200, [
+            'status' => 'ok',
+            'steps' => $results,
+        ]);
+    }
+
+    /**
      * GET /deploy?key=xxx&action=chmod
      * Fix storage permissions (cPanel).
      */
