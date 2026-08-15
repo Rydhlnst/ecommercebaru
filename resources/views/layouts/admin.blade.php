@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Admin Panel') — {{ config('app.name', 'Ankesh Mart') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/ankesh-mart-logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/ankesh-mart-logo.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -82,10 +84,9 @@
     <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <aside id="sidebar" class="sidebar fixed top-0 left-0 z-50 overflow-y-auto">
-        <div class="p-4 border-b border-slate-700">
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 text-white font-bold text-lg">
-                <i class="fas fa-store text-blue-400"></i>
-                <span>{{ config('app.name', 'Ankesh Mart') }}</span>
+        <div class="p-4 border-b border-slate-700 bg-slate-900/50">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3">
+                <img src="{{ asset('images/ankesh-mart-logo.png') }}" alt="{{ config('app.name', 'Ankesh Mart') }}" class="h-8 max-w-[160px] object-contain brightness-110">
             </a>
         </div>
         <nav class="py-2">

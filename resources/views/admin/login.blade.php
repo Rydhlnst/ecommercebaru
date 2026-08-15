@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Admin — {{ config('app.name', 'Ankesh Mart') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/ankesh-mart-logo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('images/ankesh-mart-logo.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -12,11 +14,10 @@
     <div class="w-full max-w-md">
         <div class="bg-white rounded-2xl shadow-xl p-8">
             <div class="text-center mb-8">
-                <div class="w-16 h-16 bg-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-store text-white text-2xl"></i>
-                </div>
-                <h1 class="text-2xl font-bold text-gray-900">{{ config('app.name', 'Ankesh Mart') }}</h1>
-                <p class="text-gray-500 mt-1">Panel Admin</p>
+                <a href="{{ url('/') }}" class="inline-block">
+                    <img src="{{ asset('images/ankesh-mart-logo.png') }}" alt="{{ config('app.name', 'Ankesh Mart') }}" class="h-12 max-w-[200px] mx-auto object-contain">
+                </a>
+                <p class="text-gray-500 mt-3 text-sm font-medium">Panel Admin</p>
             </div>
 
             <form method="POST" action="{{ route('admin.login.post') }}">

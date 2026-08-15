@@ -43,6 +43,8 @@
             name="generator"
             content="{{ config('app.name') }}"
         >
+        <link rel="icon" type="image/png" href="{{ asset('images/ankesh-mart-logo.png') }}">
+        <link rel="shortcut icon" type="image/png" href="{{ asset('images/ankesh-mart-logo.png') }}">
 
         {{-- ============ Global SEO defaults (page @push('meta') can override) ============ --}}
         @php
