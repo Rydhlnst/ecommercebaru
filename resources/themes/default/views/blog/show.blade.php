@@ -19,6 +19,16 @@
             <span class="text-zinc-800 font-medium truncate max-w-xs md:max-w-md">{{ $post->title }}</span>
         </nav>
 
+        {{-- Slim Landscape Banner (Widescreen Format, Compact Height 220-320px) --}}
+        @if($postImg && $post->thumbnail)
+            <div class="w-full h-[220px] sm:h-[280px] md:h-[320px] rounded-2xl md:rounded-3xl overflow-hidden mb-8 shadow-xs bg-zinc-900 relative flex items-center justify-center">
+                {{-- Ambient backdrop blur --}}
+                <img src="{{ $postImg }}" alt="" class="absolute inset-0 w-full h-full object-cover blur-md opacity-35 scale-110" aria-hidden="true">
+                {{-- Centered sharp landscape view --}}
+                <img src="{{ $postImg }}" alt="{{ $post->title }}" class="relative z-10 w-full h-full object-cover object-center" loading="eager">
+            </div>
+        @endif
+
         {{-- Two-Column Layout (Main Article + Right Sidebar) --}}
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
             {{-- Main Article Content (Clean Card with Soft Shadow, No Heavy Border) --}}
@@ -40,13 +50,6 @@
                         {{ $post->title }}
                     </h1>
                 </div>
-
-                {{-- Featured Media (Standard 16:9 Video Aspect Ratio, Compact & Centered) --}}
-                @if($postImg && $post->thumbnail)
-                    <div class="rounded-xl md:rounded-2xl overflow-hidden mb-8 shadow-xs bg-zinc-100 aspect-video max-h-[420px] w-full flex items-center justify-center">
-                        <img src="{{ $postImg }}" alt="{{ $post->title }}" class="w-full h-full object-cover object-center" loading="eager">
-                    </div>
-                @endif
 
                 {{-- Article Body Content --}}
                 <div class="prose prose-zinc lg:prose-lg max-w-none text-[#2c2c2c] leading-relaxed">
