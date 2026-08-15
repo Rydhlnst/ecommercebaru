@@ -60,7 +60,7 @@
                             }
                         }
                     @endphp
-                    <article class="group flex flex-col bg-white rounded-2xl border border-[#E8F0E5] overflow-hidden shadow-xs hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-full">
+                    <article class="group flex flex-col bg-white rounded-2xl border border-[#E8F0E5] overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full cursor-pointer" onclick="window.location.href='{{ $postUrl }}';">
                         {{-- Unified 16:9 Thumbnail Banner --}}
                         <a href="{{ $postUrl }}" class="block relative w-full overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] shrink-0" style="aspect-ratio:16/9; height:200px; max-height:220px;">
                             @if($postImg)
@@ -84,29 +84,37 @@
                         </a>
 
                         {{-- Body --}}
-                        <div class="p-6 flex flex-col flex-1">
-                            @if($postDate)
-                                <div class="flex items-center gap-2 text-xs font-medium text-zinc-500 mb-3">
-                                    <svg class="w-3.5 h-3.5 text-[#2D5A27]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                                    </svg>
-                                    <span>{{ $postDate }}</span>
-                                </div>
-                            @endif
+                        <div class="p-6 flex flex-col flex-1 justify-between">
+                            <div>
+                                @if($postDate)
+                                    <div class="flex items-center gap-2 text-xs font-medium text-zinc-500 mb-3">
+                                        <svg class="w-3.5 h-3.5 text-[#2D5A27]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                        </svg>
+                                        <span>{{ $postDate }}</span>
+                                    </div>
+                                @endif
 
-                            <a href="{{ $postUrl }}" class="block">
-                                <h2 class="text-lg md:text-xl font-bold text-[#171717] group-hover:text-[#2D5A27] transition-colors leading-snug line-clamp-2">
-                                    {{ $post->title }}
-                                </h2>
-                            </a>
+                                <a href="{{ $postUrl }}" class="block">
+                                    <h2 class="text-lg md:text-xl font-bold text-[#171717] group-hover:text-[#2D5A27] transition-colors leading-snug line-clamp-2">
+                                        {{ $post->title }}
+                                    </h2>
+                                </a>
 
-                            <p class="mt-2.5 text-sm text-zinc-600 leading-relaxed line-clamp-3">
-                                {{ $postExcerpt }}
-                            </p>
+                                <p class="mt-2.5 text-sm text-zinc-600 leading-relaxed line-clamp-3">
+                                    {{ $postExcerpt }}
+                                </p>
+                            </div>
 
-                            <div class="mt-auto pt-5 flex items-center text-xs font-bold text-[#2D5A27] group-hover:text-[#1E3A1E] transition-colors">
-                                <span>Baca Selengkapnya</span>
-                                <svg class="w-4 h-4 ml-1.5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            <div class="pt-6 mt-auto">
+                                <a href="{{ $postUrl }}"
+                                   class="w-full h-10 px-4 text-xs font-bold tracking-wider uppercase transition-all duration-200 flex items-center justify-between shadow-xs"
+                                   style="background-color:#F5F9F3; color:#2D5A27; border:none; border-radius:10px;"
+                                   onmouseover="this.style.backgroundColor='#E8F0E5';"
+                                   onmouseout="this.style.backgroundColor='#F5F9F3';">
+                                    <span>Detail Selengkapnya</span>
+                                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                </a>
                             </div>
                         </div>
                     </article>
