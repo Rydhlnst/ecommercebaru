@@ -506,7 +506,10 @@
     <section class="overflow-hidden beres-reveal" style="background-color:#2D5A27;">
         <div class="py-4 md:py-5">
             <div class="flex whitespace-nowrap animate-[marquee_35s_linear_infinite] text-white gap-10 md:gap-14">
-                @php $tickerItems = ['Fruits & Vegetables','Meat & Seafood','Bread & Bakery','Drink','Spices & Herbs','Healthy Snacks','Kitchen Essentials']; @endphp
+                @php
+                    $tickerDbCats = \App\Models\AdminCategory::pluck('name')->all();
+                    $tickerItems = !empty($tickerDbCats) ? $tickerDbCats : ['Fruits & Vegetables','Meat & Seafood','Bread & Bakery','Drink','Spices & Herbs','Healthy Snacks','Kitchen Essentials'];
+                @endphp
                 @for ($rep = 0; $rep < 4; $rep++)
                     @foreach ($tickerItems as $t)
                         <span class="text-sm md:text-base tracking-[0.12em] uppercase" style="font-weight:500;">{{ $t }}</span>

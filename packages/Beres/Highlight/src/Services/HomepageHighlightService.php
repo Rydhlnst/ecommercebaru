@@ -121,7 +121,7 @@ class HomepageHighlightService
      */
     protected function fallbackCategories(int $limit): Collection
     {
-        return AdminCategory::whereHas('products', function ($q) {
+        $cats = AdminCategory::whereHas('products', function ($q) {
             $q->where('status', 'active');
         })
             ->withCount(['products' => function ($q) {
@@ -129,12 +129,24 @@ class HomepageHighlightService
             }])
             ->orderByDesc('products_count')
             ->limit($limit)
-            ->get()
-            ->map(fn ($cat) => [
-                'id' => $cat->id,
-                'name' => $cat->name,
-                'slug' => $cat->slug,
-                'image' => $cat->image ? asset('storage/'.$cat->image) : null,
-            ]);
+            ->get();
+
+        if ($cats->isEmpty()) {
+            $cats = AdminCategory::whereNull('parent_id')
+                ->latest()
+                ->limit($limit)
+                ->get();
+
+            if ($cats->isEmpty()) {
+                $cats = AdminCategory::latest()->limit($limit)->get();
+            }
+        }
+
+        return $cats->map(fn ($cat) => [
+            'id' => $cat->id,
+            'name' => $cat->name,
+            'slug' => $cat->slug,
+            'image' => $cat->image ? asset('storage/'.$cat->image) : null,
+        ]);
     }
 }
