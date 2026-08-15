@@ -41,7 +41,7 @@
                 </div>
             @endif
             <input type="file" name="image" accept="image/*" class="form-input" onchange="previewImage(this)">
-            <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG. Akan dikompres otomatis ke WebP 500px.</p>
+            <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB). Akan dikompres otomatis ke WebP 500px.</p>
             <div id="image-preview" class="mt-2 hidden">
                 <img src="" alt="Preview" class="w-32 h-32 object-cover rounded-lg border">
             </div>

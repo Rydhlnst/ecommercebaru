@@ -55,10 +55,11 @@ class AdminCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:admin_categories,name',
             'parent_id' => 'nullable|exists:admin_categories,id',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
+        $validated['parent_id'] = ! empty($validated['parent_id']) ? (int) $validated['parent_id'] : null;
 
         if ($request->hasFile('image')) {
             $validated['image'] = $this->compressImage($request->file('image'));
@@ -83,12 +84,13 @@ class AdminCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:admin_categories,name,'.$category->id,
             'parent_id' => 'nullable|exists:admin_categories,id',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
+        $validated['parent_id'] = ! empty($validated['parent_id']) ? (int) $validated['parent_id'] : null;
 
-        if ($validated['parent_id'] == $category->id) {
+        if ($validated['parent_id'] && $validated['parent_id'] == $category->id) {
             return back()->withInput()->with('error', 'Kategori tidak bisa menjadi induk dari dirinya sendiri.');
         }
 
