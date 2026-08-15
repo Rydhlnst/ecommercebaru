@@ -14,6 +14,8 @@ class AdminProduct extends Model
         'is_featured', 'has_variations', 'price', 'stock', 'status',
     ];
 
+    protected $appends = ['image_url'];
+
     protected function casts(): array
     {
         return [
@@ -33,6 +35,15 @@ class AdminProduct extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        if ($this->relationLoaded('images')) {
+            return $this->images->first()?->url;
+        }
+
+        return $this->images()->first()?->url;
     }
 
     protected static function booted(): void
