@@ -361,15 +361,15 @@
         @php
             $fpName  = $featuredProduct->name ?? $featuredProduct->url_key ?? 'Featured Product';
             if ($featuredProduct instanceof \App\Models\AdminProduct) {
-                $fpPrice = core()->currency($featuredProduct->price ?? 0);
-                $fpUrl   = route('shop.product_or_category.index', $featuredProduct->slug ?? '#');
-                $fpImage = ($featuredProduct->images && $featuredProduct->images->count())
-                                ? asset('storage/'.$featuredProduct->images->first()->image_path)
-                                : null;
+                $fpPrice = 'Rp ' . number_format($featuredProduct->price ?? 0, 0, ',', '.');
+                $fpUrl   = route('shop.admin_product.show', $featuredProduct->slug ?? '#');
+                $fpImage = $featuredProduct->image_url;
                 $fpDesc  = $featuredProduct->description ?? null;
             } else {
-                $fpPrice = core()->currency($featuredProduct->getTypeInstance()->getMinimalPrice() ?? 0);
-                $fpUrl   = route('shop.product_or_category.index', $featuredProduct->url_key ?? '#');
+                $minP = 0;
+                try { $minP = $featuredProduct->getTypeInstance()->getMinimalPrice() ?? 0; } catch (\Throwable $e) {}
+                $fpPrice = 'Rp ' . number_format($minP, 0, ',', '.');
+                $fpUrl   = $featuredProduct->url_key ? route('shop.product_or_category.index', $featuredProduct->url_key) : route('shop.search.index');
                 $fpImage = product_image()->getProductBaseImage($featuredProduct)['medium_image_url'] ?? null;
                 $fpDesc  = $featuredProduct->short_description ?? null;
             }
@@ -536,27 +536,7 @@
 
                 <div class="product-scroll-mobile">
                     @foreach ($superfoodsDb as $i => $product)
-                        @php
-                            $sfName  = $product->name ?? 'Product';
-                            if ($product instanceof \App\Models\AdminProduct) {
-                                $sfPrice = core()->currency($product->price ?? 0);
-                                $sfUrl   = route('shop.product_or_category.index', $product->slug ?? '#');
-                                $sfImg   = ($product->images && $product->images->count())
-                                                ? asset('storage/'.$product->images->first()->image_path)
-                                                : null;
-                            } else {
-                                $sfPrice = core()->currency($product->getTypeInstance()->getMinimalPrice() ?? 0);
-                                $sfUrl   = route('shop.product_or_category.index', $product->url_key ?? '#');
-                                $sfImg   = product_image()->getProductBaseImage($product)['small_image_url'] ?? null;
-                            }
-                        @endphp
-                        <a href="{{ $sfUrl }}" class="group block">
-                            <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]" style="background-color:{{ $bgPick($i) }};">
-                                @if ($sfImg)<img src="{{ $sfImg }}" alt="{{ $sfName }}" class="w-full h-full object-cover" loading="lazy">@endif
-                            </div>
-                            <p class="mt-3 text-sm text-[#171717]" style="font-weight:500;">{{ $sfName }}</p>
-                            <p class="mt-1 text-sm" style="color:#2D5A27; font-weight:600;">{{ $sfPrice }}</p>
-                        </a>
+                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
                     @endforeach
                 </div>
             </div>
