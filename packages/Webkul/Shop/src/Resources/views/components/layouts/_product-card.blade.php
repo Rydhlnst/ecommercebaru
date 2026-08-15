@@ -174,7 +174,7 @@
     }
 @endphp
 
-<div class="beres-card group bg-white overflow-hidden flex flex-col justify-between" style="border:1px solid #E8F0E5; border-radius:16px;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
+<div class="beres-card group bg-white overflow-hidden flex flex-col justify-between" style="border:1px solid #E8F0E5; border-radius:16px; min-height:100%;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
     {{-- Product Image Container (Standardized 4:5 Aspect Ratio) --}}
     <a href="{{ $href }}" class="block relative w-full overflow-hidden shrink-0" style="aspect-ratio:4/5; height:260px; max-height:280px; background-color:{{ $bg }};">
         @if ($image)
@@ -209,7 +209,7 @@
     </a>
 
     {{-- Product Info --}}
-    <div class="p-4 flex flex-col flex-1 justify-between">
+    <div class="p-4 sm:p-5 flex flex-col flex-1 justify-between">
         <div>
             {{-- Product Name --}}
             <a href="{{ $href }}" class="block">
@@ -218,7 +218,7 @@
 
             {{-- Badge --}}
             @if($badge)
-                <div class="mt-1">
+                <div class="mt-1.5">
                     <span class="inline-block text-[10px] tracking-wider uppercase px-2 py-0.5 text-white font-bold"
                           style="width:fit-content; max-width:max-content; border-radius:4px; background-color:{{ $badge === 'sale' ? '#B91C1C' : ($badge === 'habis_terjual' ? '#737373' : '#2D5A27') }};">
                         {{ $badge === 'new' ? 'New' : ($badge === 'sale' ? 'Sale' : 'Habis') }}
@@ -228,13 +228,12 @@
 
             {{-- Description --}}
             @if (!empty($description))
-                <p class="mt-1.5 text-xs text-[#737373] leading-relaxed line-clamp-2">{!! Str::limit(strip_tags($description), 80) !!}</p>
+                <p class="mt-2 text-xs text-[#737373] leading-relaxed line-clamp-2">{!! Str::limit(strip_tags($description), 80) !!}</p>
             @endif
 
             {{-- Price with sale --}}
-            <div class="mt-2 flex items-center gap-2">
+            <div class="mt-3 mb-2 flex items-center gap-2">
                 @if ($compare)
-                    {{-- Sale price --}}
                     <span class="text-xl font-bold text-[#171717]">{{ $salePrice }}</span>
                     <span class="text-sm text-[#737373] line-through">{{ $compare }}</span>
                     <span class="text-[10px] tracking-wider uppercase px-2 py-0.5 text-white font-bold" style="background-color:#B91C1C; border-radius:4px;">Sale</span>
@@ -249,45 +248,49 @@
             <form
                 action="{{ route('cart.add') }}"
                 method="POST"
-                class="mt-3 space-y-2"
+                class="mt-4 pt-1 flex flex-col gap-3"
                 onsubmit="event.preventDefault(); beresAddToCart(this);"
             >
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $prodId }}">
 
-                {{-- Weight variant buttons (horizontal scroll with 500g, 1000g, etc.) --}}
+                {{-- Weight variant buttons (horizontal scroll) --}}
                 @if (count($childVariants))
-                    <input type="hidden" name="selected_configurable_option" value="{{ $childVariants[0]['id'] }}" class="beres-variant-input">
-                    <p class="text-xs font-medium text-[#171717] mb-1">Pilih Varian / Berat:</p>
-                    <div class="beres-variant-row flex items-center gap-1.5 mb-2 overflow-x-auto pb-1" style="scrollbar-width:none; -ms-overflow-style:none;">
-                        @foreach ($childVariants as $i => $v)
-                            <button type="button"
-                                    class="beres-variant-btn shrink-0 px-3 py-1 text-xs font-medium border transition-all whitespace-nowrap {{ $i === 0 ? 'beres-variant-active' : '' }}"
-                                    style="{{ $i === 0 ? 'background-color:#2D5A27; color:#fff; border-color:#2D5A27;' : 'background-color:#fff; color:#171717; border-color:#E8F0E5;' }} border-radius:999px;"
-                                    onclick="beresSelectVariantInline(this, '{{ $v['id'] }}', '{{ $v['price'] }}')"
-                                    data-variant-id="{{ $v['id'] }}">
-                                {{ $v['label'] }}
-                            </button>
-                        @endforeach
+                    <div>
+                        <input type="hidden" name="selected_configurable_option" value="{{ $childVariants[0]['id'] }}" class="beres-variant-input">
+                        <p class="text-xs font-semibold text-[#171717] mb-1.5">Pilih Varian / Berat:</p>
+                        <div class="beres-variant-row flex items-center gap-2 overflow-x-auto pb-1" style="scrollbar-width:none; -ms-overflow-style:none;">
+                            @foreach ($childVariants as $i => $v)
+                                <button type="button"
+                                        class="beres-variant-btn shrink-0 px-3 py-1 text-xs font-semibold border transition-all whitespace-nowrap {{ $i === 0 ? 'beres-variant-active' : '' }}"
+                                        style="{{ $i === 0 ? 'background-color:#2D5A27; color:#fff; border-color:#2D5A27;' : 'background-color:#fff; color:#171717; border-color:#E8F0E5;' }} border-radius:999px;"
+                                        onclick="beresSelectVariantInline(this, '{{ $v['id'] }}', '{{ $v['price'] }}')"
+                                        data-variant-id="{{ $v['id'] }}">
+                                    {{ $v['label'] }}
+                                </button>
+                            @endforeach
+                        </div>
                     </div>
                 @endif
 
-                {{-- Quantity Stepper (Full Width Compact Row) --}}
-                <div class="flex items-center justify-between bg-[#F5F9F3] border border-[#E8F0E5] rounded-xl px-3 h-10">
+                {{-- Quantity Stepper --}}
+                <div class="flex items-center justify-between bg-[#F5F9F3] border border-[#E8F0E5] rounded-xl px-3.5 h-10">
                     <span class="text-xs font-semibold text-[#171717]">Jumlah</span>
-                    <div class="flex items-center gap-1">
-                        <button type="button" class="w-7 h-7 flex items-center justify-center text-[#2D5A27] hover:bg-white rounded-md transition-colors font-bold text-sm leading-none" onclick="beresQty(this, -1)" aria-label="Kurangi">−</button>
+                    <div class="flex items-center gap-1.5">
+                        <button type="button" class="w-7 h-7 flex items-center justify-center text-[#2D5A27] hover:bg-white rounded-md transition-colors font-bold text-sm leading-none cursor-pointer" onclick="beresQty(this, -1)" aria-label="Kurangi">−</button>
                         <input type="number" name="quantity" value="1" min="1" max="99" class="w-8 h-7 text-center text-xs border-0 focus:outline-none bg-transparent font-bold leading-none text-[#171717]" aria-label="Jumlah">
-                        <button type="button" class="w-7 h-7 flex items-center justify-center text-[#2D5A27] hover:bg-white rounded-md transition-colors font-bold text-sm leading-none" onclick="beresQty(this, 1)" aria-label="Tambah">+</button>
+                        <button type="button" class="w-7 h-7 flex items-center justify-center text-[#2D5A27] hover:bg-white rounded-md transition-colors font-bold text-sm leading-none cursor-pointer" onclick="beresQty(this, 1)" aria-label="Tambah">+</button>
                     </div>
                 </div>
 
-                {{-- Action Buttons: 1 Horizontal Row Side-by-Side (With Distinct Margin & Clean Hover) --}}
-                <div class="grid grid-cols-2 gap-2 mt-3 pt-0.5">
+                {{-- Action Buttons: 2 Side-by-Side Horizontal Buttons --}}
+                <div class="grid grid-cols-2 gap-2.5 pt-0.5">
                     {{-- Button 1: Add to Cart --}}
                     <button type="submit"
-                            class="h-10 px-2 text-[11px] font-bold tracking-wider uppercase text-white hover:opacity-90 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap shadow-xs cursor-pointer"
-                            style="background-color:#2D5A27; border-radius:10px;">
+                            class="h-10 px-2 text-[11px] font-bold tracking-wider uppercase text-white transition-all flex items-center justify-center gap-1.5 whitespace-nowrap shadow-xs cursor-pointer"
+                            style="background-color:#2D5A27; border:1.5px solid #2D5A27; border-radius:10px;"
+                            onmouseover="this.style.backgroundColor='#1E3D1A'; this.style.borderColor='#1E3D1A';"
+                            onmouseout="this.style.backgroundColor='#2D5A27'; this.style.borderColor='#2D5A27';">
                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                         <span>Keranjang</span>
                     </button>
@@ -295,22 +298,24 @@
                     {{-- Button 2: Buy Now --}}
                     <button type="button"
                             onclick="beresBuyNow(this.form)"
-                            class="h-10 px-2 text-[11px] font-bold tracking-wider uppercase border border-[#2D5A27] text-[#2D5A27] bg-[#F5F9F3] hover:bg-[#2D5A27] hover:text-white transition-all duration-200 flex items-center justify-center gap-1.5 whitespace-nowrap shadow-xs cursor-pointer"
-                            style="border-radius:10px;">
-                        <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            class="h-10 px-2 text-[11px] font-bold tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-1.5 whitespace-nowrap shadow-xs cursor-pointer"
+                            style="background-color:#E8F0E5; color:#171717; border:1.5px solid #2D5A27; border-radius:10px;"
+                            onmouseover="this.style.backgroundColor='#171717'; this.style.color='#ffffff'; this.style.borderColor='#171717'; const s=this.querySelector('svg'); if(s){s.style.color='#ffffff'; s.style.stroke='#ffffff';}"
+                            onmouseout="this.style.backgroundColor='#E8F0E5'; this.style.color='#171717'; this.style.borderColor='#2D5A27'; const s=this.querySelector('svg'); if(s){s.style.color='#2D5A27'; s.style.stroke='currentColor';}">
+                        <svg class="w-3.5 h-3.5 shrink-0 text-[#2D5A27] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         <span>Beli Sekarang</span>
                     </button>
                 </div>
             </form>
         @elseif ($prodId && !$inStock)
             <button type="button" disabled
-                    class="mt-3 w-full h-10 text-xs font-bold tracking-wider uppercase text-zinc-500 cursor-not-allowed bg-zinc-100 rounded-lg">
+                    class="mt-4 w-full h-11 text-xs font-bold tracking-wider uppercase text-zinc-500 cursor-not-allowed bg-zinc-100 rounded-xl">
                 Habis Terjual
             </button>
         @else
             <a href="{{ $href }}"
-               class="beres-btn mt-3 block w-full h-10 text-xs font-bold tracking-wider uppercase text-white hover:opacity-90 text-center transition-opacity flex items-center justify-center"
-               style="background-color:#2D5A27; border-radius:8px;">
+               class="beres-btn mt-4 block w-full h-11 text-xs font-bold tracking-wider uppercase text-white hover:opacity-90 text-center transition-opacity flex items-center justify-center"
+               style="background-color:#2D5A27; border-radius:10px;">
                 Lihat Produk
             </a>
         @endif
