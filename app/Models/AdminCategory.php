@@ -13,6 +13,18 @@ class AdminCategory extends Model
 
     protected $appends = ['image_url'];
 
+    public function resolveRouteBinding($value, $field = null)
+    {
+        return $this->where('slug', $value)
+            ->orWhere('id', $value)
+            ->firstOrFail();
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     protected static function booted(): void
     {
         static::creating(function (AdminCategory $model) {

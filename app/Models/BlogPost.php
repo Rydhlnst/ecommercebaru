@@ -23,10 +23,24 @@ class BlogPost extends Model
         ];
     }
 
+    public function resolveRouteBinding($value, $field = null)
+    {
+        return $this->where('slug', $value)
+            ->orWhere('id', $value)
+            ->firstOrFail();
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     protected static function booted(): void
     {
         static::creating(function (BlogPost $model) {
-            $model->slug = Str::slug($model->title).random_int(100, 999);
+            if (empty($model->slug)) {
+                $model->slug = Str::slug($model->title).random_int(100, 999);
+            }
         });
 
         static::updating(function (BlogPost $model) {
