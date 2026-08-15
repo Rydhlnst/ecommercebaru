@@ -69,7 +69,7 @@
             @endif
         </div>
 
-        {{-- Image Upload --}}
+        {{-- Image Upload with 1:1 Interactive Cropper --}}
         <div class="mb-6">
             <label class="form-label">Gambar Kategori (Opsional)</label>
             @if($category->image)
@@ -78,8 +78,8 @@
                     <p class="text-xs text-gray-400 mt-1">Gambar saat ini. Upload baru untuk mengganti.</p>
                 </div>
             @endif
-            <input type="file" name="image" accept="image/*" class="form-input" onchange="previewImage(this)">
-            <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB). Akan dikompres otomatis ke WebP 500px.</p>
+            <input type="file" name="image" id="category-image-input" accept="image/*" class="form-input" onchange="handleCategoryFileInput(this)">
+            <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB). Cropper interaktif 1:1 persegi akan otomatis terbuka untuk menyesuaikan fokus gambar.</p>
             <div id="image-preview" class="mt-2 hidden">
                 <img src="" alt="Preview" class="w-32 h-32 object-cover rounded-lg border">
             </div>
@@ -116,6 +116,17 @@ function toggleCategoryType(type) {
         labelSub.classList.remove('border-gray-200');
         labelRoot.classList.remove('border-blue-600', 'bg-blue-50/50');
         labelRoot.classList.add('border-gray-200');
+    }
+}
+
+function handleCategoryFileInput(input) {
+    if (input.files && input.files[0]) {
+        window.AdminCropper.initForInput(input, {
+            aspectRatio: 1,
+            onComplete: function(inputEl) {
+                previewImage(inputEl);
+            }
+        });
     }
 }
 

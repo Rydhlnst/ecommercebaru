@@ -70,8 +70,8 @@
                 <h3 class="font-semibold text-gray-900 mb-4">Foto Produk</h3>
                 <div class="mb-4">
                     <label class="form-label">Upload Foto (Maks. 5)</label>
-                    <input type="file" name="images[]" accept="image/*" multiple class="form-input" onchange="previewImages(this)" id="image-input">
-                    <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB per foto). Akan dikompres otomatis ke WebP 800px.</p>
+                    <input type="file" name="images[]" accept="image/*" multiple class="form-input" onchange="handleProductFileInput(this)" id="image-input">
+                    <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB per foto). Cropper interaktif 4:5 (atau 1:1) akan terbuka untuk menyesuaikan setiap foto.</p>
                 </div>
                 <div id="image-preview" class="grid grid-cols-5 gap-2"></div>
                 @error('images') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -187,6 +187,17 @@ function updateGramHint(input) {
 }
 
 document.querySelectorAll('input[name="variation_weight[]"]').forEach(updateGramHint);
+
+function handleProductFileInput(input) {
+    if (input.files && input.files.length > 0) {
+        window.AdminCropper.initForInput(input, {
+            aspectRatio: 4/5,
+            onComplete: function(inputEl) {
+                previewImages(inputEl);
+            }
+        });
+    }
+}
 
 function previewImages(input) {
     const preview = document.getElementById('image-preview');
