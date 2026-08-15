@@ -123,44 +123,127 @@
         </div>
 
         {{-- Footer Link Columns Settings --}}
+        @php
+            $col1Raw = $settings['footer_col1_links'] ?? '';
+            $col1Rows = [];
+            if (!empty(trim($col1Raw))) {
+                foreach (preg_split("/\r?\n/", $col1Raw) as $line) {
+                    $line = trim($line);
+                    if ($line === '') continue;
+                    [$t, $u] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
+                    if ($t !== '') {
+                        $col1Rows[] = ['title' => $t, 'url' => $u];
+                    }
+                }
+            }
+            if (empty($col1Rows)) {
+                $col1Rows = [
+                    ['title' => 'Contact Us', 'url' => '/contact-us'],
+                    ['title' => 'Customer Service', 'url' => '/customer-service'],
+                    ['title' => "What's New", 'url' => '/whats-new'],
+                    ['title' => 'Terms of Use', 'url' => '/terms'],
+                    ['title' => 'Terms & Conditions', 'url' => '/page/terms-conditions'],
+                ];
+            }
+
+            $col2Raw = $settings['footer_col2_links'] ?? '';
+            $col2Rows = [];
+            if (!empty(trim($col2Raw))) {
+                foreach (preg_split("/\r?\n/", $col2Raw) as $line) {
+                    $line = trim($line);
+                    if ($line === '') continue;
+                    [$t, $u] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
+                    if ($t !== '') {
+                        $col2Rows[] = ['title' => $t, 'url' => $u];
+                    }
+                }
+            }
+            if (empty($col2Rows)) {
+                $col2Rows = [
+                    ['title' => 'Payment Policy', 'url' => '/page/payment-policy'],
+                    ['title' => 'Shipping Policy', 'url' => '/page/shipping-policy'],
+                    ['title' => 'Refund Policy', 'url' => '/page/refund-policy'],
+                    ['title' => 'Return Policy', 'url' => '/page/return-policy'],
+                    ['title' => 'FAQ', 'url' => '/faq'],
+                ];
+            }
+        @endphp
         <div class="admin-panel-card lg:col-span-2">
-            <h3 class="font-semibold text-gray-900 mb-4">
-                <i class="fas fa-link mr-2 text-blue-600"></i>Kelola Menu & Link Footer (Kustom Bebas)
+            <h3 class="font-semibold text-gray-900 mb-1">
+                <i class="fas fa-list-ul mr-2 text-blue-600"></i>Kelola Menu & Link Footer (Bentuk List Baris)
             </h3>
-            <p class="text-xs text-gray-500 mb-4">
-                Anda bebas menambahkan, mengubah, atau menghapus link apa saja di kolom Footer website. Tulis <strong>1 link per baris</strong> dengan format: <code>Nama Link|URL_atau_Path</code>.
+            <p class="text-xs text-gray-500 mb-5">
+                Tambahkan baris menu atau hapus sesuai kebutuhan. Sangat mudah, cukup isi <strong>Nama Menu</strong> dan <strong>Link URL</strong>.
             </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {{-- Footer Column 1 --}}
-                <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                    <h4 class="font-medium text-sm text-gray-900 mb-3">Kolom Footer 1 (Contoh: About Us)</h4>
-                    <div class="mb-3">
-                        <label class="form-label text-xs">Judul Kolom</label>
-                        <input type="text" name="footer_col1_title" value="{{ old('footer_col1_title', $settings['footer_col1_title'] ?? '') }}" placeholder="About Us" class="form-input text-sm">
-                    </div>
+                <div class="p-4 bg-gray-50/80 border border-gray-200 rounded-xl flex flex-col justify-between">
                     <div>
-                        <label class="form-label text-xs">Daftar Link (1 per baris: <code>Judul|URL</code>)</label>
-                        <textarea name="footer_col1_links" rows="6" class="form-input font-mono text-xs" placeholder="Contact Us|/contact-us&#10;Customer Service|/customer-service&#10;What's New|/whats-new&#10;Terms of Use|/terms&#10;Terms & Conditions|/page/terms-conditions">{{ old('footer_col1_links', $settings['footer_col1_links'] ?? '') }}</textarea>
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-semibold text-sm text-gray-900 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-blue-600"></span> Kolom 1 (Kiri)
+                            </h4>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-xs font-semibold text-gray-700">Judul Kolom</label>
+                            <input type="text" name="footer_col1_title" value="{{ old('footer_col1_title', $settings['footer_col1_title'] ?? 'About Us') }}" placeholder="About Us" class="form-input text-sm bg-white">
+                        </div>
+
+                        <label class="form-label text-xs font-semibold text-gray-700 mb-2 block">Daftar Baris Link</label>
+                        <div class="space-y-2" id="col1-container">
+                            @foreach($col1Rows as $row)
+                                <div class="flex items-center gap-2 link-row bg-white p-2 border border-gray-200 rounded-lg shadow-xs">
+                                    <input type="text" name="footer_col1_titles[]" value="{{ $row['title'] }}" placeholder="Nama Menu (misal: Hubungi Kami)" class="form-input text-xs flex-1">
+                                    <input type="text" name="footer_col1_urls[]" value="{{ $row['url'] }}" placeholder="URL (misal: /contact-us)" class="form-input text-xs flex-1">
+                                    <button type="button" onclick="this.closest('.link-row').remove()" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" title="Hapus Baris">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
+
+                    <button type="button" onclick="addFooterLinkRow('col1-container', 'footer_col1_titles[]', 'footer_col1_urls[]')" class="mt-4 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors w-full">
+                        <i class="fas fa-plus text-xs"></i> + Tambah Baris Link Baru
+                    </button>
                 </div>
 
                 {{-- Footer Column 2 --}}
-                <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl">
-                    <h4 class="font-medium text-sm text-gray-900 mb-3">Kolom Footer 2 (Contoh: Privacy Policy)</h4>
-                    <div class="mb-3">
-                        <label class="form-label text-xs">Judul Kolom</label>
-                        <input type="text" name="footer_col2_title" value="{{ old('footer_col2_title', $settings['footer_col2_title'] ?? '') }}" placeholder="Privacy Policy" class="form-input text-sm">
-                    </div>
+                <div class="p-4 bg-gray-50/80 border border-gray-200 rounded-xl flex flex-col justify-between">
                     <div>
-                        <label class="form-label text-xs">Daftar Link (1 per baris: <code>Judul|URL</code>)</label>
-                        <textarea name="footer_col2_links" rows="6" class="form-input font-mono text-xs" placeholder="Payment Policy|/page/payment-policy&#10;Shipping Policy|/page/shipping-policy&#10;Refund Policy|/page/refund-policy&#10;Return Policy|/page/return-policy&#10;FAQ|/faq">{{ old('footer_col2_links', $settings['footer_col2_links'] ?? '') }}</textarea>
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-semibold text-sm text-gray-900 flex items-center gap-1.5">
+                                <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Kolom 2 (Kanan)
+                            </h4>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-xs font-semibold text-gray-700">Judul Kolom</label>
+                            <input type="text" name="footer_col2_title" value="{{ old('footer_col2_title', $settings['footer_col2_title'] ?? 'Privacy Policy') }}" placeholder="Privacy Policy" class="form-input text-sm bg-white">
+                        </div>
+
+                        <label class="form-label text-xs font-semibold text-gray-700 mb-2 block">Daftar Baris Link</label>
+                        <div class="space-y-2" id="col2-container">
+                            @foreach($col2Rows as $row)
+                                <div class="flex items-center gap-2 link-row bg-white p-2 border border-gray-200 rounded-lg shadow-xs">
+                                    <input type="text" name="footer_col2_titles[]" value="{{ $row['title'] }}" placeholder="Nama Menu (misal: Syarat & Ketentuan)" class="form-input text-xs flex-1">
+                                    <input type="text" name="footer_col2_urls[]" value="{{ $row['url'] }}" placeholder="URL (misal: /page/terms)" class="form-input text-xs flex-1">
+                                    <button type="button" onclick="this.closest('.link-row').remove()" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" title="Hapus Baris">
+                                        <i class="fas fa-trash-alt text-xs"></i>
+                                    </button>
+                                </div>
+                            @endforeach
+                        </div>
                     </div>
+
+                    <button type="button" onclick="addFooterLinkRow('col2-container', 'footer_col2_titles[]', 'footer_col2_urls[]')" class="mt-4 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors w-full">
+                        <i class="fas fa-plus text-xs"></i> + Tambah Baris Link Baru
+                    </button>
                 </div>
             </div>
 
-            <div class="mt-4">
-                <label class="form-label text-xs">Teks Deskripsi Newsletter (Footer Kiri Bawah Logo)</label>
+            <div class="mt-5 pt-4 border-t border-gray-100">
+                <label class="form-label text-xs font-semibold text-gray-700">Teks Deskripsi Newsletter (Footer Kiri Bawah Logo)</label>
                 <input type="text" name="footer_newsletter_text" value="{{ old('footer_newsletter_text', $settings['footer_newsletter_text'] ?? '') }}" placeholder="Jadilah yang pertama mendengar tentang produk baru, acara eksklusif, dan penawaran online." class="form-input text-sm">
             </div>
         </div>
@@ -172,4 +255,20 @@
         </button>
     </div>
 </form>
+@endsection
+
+@section('scripts')
+function addFooterLinkRow(containerId, titleName, urlName) {
+    const container = document.getElementById(containerId);
+    const div = document.createElement('div');
+    div.className = 'flex items-center gap-2 link-row bg-white p-2 border border-gray-200 rounded-lg shadow-xs';
+    div.innerHTML = `
+        <input type="text" name="${titleName}" placeholder="Nama Menu" class="form-input text-xs flex-1">
+        <input type="text" name="${urlName}" placeholder="URL (misal: /link-tujuan)" class="form-input text-xs flex-1">
+        <button type="button" onclick="this.closest('.link-row').remove()" class="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors" title="Hapus Baris">
+            <i class="fas fa-trash-alt text-xs"></i>
+        </button>
+    `;
+    container.appendChild(div);
+}
 @endsection

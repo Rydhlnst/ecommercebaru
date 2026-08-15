@@ -100,13 +100,39 @@ class AdminSettingController extends Controller
             'header_nav_items' => 'nullable|string',
             'footer_newsletter_text' => 'nullable|string',
             'footer_col1_title' => 'nullable|string|max:100',
-            'footer_col1_links' => 'nullable|string',
             'footer_col2_title' => 'nullable|string|max:100',
-            'footer_col2_links' => 'nullable|string',
         ]);
 
         foreach ($validated as $key => $value) {
             SiteSetting::setValue($key, $value);
+        }
+
+        if ($request->has('footer_col1_titles')) {
+            $lines = [];
+            $titles = (array) $request->input('footer_col1_titles', []);
+            $urls = (array) $request->input('footer_col1_urls', []);
+            foreach ($titles as $idx => $t) {
+                $t = trim($t);
+                $u = trim($urls[$idx] ?? '');
+                if ($t !== '') {
+                    $lines[] = "{$t}|{$u}";
+                }
+            }
+            SiteSetting::setValue('footer_col1_links', implode("\n", $lines));
+        }
+
+        if ($request->has('footer_col2_titles')) {
+            $lines = [];
+            $titles = (array) $request->input('footer_col2_titles', []);
+            $urls = (array) $request->input('footer_col2_urls', []);
+            foreach ($titles as $idx => $t) {
+                $t = trim($t);
+                $u = trim($urls[$idx] ?? '');
+                if ($t !== '') {
+                    $lines[] = "{$t}|{$u}";
+                }
+            }
+            SiteSetting::setValue('footer_col2_links', implode("\n", $lines));
         }
 
         return redirect()->route('admin.settings.store')->with('success', 'Pengaturan toko berhasil diperbarui.');
