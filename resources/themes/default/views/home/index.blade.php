@@ -16,11 +16,11 @@
     $highlightService = app(\Beres\Highlight\Services\HomepageHighlightService::class);
 
     try {
-        $newProductsDb   = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_NEW_ARRIVALS, 4);
+        $newProductsDb   = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_NEW_ARRIVALS, 8);
         $featuredProduct = $highlightService->getFeaturedProduct();
-        $bundlesDb       = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_KITS_BUNDLES, 4);
-        $bestSellersDb   = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_BEST_SELLERS, 4);
-        $superfoodsDb    = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_SEEDS, 5);
+        $bundlesDb       = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_KITS_BUNDLES, 8);
+        $bestSellersDb   = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_BEST_SELLERS, 8);
+        $superfoodsDb    = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_SEEDS, 8);
     } catch (\Throwable $e) {
         $newProductsDb   = collect();
         $featuredProduct = null;
@@ -85,7 +85,7 @@
 <style>
     @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    /* Custom scrollbar for horizontal product scroll */
+    /* Responsive, compact product scroll & grid (4-5 in view on desktop) */
     .product-scroll-mobile {
         display: flex;
         overflow-x: auto;
@@ -94,15 +94,23 @@
         scrollbar-width: thin;
         scrollbar-color: #2D5A27 #E8F0E5;
         padding-bottom: 1rem;
-        gap: 1rem;
+        gap: 1.25rem;
     }
     .product-scroll-mobile > * {
-        flex: 0 0 calc((100% - 2rem) / 3);
+        flex: 0 0 270px;
+        max-width: 280px;
         scroll-snap-align: start;
     }
-    @media (max-width: 767px) {
+    @media (max-width: 1024px) {
         .product-scroll-mobile > * {
-            flex: 0 0 calc(70%);
+            flex: 0 0 250px;
+            max-width: 260px;
+        }
+    }
+    @media (max-width: 640px) {
+        .product-scroll-mobile > * {
+            flex: 0 0 220px;
+            max-width: 230px;
         }
     }
     /* Webkit scrollbar (Chrome, Safari, Edge) */
