@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Admin Panel') — Ankish Mart</title>
+    <title>@yield('title', 'Admin Panel') — {{ config('app.name', 'Ankesh Mart') }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -85,7 +85,7 @@
         <div class="p-4 border-b border-slate-700">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2 text-white font-bold text-lg">
                 <i class="fas fa-store text-blue-400"></i>
-                <span>Ankish Mart</span>
+                <span>{{ config('app.name', 'Ankesh Mart') }}</span>
             </a>
         </div>
         <nav class="py-2">

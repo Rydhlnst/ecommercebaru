@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Ankish Mart'),
+    'name' => env('APP_NAME', 'Ankesh Mart'),
 
     /*
     |--------------------------------------------------------------------------

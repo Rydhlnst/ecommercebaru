@@ -539,6 +539,6 @@ class AdminSeeder extends Seeder
         SiteSetting::setValue('store_country', 'Indonesia');
         SiteSetting::setValue('store_address', 'Jl. Merdeka No. 123, Jakarta Selatan, DKI Jakarta 12345');
         SiteSetting::setValue('store_phone', '021-1234567');
-        SiteSetting::setValue('store_email', 'info@ankishmart.id');
+        SiteSetting::setValue('store_email', 'info@ankeshmart.com');
     }
 }

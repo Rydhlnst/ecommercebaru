@@ -289,7 +289,7 @@
             Skip to main content
         </a>
 
-        <!-- Ankish Mart -->
+        <!-- Ankesh Mart -->
         <div id="app">
             <!-- Flash Message Blade Component -->
             <x-shop::flash-group />
