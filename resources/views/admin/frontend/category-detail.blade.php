@@ -1,12 +1,12 @@
 <x-shop::layouts>
     <x-slot:title>{{ $category->name }}</x-slot:title>
 
-    <div class="mx-auto max-w-[1200px] px-4 py-8">
+    <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
         {{-- Breadcrumb --}}
-        <nav class="text-sm text-zinc-500 mb-6">
-            <a href="/" class="hover:text-[#2D5A27]">Beranda</a>
-            <span class="mx-2">/</span>
-            <span class="text-[#171717]">{{ $category->name }}</span>
+        <nav class="text-sm text-zinc-500 mb-6 flex items-center gap-2">
+            <a href="/" class="hover:text-[#2D5A27] transition-colors">Beranda</a>
+            <span class="text-zinc-400">/</span>
+            <span class="text-[#171717] font-medium">{{ $category->name }}</span>
         </nav>
 
         {{-- Category Header --}}

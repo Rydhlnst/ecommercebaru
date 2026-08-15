@@ -1,16 +1,16 @@
 <x-shop::layouts>
     <x-slot:title>{{ $product->name }}</x-slot:title>
 
-    <div class="mx-auto max-w-[1200px] px-4 py-8">
+    <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
         {{-- Breadcrumb --}}
-        <nav class="text-sm text-zinc-500 mb-6">
-            <a href="/" class="hover:text-[#2D5A27]">Beranda</a>
-            <span class="mx-2">/</span>
+        <nav class="text-sm text-zinc-500 mb-6 flex items-center gap-2">
+            <a href="/" class="hover:text-[#2D5A27] transition-colors">Beranda</a>
+            <span class="text-zinc-400">/</span>
             @if($product->category)
-                <a href="{{ route('shop.admin_category.show', $product->category->slug) }}" class="hover:text-[#2D5A27]">{{ $product->category->name }}</a>
-                <span class="mx-2">/</span>
+                <a href="{{ route('shop.admin_category.show', $product->category->slug) }}" class="hover:text-[#2D5A27] transition-colors">{{ $product->category->name }}</a>
+                <span class="text-zinc-400">/</span>
             @endif
-            <span class="text-[#171717]">{{ $product->name }}</span>
+            <span class="text-[#171717] font-medium">{{ $product->name }}</span>
         </nav>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
