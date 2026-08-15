@@ -21,6 +21,7 @@
             // --- AdminProduct (simple model) ---
             $price    = 'Rp ' . number_format($product->price ?? 0, 0, ',', '.');
             $inStock  = ($product->stock ?? 0) > 0;
+            $href     = route('shop.admin_product.show', $product->slug);
             $image    = $product->images->count()
                             ? $product->images->first()->url
                             : null;
