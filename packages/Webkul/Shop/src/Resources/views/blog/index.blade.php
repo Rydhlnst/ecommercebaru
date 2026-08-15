@@ -60,7 +60,7 @@
                             }
                         }
                     @endphp
-                    <article class="group flex flex-col bg-white rounded-2xl border border-[#E8F0E5] overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full cursor-pointer" onclick="window.location.href='{{ $postUrl }}';">
+                    <article class="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 h-full cursor-pointer" onclick="window.location.href='{{ $postUrl }}';">
                         {{-- Unified 16:9 Thumbnail Banner --}}
                         <a href="{{ $postUrl }}" class="block relative w-full overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] shrink-0" style="aspect-ratio:16/9; height:200px; max-height:220px;">
                             @if($postImg)
