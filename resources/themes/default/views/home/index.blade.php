@@ -486,10 +486,10 @@
                 </div>
 
                 {{-- Horizontal scroll row — single row on desktop --}}
-                <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
+                <div class="flex gap-5 overflow-x-auto pb-4 scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
                     @foreach ($homeCats as $i => $cat)
-                        <a href="{{ route('shop.admin_category.show', $cat['slug']) }}" class="group block shrink-0 w-[140px] sm:w-[160px] md:w-[180px]">
-                            <div class="aspect-[3/4] overflow-hidden transition-transform duration-500 group-hover:scale-[1.03] rounded-2xl relative flex items-center justify-center" style="background-color:{{ $bgPick($i) }};">
+                        <a href="{{ route('shop.admin_category.show', $cat['slug']) }}" class="group block shrink-0 w-[150px] sm:w-[170px] md:w-[190px]">
+                            <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.03] rounded-2xl relative flex items-center justify-center border border-[#E8F0E5] shadow-xs" style="background-color:{{ $bgPick($i) }};">
                                 @if(!empty($cat['image']))
                                     <img src="{{ $cat['image'] }}" alt="{{ $cat['name'] }}" class="w-full h-full object-cover">
                                 @else
@@ -499,7 +499,7 @@
                                     </div>
                                 @endif
                             </div>
-                            <p class="mt-2 text-center text-[11px] md:text-xs text-white px-2 py-1.5 transition-colors group-hover:bg-[#1E3D1A]" style="background-color:#2D5A27; font-weight:600; border-radius:999px;">
+                            <p class="mt-2.5 text-center text-[11px] md:text-xs text-white px-3 py-1.5 transition-colors group-hover:bg-[#1E3D1A] shadow-xs" style="background-color:#2D5A27; font-weight:600; border-radius:999px;">
                                 {{ $cat['name'] }}
                             </p>
                         </a>
