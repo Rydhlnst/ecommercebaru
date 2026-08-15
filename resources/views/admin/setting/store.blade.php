@@ -8,9 +8,33 @@
     <h1>Pengaturan Toko</h1>
 </div>
 
-<form method="POST" action="{{ route('admin.settings.store.update') }}">
+<form method="POST" action="{{ route('admin.settings.store.update') }}" enctype="multipart/form-data">
     @csrf
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{-- Banner Hero Beranda --}}
+        <div class="admin-panel-card lg:col-span-2">
+            <h3 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                <i class="fas fa-image text-purple-600"></i> Banner Hero Beranda (Halaman Depan Toko)
+            </h3>
+            <p class="text-xs text-gray-500 mb-4">
+                Upload atau ganti foto banner produk yang tampil di bagian paling atas halaman utama toko.
+            </p>
+
+            <div class="flex flex-col md:flex-row items-start md:items-center gap-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <div class="w-full md:w-1/2">
+                    <label class="form-label text-xs font-semibold text-gray-700 mb-2 block">Upload Gambar Banner Baru</label>
+                    <input type="file" name="hero_banner" accept="image/*" class="form-input text-sm bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                    <p class="text-xs text-gray-400 mt-2">Format didukung: JPG, PNG, WEBP. Rekomendasi resolusi landscape.</p>
+                </div>
+                <div class="w-full md:w-1/2">
+                    <label class="form-label text-xs font-semibold text-gray-700 mb-2 block">Preview Banner Saat Ini</label>
+                    <div class="rounded-lg overflow-hidden border border-gray-300 bg-white shadow-xs">
+                        <img src="{{ \App\Models\SiteSetting::getValue('hero_banner_image') ?: '/images/hero-products.jpg' }}" alt="Current Hero Banner" class="w-full h-36 object-contain bg-gray-100">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="admin-panel-card">
             <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-store mr-2 text-blue-500"></i>Informasi Toko</h3>
             <p class="text-xs text-gray-500 mb-4">

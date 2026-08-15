@@ -129,6 +129,16 @@ class AdminSettingController extends Controller
 
     public function updateStore(Request $request)
     {
+        if ($request->hasFile('hero_banner')) {
+            $request->validate([
+                'hero_banner' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
+            ]);
+            $file = $request->file('hero_banner');
+            $filename = 'hero-products.' . $file->getClientOriginalExtension();
+            $file->move(public_path('images'), $filename);
+            SiteSetting::setValue('hero_banner_image', '/images/' . $filename . '?v=' . time());
+        }
+
         $validated = $request->validate([
             'store_whatsapp' => 'nullable|string|max:20',
             'store_maps_embed' => 'nullable|string',

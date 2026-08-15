@@ -33,14 +33,19 @@
         {{  $channel->home_seo['meta_title'] ?? '' }}
     </x-slot>
 
-    {{-- HERO --}}
-    <section class="relative w-full overflow-hidden">
-        <img
-            src="/images/hero-products.jpg"
-            alt="Ankesh Mart - Himalayan Salt, Chia Seeds, Almonds & More"
-            class="w-full h-auto object-cover max-h-[600px]"
-            loading="eager"
-        >
+    {{-- HERO BANNER --}}
+    @php
+        $heroImage = \App\Models\SiteSetting::getValue('hero_banner_image') ?: '/images/hero-products.jpg';
+    @endphp
+    <section class="relative w-full bg-[#fbf9f5] overflow-hidden border-b border-mist">
+        <div class="mx-auto max-w-[1600px] flex items-center justify-center">
+            <img
+                src="{{ $heroImage }}"
+                alt="Ankesh Mart - Himalayan Salt, Chia Seeds, Almonds & More"
+                class="w-full h-auto max-h-[500px] md:max-h-[580px] object-contain object-center"
+                loading="eager"
+            >
+        </div>
     </section>
 
     {{-- Category tiles quick-links --}}
