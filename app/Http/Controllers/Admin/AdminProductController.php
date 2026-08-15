@@ -91,16 +91,28 @@ class AdminProductController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
-    public function edit(AdminProduct $product)
+    public function edit($product)
     {
+        if (! ($product instanceof AdminProduct)) {
+            $product = AdminProduct::where('slug', $product)
+                ->orWhere('id', $product)
+                ->firstOrFail();
+        }
+
         $categories = AdminCategory::all();
         $product->load('variations', 'images');
 
         return view('admin.product.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, AdminProduct $product)
+    public function update(Request $request, $product)
     {
+        if (! ($product instanceof AdminProduct)) {
+            $product = AdminProduct::where('slug', $product)
+                ->orWhere('id', $product)
+                ->firstOrFail();
+        }
+
         $hasVariations = $request->boolean('has_variations');
 
         $validated = $request->validate([
@@ -146,8 +158,14 @@ class AdminProductController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
-    public function destroy(AdminProduct $product)
+    public function destroy($product)
     {
+        if (! ($product instanceof AdminProduct)) {
+            $product = AdminProduct::where('slug', $product)
+                ->orWhere('id', $product)
+                ->firstOrFail();
+        }
+
         foreach ($product->images as $img) {
             Storage::disk('public')->delete($img->image_path);
         }

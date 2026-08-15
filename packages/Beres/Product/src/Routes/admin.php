@@ -5,9 +5,6 @@ use Beres\Product\Http\Controllers\ProductController;
 use Beres\Product\Http\Controllers\ProductApiController;
 
 Route::group(['prefix' => 'admin', 'middleware' => ['web', 'admin', 'auth']], function () {
-    // Product Management Routes
-    Route::resource('products', ProductController::class)->except(['create', 'edit']);
-
     // Bulk Actions
     Route::post('products/bulk-action', [ProductController::class, 'bulkAction'])
         ->name('admin.products.bulk_action');
