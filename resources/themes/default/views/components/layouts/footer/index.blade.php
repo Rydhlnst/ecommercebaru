@@ -81,22 +81,16 @@
                     }
                 }
             @endphp
-            <div>
-                <p class="text-sm font-semibold text-cream mb-4">{{ $col1Title }}</p>
-                <ul class="grid gap-3 text-sm text-mist/80">
-                    @if(!empty($col1Items))
+            @if(!empty($col1Items))
+                <div>
+                    <p class="text-sm font-semibold text-cream mb-4">{{ $col1Title }}</p>
+                    <ul class="grid gap-3 text-sm text-mist/80">
                         @foreach ($col1Items as $item)
                             <li><a href="{{ $item['url'] }}" class="hover:text-cream transition-colors">{{ $item['title'] }}</a></li>
                         @endforeach
-                    @else
-                        <li><a href="{{ url('/about-us') }}" class="hover:text-cream transition-colors">About Us</a></li>
-                        <li><a href="{{ url('/contact-us') }}" class="hover:text-cream transition-colors">Contact Us</a></li>
-                        <li><a href="{{ url('/customer-service') }}" class="hover:text-cream transition-colors">Customer Service</a></li>
-                        <li><a href="{{ url('/whats-new') }}" class="hover:text-cream transition-colors">What's New</a></li>
-                        <li><a href="{{ url('/page/terms-conditions') }}" class="hover:text-cream transition-colors">Terms & Conditions</a></li>
-                    @endif
-                </ul>
-            </div>
+                    </ul>
+                </div>
+            @endif
 
             {{-- Column 2 — Privacy Policy / Custom Links --}}
             @php
@@ -114,22 +108,16 @@
                     }
                 }
             @endphp
-            <div>
-                <p class="text-sm font-semibold text-cream mb-4">{{ $col2Title }}</p>
-                <ul class="grid gap-3 text-sm text-mist/80">
-                    @if(!empty($col2Items))
+            @if(!empty($col2Items))
+                <div>
+                    <p class="text-sm font-semibold text-cream mb-4">{{ $col2Title }}</p>
+                    <ul class="grid gap-3 text-sm text-mist/80">
                         @foreach ($col2Items as $item)
                             <li><a href="{{ $item['url'] }}" class="hover:text-cream transition-colors">{{ $item['title'] }}</a></li>
                         @endforeach
-                    @else
-                        <li><a href="{{ url('/page/payment-policy') }}" class="hover:text-cream transition-colors">Payment Policy</a></li>
-                        <li><a href="{{ url('/page/shipping-policy') }}" class="hover:text-cream transition-colors">Shipping Policy</a></li>
-                        <li><a href="{{ url('/page/refund-policy') }}" class="hover:text-cream transition-colors">Refund Policy</a></li>
-                        <li><a href="{{ url('/page/return-policy') }}" class="hover:text-cream transition-colors">Return Policy</a></li>
-                        <li><a href="{{ url('/faq') }}" class="hover:text-cream transition-colors">FAQ</a></li>
-                    @endif
-                </ul>
-            </div>
+                    </ul>
+                </div>
+            @endif
 
             {{-- Column 3 — Contact Details --}}
             @if (! empty($footerOptions['column_3']))
@@ -164,34 +152,36 @@
                 </div>
             @else
                 @php
-                    $storeAddress = \App\Models\SiteSetting::getValue('store_address') ?: 'Jakarta, Indonesia';
-                    $storePhone = \App\Models\SiteSetting::getValue('store_phone') ?: (\App\Models\SiteSetting::getValue('store_whatsapp') ?: '+62 812-3456-7890');
-                    $storeEmail = \App\Models\SiteSetting::getValue('store_email') ?: 'info@ankeshmart.com';
+                    $storeAddress = \App\Models\SiteSetting::getValue('store_address');
+                    $storePhone = \App\Models\SiteSetting::getValue('store_phone') ?: \App\Models\SiteSetting::getValue('store_whatsapp');
+                    $storeEmail = \App\Models\SiteSetting::getValue('store_email');
                 @endphp
-                <div>
-                    <p class="text-sm font-semibold text-cream mb-4">DETAIL KONTAK</p>
-                    <div class="text-sm text-mist/80 space-y-4">
-                        <p>&copy; {{ date('Y') }} {{ config('app.name', 'Ankesh Mart') }}</p>
-                        @if($storeAddress)
-                            <div class="flex items-start gap-3">
-                                <span class="icon-location text-lg mt-0.5 text-mist/80"></span>
-                                <p>{!! nl2br(e($storeAddress)) !!}</p>
-                            </div>
-                        @endif
-                        @if($storePhone)
-                            <div class="flex items-start gap-3">
-                                <span class="icon-support text-lg mt-0.5 text-mist/80"></span>
-                                <p><a href="tel:{{ preg_replace('/[^0-9+]/', '', $storePhone) }}" class="hover:text-cream transition-colors">{{ $storePhone }}</a></p>
-                            </div>
-                        @endif
-                        @if($storeEmail)
-                            <div class="flex items-start gap-3">
-                                <span class="icon-email text-lg mt-0.5 text-mist/80"></span>
-                                <p><a href="mailto:{{ $storeEmail }}" class="hover:text-cream transition-colors">{{ $storeEmail }}</a></p>
-                            </div>
-                        @endif
+                @if($storeAddress || $storePhone || $storeEmail)
+                    <div>
+                        <p class="text-sm font-semibold text-cream mb-4">DETAIL KONTAK</p>
+                        <div class="text-sm text-mist/80 space-y-4">
+                            <p>&copy; {{ date('Y') }} {{ config('app.name', 'Ankesh Mart') }}</p>
+                            @if($storeAddress)
+                                <div class="flex items-start gap-3">
+                                    <span class="icon-location text-lg mt-0.5 text-mist/80"></span>
+                                    <p>{!! nl2br(e($storeAddress)) !!}</p>
+                                </div>
+                            @endif
+                            @if($storePhone)
+                                <div class="flex items-start gap-3">
+                                    <span class="icon-support text-lg mt-0.5 text-mist/80"></span>
+                                    <p><a href="tel:{{ preg_replace('/[^0-9+]/', '', $storePhone) }}" class="hover:text-cream transition-colors">{{ $storePhone }}</a></p>
+                                </div>
+                            @endif
+                            @if($storeEmail)
+                                <div class="flex items-start gap-3">
+                                    <span class="icon-email text-lg mt-0.5 text-mist/80"></span>
+                                    <p><a href="mailto:{{ $storeEmail }}" class="hover:text-cream transition-colors">{{ $storeEmail }}</a></p>
+                                </div>
+                            @endif
+                        </div>
                     </div>
-                </div>
+                @endif
             @endif
 
             {{-- Column 4 — Social Media --}}
@@ -225,37 +215,40 @@
                     $storeYt = \App\Models\SiteSetting::getValue('store_youtube');
                     $storeTt = \App\Models\SiteSetting::getValue('store_tiktok');
                     $storeWa = \App\Models\SiteSetting::getValue('store_whatsapp');
+                    $hasSocial = $storeIg || $storeFb || $storeYt || $storeTt || $storeWa;
                 @endphp
-                <div>
-                    <p class="text-sm font-semibold text-cream mb-4">Ikuti kami</p>
-                    <div class="flex items-center gap-4">
-                        @if($storeWa)
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $storeWa) }}" target="_blank" rel="noopener" class="text-mist/80 hover:text-cream transition-colors" aria-label="WhatsApp">
-                                {!! $socialIcons['whatsapp'] !!}
-                            </a>
-                        @endif
-                        @if($storeIg)
-                            <a href="{{ $storeIg }}" target="_blank" rel="noopener" class="text-mist/80 hover:text-cream transition-colors" aria-label="Instagram">
-                                {!! $socialIcons['instagram'] !!}
-                            </a>
-                        @endif
-                        @if($storeFb)
-                            <a href="{{ $storeFb }}" target="_blank" rel="noopener" class="text-mist/80 hover:text-cream transition-colors" aria-label="Facebook">
-                                {!! $socialIcons['facebook'] !!}
-                            </a>
-                        @endif
-                        @if($storeTt)
-                            <a href="{{ $storeTt }}" target="_blank" rel="noopener" class="text-mist/80 hover:text-cream transition-colors" aria-label="TikTok">
-                                {!! $socialIcons['tiktok'] !!}
-                            </a>
-                        @endif
-                        @if($storeYt)
-                            <a href="{{ $storeYt }}" target="_blank" rel="noopener" class="text-mist/80 hover:text-cream transition-colors" aria-label="YouTube">
-                                {!! $socialIcons['youtube'] !!}
-                            </a>
-                        @endif
+                @if($hasSocial)
+                    <div>
+                        <p class="text-sm font-semibold text-cream mb-4">Ikuti kami</p>
+                        <div class="flex items-center gap-4">
+                            @if($storeWa)
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $storeWa) }}" target="_blank" rel="noopener" class="text-mist/80 hover:text-cream transition-colors" aria-label="WhatsApp">
+                                    {!! $socialIcons['whatsapp'] !!}
+                                </a>
+                            @endif
+                            @if($storeIg)
+                                <a href="{{ $storeIg }}" target="_blank" rel="noopener" class="text-mist/80 hover:text-cream transition-colors" aria-label="Instagram">
+                                    {!! $socialIcons['instagram'] !!}
+                                </a>
+                            @endif
+                            @if($storeFb)
+                                <a href="{{ $storeFb }}" target="_blank" rel="noopener" class="text-mist/80 hover:text-cream transition-colors" aria-label="Facebook">
+                                    {!! $socialIcons['facebook'] !!}
+                                </a>
+                            @endif
+                            @if($storeTt)
+                                <a href="{{ $storeTt }}" target="_blank" rel="noopener" class="text-mist/80 hover:text-cream transition-colors" aria-label="TikTok">
+                                    {!! $socialIcons['tiktok'] !!}
+                                </a>
+                            @endif
+                            @if($storeYt)
+                                <a href="{{ $storeYt }}" target="_blank" rel="noopener" class="text-mist/80 hover:text-cream transition-colors" aria-label="YouTube">
+                                    {!! $socialIcons['youtube'] !!}
+                                </a>
+                            @endif
+                        </div>
                     </div>
-                </div>
+                @endif
             @endif
 
         </div>

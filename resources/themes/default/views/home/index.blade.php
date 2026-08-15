@@ -502,23 +502,24 @@
         </section>
     @endif
 
-    {{-- ============ CATEGORY TICKER (Marquee) ============ --}}
-    <section class="overflow-hidden beres-reveal" style="background-color:#2D5A27;">
-        <div class="py-4 md:py-5">
-            <div class="flex whitespace-nowrap animate-[marquee_35s_linear_infinite] text-white gap-10 md:gap-14">
-                @php
-                    $tickerDbCats = \App\Models\AdminCategory::pluck('name')->all();
-                    $tickerItems = !empty($tickerDbCats) ? $tickerDbCats : ['Fruits & Vegetables','Meat & Seafood','Bread & Bakery','Drink','Spices & Herbs','Healthy Snacks','Kitchen Essentials'];
-                @endphp
-                @for ($rep = 0; $rep < 4; $rep++)
-                    @foreach ($tickerItems as $t)
-                        <span class="text-sm md:text-base tracking-[0.12em] uppercase" style="font-weight:500;">{{ $t }}</span>
-                        <span class="text-white/40">—</span>
-                    @endforeach
-                @endfor
+    {{-- ============ CATEGORY TICKER (Marquee - Only if categories exist in DB) ============ --}}
+    @php
+        $tickerDbCats = \App\Models\AdminCategory::pluck('name')->all();
+    @endphp
+    @if(!empty($tickerDbCats))
+        <section class="overflow-hidden beres-reveal" style="background-color:#2D5A27;">
+            <div class="py-4 md:py-5">
+                <div class="flex whitespace-nowrap animate-[marquee_35s_linear_infinite] text-white gap-10 md:gap-14">
+                    @for ($rep = 0; $rep < 4; $rep++)
+                        @foreach ($tickerDbCats as $t)
+                            <span class="text-sm md:text-base tracking-[0.12em] uppercase" style="font-weight:500;">{{ $t }}</span>
+                            <span class="text-white/40">—</span>
+                        @endforeach
+                    @endfor
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     {{-- ============ SEEDS & SUPERFOODS ============ --}}
     @if ($superfoodsDb->isNotEmpty())
@@ -598,19 +599,18 @@
         </div>
     </section>
 
-    {{-- ============ CUSTOMER REVIEWS ============ --}}
-    <section class="beres-reveal" style="background-color:#F5F9F3;">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-8">
-                <div>
-                    <p class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.review_title', 'Ulasan Pelanggan') }}</p>
-                    <p class="mt-1 text-sm" style="color:#2D5A27;">★★★★★ &nbsp; {{ $c('sections.review_eyebrow', '4,8 dari 2.400+ ulasan') }}</p>
+           {{-- ============ CUSTOMER REVIEWS (Only show if real approved reviews exist in DB) ============ --}}
+    @if ($reviewsDb->isNotEmpty())
+        <section class="beres-reveal" style="background-color:#F5F9F3;">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-8">
+                    <div>
+                        <p class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.review_title', 'Ulasan Pelanggan') }}</p>
+                    </div>
+                    <a href="{{ $c('contact.google_review_url', 'https://www.google.com/search?q=Ankesh+Online+Store') }}" target="_blank" rel="noopener" class="text-sm underline text-[#2D5A27] hover:opacity-70">Tulis ulasan</a>
                 </div>
-                <a href="{{ $c('contact.google_review_url', 'https://www.google.com/search?q=Ankesh+Online+Store') }}" target="_blank" rel="noopener" class="text-sm underline text-[#2D5A27] hover:opacity-70">Tulis ulasan</a>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                @if ($reviewsDb->isNotEmpty())
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                     @foreach ($reviewsDb as $review)
                         @php
                             $revName    = $review->name ?? 'Anonim';
@@ -627,25 +627,10 @@
                             </div>
                         </div>
                     @endforeach
-                @else
-                    @foreach ([['A','Ahmad Rizky','Sayurannya benar-benar segar seperti baru dipetik. Pengiriman tepat waktu di pagi hari.'],['S','Siti Nurhaliza','Kualitas dagingnya konsisten. Berlangganan 6 bulan tanpa kecewa.'],['B','Budi Santoso','Kopinya harum dan segar, terasa baru di-roasting. Harga wajar untuk single origin.']] as [$initial, $name, $text])
-                        <div class="p-5 md:p-6 bg-white beres-card" style="border-radius:16px;">
-                            <p class="text-sm" style="color:#2D5A27;">★★★★★</p>
-                            <p class="mt-3 text-sm md:text-base text-[#404040] leading-relaxed">"{{ $text }}"</p>
-                            <div class="mt-5 flex items-center gap-3">
-                                <span class="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm" style="background-color:#2D5A27; font-weight:600;">{{ $initial }}</span>
-                                <span class="text-sm text-[#171717]" style="font-weight:500;">{{ $name }}</span>
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
+                </div>
             </div>
-
-            <div class="mt-6 text-center">
-                <a href="{{ $c('contact.google_review_url', 'https://www.google.com/search?q=Ankesh+Online+Store') }}" target="_blank" rel="noopener" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat semua ulasan</a>
-            </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     {{-- ============ FAQ ============ --}}
     <section class="bg-white beres-reveal">
@@ -666,36 +651,31 @@
         </div>
     </section>
 
-    {{-- ============ LATEST BLOGS & ARTICLES ============ --}}
-    <section class="bg-gradient-to-b from-white to-[#F7FAF6] py-16 md:py-24 border-t border-[#E8F0E5]/60 beres-reveal">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 md:mb-12">
-                <div class="space-y-2">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-[#E8F0E5] text-[#2D5A27]">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-                        <span>Culinary & Wellness Insights</span>
+    {{-- ============ LATEST BLOGS & ARTICLES (Only show if real blogs exist in DB) ============ --}}
+    @if ($blogsDb->isNotEmpty())
+        <section class="bg-gradient-to-b from-white to-[#F7FAF6] py-16 md:py-24 border-t border-[#E8F0E5]/60 beres-reveal">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14">
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 md:mb-12">
+                    <div class="space-y-2">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-[#E8F0E5] text-[#2D5A27]">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                            <span>Artikel & Wawasan</span>
+                        </div>
+                        <h2 class="text-3xl md:text-4xl text-[#171717] font-bold tracking-tight">Artikel & Tips Terbaru</h2>
                     </div>
-                    <h2 class="text-3xl md:text-4xl text-[#171717] font-bold tracking-tight">Latest Articles & Recipes</h2>
                 </div>
-                <a href="{{ route('shop.search.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-[#2D5A27] hover:text-[#1E3A1E] transition-colors group">
-                    <span>Browse All Articles</span>
-                    <span class="text-base group-hover:translate-x-1 transition-transform">→</span>
-                </a>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                @if ($blogsDb->isNotEmpty())
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     @foreach ($blogsDb as $i => $page)
                         @php
                             $blogTitle    = $page->title ?? ($page->page_title ?? 'Wellness & Healthy Living');
-                            $blogCategory = $page->category?->name ?? 'Grannis Kitchen';
+                            $blogCategory = $page->category?->name ?? 'Ankesh Mart';
                             $blogExcerpt  = \Illuminate\Support\Str::limit(strip_tags($page->content ?? ($page->html_content ?? '')), 120);
                             $blogUrl      = $page->slug ? route('shop.search.index', ['query' => $page->slug]) : '#';
                             $blogDate     = $page->published_at ? $page->published_at->format('d M Y') : ($page->created_at ? $page->created_at->format('d M Y') : '');
                             $blogImage    = $page->thumbnail ?? null;
                         @endphp
                         <article class="group flex flex-col bg-white rounded-2xl border border-[#E8F0E5] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5">
-                            {{-- Header Image / Graphic --}}
                             <a href="{{ $blogUrl }}" class="block relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE]">
                                 @if ($blogImage && file_exists(public_path($blogImage)))
                                     <img src="{{ asset($blogImage) }}" alt="{{ $blogTitle }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -709,30 +689,14 @@
                                                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                                             </div>
                                         </div>
-                                        <div class="opacity-15 transform translate-x-4 translate-y-4">
-                                            <svg class="w-32 h-32 text-[#2D5A27]" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                                        </div>
                                     </div>
-                                @endif
-
-                                {{-- Category Tag Overlay if image exists --}}
-                                @if ($blogImage && file_exists(public_path($blogImage)))
-                                    <span class="absolute top-4 left-4 inline-block px-3 py-1 text-xs font-semibold text-[#2D5A27] bg-white/90 backdrop-blur-md rounded-full shadow-sm">
-                                        {{ $blogCategory }}
-                                    </span>
                                 @endif
                             </a>
 
-                            {{-- Card Body --}}
                             <div class="p-6 flex flex-col flex-1">
                                 @if ($blogDate)
                                     <div class="flex items-center gap-2 text-xs font-medium text-[#737373] mb-3">
-                                        <svg class="w-3.5 h-3.5 text-[#2D5A27]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                                        </svg>
                                         <span>{{ strtoupper($blogDate) }}</span>
-                                        <span>•</span>
-                                        <span>5 MIN READ</span>
                                     </div>
                                 @endif
 
@@ -745,89 +709,13 @@
                                 <p class="mt-2.5 text-sm text-[#555555] leading-relaxed line-clamp-3">
                                     {{ $blogExcerpt }}
                                 </p>
-
-                                <div class="mt-auto pt-5 flex items-center text-xs font-bold text-[#2D5A27] group-hover:text-[#1E3A1E] transition-colors">
-                                    <span>Read Full Article</span>
-                                    <svg class="w-4 h-4 ml-1.5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                                </div>
                             </div>
                         </article>
                     @endforeach
-                @else
-                    @php
-                        $dummyBlogs = [
-                            [
-                                'category' => 'Healthy Recipes',
-                                'title' => '5 Tips Memasak Rendang yang Empuk dan Lezat',
-                                'excerpt' => 'Rendang adalah masakan khas Padang yang memerlukan waktu lama untuk dimasak. Simak tips rahasia agar daging empuk dan bumbu meresap sempurna.',
-                                'date' => now()->subDays(2)->format('d M Y')
-                            ],
-                            [
-                                'category' => 'Kuliner Nusantara',
-                                'title' => 'Resep Sambal Terasi Pedas Manis Autentik',
-                                'excerpt' => 'Sambal terasi adalah pelengkap wajib masakan Indonesia. Pelajari racikan bumbu pilihan dan langkah sederhana membuatnya di rumah.',
-                                'date' => now()->subDays(5)->format('d M Y')
-                            ],
-                            [
-                                'category' => 'Gaya Hidup Sehat',
-                                'title' => 'Manfaat Kopi Gayo untuk Kesehatan & Stamina',
-                                'excerpt' => 'Kopi Gayo khas Aceh memiliki kandungan antioksidan tinggi yang mendukung metabolisme dan energi harian Anda secara alami.',
-                                'date' => now()->subDays(8)->format('d M Y')
-                            ]
-                        ];
-                    @endphp
-
-                    @foreach ($dummyBlogs as $i => $item)
-                        <article class="group flex flex-col bg-white rounded-2xl border border-[#E8F0E5] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1.5">
-                            {{-- Header Image / Graphic --}}
-                            <a href="{{ route('shop.search.index') }}" class="block relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE]">
-                                <div class="absolute inset-0 flex items-center justify-between p-6 bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] group-hover:scale-105 transition-transform duration-500">
-                                    <div class="flex flex-col justify-between h-full">
-                                        <span class="inline-block px-3 py-1 text-xs font-semibold text-[#2D5A27] bg-white/90 backdrop-blur-md rounded-full shadow-sm w-fit">
-                                            {{ $item['category'] }}
-                                        </span>
-                                        <div class="w-12 h-12 rounded-xl bg-white/80 backdrop-blur-md flex items-center justify-center text-[#2D5A27] shadow-sm">
-                                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-                                        </div>
-                                    </div>
-                                    <div class="opacity-15 transform translate-x-4 translate-y-4">
-                                        <svg class="w-32 h-32 text-[#2D5A27]" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                                    </div>
-                                </div>
-                            </a>
-
-                            {{-- Card Body --}}
-                            <div class="p-6 flex flex-col flex-1">
-                                <div class="flex items-center gap-2 text-xs font-medium text-[#737373] mb-3">
-                                    <svg class="w-3.5 h-3.5 text-[#2D5A27]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                                    </svg>
-                                    <span>{{ strtoupper($item['date']) }}</span>
-                                    <span>•</span>
-                                    <span>4 MIN READ</span>
-                                </div>
-
-                                <a href="{{ route('shop.search.index') }}" class="block">
-                                    <h3 class="text-lg md:text-xl font-bold text-[#171717] group-hover:text-[#2D5A27] transition-colors leading-snug line-clamp-2">
-                                        {{ $item['title'] }}
-                                    </h3>
-                                </a>
-
-                                <p class="mt-2.5 text-sm text-[#555555] leading-relaxed line-clamp-3">
-                                    {{ $item['excerpt'] }}
-                                </p>
-
-                                <div class="mt-auto pt-5 flex items-center text-xs font-bold text-[#2D5A27] group-hover:text-[#1E3A1E] transition-colors">
-                                    <span>Read Full Article</span>
-                                    <svg class="w-4 h-4 ml-1.5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                                </div>
-                            </div>
-                        </article>
-                    @endforeach
-                @endif
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     {{-- Map & Contact section ditampilkan lewat layout utama
          (shop::components.layouts.map-section) pada semua halaman,
