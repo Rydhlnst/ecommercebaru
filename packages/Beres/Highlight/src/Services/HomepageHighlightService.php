@@ -70,7 +70,7 @@ class HomepageHighlightService
                         'id' => $cat->id,
                         'name' => $cat->name,
                         'slug' => $cat->slug,
-                        'image' => $cat->image ? asset('storage/'.$cat->image) : null,
+                        'image' => $cat->image_url,
                     ] : null;
                 })
                 ->filter()
@@ -150,7 +150,7 @@ class HomepageHighlightService
             'id' => $cat->id,
             'name' => $cat->name,
             'slug' => $cat->slug,
-            'image' => $cat->image ? asset('storage/'.$cat->image) : null,
+            'image' => $cat->image_url,
         ]);
     }
 }

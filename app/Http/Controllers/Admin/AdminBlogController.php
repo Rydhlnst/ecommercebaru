@@ -222,11 +222,17 @@ class AdminBlogController extends Controller
         Storage::disk('public')->put($path, $encoded);
 
         try {
-            $publicDir = public_path('storage/uploads/blog/thumbnails');
-            if (! file_exists($publicDir)) {
-                @mkdir($publicDir, 0755, true);
+            $dir1 = public_path('storage/uploads/blog/thumbnails');
+            if (! file_exists($dir1)) {
+                @mkdir($dir1, 0777, true);
             }
-            @file_put_contents($publicDir.'/'.$filename, $encoded);
+            @file_put_contents($dir1.'/'.$filename, $encoded);
+
+            $dir2 = public_path('uploads/blog/thumbnails');
+            if (! file_exists($dir2)) {
+                @mkdir($dir2, 0777, true);
+            }
+            @file_put_contents($dir2.'/'.$filename, $encoded);
         } catch (\Throwable $e) {
         }
 

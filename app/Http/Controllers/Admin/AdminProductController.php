@@ -214,13 +214,19 @@ class AdminProductController extends Controller
 
             Storage::disk('public')->put($path, $encoded);
 
-            // Also write directly to public/storage for cPanel environments
+            // Also write directly to public/storage AND public/uploads for cPanel environments
             try {
-                $publicStorageDir = public_path('storage/uploads/products');
-                if (! file_exists($publicStorageDir)) {
-                    @mkdir($publicStorageDir, 0755, true);
+                $dir1 = public_path('storage/uploads/products');
+                if (! file_exists($dir1)) {
+                    @mkdir($dir1, 0777, true);
                 }
-                @file_put_contents($publicStorageDir.'/'.$filename, $encoded);
+                @file_put_contents($dir1.'/'.$filename, $encoded);
+
+                $dir2 = public_path('uploads/products');
+                if (! file_exists($dir2)) {
+                    @mkdir($dir2, 0777, true);
+                }
+                @file_put_contents($dir2.'/'.$filename, $encoded);
             } catch (\Throwable $e) {
                 // Ignore fallback error
             }

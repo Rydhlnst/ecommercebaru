@@ -11,6 +11,8 @@ class AdminCategory extends Model
 {
     protected $fillable = ['name', 'slug', 'image', 'parent_id'];
 
+    protected $appends = ['image_url'];
+
     protected static function booted(): void
     {
         static::creating(function (AdminCategory $model) {
@@ -24,6 +26,26 @@ class AdminCategory extends Model
                 $model->slug = Str::slug($model->name);
             }
         });
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        $path = $this->image;
+        if (empty($path)) {
+            return null;
+        }
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+        $path = ltrim($path, '/');
+        if (str_starts_with($path, 'storage/')) {
+            return asset($path);
+        }
+        if (file_exists(public_path($path))) {
+            return asset($path);
+        }
+
+        return asset('storage/'.$path);
     }
 
     public function parent(): BelongsTo
