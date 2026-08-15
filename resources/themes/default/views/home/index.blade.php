@@ -475,7 +475,7 @@
     {{-- ============ SHOP BY CATEGORY ============ --}}
     @php
         $homeCats = app(\Beres\Highlight\Services\HomepageHighlightService::class)
-            ->getCategories(6, $channel->root_category_id ?? 1);
+            ->getCategories(12);
     @endphp
     @if ($homeCats->isNotEmpty())
         <section class="bg-white beres-reveal">
@@ -488,13 +488,18 @@
                 {{-- Horizontal scroll row — single row on desktop --}}
                 <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
                     @foreach ($homeCats as $i => $cat)
-                        <a href="{{ route('shop.product_or_category.index', $cat['slug']) }}" class="group block shrink-0 w-[140px] sm:w-[160px] md:w-[180px]">
-                            <div class="aspect-[3/4] overflow-hidden transition-transform duration-500 group-hover:scale-[1.03] rounded-lg" style="background-color:{{ $bgPick($i) }};">
+                        <a href="{{ route('shop.admin_category.show', $cat['slug']) }}" class="group block shrink-0 w-[140px] sm:w-[160px] md:w-[180px]">
+                            <div class="aspect-[3/4] overflow-hidden transition-transform duration-500 group-hover:scale-[1.03] rounded-2xl relative flex items-center justify-center" style="background-color:{{ $bgPick($i) }};">
                                 @if(!empty($cat['image']))
                                     <img src="{{ $cat['image'] }}" alt="{{ $cat['name'] }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-[#F5F9F3] to-[#E8F0E5] text-[#2D5A27]">
+                                        <svg class="w-8 h-8 mb-2 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                                        <span class="text-xs font-semibold leading-tight">{{ $cat['name'] }}</span>
+                                    </div>
                                 @endif
                             </div>
-                            <p class="mt-2 text-center text-[11px] md:text-xs text-white px-2 py-1.5" style="background-color:#2D5A27; font-weight:500; border-radius:999px;">
+                            <p class="mt-2 text-center text-[11px] md:text-xs text-white px-2 py-1.5 transition-colors group-hover:bg-[#1E3D1A]" style="background-color:#2D5A27; font-weight:600; border-radius:999px;">
                                 {{ $cat['name'] }}
                             </p>
                         </a>

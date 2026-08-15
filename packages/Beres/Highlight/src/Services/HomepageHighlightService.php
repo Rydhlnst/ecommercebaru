@@ -121,29 +121,17 @@ class HomepageHighlightService
     }
 
     /**
-     * Fallback: return active categories from admin_categories.
+     * Fallback: return active parent categories from admin_categories regardless of product count.
      */
     protected function fallbackCategories(int $limit): Collection
     {
-        $cats = AdminCategory::whereHas('products', function ($q) {
-            $q->where('status', 'active');
-        })
-            ->withCount(['products' => function ($q) {
-                $q->where('status', 'active');
-            }])
-            ->orderByDesc('products_count')
+        $cats = AdminCategory::whereNull('parent_id')
+            ->orderBy('id', 'asc')
             ->limit($limit)
             ->get();
 
         if ($cats->isEmpty()) {
-            $cats = AdminCategory::whereNull('parent_id')
-                ->latest()
-                ->limit($limit)
-                ->get();
-
-            if ($cats->isEmpty()) {
-                $cats = AdminCategory::latest()->limit($limit)->get();
-            }
+            $cats = AdminCategory::orderBy('id', 'asc')->limit($limit)->get();
         }
 
         return $cats->map(fn ($cat) => [
