@@ -7,103 +7,63 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
+     * Helper to safely replace text in a column if table & column exist.
+     */
+    protected function replaceInTable(string $table, string $column): void
+    {
+        if (Schema::hasTable($table) && Schema::hasColumn($table, $column)) {
+            DB::table($table)
+                ->where($column, 'like', '%ankish%')
+                ->orWhere($column, 'like', '%Ankish%')
+                ->update([
+                    $column => DB::raw("REPLACE(REPLACE(`{$column}`, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
+                ]);
+        }
+    }
+
+    /**
      * Run the migrations.
      */
     public function up(): void
     {
-        // 1. Update admins table (Bagisto Admin user)
-        if (Schema::hasTable('admins')) {
-            DB::table('admins')
-                ->where('name', 'like', '%ankish%')
-                ->orWhere('name', 'like', '%Ankish%')
-                ->update([
-                    'name' => DB::raw("REPLACE(REPLACE(name, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
-                ]);
+        // 1. Admins table (Bagisto Admin user)
+        $this->replaceInTable('admins', 'name');
+        $this->replaceInTable('admins', 'email');
 
-            DB::table('admins')
-                ->where('email', 'like', '%ankish%')
-                ->update([
-                    'email' => DB::raw("REPLACE(email, 'ankish', 'ankesh')"),
-                ]);
-        }
+        // 2. Users table (Custom Admin / App users)
+        $this->replaceInTable('users', 'name');
+        $this->replaceInTable('users', 'email');
 
-        // 2. Update users table (Custom Admin / App users)
-        if (Schema::hasTable('users')) {
-            DB::table('users')
-                ->where('name', 'like', '%ankish%')
-                ->orWhere('name', 'like', '%Ankish%')
-                ->update([
-                    'name' => DB::raw("REPLACE(REPLACE(name, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
-                ]);
+        // 3. Customers table
+        $this->replaceInTable('customers', 'first_name');
+        $this->replaceInTable('customers', 'last_name');
+        $this->replaceInTable('customers', 'email');
 
-            DB::table('users')
-                ->where('email', 'like', '%ankish%')
-                ->update([
-                    'email' => DB::raw("REPLACE(email, 'ankish', 'ankesh')"),
-                ]);
-        }
+        // 4. Channel translations table
+        $this->replaceInTable('channel_translations', 'name');
+        $this->replaceInTable('channel_translations', 'description');
+        $this->replaceInTable('channel_translations', 'home_seo');
+        $this->replaceInTable('channel_translations', 'home_page_content');
+        $this->replaceInTable('channel_translations', 'footer_content');
 
-        // 3. Update customers table
-        if (Schema::hasTable('customers')) {
-            DB::table('customers')
-                ->where('first_name', 'like', '%ankish%')
-                ->orWhere('first_name', 'like', '%Ankish%')
-                ->update([
-                    'first_name' => DB::raw("REPLACE(REPLACE(first_name, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
-                ]);
+        // 5. Channels table
+        $this->replaceInTable('channels', 'home_seo');
+        $this->replaceInTable('channels', 'hostname');
 
-            DB::table('customers')
-                ->where('last_name', 'like', '%ankish%')
-                ->orWhere('last_name', 'like', '%Ankish%')
-                ->update([
-                    'last_name' => DB::raw("REPLACE(REPLACE(last_name, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
-                ]);
+        // 6. Site settings table
+        $this->replaceInTable('site_settings', 'value');
 
-            DB::table('customers')
-                ->where('email', 'like', '%ankish%')
-                ->update([
-                    'email' => DB::raw("REPLACE(email, 'ankish', 'ankesh')"),
-                ]);
-        }
+        // 7. Core config table
+        $this->replaceInTable('core_config', 'value');
 
-        // 4. Update channels & channel_translations
-        if (Schema::hasTable('channels')) {
-            DB::table('channels')
-                ->where('name', 'like', '%ankish%')
-                ->orWhere('name', 'like', '%Ankish%')
-                ->update([
-                    'name' => DB::raw("REPLACE(REPLACE(name, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
-                ]);
-        }
-
-        if (Schema::hasTable('channel_translations')) {
-            DB::table('channel_translations')
-                ->where('home_seo', 'like', '%ankish%')
-                ->orWhere('home_seo', 'like', '%Ankish%')
-                ->update([
-                    'home_seo' => DB::raw("REPLACE(REPLACE(home_seo, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
-                ]);
-        }
-
-        // 5. Update site_settings table
-        if (Schema::hasTable('site_settings')) {
-            DB::table('site_settings')
-                ->where('value', 'like', '%ankish%')
-                ->orWhere('value', 'like', '%Ankish%')
-                ->update([
-                    'value' => DB::raw("REPLACE(REPLACE(value, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
-                ]);
-        }
-
-        // 6. Update core_config table
-        if (Schema::hasTable('core_config')) {
-            DB::table('core_config')
-                ->where('value', 'like', '%ankish%')
-                ->orWhere('value', 'like', '%Ankish%')
-                ->update([
-                    'value' => DB::raw("REPLACE(REPLACE(value, 'Ankish', 'Ankesh'), 'ankish', 'ankesh')"),
-                ]);
-        }
+        // 8. CMS Pages & Categories if applicable
+        $this->replaceInTable('cms_page_translations', 'page_title');
+        $this->replaceInTable('cms_page_translations', 'html_content');
+        $this->replaceInTable('category_translations', 'name');
+        $this->replaceInTable('admin_categories', 'name');
+        $this->replaceInTable('admin_products', 'name');
+        $this->replaceInTable('blog_posts', 'title');
+        $this->replaceInTable('blog_posts', 'content');
     }
 
     /**
