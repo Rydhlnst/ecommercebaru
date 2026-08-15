@@ -19,21 +19,12 @@
             <span class="text-zinc-800 font-medium truncate max-w-xs md:max-w-md">{{ $post->title }}</span>
         </nav>
 
-        {{-- Hero Landscape Banner (Aspect Ratio 21:9 Widescreen Landscape) --}}
-        @if($postImg && $post->thumbnail)
-            <div class="rounded-2xl md:rounded-3xl overflow-hidden mb-8 shadow-xs bg-zinc-100">
-                <div class="w-full aspect-[16/9] md:aspect-[21/9] max-h-[520px] overflow-hidden">
-                    <img src="{{ $postImg }}" alt="{{ $post->title }}" class="w-full h-full object-cover object-center" loading="eager">
-                </div>
-            </div>
-        @endif
-
         {{-- Two-Column Layout (Main Article + Right Sidebar) --}}
         <div class="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
             {{-- Main Article Content (Clean Card with Soft Shadow, No Heavy Border) --}}
             <article class="w-full lg:flex-1 bg-white p-6 sm:p-8 md:p-10 rounded-2xl shadow-xs">
                 {{-- Header Inside Article --}}
-                <div class="mb-8">
+                <div class="mb-6">
                     <div class="flex items-center gap-3 mb-3 flex-wrap">
                         <span class="inline-block px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#2D5A27] bg-[#F5F9F3] rounded-full">
                             {{ $postCategory }}
@@ -49,6 +40,13 @@
                         {{ $post->title }}
                     </h1>
                 </div>
+
+                {{-- Featured Media (Standard 16:9 Video Aspect Ratio, Compact & Centered) --}}
+                @if($postImg && $post->thumbnail)
+                    <div class="rounded-xl md:rounded-2xl overflow-hidden mb-8 shadow-xs bg-zinc-100 aspect-video max-h-[420px] w-full flex items-center justify-center">
+                        <img src="{{ $postImg }}" alt="{{ $post->title }}" class="w-full h-full object-cover object-center" loading="eager">
+                    </div>
+                @endif
 
                 {{-- Article Body Content --}}
                 <div class="prose prose-zinc lg:prose-lg max-w-none text-[#2c2c2c] leading-relaxed">
