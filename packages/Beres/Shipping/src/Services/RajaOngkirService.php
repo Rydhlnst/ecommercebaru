@@ -2,6 +2,7 @@
 
 namespace Beres\Shipping\Services;
 
+use App\Models\SiteSetting;
 use Beres\Shipping\Contracts\RajaOngkirCacheRepositoryInterface;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -9,12 +10,13 @@ use Illuminate\Support\Facades\Log;
 class RajaOngkirService
 {
     protected string $apiKey;
+
     protected string $baseUrl;
 
     public function __construct(
         protected RajaOngkirCacheRepositoryInterface $cacheRepository
     ) {
-        $this->apiKey  = $this->readApiKey();
+        $this->apiKey = $this->readApiKey();
         $this->baseUrl = $this->readBaseUrl();
     }
 
@@ -23,10 +25,19 @@ class RajaOngkirService
      */
     protected function readApiKey(): string
     {
+        try {
+            $siteKey = (string) SiteSetting::getValue('rajaongkir_api_key');
+            if ($siteKey !== '') {
+                return $siteKey;
+            }
+        } catch (\Throwable $e) {
+        }
+
         $adminKey = (string) core()->getConfigData('beres_storefront.shipping.api_key');
         if ($adminKey !== '') {
             return $adminKey;
         }
+
         return (string) config('rajaongkir.api_key', '');
     }
 
@@ -35,11 +46,22 @@ class RajaOngkirService
      */
     protected function readBaseUrl(): string
     {
-        $adminType = (string) core()->getConfigData('beres_storefront.shipping.api_type');
-        $type      = $adminType !== '' ? $adminType : 'starter';
+        $type = 'starter';
+        try {
+            $siteType = (string) SiteSetting::getValue('rajaongkir_api_type');
+            if ($siteType !== '') {
+                $type = $siteType;
+            } else {
+                $adminType = (string) core()->getConfigData('beres_storefront.shipping.api_type');
+                if ($adminType !== '') {
+                    $type = $adminType;
+                }
+            }
+        } catch (\Throwable $e) {
+        }
 
         return match ($type) {
-            'pro'   => 'https://pro.rajaongkir.com/api',
+            'pro' => 'https://pro.rajaongkir.com/api',
             'basic' => 'https://api.rajaongkir.com/basic',
             default => (string) config('rajaongkir.base_url', 'https://api.rajaongkir.com/starter'),
         };
@@ -50,7 +72,15 @@ class RajaOngkirService
      */
     public function isActive(): bool
     {
-        return (bool) core()->getConfigData('beres_storefront.shipping.active');
+        try {
+            $siteActive = SiteSetting::getValue('rajaongkir_is_active');
+            if ($siteActive !== null && $siteActive !== '') {
+                return (bool) $siteActive;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return (bool) core()->getConfigData('beres_storefront.shipping.active', true);
     }
 
     /**
@@ -58,11 +88,20 @@ class RajaOngkirService
      */
     public function getOriginCity(): int
     {
+        try {
+            $siteCity = (string) SiteSetting::getValue('rajaongkir_origin_city');
+            if ($siteCity !== '') {
+                return (int) $siteCity;
+            }
+        } catch (\Throwable $e) {
+        }
+
         $admin = (string) core()->getConfigData('beres_storefront.shipping.origin_city');
         if ($admin !== '') {
             return (int) $admin;
         }
-        return (int) config('rajaongkir.origin_city', 501);
+
+        return (int) config('rajaongkir.origin_city', 152);
     }
 
     /**
@@ -74,6 +113,7 @@ class RajaOngkirService
         if ($raw === '') {
             return (array) config('rajaongkir.couriers', ['jne', 'jnt', 'sicepat']);
         }
+
         return array_values(array_filter(array_map('trim', explode(',', $raw))));
     }
 
@@ -98,12 +138,14 @@ class RajaOngkirService
             if ($data['rajaongkir']['status']['code'] == 200) {
                 $provinces = $data['rajaongkir']['results'];
                 $this->cacheRepository->set('province', $cacheKey, $provinces);
+
                 return $provinces;
             }
 
             return [];
         } catch (\Exception $e) {
-            Log::error('RajaOngkir Province Error: ' . $e->getMessage());
+            Log::error('RajaOngkir Province Error: '.$e->getMessage());
+
             return [];
         }
     }
@@ -131,12 +173,14 @@ class RajaOngkirService
             if ($data['rajaongkir']['status']['code'] == 200) {
                 $cities = $data['rajaongkir']['results'];
                 $this->cacheRepository->set('city', $cacheKey, $cities);
+
                 return $cities;
             }
 
             return [];
         } catch (\Exception $e) {
-            Log::error('RajaOngkir City Error: ' . $e->getMessage());
+            Log::error('RajaOngkir City Error: '.$e->getMessage());
+
             return [];
         }
     }
@@ -164,12 +208,14 @@ class RajaOngkirService
             if ($data['rajaongkir']['status']['code'] == 200) {
                 $districts = $data['rajaongkir']['results'];
                 $this->cacheRepository->set('district', $cacheKey, $districts);
+
                 return $districts;
             }
 
             return [];
         } catch (\Exception $e) {
-            Log::error('RajaOngkir District Error: ' . $e->getMessage());
+            Log::error('RajaOngkir District Error: '.$e->getMessage());
+
             return [];
         }
     }
@@ -183,7 +229,7 @@ class RajaOngkirService
         int $weight,
         array $couriers
     ): array {
-        $cacheKey = "cost_{$origin}_{$destination}_{$weight}_" . implode('_', $couriers);
+        $cacheKey = "cost_{$origin}_{$destination}_{$weight}_".implode('_', $couriers);
 
         if ($this->cacheRepository->has('shipping_cost', $cacheKey)) {
             return $this->cacheRepository->get('shipping_cost', $cacheKey);
@@ -193,10 +239,10 @@ class RajaOngkirService
             $response = Http::withHeaders([
                 'key' => $this->apiKey,
             ])->post("{$this->baseUrl}/cost", [
-                'origin'      => $origin,
+                'origin' => $origin,
                 'destination' => $destination,
-                'weight'      => $weight,
-                'courier'     => implode(',', $couriers),
+                'weight' => $weight,
+                'courier' => implode(',', $couriers),
             ]);
 
             $data = $response->json();
@@ -204,12 +250,14 @@ class RajaOngkirService
             if ($data['rajaongkir']['status']['code'] == 200) {
                 $costs = $data['rajaongkir']['results'];
                 $this->cacheRepository->set('shipping_cost', $cacheKey, $costs, 60); // Cache for 1 hour
+
                 return $costs;
             }
 
             return [];
         } catch (\Exception $e) {
-            Log::error('RajaOngkir Shipping Cost Error: ' . $e->getMessage());
+            Log::error('RajaOngkir Shipping Cost Error: '.$e->getMessage());
+
             return [];
         }
     }
@@ -234,7 +282,8 @@ class RajaOngkirService
 
             return [];
         } catch (\Exception $e) {
-            Log::error('RajaOngkir Address Search Error: ' . $e->getMessage());
+            Log::error('RajaOngkir Address Search Error: '.$e->getMessage());
+
             return [];
         }
     }

@@ -144,11 +144,14 @@
             </a>
 
             <div class="sidebar-heading">Pengaturan</div>
-            <a href="{{ route('admin.settings.policy') }}" class="sidebar-link {{ request()->routeIs('admin.settings.policy') ? 'active' : '' }}">
-                <i class="fas fa-file-alt"></i> Privacy & Policy
+            <a href="{{ route('admin.settings.integrations') }}" class="sidebar-link {{ request()->routeIs('admin.settings.integrations') ? 'active' : '' }}">
+                <i class="fas fa-plug"></i> Pembayaran & Ongkir (API)
             </a>
             <a href="{{ route('admin.settings.store') }}" class="sidebar-link {{ request()->routeIs('admin.settings.store') ? 'active' : '' }}">
                 <i class="fas fa-cog"></i> Pengaturan Toko
+            </a>
+            <a href="{{ route('admin.settings.policy') }}" class="sidebar-link {{ request()->routeIs('admin.settings.policy') ? 'active' : '' }}">
+                <i class="fas fa-file-alt"></i> Privacy & Policy
             </a>
 
             <div class="sidebar-heading mt-4"></div>

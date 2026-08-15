@@ -2,11 +2,12 @@
 
 namespace Beres\Payment\Services;
 
+use App\Models\SiteSetting;
+use Illuminate\Support\Facades\Log;
 use Midtrans\Config;
+use Midtrans\Notification;
 use Midtrans\Snap;
 use Midtrans\Transaction;
-use Midtrans\Notification;
-use Illuminate\Support\Facades\Log;
 
 class MidtransService
 {
@@ -20,10 +21,19 @@ class MidtransService
      */
     protected function setting(string $key, $default = null)
     {
+        try {
+            $siteValue = SiteSetting::getValue("midtrans_$key");
+            if ($siteValue !== null && $siteValue !== '') {
+                return $siteValue;
+            }
+        } catch (\Throwable $e) {
+        }
+
         $value = core()->getConfigData("beres_storefront.midtrans.$key");
         if ($value !== null && $value !== '') {
             return $value;
         }
+
         return config("midtrans.$key", $default);
     }
 
@@ -44,7 +54,15 @@ class MidtransService
      */
     public function isActive(): bool
     {
-        return (bool) core()->getConfigData('beres_storefront.midtrans.active');
+        try {
+            $siteActive = SiteSetting::getValue('midtrans_is_active');
+            if ($siteActive !== null && $siteActive !== '') {
+                return (bool) $siteActive;
+            }
+        } catch (\Throwable $e) {
+        }
+
+        return (bool) core()->getConfigData('beres_storefront.midtrans.active', true);
     }
 
     /**
@@ -56,6 +74,7 @@ class MidtransService
         if ($raw === '') {
             return ['credit_card', 'bca_va', 'bni_va', 'bri_va', 'mandiri_va', 'gopay', 'shopeepay', 'qris'];
         }
+
         return array_values(array_filter(array_map('trim', explode(',', $raw))));
     }
 
@@ -66,9 +85,10 @@ class MidtransService
     {
         try {
             $paymentUrl = Snap::getSnapUrl($params);
+
             return $paymentUrl;
         } catch (\Exception $e) {
-            Log::error('Midtrans Snap Error: ' . $e->getMessage());
+            Log::error('Midtrans Snap Error: '.$e->getMessage());
             throw $e;
         }
     }
@@ -87,11 +107,12 @@ class MidtransService
     public function getTransactionStatus(string $orderId): ?array
     {
         try {
-            $status = new Transaction();
+            $status = new Transaction;
             $response = $status->status($orderId);
+
             return $response;
         } catch (\Exception $e) {
-            Log::error('Midtrans Transaction Status Error: ' . $e->getMessage());
+            Log::error('Midtrans Transaction Status Error: '.$e->getMessage());
             throw $e;
         }
     }
@@ -102,11 +123,12 @@ class MidtransService
     public function approveTransaction(string $orderId): ?array
     {
         try {
-            $status = new Transaction();
+            $status = new Transaction;
             $response = $status->approve($orderId);
+
             return $response;
         } catch (\Exception $e) {
-            Log::error('Midtrans Approve Error: ' . $e->getMessage());
+            Log::error('Midtrans Approve Error: '.$e->getMessage());
             throw $e;
         }
     }
@@ -117,11 +139,12 @@ class MidtransService
     public function cancelTransaction(string $orderId): ?array
     {
         try {
-            $status = new Transaction();
+            $status = new Transaction;
             $response = $status->cancel($orderId);
+
             return $response;
         } catch (\Exception $e) {
-            Log::error('Midtrans Cancel Error: ' . $e->getMessage());
+            Log::error('Midtrans Cancel Error: '.$e->getMessage());
             throw $e;
         }
     }
@@ -132,11 +155,12 @@ class MidtransService
     public function expireTransaction(string $orderId): ?array
     {
         try {
-            $status = new Transaction();
+            $status = new Transaction;
             $response = $status->expire($orderId);
+
             return $response;
         } catch (\Exception $e) {
-            Log::error('Midtrans Expire Error: ' . $e->getMessage());
+            Log::error('Midtrans Expire Error: '.$e->getMessage());
             throw $e;
         }
     }
@@ -144,14 +168,15 @@ class MidtransService
     /**
      * Refund a transaction.
      */
-    public function refundTransaction(string $orderId, float $amount, string $reason = null): ?array
+    public function refundTransaction(string $orderId, float $amount, ?string $reason = null): ?array
     {
         try {
-            $status = new Transaction();
+            $status = new Transaction;
             $response = $status->refund($orderId, $amount, $reason);
+
             return $response;
         } catch (\Exception $e) {
-            Log::error('Midtrans Refund Error: ' . $e->getMessage());
+            Log::error('Midtrans Refund Error: '.$e->getMessage());
             throw $e;
         }
     }
@@ -168,14 +193,15 @@ class MidtransService
             $serverKey = (string) $this->setting('server_key', '');
 
             // Build verification string
-            $orderId . $statusCode . $grossAmount . $serverKey;
+            $orderId.$statusCode.$grossAmount.$serverKey;
 
             $signatureKey = $notification->signature_key;
-            $expectedSignature = hash('sha512', $orderId . $statusCode . $grossAmount . $serverKey);
+            $expectedSignature = hash('sha512', $orderId.$statusCode.$grossAmount.$serverKey);
 
             return $signatureKey === $expectedSignature;
         } catch (\Exception $e) {
-            Log::error('Midtrans Signature Verification Error: ' . $e->getMessage());
+            Log::error('Midtrans Signature Verification Error: '.$e->getMessage());
+
             return false;
         }
     }

@@ -142,6 +142,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             'faqs' => 'faq',
         ]);
 
+        Route::get('/settings/integrations', [AdminSettingController::class, 'integrations'])->name('settings.integrations');
+        Route::post('/settings/integrations', [AdminSettingController::class, 'updateIntegrations'])->name('settings.integrations.update');
         Route::get('/settings/policy', [AdminSettingController::class, 'policy'])->name('settings.policy');
         Route::post('/settings/policy', [AdminSettingController::class, 'updatePolicy'])->name('settings.policy.update');
         Route::get('/settings/store', [AdminSettingController::class, 'store'])->name('settings.store');

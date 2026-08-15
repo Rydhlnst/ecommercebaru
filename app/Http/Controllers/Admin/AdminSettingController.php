@@ -93,4 +93,50 @@ class AdminSettingController extends Controller
 
         return redirect()->route('admin.settings.store')->with('success', 'Pengaturan toko berhasil diperbarui.');
     }
+
+    public function integrations()
+    {
+        $settings = collect();
+
+        try {
+            if (Schema::hasTable('site_settings')) {
+                $settings = SiteSetting::getMany([
+                    'midtrans_server_key',
+                    'midtrans_client_key',
+                    'midtrans_merchant_id',
+                    'midtrans_environment',
+                    'midtrans_is_active',
+                    'rajaongkir_api_key',
+                    'rajaongkir_origin_city',
+                    'rajaongkir_api_type',
+                    'rajaongkir_is_active',
+                ]);
+            }
+        } catch (QueryException $e) {
+            // Table might not exist yet
+        }
+
+        return view('admin.setting.integrations', compact('settings'));
+    }
+
+    public function updateIntegrations(Request $request)
+    {
+        $validated = $request->validate([
+            'midtrans_server_key' => 'nullable|string',
+            'midtrans_client_key' => 'nullable|string',
+            'midtrans_merchant_id' => 'nullable|string',
+            'midtrans_environment' => 'nullable|string|in:sandbox,production',
+            'midtrans_is_active' => 'nullable|in:0,1',
+            'rajaongkir_api_key' => 'nullable|string',
+            'rajaongkir_origin_city' => 'nullable|string',
+            'rajaongkir_api_type' => 'nullable|string|in:starter,basic,pro',
+            'rajaongkir_is_active' => 'nullable|in:0,1',
+        ]);
+
+        foreach ($validated as $key => $value) {
+            SiteSetting::setValue($key, $value);
+        }
+
+        return redirect()->route('admin.settings.integrations')->with('success', 'Pengaturan Pembayaran & Ongkir berhasil disimpan.');
+    }
 }
