@@ -51,6 +51,8 @@ class AdminProductController extends Controller
 
     public function store(Request $request)
     {
+        $hasVariations = $request->boolean('has_variations');
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:admin_categories,id',
@@ -58,19 +60,21 @@ class AdminProductController extends Controller
             'description' => 'nullable|string',
             'is_featured' => 'nullable|boolean',
             'has_variations' => 'nullable|boolean',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+            'price' => $hasVariations ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
+            'stock' => $hasVariations ? 'nullable|integer|min:0' : 'required|integer|min:0',
             'status' => 'nullable|in:active,inactive',
             'images' => 'nullable|array|max:5',
-            'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'variation_weight' => 'nullable|array',
             'variation_price' => 'nullable|array',
             'variation_stock' => 'nullable|array',
         ]);
 
         $validated['is_featured'] = $request->boolean('is_featured');
-        $validated['has_variations'] = $request->boolean('has_variations');
+        $validated['has_variations'] = $hasVariations;
         $validated['status'] = $validated['status'] ?? 'active';
+        $validated['price'] = $validated['price'] ?? 0;
+        $validated['stock'] = $validated['stock'] ?? 0;
 
         $product = AdminProduct::create($validated);
 
@@ -95,6 +99,8 @@ class AdminProductController extends Controller
 
     public function update(Request $request, AdminProduct $product)
     {
+        $hasVariations = $request->boolean('has_variations');
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:admin_categories,id',
@@ -102,19 +108,21 @@ class AdminProductController extends Controller
             'description' => 'nullable|string',
             'is_featured' => 'nullable|boolean',
             'has_variations' => 'nullable|boolean',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+            'price' => $hasVariations ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
+            'stock' => $hasVariations ? 'nullable|integer|min:0' : 'required|integer|min:0',
             'status' => 'nullable|in:active,inactive',
             'images' => 'nullable|array|max:5',
-            'images.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'variation_weight' => 'nullable|array',
             'variation_price' => 'nullable|array',
             'variation_stock' => 'nullable|array',
         ]);
 
         $validated['is_featured'] = $request->boolean('is_featured');
-        $validated['has_variations'] = $request->boolean('has_variations');
+        $validated['has_variations'] = $hasVariations;
         $validated['status'] = $validated['status'] ?? 'active';
+        $validated['price'] = $validated['price'] ?? 0;
+        $validated['stock'] = $validated['stock'] ?? 0;
 
         $product->update($validated);
 

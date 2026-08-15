@@ -158,7 +158,7 @@
                 <div>
                     <p class="text-sm font-semibold text-cream mb-4">DETAIL KONTAK</p>
                     <div class="text-sm text-mist/80 space-y-4">
-                        <p>&copy; {{ date('Y') }} {{ config('app.name') }}.<br>Dikelola dan Dipasarkan oleh <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a></p>
+                        <p>&copy; {{ date('Y') }} {{ config('app.name') }}</p>
                         <div class="flex items-start gap-3">
                             <span class="icon-location text-lg mt-0.5 text-mist/80"></span>
                             <p>235 ABBAS BLOCK<br>MUSTAFA TOWN</p>
@@ -225,7 +225,7 @@
     {{-- Bottom bar --}}
     <div class="border-t border-white/10">
         <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-5 text-center text-sm text-mist/60">
-            &copy; {{ date('Y') }}, {{ config('app.name') }} Dikelola dan Dipasarkan oleh <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a>
+            &copy; {{ date('Y') }}, {{ config('app.name') }}
         </div>
     </div>
 </footer>

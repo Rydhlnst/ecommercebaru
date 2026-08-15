@@ -61,7 +61,7 @@ class AdminBlogController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
             'blog_category_id' => 'nullable|exists:blog_categories,id',
-            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'tags' => 'nullable|string',
             'is_published' => 'nullable|boolean',
         ]);
@@ -94,7 +94,7 @@ class AdminBlogController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
             'blog_category_id' => 'nullable|exists:blog_categories,id',
-            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'thumbnail' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'tags' => 'nullable|string',
             'is_published' => 'nullable|boolean',
         ]);

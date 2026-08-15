@@ -248,7 +248,7 @@
     <div class="border-t border-cocoa">
         <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-mist">
             <p>
-                © {{ date('Y') }}, {{ config('app.name') }} Managed and Marketed by <a href="https://www.zcorebit.com/" target="_blank" class="underline hover:text-cream">Zcorebit.com</a>
+                © {{ date('Y') }}, {{ config('app.name') }}
             </p>
         </div>
     </div>

@@ -54,7 +54,7 @@ class AdminCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:admin_categories,name',
             'parent_id' => 'nullable|exists:admin_categories,id',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
@@ -82,7 +82,7 @@ class AdminCategoryController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:admin_categories,name,'.$category->id,
             'parent_id' => 'nullable|exists:admin_categories,id',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
