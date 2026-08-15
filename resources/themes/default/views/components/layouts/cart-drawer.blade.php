@@ -195,6 +195,41 @@
         };
     }
 
+    if (typeof window.beresBuyNow !== 'function') {
+        window.beresBuyNow = async function (form) {
+            var productId = form.querySelector('[name="product_id"]').value;
+            var qtyEl = form.querySelector('[name="quantity"]');
+            var quantity = parseInt((qtyEl ? qtyEl.value : 1) || 1, 10);
+            var token = (document.querySelector('meta[name="csrf-token"]')?.content) || (form.querySelector('[name="_token"]')?.value);
+
+            var variantInput = form.querySelector('.beres-variant-input');
+            var selectedVariantId = variantInput ? parseInt(variantInput.value, 10) : null;
+
+            var payload = { product_id: productId, quantity: quantity };
+            if (selectedVariantId && !isNaN(selectedVariantId)) {
+                payload.selected_configurable_option = selectedVariantId;
+            }
+
+            try {
+                var res = await fetch(form.action, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest', 'X-CSRF-TOKEN': token },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(payload),
+                });
+                var data = await res.json().catch(function () { return ({}); });
+
+                if (res.ok && data.success) {
+                    window.location.href = '{{ route("shop.checkout.onepage.index") }}';
+                } else {
+                    alert(data.message || 'Gagal melanjutkan ke pembayaran.');
+                }
+            } catch (e) {
+                alert('Gagal terhubung ke server.');
+            }
+        };
+    }
+
     // ---- Qty stepper + variant selector (cards) — guarded ----
     if (typeof window.beresQty !== 'function') {
         window.beresQty = function (btn, delta) {

@@ -103,7 +103,7 @@
                     </div>
                 @endif
 
-                {{-- Add to Cart --}}
+                {{-- Add to Cart & Buy Now --}}
                 @if($product->stock > 0)
                     <form action="{{ route('cart.add') }}" method="POST" class="mt-auto" id="pdp-form" onsubmit="event.preventDefault(); pdpAddToCart(this);">
                         @csrf
@@ -113,19 +113,26 @@
                         @endif
 
                         {{-- Quantity stepper --}}
-                        <p class="text-sm font-medium text-[#171717] mb-2">Quantity</p>
-                        <div class="flex items-center gap-3 mb-3">
-                            <div class="flex items-center border border-[#E8F0E5] rounded-lg overflow-hidden h-12">
+                        <p class="text-sm font-medium text-[#171717] mb-2">@lang('shop::app.products.quantity', [], 'Jumlah')</p>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="flex items-center border border-[#E8F0E5] rounded-lg overflow-hidden h-12 bg-white">
                                 <button type="button" class="w-11 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-xl leading-none" onclick="pdpQty(-1)" aria-label="Kurangi">−</button>
                                 <input type="number" name="quantity" value="1" min="1" max="99" id="pdp-qty" class="w-12 h-full text-center text-sm border-0 border-x border-[#E8F0E5] focus:outline-none bg-transparent font-semibold leading-none" aria-label="Jumlah">
                                 <button type="button" class="w-11 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-xl leading-none" onclick="pdpQty(1)" aria-label="Tambah">+</button>
                             </div>
                         </div>
 
-                        <button type="submit" class="pdp-btn-primary">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                            Tambah ke Keranjang
-                        </button>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button type="submit" class="pdp-btn-primary flex items-center justify-center gap-2 w-full">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                                <span>@lang('shop::app.products.add-to-cart', [], 'Tambah ke Keranjang')</span>
+                            </button>
+
+                            <button type="button" onclick="pdpBuyNow(document.getElementById('pdp-form'))" class="w-full h-12 flex items-center justify-center gap-2 font-semibold text-sm uppercase tracking-wider text-white bg-[#171717] hover:bg-black transition-colors rounded-xl shadow-sm">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                <span>@lang('shop::app.products.buy-now', [], 'Beli Sekarang')</span>
+                            </button>
+                        </div>
                     </form>
                 @endif
 
@@ -134,7 +141,7 @@
                 @if($wa)
                     <a href="https://wa.me/{{ $wa }}?text=Halo, saya tertarik dengan {{ urlencode($product->name) }}" target="_blank" class="pdp-btn-whatsapp mt-3">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                        Hubungi via WhatsApp
+                        @lang('shop::app.products.contact-wa', [], 'Hubungi via WhatsApp')
                     </a>
                 @endif
             </div>
@@ -229,6 +236,40 @@
             } catch (e) {
                 alert('Gagal terhubung ke server.');
                 if (btn) { btn.disabled = false; btn.textContent = original; }
+            }
+        };
+
+        window.pdpBuyNow = async function (form) {
+            const productId = form.querySelector('[name="product_id"]').value;
+            const quantity  = parseInt(document.getElementById('pdp-qty')?.value || 1, 10);
+            const token     = document.querySelector('meta[name="csrf-token"]')?.content
+                           || form.querySelector('[name="_token"]')?.value;
+
+            const payload = { product_id: productId, quantity };
+            const variantInput = document.getElementById('pdp-variant-input');
+            if (variantInput) payload.selected_configurable_option = parseInt(variantInput.value, 10);
+
+            try {
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': token,
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify(payload),
+                });
+
+                const data = await res.json().catch(() => ({}));
+                if (res.ok && data.success) {
+                    window.location.href = "{{ route('shop.checkout.onepage.index') }}";
+                } else {
+                    alert(data.message || 'Gagal melanjutkan ke pembayaran.');
+                }
+            } catch (e) {
+                alert('Gagal terhubung ke server.');
             }
         };
     </script>
