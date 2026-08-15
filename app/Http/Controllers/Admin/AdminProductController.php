@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\AdminCategory;
 use App\Models\AdminProduct;
 use App\Models\AdminProductImage;
+use App\Models\AdminProductVariation;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -199,6 +201,28 @@ class AdminProductController extends Controller
                 'image_path' => $path,
                 'sort_order' => $index,
             ]);
+        }
+    }
+
+    public function clearAll()
+    {
+        try {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            if (Schema::hasTable('admin_product_images')) {
+                AdminProductImage::truncate();
+            }
+            if (Schema::hasTable('admin_product_variations')) {
+                AdminProductVariation::truncate();
+            }
+            AdminProduct::truncate();
+            if (Schema::hasTable('homepage_highlights')) {
+                DB::table('homepage_highlights')->where('section', '!=', 'categories')->delete();
+            }
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+            return redirect()->route('admin.products.index')->with('success', 'Seluruh data produk dan variasi berhasil dikosongkan.');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal mengosongkan produk: '.$e->getMessage());
         }
     }
 }

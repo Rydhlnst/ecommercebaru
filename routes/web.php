@@ -109,10 +109,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::middleware(['web', 'admin.auth'])->group(function () {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
+        Route::post('/categories/clear-all', [AdminCategoryController::class, 'clearAll'])->name('categories.clearAll');
         Route::resource('categories', AdminCategoryController::class)->parameters([
             'categories' => 'category',
         ]);
 
+        Route::post('/products/clear-all', [AdminProductController::class, 'clearAll'])->name('products.clearAll');
         Route::resource('products', AdminProductController::class)->parameters([
             'products' => 'product',
         ]);

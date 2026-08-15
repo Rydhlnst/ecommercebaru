@@ -6,9 +6,19 @@
 @section('admin_content')
 <div class="page-header">
     <h1>Kelola Produk</h1>
-    <a href="{{ route('admin.products.create') }}" class="btn-primary">
-        <i class="fas fa-plus mr-1"></i> Tambah Produk
-    </a>
+    <div class="flex items-center gap-3">
+        @if($products->total() > 0)
+            <form action="{{ route('admin.products.clearAll') }}" method="POST" onsubmit="return confirmClearAllProducts(this)">
+                @csrf
+                <button type="submit" class="btn-danger">
+                    <i class="fas fa-trash-alt mr-1"></i> Kosongkan Semua Produk
+                </button>
+            </form>
+        @endif
+        <a href="{{ route('admin.products.create') }}" class="btn-primary">
+            <i class="fas fa-plus mr-1"></i> Tambah Produk
+        </a>
+    </div>
 </div>
 
 <div class="admin-panel-card">
@@ -116,6 +126,23 @@ function confirmDelete(form) {
         confirmButtonColor: '#dc2626',
         cancelButtonColor: '#6b7280',
         confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) form.submit();
+    });
+    return false;
+}
+
+function confirmClearAllProducts(form) {
+    event.preventDefault();
+    Swal.fire({
+        title: 'Kosongkan Semua Produk?',
+        text: 'PERINGATAN: Seluruh produk dan gambar di database akan dihapus bersih!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, Kosongkan Semua',
         cancelButtonText: 'Batal'
     }).then((result) => {
         if (result.isConfirmed) form.submit();

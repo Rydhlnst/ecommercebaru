@@ -7,6 +7,7 @@ use App\Models\AdminCategory;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -120,6 +121,22 @@ class AdminCategoryController extends Controller
         $category->delete();
 
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil dihapus.');
+    }
+
+    public function clearAll()
+    {
+        try {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            AdminCategory::truncate();
+            if (Schema::hasTable('homepage_highlights')) {
+                DB::table('homepage_highlights')->where('section', 'categories')->delete();
+            }
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
+            return redirect()->route('admin.categories.index')->with('success', 'Seluruh data kategori berhasil dikosongkan.');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal mengosongkan kategori: '.$e->getMessage());
+        }
     }
 
     private function compressImage($file)
