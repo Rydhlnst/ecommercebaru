@@ -312,7 +312,7 @@
 <x-shop::layouts>
     <x-slot:title>{{ $channel->home_seo['meta_title'] ?? '' }}</x-slot>
 
-    {{-- ============ HERO CAROUSEL (full-width, gambar penuh) ============ --}}
+    {{-- ============ HERO CAROUSEL ============ --}}
     @php
         $heroSlides = array_values(array_filter([
             $c('hero.slide1_img'),
@@ -320,35 +320,49 @@
             $c('hero.slide3_img'),
             $c('hero.slide4_img'),
         ]));
-        if (empty($heroSlides)) {
-            $heroSlides = [
-                'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=2000&q=80',
-                'https://images.unsplash.com/photo-1506806732259-39c2d0268443?auto=format&fit=crop&w=2000&q=80',
-                'https://images.unsplash.com/photo-1490818387583-1baba5e638af?auto=format&fit=crop&w=2000&q=80',
-            ];
-        }
     @endphp
 
-    <section class="beres-hero" aria-label="Carousel hero">
-        <div class="beres-hero__track" id="beresHeroTrack">
-            @foreach ($heroSlides as $i => $img)
-                <div class="beres-hero__slide" data-idx="{{ $i }}">
-                    <img src="{{ $img }}" alt="Slide {{ $i + 1 }}" loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
-                </div>
-            @endforeach
-        </div>
-
-        @if (count($heroSlides) > 1)
-            <button type="button" class="beres-hero__nav beres-hero__nav--prev" aria-label="Slide sebelumnya" onclick="beresHeroGo(-1)">&#10094;</button>
-            <button type="button" class="beres-hero__nav beres-hero__nav--next" aria-label="Slide berikutnya" onclick="beresHeroGo(1)">&#10095;</button>
-
-            <div class="beres-hero__dots" role="tablist">
+    @if (!empty($heroSlides))
+        <section class="beres-hero" aria-label="Carousel hero">
+            <div class="beres-hero__track" id="beresHeroTrack">
                 @foreach ($heroSlides as $i => $img)
-                    <button type="button" class="beres-hero__dot {{ $i === 0 ? 'is-active' : '' }}" data-idx="{{ $i }}" aria-label="Slide {{ $i + 1 }}" onclick="beresHeroGoto({{ $i }})"></button>
+                    <div class="beres-hero__slide" data-idx="{{ $i }}">
+                        <img src="{{ $img }}" alt="Slide {{ $i + 1 }}" loading="{{ $i === 0 ? 'eager' : 'lazy' }}">
+                    </div>
                 @endforeach
             </div>
-        @endif
-    </section>
+
+            @if (count($heroSlides) > 1)
+                <button type="button" class="beres-hero__nav beres-hero__nav--prev" aria-label="Slide sebelumnya" onclick="beresHeroGo(-1)">&#10094;</button>
+                <button type="button" class="beres-hero__nav beres-hero__nav--next" aria-label="Slide berikutnya" onclick="beresHeroGo(1)">&#10095;</button>
+
+                <div class="beres-hero__dots" role="tablist">
+                    @foreach ($heroSlides as $i => $img)
+                        <button type="button" class="beres-hero__dot {{ $i === 0 ? 'is-active' : '' }}" data-idx="{{ $i }}" aria-label="Slide {{ $i + 1 }}" onclick="beresHeroGoto({{ $i }})"></button>
+                    @endforeach
+                </div>
+            @endif
+        </section>
+    @else
+        <section class="relative bg-[#2D5A27] text-white py-16 md:py-24 overflow-hidden beres-reveal">
+            <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 text-center">
+                <span class="inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-white/10 text-white mb-4">
+                    {{ config('app.name', 'Ankesh Mart') }}
+                </span>
+                <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 max-w-3xl mx-auto leading-tight">
+                    {{ $c('hero.headline', 'Selamat Datang di ' . config('app.name', 'Ankesh Mart')) }}
+                </h1>
+                <p class="text-sm md:text-base text-white/80 max-w-xl mx-auto mb-8 leading-relaxed">
+                    {{ $c('hero.subhead', 'Pusat belanja online terpercaya untuk kebutuhan Anda.') }}
+                </p>
+                <div class="flex items-center justify-center gap-4">
+                    <a href="{{ route('shop.search.index') }}" class="px-8 py-3.5 bg-white text-[#2D5A27] font-bold text-sm uppercase tracking-wider rounded-full hover:bg-cream transition-colors shadow-sm">
+                        Belanja Sekarang
+                    </a>
+                </div>
+            </div>
+        </section>
+    @endif
 
     {{-- Style & script hero dipindah ke @push di bawah supaya tidak di-drop oleh Vue --}}
 
