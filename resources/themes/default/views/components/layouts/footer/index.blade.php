@@ -70,15 +70,25 @@
                 $col1Title = \App\Models\SiteSetting::getValue('footer_col1_title') ?: 'About Us';
                 $col1Raw = \App\Models\SiteSetting::getValue('footer_col1_links');
                 $col1Items = [];
-                if ($col1Raw && trim($col1Raw) !== '') {
-                    foreach (preg_split("/\r?\n/", $col1Raw) as $line) {
-                        $line = trim($line);
-                        if ($line === '') continue;
-                        [$title, $url] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
-                        if ($title !== '') {
-                            $col1Items[] = ['title' => $title, 'url' => $url ?: '#'];
+                if ($col1Raw !== null) {
+                    if (trim($col1Raw) !== '') {
+                        foreach (preg_split("/\r?\n/", $col1Raw) as $line) {
+                            $line = trim($line);
+                            if ($line === '') continue;
+                            [$title, $url] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
+                            if ($title !== '') {
+                                $col1Items[] = ['title' => $title, 'url' => $url ?: '#'];
+                            }
                         }
                     }
+                } else {
+                    $col1Items = [
+                        ['title' => 'About Us', 'url' => '/about-us'],
+                        ['title' => 'Contact Us', 'url' => '/contact-us'],
+                        ['title' => 'Customer Service', 'url' => '/customer-service'],
+                        ['title' => 'What\'s New', 'url' => '/whats-new'],
+                        ['title' => 'Terms & Conditions', 'url' => '/page/terms-conditions'],
+                    ];
                 }
             @endphp
             @if(!empty($col1Items))
@@ -97,15 +107,25 @@
                 $col2Title = \App\Models\SiteSetting::getValue('footer_col2_title') ?: 'Privacy Policy';
                 $col2Raw = \App\Models\SiteSetting::getValue('footer_col2_links');
                 $col2Items = [];
-                if ($col2Raw && trim($col2Raw) !== '') {
-                    foreach (preg_split("/\r?\n/", $col2Raw) as $line) {
-                        $line = trim($line);
-                        if ($line === '') continue;
-                        [$title, $url] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
-                        if ($title !== '') {
-                            $col2Items[] = ['title' => $title, 'url' => $url ?: '#'];
+                if ($col2Raw !== null) {
+                    if (trim($col2Raw) !== '') {
+                        foreach (preg_split("/\r?\n/", $col2Raw) as $line) {
+                            $line = trim($line);
+                            if ($line === '') continue;
+                            [$title, $url] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
+                            if ($title !== '') {
+                                $col2Items[] = ['title' => $title, 'url' => $url ?: '#'];
+                            }
                         }
                     }
+                } else {
+                    $col2Items = [
+                        ['title' => 'Payment Policy', 'url' => '/page/payment-policy'],
+                        ['title' => 'Shipping Policy', 'url' => '/page/shipping-policy'],
+                        ['title' => 'Refund Policy', 'url' => '/page/refund-policy'],
+                        ['title' => 'Return Policy', 'url' => '/page/return-policy'],
+                        ['title' => 'FAQ', 'url' => '/faq'],
+                    ];
                 }
             @endphp
             @if(!empty($col2Items))
