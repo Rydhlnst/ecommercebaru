@@ -23,7 +23,7 @@
                     class="block absolute inset-0"
                 >
                     <x-shop::media.images.lazy
-                        class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                        class="absolute inset-0 w-full h-full object-contain p-2 transition-opacity duration-500 group-hover:opacity-0"
                         ::src="product.base_image.medium_image_url"
                         ::srcset="`
                             ${product.base_image.small_image_url} 150w,
@@ -38,7 +38,7 @@
                     />
 
                     <img
-                        class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 scale-[1.02]"
+                        class="absolute inset-0 w-full h-full object-contain p-2 opacity-0 transition-opacity duration-500 group-hover:opacity-100 scale-[1.02]"
                         :src="(product.images && product.images[1]) ? product.images[1].medium_image_url : product.base_image.large_image_url"
                         :alt="product.name"
                         loading="lazy"
@@ -210,7 +210,7 @@
                 {!! view_render_event('bagisto.shop.components.products.card.image.before') !!}
                 <a :href="'{{ route('shop.product_or_category.index', ':slug') }}'.replace(':slug', product.url_key)">
                     <x-shop::media.images.lazy
-                        class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                        class="absolute inset-0 w-full h-full object-contain p-2 transition-transform duration-500 group-hover:scale-[1.03]"
                         ::src="product.base_image.medium_image_url"
                         ::key="product.id"
                         ::index="product.id"

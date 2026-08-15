@@ -131,7 +131,7 @@
     .beres-hero{position:relative;width:100%;overflow:hidden;background:#f8f9fa;}
     .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform;}
     .beres-hero__slide{flex:0 0 100%;width:100%;aspect-ratio:16/7;background:#f8f9fa;}
-    .beres-hero__slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
+    .beres-hero__slide img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;}
     @media (max-width:768px){.beres-hero__slide{aspect-ratio:4/5;}}
     .beres-hero__nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:rgba(255,255,255,.85);color:#1A3E1A;border:0;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.15);}
     .beres-hero__nav:hover{background:#fff;}
@@ -392,7 +392,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
                     <a href="{{ $fpUrl }}" class="block aspect-square md:aspect-[4/5] overflow-hidden rounded-2xl relative" style="background-color:#E8F0E5;">
                         @if ($fpImage)
-                            <img src="{{ $fpImage }}" alt="{{ $fpName }}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-[1.02]" loading="lazy">
+                            <img src="{{ $fpImage }}" alt="{{ $fpName }}" class="w-full h-full object-contain p-3 transition-transform duration-500 hover:scale-[1.02]" loading="lazy">
                         @else
                             <div class="w-full h-full flex flex-col items-center justify-center text-[#2D5A27]/40 p-8 text-center bg-gradient-to-br from-[#E8F0E5] to-[#DCE8D6]">
                                 <svg class="w-16 h-16 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
@@ -496,7 +496,7 @@
                         <a href="{{ route('shop.admin_category.show', $cat['slug']) }}" class="group block shrink-0 w-[150px] sm:w-[170px] md:w-[190px]">
                             <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.03] rounded-2xl relative flex items-center justify-center border border-[#E8F0E5] shadow-xs" style="background-color:{{ $bgPick($i) }};">
                                 @if(!empty($cat['image']))
-                                    <img src="{{ $cat['image'] }}" alt="{{ $cat['name'] }}" class="w-full h-full object-cover">
+                                    <img src="{{ $cat['image'] }}" alt="{{ $cat['name'] }}" class="w-full h-full object-contain p-1">
                                 @else
                                     <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-[#F5F9F3] to-[#E8F0E5] text-[#2D5A27]">
                                         <svg class="w-8 h-8 mb-2 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
@@ -704,7 +704,7 @@
                             {{-- Unified 16:9 Thumbnail Banner Container --}}
                             <a href="{{ $blogUrl }}" class="block relative w-full overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] shrink-0" style="aspect-ratio:16/9; height:200px; max-height:220px;">
                                 @if ($blogImg)
-                                    <img src="{{ $blogImg }}" alt="{{ $blogTitle }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
+                                    <img src="{{ $blogImg }}" alt="{{ $blogTitle }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" style="width:100%; height:100%; object-fit:contain;" loading="lazy">
                                 @else
                                     <div class="w-full h-full flex flex-col justify-between p-5 bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] group-hover:scale-105 transition-transform duration-500" style="width:100%; height:100%;">
                                         <span class="inline-block px-3 py-1 text-xs font-semibold text-[#2D5A27] bg-white/90 backdrop-blur-md rounded-full shadow-xs w-fit">
