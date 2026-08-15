@@ -40,9 +40,4 @@ class AdminCategory extends Model
     {
         return $this->hasMany(AdminProduct::class, 'category_id');
     }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
 }

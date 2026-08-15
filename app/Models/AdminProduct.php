@@ -55,9 +55,4 @@ class AdminProduct extends Model
     {
         return $this->hasMany(AdminReview::class, 'product_id');
     }
-
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
 }

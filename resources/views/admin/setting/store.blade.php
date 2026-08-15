@@ -247,6 +247,71 @@
                 <input type="text" name="footer_newsletter_text" value="{{ old('footer_newsletter_text', $settings['footer_newsletter_text'] ?? '') }}" placeholder="Jadilah yang pertama mendengar tentang produk baru, acara eksklusif, dan penawaran online." class="form-input text-sm">
             </div>
         </div>
+
+        {{-- Layanan & Trust Badges (Editable Feature Icons) --}}
+        @php
+            $featuresRaw = $settings['service_features'] ?? null;
+            $featuresList = [];
+            if ($featuresRaw) {
+                $featuresList = json_decode($featuresRaw, true) ?: [];
+            }
+            if (empty($featuresList)) {
+                $featuresList = [
+                    ['icon' => 'fas fa-truck-fast', 'title' => 'Gratis Ongkir', 'description' => 'Bebas ongkir untuk pesanan tertentu'],
+                    ['icon' => 'fas fa-rotate-left', 'title' => 'Garansi Produk', 'description' => 'Jaminan ganti baru bila rusak'],
+                    ['icon' => 'fas fa-shield-halved', 'title' => 'Pembayaran Aman', 'description' => 'Transaksi aman & terenkripsi'],
+                    ['icon' => 'fas fa-headset', 'title' => 'Layanan 24/7', 'description' => 'Dukungan ramah via chat & CS'],
+                ];
+            }
+        @endphp
+        <div class="admin-panel-card lg:col-span-2">
+            <h3 class="font-semibold text-gray-900 mb-1">
+                <i class="fas fa-shield-alt mr-2 text-emerald-600"></i>Layanan & Jaminan Toko (Trust Badges / Service Highlights)
+            </h3>
+            <p class="text-xs text-gray-500 mb-5">
+                Atur 4 jaminan/layanan yang muncul di bagian bawah website. Anda dapat memilih icon, judul, dan deskripsi sesuai keinginan toko Anda.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="features-container">
+                @foreach($featuresList as $fIdx => $fItem)
+                    <div class="p-4 bg-gray-50/80 border border-gray-200 rounded-xl space-y-3 feature-card">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Layanan {{ $fIdx + 1 }}</span>
+                            <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm shadow-xs feature-icon-preview">
+                                <i class="{{ $fItem['icon'] ?? 'fas fa-shield-alt' }}"></i>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="form-label text-xs font-semibold text-gray-700">Pilih / Ketik Ikon</label>
+                            <select class="form-input text-xs mb-1" onchange="applyFeatureIcon(this)">
+                                <option value="fas fa-truck-fast" {{ ($fItem['icon'] ?? '') === 'fas fa-truck-fast' ? 'selected' : '' }}>🚚 Truk / Pengiriman</option>
+                                <option value="fas fa-rotate-left" {{ ($fItem['icon'] ?? '') === 'fas fa-rotate-left' ? 'selected' : '' }}>🔄 Pengembalian / Garansi</option>
+                                <option value="fas fa-shield-halved" {{ ($fItem['icon'] ?? '') === 'fas fa-shield-halved' ? 'selected' : '' }}>🛡️ Keamanan / Proteksi</option>
+                                <option value="fas fa-headset" {{ ($fItem['icon'] ?? '') === 'fas fa-headset' ? 'selected' : '' }}>🎧 CS / Support 24/7</option>
+                                <option value="fas fa-credit-card" {{ ($fItem['icon'] ?? '') === 'fas fa-credit-card' ? 'selected' : '' }}>💳 Pembayaran / Cicilan</option>
+                                <option value="fas fa-leaf" {{ ($fItem['icon'] ?? '') === 'fas fa-leaf' ? 'selected' : '' }}>🌿 100% Organik / Alami</option>
+                                <option value="fas fa-award" {{ ($fItem['icon'] ?? '') === 'fas fa-award' ? 'selected' : '' }}>🏆 Kualitas Teruji</option>
+                                <option value="fas fa-box-open" {{ ($fItem['icon'] ?? '') === 'fas fa-box-open' ? 'selected' : '' }}>📦 Kemasan Rapi</option>
+                                <option value="fas fa-clock" {{ ($fItem['icon'] ?? '') === 'fas fa-clock' ? 'selected' : '' }}>⏰ Respon Cepat</option>
+                                <option value="custom">Ketik Ikon Kustom Lainnya...</option>
+                            </select>
+                            <input type="text" name="feature_icons[]" value="{{ $fItem['icon'] ?? 'fas fa-shield-alt' }}" placeholder="fas fa-truck-fast" class="form-input text-xs feature-icon-input" oninput="updateFeatureIconInput(this)">
+                        </div>
+
+                        <div>
+                            <label class="form-label text-xs font-semibold text-gray-700">Judul Layanan</label>
+                            <input type="text" name="feature_titles[]" value="{{ $fItem['title'] ?? '' }}" placeholder="Gratis Ongkir" class="form-input text-xs bg-white font-medium">
+                        </div>
+
+                        <div>
+                            <label class="form-label text-xs font-semibold text-gray-700">Deskripsi Singkat</label>
+                            <textarea name="feature_descs[]" rows="2" placeholder="Bebas ongkir untuk pesanan tertentu" class="form-input text-xs bg-white">{{ $fItem['description'] ?? '' }}</textarea>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     </div>
 
     <div class="mt-6">
@@ -258,6 +323,24 @@
 @endsection
 
 @section('scripts')
+function applyFeatureIcon(select) {
+    const card = select.closest('.feature-card');
+    const input = card.querySelector('.feature-icon-input');
+    const preview = card.querySelector('.feature-icon-preview i');
+    if (select.value !== 'custom') {
+        input.value = select.value;
+        preview.className = select.value;
+    } else {
+        input.focus();
+    }
+}
+
+function updateFeatureIconInput(input) {
+    const card = input.closest('.feature-card');
+    const preview = card.querySelector('.feature-icon-preview i');
+    preview.className = input.value || 'fas fa-shield-alt';
+}
+
 function addFooterLinkRow(containerId, titleName, urlName) {
     const container = document.getElementById(containerId);
     const div = document.createElement('div');

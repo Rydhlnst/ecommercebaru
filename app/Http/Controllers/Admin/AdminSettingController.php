@@ -72,6 +72,7 @@ class AdminSettingController extends Controller
                     'footer_col1_links',
                     'footer_col2_title',
                     'footer_col2_links',
+                    'service_features',
                 ]);
             }
         } catch (QueryException $e) {
@@ -105,6 +106,25 @@ class AdminSettingController extends Controller
 
         foreach ($validated as $key => $value) {
             SiteSetting::setValue($key, $value);
+        }
+
+        if ($request->has('feature_titles')) {
+            $features = [];
+            $icons = (array) $request->input('feature_icons', []);
+            $titles = (array) $request->input('feature_titles', []);
+            $descs = (array) $request->input('feature_descs', []);
+
+            foreach ($titles as $idx => $title) {
+                $title = trim($title);
+                if ($title !== '') {
+                    $features[] = [
+                        'icon' => trim($icons[$idx] ?? 'fas fa-shield-alt'),
+                        'title' => $title,
+                        'description' => trim($descs[$idx] ?? ''),
+                    ];
+                }
+            }
+            SiteSetting::setValue('service_features', json_encode($features));
         }
 
         if ($request->has('footer_col1_titles')) {
