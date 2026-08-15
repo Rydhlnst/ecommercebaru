@@ -81,18 +81,19 @@
                     </ul>
                 </div>
             @else
-                <div>
-                    <p class="text-sm font-semibold text-cream mb-4">BELANJA</p>
-                    <ul class="grid gap-3 text-sm text-mist/80">
-                        <li><a href="{{ route('shop.product_or_category.index', 'grannis-signature-kits') }}" class="hover:text-cream transition-colors">Signature Kits</a></li>
-                        <li><a href="{{ route('shop.product_or_category.index', 'oats-with-nuts') }}" class="hover:text-cream transition-colors">Oats With Nuts</a></li>
-                        <li><a href="{{ route('shop.product_or_category.index', 'recipe-mix-masalas') }}" class="hover:text-cream transition-colors">Recipe Mix Masalas</a></li>
-                        <li><a href="{{ route('shop.product_or_category.index', 'seeds-and-super-foods') }}" class="hover:text-cream transition-colors">Seeds And Super Foods</a></li>
-                        <li><a href="{{ route('shop.product_or_category.index', 'spices-and-salts') }}" class="hover:text-cream transition-colors">Spices And Salts</a></li>
-                        <li><a href="{{ route('shop.product_or_category.index', 'desi-ghee') }}" class="hover:text-cream transition-colors">Desi Ghee</a></li>
-                        <li><a href="{{ route('shop.product_or_category.index', 'fry-mix-masala') }}" class="hover:text-cream transition-colors">Fry Mix Masala</a></li>
-                    </ul>
-                </div>
+                @php
+                    $footerCats = \App\Models\AdminCategory::whereNull('parent_id')->limit(7)->get();
+                @endphp
+                @if ($footerCats->isNotEmpty())
+                    <div>
+                        <p class="text-sm font-semibold text-cream mb-4">BELANJA</p>
+                        <ul class="grid gap-3 text-sm text-mist/80">
+                            @foreach ($footerCats as $cat)
+                                <li><a href="{{ route('shop.admin_category.show', $cat->slug) }}" class="hover:text-cream transition-colors">{{ $cat->name }}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             @endif
 
             {{-- Column 2 — Useful Links --}}

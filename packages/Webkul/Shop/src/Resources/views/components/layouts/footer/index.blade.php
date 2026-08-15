@@ -12,15 +12,7 @@
         'channel_id' => $channel->id,
     ]);
 
-    $shopCategories = [
-        ['name' => 'Grannis Signature Kits', 'slug' => 'grannis-signature-kits'],
-        ['name' => 'Oats With Nuts', 'slug' => 'oats-with-nuts'],
-        ['name' => 'Recipe Mix Masalas', 'slug' => 'recipe-mix-masalas'],
-        ['name' => 'Seeds And Super Foods', 'slug' => 'seeds-and-super-foods'],
-        ['name' => 'Spices And Salts', 'slug' => 'spices-and-salts'],
-        ['name' => 'Desi Ghee', 'slug' => 'desi-ghee'],
-        ['name' => 'Fry Mix Masala', 'slug' => 'fry-mix-masala'],
-    ];
+    $shopCategories = \App\Models\AdminCategory::whereNull('parent_id')->limit(7)->get();
 @endphp
 
 <footer class="mt-12 md:mt-16 text-cream" style="background-color:#2D5A27;">
@@ -69,34 +61,20 @@
     <!-- Main Footer Content -->
     <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-12 md:py-16">
         <div class="grid gap-10 md:grid-cols-5">
-            <!-- Shop Links -->
+            @if($shopCategories->isNotEmpty())
             <div>
                 <p class="text-lg font-semibold mb-4">SHOP</p>
                 <ul class="grid gap-2 text-sm text-mist">
                     @foreach($shopCategories as $category)
                         <li>
-                            <a href="{{ route('shop.product_or_category.index', $category['slug']) }}" class="hover:text-cream transition-colors">
-                                {{ $category['name'] }}
+                            <a href="{{ route('shop.admin_category.show', $category->slug) }}" class="hover:text-cream transition-colors">
+                                {{ $category->name }}
                             </a>
                         </li>
                     @endforeach
-                    <li>
-                        <a href="{{ route('shop.cms.page.show', 'contact-us') }}" class="hover:text-cream transition-colors">
-                            Contact Us
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('shop.cms.page.show', 'awards-and-certificates') }}" class="hover:text-cream transition-colors">
-                            Awards and Certificates
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="hover:text-cream transition-colors">
-                            Blogs
-                        </a>
-                    </li>
                 </ul>
             </div>
+            @endif
 
             <!-- Useful Links -->
             <div>

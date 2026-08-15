@@ -57,15 +57,6 @@
         $blogsDb = collect();
     }
 
-    // ============ Dummy fallback (kalau DB masih kosong) ============
-    $dummyProducts = [
-        ['Masala Diabetic Roti', 'Rp 32.500', null,          ['1kg','5kg']],
-        ['Chatpata Masala Oats', 'Rp 25.000', null,          ['500g','1kg']],
-        ['Chicken Masala Oats',  'Rp 28.000', 'Rp 35.000',   ['500g','1kg']],
-        ['Masala Quinoa Roti',   'Rp 35.000', null,          ['1kg']],
-    ];
-    $dummyCategories = ['Signature Oats','Granola','Seeds & Superfoods','Fry Mixes','Sauces','Special Spices','Tea & Drinks','Bakery'];
-
     // Trust badges (editable via admin)
     $trustBadges = [
         [core()->getConfigData('beres_storefront.trust.badge1_title') ?: 'Ambil di Toko',       core()->getConfigData('beres_storefront.trust.badge1_desc') ?: 'Ambil di gerai fisik kami'],
@@ -424,42 +415,34 @@
     @endif
 
     {{-- ============ NEW ARRIVALS ============ --}}
-    <section class="bg-white beres-reveal">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
-            <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.new_title', 'Produk Terbaru') }}</h2>
+    @if ($newProductsDb->isNotEmpty())
+        <section class="bg-white beres-reveal">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+                <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.new_title', 'Produk Terbaru') }}</h2>
 
-            <div class="product-scroll-mobile">
-                @if ($newProductsDb->isNotEmpty())
+                <div class="product-scroll-mobile">
                     @foreach ($newProductsDb as $i => $product)
                         @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
                     @endforeach
-                @else
-                    @foreach ($dummyProducts as $i => [$name, $price, $compare, $variants])
-                        @include('shop::components.layouts._product-card', ['name'=>$name, 'price'=>$price, 'compare'=>$compare, 'variants'=>$variants, 'bg'=>$bgPick($i)])
-                    @endforeach
-                @endif
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     {{-- ============ KITS & BUNDLES ============ --}}
-    <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
-            <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.bundle_title', 'Paket & Bundel') }}</h2>
+    @if ($bundlesDb->isNotEmpty())
+        <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+                <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.bundle_title', 'Paket & Bundel') }}</h2>
 
-            <div class="product-scroll-mobile">
-                @if ($bundlesDb->isNotEmpty())
+                <div class="product-scroll-mobile">
                     @foreach ($bundlesDb as $i => $product)
                         @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
                     @endforeach
-                @else
-                    @foreach ($dummyProducts as $i => [$name, $price, $compare, $variants])
-                        @include('shop::components.layouts._product-card', ['name'=>$name, 'price'=>$price, 'compare'=>$compare, 'variants'=>['Bundle'], 'bg'=>$bgPick($i)])
-                    @endforeach
-                @endif
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     {{-- ============ 100% NATURAL BANNER ============ --}}
     <section class="beres-reveal" style="background-color:#2D5A27;">
@@ -477,45 +460,47 @@
         $homeCats = app(\Beres\Highlight\Services\HomepageHighlightService::class)
             ->getCategories(6, $channel->root_category_id ?? 1);
     @endphp
-    <section class="bg-white beres-reveal">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
-            <div class="flex items-center justify-between mb-6 md:mb-8">
-                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.cat_title', 'All Kitchen Needs') }}</h2>
-                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All Categories</a>
-            </div>
+    @if ($homeCats->isNotEmpty())
+        <section class="bg-white beres-reveal">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+                <div class="flex items-center justify-between mb-6 md:mb-8">
+                    <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.cat_title', 'All Kitchen Needs') }}</h2>
+                    <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All Categories</a>
+                </div>
 
-            {{-- Horizontal scroll row — single row on desktop --}}
-            <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
-                @foreach ($homeCats as $i => $cat)
-                    <a href="{{ route('shop.product_or_category.index', $cat['slug']) }}" class="group block shrink-0 w-[140px] sm:w-[160px] md:w-[180px]">
-                        <div class="aspect-[3/4] overflow-hidden transition-transform duration-500 group-hover:scale-[1.03] rounded-lg" style="background-color:{{ $bgPick($i) }};"></div>
-                        <p class="mt-2 text-center text-[11px] md:text-xs text-white px-2 py-1.5" style="background-color:#2D5A27; font-weight:500; border-radius:999px;">
-                            {{ $cat['name'] }}
-                        </p>
-                    </a>
-                @endforeach
+                {{-- Horizontal scroll row — single row on desktop --}}
+                <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
+                    @foreach ($homeCats as $i => $cat)
+                        <a href="{{ route('shop.product_or_category.index', $cat['slug']) }}" class="group block shrink-0 w-[140px] sm:w-[160px] md:w-[180px]">
+                            <div class="aspect-[3/4] overflow-hidden transition-transform duration-500 group-hover:scale-[1.03] rounded-lg" style="background-color:{{ $bgPick($i) }};">
+                                @if(!empty($cat['image']))
+                                    <img src="{{ $cat['image'] }}" alt="{{ $cat['name'] }}" class="w-full h-full object-cover">
+                                @endif
+                            </div>
+                            <p class="mt-2 text-center text-[11px] md:text-xs text-white px-2 py-1.5" style="background-color:#2D5A27; font-weight:500; border-radius:999px;">
+                                {{ $cat['name'] }}
+                            </p>
+                        </a>
+                    @endforeach
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     {{-- ============ ALL TIME BEST SELLER ============ --}}
-    <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
-            <h2 class="text-xl md:text-2xl text-[#171717] mb-6 md:mb-8" style="font-weight:600;">{{ $c('sections.best_title', 'Produk Terlaris') }}</h2>
+    @if ($bestSellersDb->isNotEmpty())
+        <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+                <h2 class="text-xl md:text-2xl text-[#171717] mb-6 md:mb-8" style="font-weight:600;">{{ $c('sections.best_title', 'Produk Terlaris') }}</h2>
 
-            <div class="product-scroll-mobile">
-                @if ($bestSellersDb->isNotEmpty())
+                <div class="product-scroll-mobile">
                     @foreach ($bestSellersDb as $i => $product)
                         @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
                     @endforeach
-                @else
-                    @foreach ($dummyProducts as $i => [$name, $price, $compare, $variants])
-                        @include('shop::components.layouts._product-card', ['name'=>$name, 'price'=>$price, 'compare'=>$compare, 'variants'=>$variants, 'bg'=>$bgPick($i)])
-                    @endforeach
-                @endif
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
 
     {{-- ============ CATEGORY TICKER (Marquee) ============ --}}
     <section class="overflow-hidden beres-reveal" style="background-color:#2D5A27;">
@@ -533,15 +518,15 @@
     </section>
 
     {{-- ============ SEEDS & SUPERFOODS ============ --}}
-    <section class="bg-white beres-reveal">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
-            <div class="flex items-center justify-between mb-6 md:mb-8">
-                <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Biji & Superfood Kami</h2>
-                <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat Semua</a>
-            </div>
+    @if ($superfoodsDb->isNotEmpty())
+        <section class="bg-white beres-reveal">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+                <div class="flex items-center justify-between mb-6 md:mb-8">
+                    <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Biji & Superfood Kami</h2>
+                    <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat Semua</a>
+                </div>
 
-            <div class="product-scroll-mobile">
-                @if ($superfoodsDb->isNotEmpty())
+                <div class="product-scroll-mobile">
                     @foreach ($superfoodsDb as $i => $product)
                         @php
                             $sfName  = $product->name ?? 'Product';
@@ -565,18 +550,25 @@
                             <p class="mt-1 text-sm" style="color:#2D5A27; font-weight:600;">{{ $sfPrice }}</p>
                         </a>
                     @endforeach
-                @else
-                    @foreach (['Masala Quinoa Roti','Chia Seeds','Pumpkin Seeds','Sunflower Seeds','Flax Seeds Mix'] as $i => $name)
-                        <a href="{{ route('shop.search.index') }}" class="group block">
-                            <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.02]" style="background-color:{{ $bgPick($i) }};"></div>
-                            <p class="mt-3 text-sm text-[#171717]" style="font-weight:500;">{{ $name }}</p>
-                            <p class="mt-1 text-sm" style="color:#2D5A27; font-weight:600;">Rp —</p>
-                        </a>
-                    @endforeach
-                @endif
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
+    @endif
+
+    {{-- Empty catalog notice when no products exist --}}
+    @if ($newProductsDb->isEmpty() && $bundlesDb->isEmpty() && $bestSellersDb->isEmpty() && $superfoodsDb->isEmpty() && !$featuredProduct)
+        <section class="bg-white py-20 text-center beres-reveal">
+            <div class="mx-auto max-w-md px-4">
+                <div class="w-16 h-16 bg-[#E8F0E5] text-[#2D5A27] rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold text-[#171717] mb-2">Katalog Produk Segera Hadir</h3>
+                <p class="text-sm text-[#737373]">Saat ini belum ada produk aktif yang ditampilkan. Silakan tambahkan produk baru melalui panel admin.</p>
+            </div>
+        </section>
+    @endif
 
     {{-- ============ TRUST BADGES with icons ============ --}}
     <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
