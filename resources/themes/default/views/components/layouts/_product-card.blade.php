@@ -9,6 +9,9 @@
     $salePrice = null;
     $isNew    = false;
     $href     = $href    ?? route('shop.search.index');
+    $badge    = null;
+    $description = null;
+    $childVariants = [];
 
     if ($product) {
         // Detect model type: AdminProduct vs Bagisto Product
@@ -20,36 +23,61 @@
 
         if ($isAdminProduct) {
             // --- AdminProduct (simple model) ---
-            $price    = 'Rp ' . number_format($product->price ?? 0, 0, ',', '.');
+            $priceNum = (float) ($product->price ?? 0);
+            $price    = 'Rp ' . number_format($priceNum, 0, ',', '.');
             $vars     = $product->variations;
             $hasVars  = $vars && $vars->count() > 0;
-            $inStock  = ($product->stock ?? 0) > 0 || ($hasVars && $vars->sum('stock') > 0);
+
+            // In stock: strictly true unless badge is explicitly 'habis_terjual'
+            if ($product->badge === 'habis_terjual') {
+                $inStock = false;
+            } else {
+                $inStock = true;
+            }
+
             $href     = route('shop.admin_product.show', $product->slug);
             $image    = $product->images->count()
                             ? $product->images->first()->url
                             : null;
 
             // Badge
-            $badge = $product->badge ?? null;
+            $badge = ($product->badge && $product->badge !== 'habis_terjual') ? $product->badge : ($isNew ? 'new' : null);
 
             // Description
             $description = $product->description ?? null;
 
-            // Variations
-            $childVariants = [];
+            // Variations (pills 500g, 1000g, etc.)
             if ($hasVars) {
                 foreach ($vars as $i => $var) {
+                    $vPriceNum = (float) ($var->price > 0 ? $var->price : $priceNum);
                     $childVariants[] = [
                         'id'            => $var->id,
-                        'label'         => $var->weight ? $var->weight_label : 'Var '.($i+1),
-                        'price'         => 'Rp ' . number_format($var->price, 0, ',', '.'),
+                        'label'         => $var->weight ? $var->weight_label : ($i === 0 ? '500g' : '1000g'),
+                        'price'         => 'Rp ' . number_format($vPriceNum, 0, ',', '.'),
                         'regular_price' => null,
-                        'special_price' => $var->price,
+                        'special_price' => $vPriceNum,
                     ];
                 }
-                if (($product->price ?? 0) == 0 && count($childVariants)) {
+                if ($priceNum == 0 && count($childVariants)) {
                     $price = $childVariants[0]['price'];
                 }
+            } else {
+                // Always provide 500g and 1000g variant pills on every card
+                $childVariants[] = [
+                    'id'            => 'var_500g',
+                    'label'         => '500g',
+                    'price'         => $price,
+                    'regular_price' => null,
+                    'special_price' => $priceNum,
+                ];
+                $var1000Price = $priceNum > 0 ? ($priceNum * 1.85) : 185000;
+                $childVariants[] = [
+                    'id'            => 'var_1000g',
+                    'label'         => '1000g',
+                    'price'         => 'Rp ' . number_format($var1000Price, 0, ',', '.'),
+                    'regular_price' => null,
+                    'special_price' => $var1000Price,
+                ];
             }
 
             $isConfigurable = false;
@@ -77,16 +105,15 @@
             $description = $product->short_description ?? null;
 
             $isConfigurable = $product->type === 'configurable';
-            $childVariants  = [];
             $superAttrId    = null;
             if ($isConfigurable) {
                 try {
                     foreach ($product->variants as $child) {
                         $childType = $child->getTypeInstance();
-                        $minPrice  = 0;
+                        $cMinPrice  = 0;
                         $regPrice  = null;
                         try {
-                            $minPrice = $childType->getMinimalPrice() ?? $child->price ?? 0;
+                            $cMinPrice = $childType->getMinimalPrice() ?? $child->price ?? 0;
                             $regPrice = $childType->getRegularPrice();
                         } catch (\Throwable $e) {}
 
@@ -101,43 +128,49 @@
                         $childVariants[] = [
                             'id'            => $child->id,
                             'label'         => $label,
-                            'price'         => 'Rp ' . number_format($minPrice, 0, ',', '.'),
+                            'price'         => 'Rp ' . number_format($cMinPrice, 0, ',', '.'),
                             'regular_price' => $regPrice,
-                            'special_price' => $minPrice,
+                            'special_price' => $cMinPrice,
                         ];
                     }
                     $superAttrs = $product->super_attributes()->first();
                     if ($superAttrs) $superAttrId = $superAttrs->attribute_id ?? $superAttrs->id ?? 35;
                 } catch (\Throwable $e) {}
             }
+
+            if (empty($childVariants)) {
+                $childVariants[] = [
+                    'id'            => 'var_500g',
+                    'label'         => '500g',
+                    'price'         => $price,
+                    'regular_price' => null,
+                    'special_price' => $minPrice,
+                ];
+                $var1000Price = $minPrice > 0 ? ($minPrice * 1.85) : 185000;
+                $childVariants[] = [
+                    'id'            => 'var_1000g',
+                    'label'         => '1000g',
+                    'price'         => 'Rp ' . number_format($var1000Price, 0, ',', '.'),
+                    'regular_price' => null,
+                    'special_price' => $var1000Price,
+                ];
+            }
         }
     } else {
-        $name     = $name     ?? '';
-        $price    = $price    ?? '';
+        $name     = $name     ?? 'Produk Segar';
+        $price    = $price    ?? 'Rp 100.000';
         $compare  = $compare  ?? null;
-        $variants = $variants ?? [];
         $href     = $href     ?? route('shop.search.index');
         $prodId   = 1;
         $image    = null;
         $badge    = null;
         $description = null;
         $isConfigurable = false;
-        $childVariants  = [];
         $superAttrId    = null;
-    }
-
-    // Ensure childVariants is always populated with variant pills for selection on every card
-    if (empty($childVariants)) {
-        $variantList = !empty($variants) ? (array) $variants : ['500g', '1kg'];
-        foreach ($variantList as $i => $vLabel) {
-            $childVariants[] = [
-                'id'            => 'var_' . ($i + 1),
-                'label'         => is_array($vLabel) ? ($vLabel['label'] ?? 'Varian ' . ($i+1)) : (string) $vLabel,
-                'price'         => $price,
-                'regular_price' => null,
-                'special_price' => null,
-            ];
-        }
+        $childVariants  = [
+            ['id' => 'var_500g', 'label' => '500g', 'price' => $price, 'regular_price' => null, 'special_price' => null],
+            ['id' => 'var_1000g', 'label' => '1000g', 'price' => 'Rp 185.000', 'regular_price' => null, 'special_price' => null],
+        ];
     }
 @endphp
 
@@ -211,7 +244,7 @@
             </div>
         </div>
 
-        {{-- Actions: Counter + Add to Cart + Buy Now --}}
+        {{-- Actions: Variant Pills + Counter + Add to Cart + Buy Now --}}
         @if ($prodId && $inStock)
             <form
                 action="{{ route('cart.add') }}"
@@ -222,10 +255,10 @@
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $prodId }}">
 
-                {{-- Weight variant buttons (above quantity, horizontal scroll) --}}
+                {{-- Weight variant buttons (horizontal scroll with 500g, 1000g, etc.) --}}
                 @if (count($childVariants))
                     <input type="hidden" name="selected_configurable_option" value="{{ $childVariants[0]['id'] }}" class="beres-variant-input">
-                    <p class="text-xs font-medium text-[#171717] mb-1">Pilih Varian / Berat</p>
+                    <p class="text-xs font-medium text-[#171717] mb-1">Pilih Varian / Berat:</p>
                     <div class="beres-variant-row flex items-center gap-1.5 mb-2 overflow-x-auto pb-1" style="scrollbar-width:none; -ms-overflow-style:none;">
                         @foreach ($childVariants as $i => $v)
                             <button type="button"
