@@ -11,7 +11,7 @@
 
     <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
         {{-- Breadcrumb --}}
-        <nav class="text-sm text-zinc-500 mb-6 flex items-center gap-2 flex-wrap py-2 px-4 bg-zinc-100/70 rounded-xl shadow-2xs">
+        <nav class="text-sm text-zinc-500 mb-6 flex items-center gap-2 flex-wrap py-2.5 px-4 bg-zinc-100/70 rounded-xl">
             <a href="/" class="hover:text-[#2D5A27] transition-colors">Home</a>
             <span class="text-zinc-400">/</span>
             <a href="{{ route('shop.blog.index') }}" class="hover:text-[#2D5A27] transition-colors">News</a>
@@ -19,13 +19,10 @@
             <span class="text-zinc-800 font-medium truncate max-w-xs md:max-w-md">{{ $post->title }}</span>
         </nav>
 
-        {{-- Slim Landscape Banner (Widescreen Format, Compact Height 220-320px) --}}
+        {{-- Clean Landscape Banner (No dark overlay, crisp clean rounded container) --}}
         @if($postImg && $post->thumbnail)
-            <div class="w-full h-[220px] sm:h-[280px] md:h-[320px] rounded-2xl md:rounded-3xl overflow-hidden mb-8 shadow-xs bg-zinc-900 relative flex items-center justify-center">
-                {{-- Ambient backdrop blur --}}
-                <img src="{{ $postImg }}" alt="" class="absolute inset-0 w-full h-full object-cover blur-md opacity-35 scale-110" aria-hidden="true">
-                {{-- Centered sharp landscape view --}}
-                <img src="{{ $postImg }}" alt="{{ $post->title }}" class="relative z-10 w-full h-full object-cover object-center" loading="eager">
+            <div class="w-full max-h-[420px] aspect-[16/9] md:aspect-[21/9] rounded-2xl md:rounded-3xl overflow-hidden mb-8 shadow-xs bg-white flex items-center justify-center">
+                <img src="{{ $postImg }}" alt="{{ $post->title }}" class="w-full h-full object-contain md:object-cover object-center" loading="eager">
             </div>
         @endif
 
