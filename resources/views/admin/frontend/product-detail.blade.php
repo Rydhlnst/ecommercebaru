@@ -1,5 +1,5 @@
 <x-shop::layouts>
-    <x-slot:title>{{ $product->name }} — {{ config('app.name') }}</x-slot:title>
+    <x-slot:title>{{ $product->name }}</x-slot:title>
 
     <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
         {{-- Breadcrumb --}}

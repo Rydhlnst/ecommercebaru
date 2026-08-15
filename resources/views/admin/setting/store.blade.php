@@ -13,6 +13,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="admin-panel-card">
             <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-store mr-2 text-blue-500"></i>Informasi Toko</h3>
+            <p class="text-xs text-gray-500 mb-4">
+                Nomor telepon, WhatsApp, email & alamat di sini otomatis tersinkron ke <strong>semua bagian website</strong>: section lokasi & peta (front page), footer, FAQ, dan tombol "Pesan via WhatsApp" di halaman produk.
+            </p>
 
             <div class="mb-4">
                 <label class="form-label">Nomor WhatsApp</label>
@@ -102,6 +105,34 @@
                     <i class="fab fa-youtube text-red-600 mr-1"></i> YouTube URL
                 </label>
                 <input type="url" name="store_youtube" value="{{ old('store_youtube', $settings['store_youtube'] ?? '') }}" class="form-input" placeholder="https://youtube.com/@ankeshmart">
+            </div>
+        </div>
+
+        {{-- SEO & Browser Tab Title Settings --}}
+        <div class="admin-panel-card lg:col-span-2">
+            <h3 class="font-semibold text-gray-900 mb-1">
+                <i class="fas fa-window-maximize mr-2 text-purple-600"></i>SEO & Nama Tab Browser
+            </h3>
+            <p class="text-xs text-gray-500 mb-5">
+                Atur nama tab browser (title) website. Perubahan langsung berlaku di semua halaman.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="form-label">Nama Situs</label>
+                    <input type="text" name="seo_site_name" value="{{ old('seo_site_name', $settings['seo_site_name'] ?? '') }}" class="form-input" placeholder="Ankesh Mart">
+                    <p class="text-xs text-gray-400 mt-1">Dipakai di footer, credit & meta social. Kosong = {{ config('app.name') }}.</p>
+                </div>
+                <div>
+                    <label class="form-label">Nama Tab Homepage</label>
+                    <input type="text" name="seo_home_title" value="{{ old('seo_home_title', $settings['seo_home_title'] ?? '') }}" class="form-input" placeholder="Ankesh Mart — Belanja bahan segar">
+                    <p class="text-xs text-gray-400 mt-1">Title tab halaman utama. Kosong = default SEO channel.</p>
+                </div>
+                <div>
+                    <label class="form-label">Suffix Title Semua Halaman</label>
+                    <input type="text" name="seo_title_suffix" value="{{ old('seo_title_suffix', $settings['seo_title_suffix'] ?? '— Ankesh Mart') }}" class="form-input" placeholder="— Ankesh Mart">
+                    <p class="text-xs text-gray-400 mt-1">Contoh "— Ankesh Mart". Otomatis ditambahkan di akhir nama tab tiap halaman. Kosongkan untuk menonaktifkan.</p>
+                </div>
             </div>
         </div>
 

@@ -7,9 +7,47 @@ use App\Models\SiteSetting;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Core\Models\CoreConfig;
 
 class AdminSettingController extends Controller
 {
+    /**
+     * Mapping field form Pengaturan Toko → core config "Kontak & Lokasi".
+     * Write-through: sekali simpan, semua tampilan storefront ikut berubah
+     * (map section, footer, FAQ, tombol WhatsApp di halaman produk).
+     */
+    protected array $contactConfigMap = [
+        'store_phone' => 'beres_storefront.contact.phone',
+        'store_whatsapp' => 'beres_storefront.contact.whatsapp_number',
+        'store_email' => 'beres_storefront.contact.email',
+        'store_address' => 'beres_storefront.contact.address',
+        'store_country' => 'beres_storefront.contact.country',
+    ];
+
+    /**
+     * Mapping field form SEO → core config "SEO & Nama Tab Browser".
+     */
+    protected array $seoConfigMap = [
+        'seo_site_name' => 'beres_storefront.seo.site_name',
+        'seo_home_title' => 'beres_storefront.seo.home_title',
+        'seo_title_suffix' => 'beres_storefront.seo.title_suffix',
+    ];
+
+    /**
+     * Simpan value ke core_config (sumber tunggal storefront).
+     */
+    protected function saveCoreConfig(string $code, ?string $value): void
+    {
+        try {
+            CoreConfig::updateOrCreate(
+                ['code' => $code, 'channel_code' => null, 'locale_code' => null],
+                ['value' => $value ?? '']
+            );
+        } catch (QueryException $e) {
+            // Lewati bila tabel core_config belum tersedia
+        }
+    }
+
     public function policy()
     {
         $policies = collect();
@@ -79,6 +117,13 @@ class AdminSettingController extends Controller
             // Table might not exist yet
         }
 
+        // Nilai SEO & nama tab dari core_config
+        $settings = $settings->merge([
+            'seo_site_name' => (string) core()->getConfigData('beres_storefront.seo.site_name'),
+            'seo_home_title' => (string) core()->getConfigData('beres_storefront.seo.home_title'),
+            'seo_title_suffix' => (string) core()->getConfigData('beres_storefront.seo.title_suffix'),
+        ]);
+
         return view('admin.setting.store', compact('settings'));
     }
 
@@ -102,10 +147,27 @@ class AdminSettingController extends Controller
             'footer_newsletter_text' => 'nullable|string',
             'footer_col1_title' => 'nullable|string|max:100',
             'footer_col2_title' => 'nullable|string|max:100',
+            'seo_site_name' => 'nullable|string|max:255',
+            'seo_home_title' => 'nullable|string|max:255',
+            'seo_title_suffix' => 'nullable|string|max:255',
         ]);
 
         foreach ($validated as $key => $value) {
             SiteSetting::setValue($key, $value);
+        }
+
+        // Write-through: sinkronkan kontak & SEO ke core_config agar semua
+        // tampilan storefront (map, footer, FAQ, title tab) ikut berubah.
+        foreach ($this->contactConfigMap as $formKey => $configKey) {
+            if (array_key_exists($formKey, $validated)) {
+                $this->saveCoreConfig($configKey, $validated[$formKey]);
+            }
+        }
+
+        foreach ($this->seoConfigMap as $formKey => $configKey) {
+            if (array_key_exists($formKey, $validated)) {
+                $this->saveCoreConfig($configKey, $validated[$formKey]);
+            }
         }
 
         if ($request->has('feature_titles')) {

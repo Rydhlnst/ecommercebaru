@@ -1,5 +1,5 @@
-<div class="fixed top-14 z-[1000] h-full w-[270px] bg-white pt-4 shadow-[0px_8px_10px_0px_rgba(0,_0,_0,_0.2)] transition-all duration-300 group-[.sidebar-collapsed]/container:w-[70px] dark:bg-gray-900 max-lg:hidden">
-    <div class="journal-scroll h-[calc(100vh-100px)] overflow-auto group-[.sidebar-collapsed]/container:overflow-visible">
+<div class="fixed top-14 bottom-0 z-[1000] flex flex-col justify-between w-[270px] bg-white pt-4 shadow-[0px_8px_10px_0px_rgba(0,_0,_0,_0.2)] transition-all duration-300 group-[.sidebar-collapsed]/container:w-[70px] dark:bg-gray-900 max-lg:hidden">
+    <div class="journal-scroll min-h-0 flex-1 overflow-y-auto overflow-x-hidden pb-4">
         <nav class="grid w-full gap-2">
             <!-- Navigation Menu -->
             @foreach (menu()->getItems('admin') as $menuItem)
@@ -46,7 +46,7 @@
         id="v-sidebar-collapse-template"
     >
         <div
-            class="fixed bottom-0 w-full max-w-[270px] cursor-pointer border-t border-gray-200 bg-white px-4 transition-all duration-300 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-950"
+            class="sticky bottom-0 z-[100] w-full max-w-[270px] shrink-0 cursor-pointer border-t border-gray-200 bg-white px-4 transition-all duration-300 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:hover:bg-gray-950"
             :class="{'max-w-[70px]': isCollapsed}"
             @click="toggle"
         >

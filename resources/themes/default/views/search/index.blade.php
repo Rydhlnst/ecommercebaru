@@ -1,6 +1,6 @@
 <x-shop::layouts>
     <x-slot:title>
-        {{ !empty($query) ? 'Hasil Pencarian: "' . $query . '"' : 'Pencarian Produk' }} — {{ config('app.name') }}
+        {{ !empty($query) ? 'Hasil Pencarian: "' . $query . '"' : 'Pencarian Produk' }}
     </x-slot:title>
 
     <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">

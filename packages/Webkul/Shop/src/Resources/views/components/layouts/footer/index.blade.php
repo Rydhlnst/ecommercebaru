@@ -13,6 +13,8 @@
     ]);
 
     $shopCategories = \App\Models\AdminCategory::whereNull('parent_id')->limit(7)->get();
+    $seoSiteName    = trim((string) core()->getConfigData('beres_storefront.seo.site_name'));
+    $siteName       = $seoSiteName !== '' ? $seoSiteName : ($channel->name ?? config('app.name', 'Ankesh Mart'));
 @endphp
 
 <footer class="mt-12 md:mt-16 text-cream" style="background-color:#2D5A27;">
@@ -105,19 +107,21 @@
 
             <!-- Contact Details -->
             @php
-                $storeAddress = \App\Models\SiteSetting::getValue('store_address') ?: 'Jakarta, Indonesia';
-                $storePhone = \App\Models\SiteSetting::getValue('store_phone') ?: (\App\Models\SiteSetting::getValue('store_whatsapp') ?: '+62 812-3456-7890');
-                $storeEmail = \App\Models\SiteSetting::getValue('store_email') ?: 'info@ankeshmart.com';
+                $storeAddress = (string) core()->getConfigData('beres_storefront.contact.address') ?: (\App\Models\SiteSetting::getValue('store_address') ?: 'Jakarta, Indonesia');
+                $storePhone = (string) core()->getConfigData('beres_storefront.contact.phone')
+                    ?: ((string) core()->getConfigData('beres_storefront.contact.whatsapp_number')
+                    ?: (\App\Models\SiteSetting::getValue('store_phone') ?: (\App\Models\SiteSetting::getValue('store_whatsapp') ?: '+62 812-3456-7890')));
+                $storeEmail = (string) core()->getConfigData('beres_storefront.contact.email') ?: (\App\Models\SiteSetting::getValue('store_email') ?: 'info@ankeshmart.com');
                 $storeIg = \App\Models\SiteSetting::getValue('store_instagram');
                 $storeFb = \App\Models\SiteSetting::getValue('store_facebook');
                 $storeYt = \App\Models\SiteSetting::getValue('store_youtube');
                 $storeTt = \App\Models\SiteSetting::getValue('store_tiktok');
-                $storeWa = \App\Models\SiteSetting::getValue('store_whatsapp');
+                $storeWa = (string) core()->getConfigData('beres_storefront.contact.whatsapp_number') ?: \App\Models\SiteSetting::getValue('store_whatsapp');
             @endphp
             <div class="md:col-span-2">
                 <p class="text-lg font-semibold mb-4">DETAIL KONTAK</p>
                 <div class="grid gap-3 text-sm text-mist">
-                    <p>© {{ date('Y') }} {{ config('app.name', 'Ankesh Mart') }}. All rights reserved.</p>
+                    <p>© {{ date('Y') }} {{ $siteName }}. All rights reserved.</p>
                     @if($storeAddress)
                         <div class="flex items-start gap-2">
                             <span class="mt-1">📍</span>
@@ -255,7 +259,7 @@
     <div class="border-t border-cocoa">
         <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-6 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-mist">
             <p>
-                © {{ date('Y') }}, {{ config('app.name') }}
+                © {{ date('Y') }}, {{ $siteName }}
             </p>
         </div>
     </div>

@@ -1,5 +1,5 @@
 <x-shop::layouts>
-    <x-slot:title>{{ $post->title }} — {{ config('app.name') }}</x-slot:title>
+    <x-slot:title>{{ $post->title }}</x-slot:title>
 
     @php
         $postDate = $post->published_at ? $post->published_at->format('d F Y') : ($post->created_at ? $post->created_at->format('d F Y') : '');

@@ -14,6 +14,9 @@
 
     $footerOptions = $customization?->translate(app()->getLocale())['options'] ?? [];
 
+    $seoSiteName = trim((string) core()->getConfigData('beres_storefront.seo.site_name'));
+    $siteName    = $seoSiteName !== '' ? $seoSiteName : ($channel->name ?? config('app.name', 'Ankesh Mart'));
+
     // Social media icon map
     $socialIcons = [
         'facebook'  => '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>',
@@ -172,15 +175,17 @@
                 </div>
             @else
                 @php
-                    $storeAddress = \App\Models\SiteSetting::getValue('store_address');
-                    $storePhone = \App\Models\SiteSetting::getValue('store_phone') ?: \App\Models\SiteSetting::getValue('store_whatsapp');
-                    $storeEmail = \App\Models\SiteSetting::getValue('store_email');
+                    $storeAddress = (string) core()->getConfigData('beres_storefront.contact.address') ?: \App\Models\SiteSetting::getValue('store_address');
+                    $storePhone = (string) core()->getConfigData('beres_storefront.contact.phone')
+                        ?: ((string) core()->getConfigData('beres_storefront.contact.whatsapp_number')
+                        ?: (\App\Models\SiteSetting::getValue('store_phone') ?: \App\Models\SiteSetting::getValue('store_whatsapp')));
+                    $storeEmail = (string) core()->getConfigData('beres_storefront.contact.email') ?: \App\Models\SiteSetting::getValue('store_email');
                 @endphp
                 @if($storeAddress || $storePhone || $storeEmail)
                     <div>
                         <p class="text-sm font-semibold text-cream mb-4">DETAIL KONTAK</p>
                         <div class="text-sm text-mist/80 space-y-4">
-                            <p>&copy; {{ date('Y') }} {{ config('app.name', 'Ankesh Mart') }}</p>
+                            <p>&copy; {{ date('Y') }} {{ $siteName }}</p>
                             @if($storeAddress)
                                 <div class="flex items-start gap-3">
                                     <span class="icon-location text-lg mt-0.5 text-mist/80"></span>
@@ -234,7 +239,7 @@
                     $storeFb = \App\Models\SiteSetting::getValue('store_facebook');
                     $storeYt = \App\Models\SiteSetting::getValue('store_youtube');
                     $storeTt = \App\Models\SiteSetting::getValue('store_tiktok');
-                    $storeWa = \App\Models\SiteSetting::getValue('store_whatsapp');
+                    $storeWa = (string) core()->getConfigData('beres_storefront.contact.whatsapp_number') ?: \App\Models\SiteSetting::getValue('store_whatsapp');
                     $hasSocial = $storeIg || $storeFb || $storeYt || $storeTt || $storeWa;
                 @endphp
                 @if($hasSocial)
@@ -277,7 +282,7 @@
     {{-- Bottom bar --}}
     <div class="border-t border-white/10">
         <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-5 text-center text-sm text-mist/60">
-            &copy; {{ date('Y') }}, {{ config('app.name') }}
+            &copy; {{ date('Y') }}, {{ $siteName }}
         </div>
     </div>
 </footer>

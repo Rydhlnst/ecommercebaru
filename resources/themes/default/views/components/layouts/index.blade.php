@@ -14,7 +14,31 @@
 
         {!! view_render_event('bagisto.shop.layout.head.before') !!}
 
-        <title>{{ $title ?? '' }}</title>
+        {{-- ============ Nama tab browser — editable dari dashboard ============ --}}
+        @php
+            $seoSiteName  = trim((string) core()->getConfigData('beres_storefront.seo.site_name'));
+            $seoHomeTitle = trim((string) core()->getConfigData('beres_storefront.seo.home_title'));
+            $seoSuffix    = trim((string) core()->getConfigData('beres_storefront.seo.title_suffix'));
+
+            $channel  = core()->getCurrentChannel();
+            $siteName = $seoSiteName !== '' ? $seoSiteName : ($channel->name ?? config('app.name'));
+
+            if (isset($title) && trim((string) $title) !== '') {
+                $pageTitle = trim((string) $title);
+            } elseif ($seoHomeTitle !== '') {
+                $pageTitle = $seoHomeTitle;
+            } elseif (trim((string) ($channel->home_seo['meta_title'] ?? '')) !== '') {
+                $pageTitle = $channel->home_seo['meta_title'];
+            } else {
+                $pageTitle = $siteName;
+            }
+
+            if ($seoSuffix !== '' && ! str_contains($pageTitle, $seoSuffix) && ! str_contains($pageTitle, $siteName)) {
+                $pageTitle .= ' '.$seoSuffix;
+            }
+        @endphp
+
+        <title>{{ $pageTitle }}</title>
 
         <meta charset="UTF-8">
 

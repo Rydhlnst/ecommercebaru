@@ -164,6 +164,8 @@ return [
             ['name' => 'address',      'title' => 'Alamat lengkap',    'type' => 'textarea', 'default' => "Pasar Modern BSD, Blok C-12\nJl. Letnan Sutopo No. 12, Serpong\nTangerang Selatan 15321"],
             ['name' => 'hours',        'title' => 'Jam operasional',   'type' => 'textarea', 'default' => "Senin – Sabtu · 07.00 – 21.00\nMinggu · 08.00 – 20.00"],
             ['name' => 'phone',        'title' => 'Nomor telepon',     'type' => 'text',     'default' => '+62 21 555 1234'],
+            ['name' => 'whatsapp_number', 'title' => 'Nomor WhatsApp (format 62xxx)', 'type' => 'text', 'default' => '',
+                'info' => 'Dipakai untuk tombol "Pesan via WhatsApp" di halaman produk & FAQ. Contoh: 6281234567890'],
             ['name' => 'email',        'title' => 'Email',             'type' => 'text',     'default' => 'halo@ecommerce.beres.io'],
             ['name' => 'map_query',    'title' => 'Query maps (search)', 'type' => 'text',     'default' => 'Pasar Modern BSD, Serpong, Tangerang',
                 'channel_based' => false],
@@ -279,6 +281,27 @@ return [
             ['name' => 'from_email',    'title' => 'Email Pengirim',     'type' => 'text',     'default' => 'noreply@ankeshmart.com',
                 'info' => 'Harus verified di Resend Dashboard → Domains', 'channel_based' => false],
             ['name' => 'from_name',     'title' => 'Nama Pengirim',      'type' => 'text',     'default' => 'Ankesh Mart',
+                'channel_based' => false],
+        ],
+    ],
+
+    /* =========================
+      | SEO & NAMA TAB BROWSER
+      ========================= */
+    [
+        'key' => 'beres_storefront.seo',
+        'name' => 'SEO & Nama Tab Browser',
+        'info' => 'Nama tab browser (title), nama situs, dan suffix title semua halaman.',
+        'sort' => 13,
+        'fields' => [
+            ['name' => 'site_name',    'title' => 'Nama Situs',           'type' => 'text', 'default' => '',
+                'info' => 'Dipakai di nama tab, footer copyright & meta og:site_name. Kosong = pakai nama channel / APP_NAME.',
+                'channel_based' => false],
+            ['name' => 'home_title',   'title' => 'Nama Tab Homepage',    'type' => 'text', 'default' => '',
+                'info' => 'Title tab browser halaman utama. Kosong = pakai Home SEO title di Settings → Channels.',
+                'channel_based' => false],
+            ['name' => 'title_suffix', 'title' => 'Suffix Title (semua halaman)', 'type' => 'text', 'default' => '— Ankesh Mart',
+                'info' => 'Otomatis ditambahkan ke nama tab semua halaman (mis. "— Ankesh Mart"). Kosongkan untuk menonaktifkan.',
                 'channel_based' => false],
         ],
     ],

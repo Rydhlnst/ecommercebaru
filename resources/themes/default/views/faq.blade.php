@@ -1,5 +1,5 @@
 <x-shop::layouts>
-    <x-slot:title>Frequently Asked Questions (FAQ) — {{ config('app.name') }}</x-slot>
+    <x-slot:title>Frequently Asked Questions (FAQ)</x-slot>
 
     <div class="bg-gradient-to-b from-[#F5F9F3] to-white py-12 md:py-20 border-b border-[#E8F0E5]/60">
         <div class="mx-auto max-w-4xl px-4 sm:px-6 md:px-10 text-center">
@@ -43,7 +43,9 @@
                     <p class="text-sm text-[#555555] mt-1">Tim dukungan pelanggan kami siap membantu Anda kapan saja.</p>
                 </div>
                 @php
-                    $storeWa = \App\Models\SiteSetting::getValue('store_whatsapp') ?: \App\Models\SiteSetting::getValue('store_phone');
+                    $storeWa = (string) core()->getConfigData('beres_storefront.contact.whatsapp_number')
+                        ?: ((string) core()->getConfigData('beres_storefront.contact.phone')
+                        ?: (\App\Models\SiteSetting::getValue('store_whatsapp') ?: \App\Models\SiteSetting::getValue('store_phone')));
                 @endphp
                 @if($storeWa)
                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $storeWa) }}" target="_blank" rel="noopener" class="px-6 py-3 bg-[#2D5A27] text-white font-semibold text-sm rounded-xl hover:bg-[#1E3A1E] transition-colors shrink-0 shadow-sm">

@@ -138,7 +138,7 @@
 
     <!-- Drawer Content -->
     <x-slot:content class="p-3 sm:p-4">
-        <div class="journal-scroll h-[calc(100vh-100px)] overflow-auto">
+        <div class="journal-scroll max-h-[calc(100vh-100px)] overflow-y-auto overflow-x-hidden">
             <nav class="grid w-full gap-1.5 sm:gap-2">
                 <!-- Navigation Menu -->
                 @foreach (menu()->getItems('admin') as $menuItem)
