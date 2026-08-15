@@ -142,10 +142,10 @@
 @endphp
 
 <div class="beres-card group bg-white overflow-hidden flex flex-col justify-between" style="border:1px solid #E8F0E5; border-radius:16px;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
-    {{-- Product Image --}}
-    <a href="{{ $href }}" class="block relative aspect-[4/5] overflow-hidden" style="background-color:{{ $bg }};">
+    {{-- Product Image Container (Standardized 4:5 Aspect Ratio) --}}
+    <a href="{{ $href }}" class="block relative w-full overflow-hidden shrink-0" style="aspect-ratio:4/5; height:260px; max-height:280px; background-color:{{ $bg }};">
         @if ($image)
-            <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy">
+            <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
         @endif
 
         {{-- Numbered badge --}}
