@@ -272,30 +272,35 @@
                     </div>
                 @endif
 
-                {{-- Row 1: Quantity + Add to cart --}}
-                <div class="flex items-center gap-2">
-                    <div class="flex items-center border border-[#E8F0E5] rounded-lg overflow-hidden h-9 bg-white">
-                        <button type="button" class="w-8 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-base leading-none" onclick="beresQty(this, -1)" aria-label="Kurangi">−</button>
-                        <input type="number" name="quantity" value="1" min="1" max="99" class="w-8 h-full text-center text-xs border-0 border-x border-[#E8F0E5] focus:outline-none bg-transparent font-semibold leading-none" aria-label="Jumlah">
-                        <button type="button" class="w-8 h-full flex items-center justify-center text-[#2D5A27] hover:bg-[#F5F9F3] transition-colors text-base leading-none" onclick="beresQty(this, 1)" aria-label="Tambah">+</button>
+                {{-- Quantity Stepper (Full Width Compact Row) --}}
+                <div class="flex items-center justify-between bg-[#F5F9F3] border border-[#E8F0E5] rounded-xl px-2.5 h-9">
+                    <span class="text-xs font-semibold text-[#171717]">Jumlah</span>
+                    <div class="flex items-center">
+                        <button type="button" class="w-7 h-7 flex items-center justify-center text-[#2D5A27] hover:bg-white rounded-md transition-colors font-bold text-sm leading-none" onclick="beresQty(this, -1)" aria-label="Kurangi">−</button>
+                        <input type="number" name="quantity" value="1" min="1" max="99" class="w-8 h-7 text-center text-xs border-0 focus:outline-none bg-transparent font-bold leading-none text-[#171717]" aria-label="Jumlah">
+                        <button type="button" class="w-7 h-7 flex items-center justify-center text-[#2D5A27] hover:bg-white rounded-md transition-colors font-bold text-sm leading-none" onclick="beresQty(this, 1)" aria-label="Tambah">+</button>
                     </div>
-
-                    <button type="submit"
-                            class="flex-1 h-9 text-xs font-semibold tracking-wide uppercase text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
-                            style="background-color:#2D5A27; border-radius:8px;">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                        <span>Add To Cart</span>
-                    </button>
                 </div>
 
-                {{-- Row 2: Buy Now direct checkout --}}
-                <button type="button"
-                        onclick="beresBuyNow(this.form)"
-                        class="w-full h-8 text-[11px] font-bold tracking-wider uppercase text-[#171717] hover:text-white bg-[#E8F0E5] hover:bg-[#171717] transition-colors flex items-center justify-center gap-1.5"
-                        style="border-radius:8px;">
-                    <svg class="w-3 h-3 text-[#2D5A27]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                    <span>Beli Sekarang</span>
-                </button>
+                {{-- Action Buttons: 1 Horizontal Row Side-by-Side --}}
+                <div class="grid grid-cols-2 gap-2 pt-0.5">
+                    {{-- Button 1: Add to Cart --}}
+                    <button type="submit"
+                            class="h-9 px-2 text-[11px] font-bold tracking-wider uppercase text-white hover:opacity-90 transition-all flex items-center justify-center gap-1.5 shadow-xs"
+                            style="background-color:#2D5A27; border-radius:10px;">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        <span>Keranjang</span>
+                    </button>
+
+                    {{-- Button 2: Buy Now --}}
+                    <button type="button"
+                            onclick="beresBuyNow(this.form)"
+                            class="h-9 px-2 text-[11px] font-bold tracking-wider uppercase text-[#171717] hover:text-white bg-[#E8F0E5] hover:bg-[#171717] transition-all flex items-center justify-center gap-1.5 shadow-xs"
+                            style="border-radius:10px;">
+                        <svg class="w-3 h-3 text-[#2D5A27]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span>Beli Sekarang</span>
+                    </button>
+                </div>
             </form>
         @elseif ($prodId && !$inStock)
             <button type="button" disabled
