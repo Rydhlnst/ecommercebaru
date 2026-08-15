@@ -171,12 +171,28 @@ class AdminBlogController extends Controller
             $filename = time().'_blog.webp';
             $path = 'uploads/blog/'.$filename;
 
-            $manager = new ImageManager(new Driver);
-            $img = $manager->read($file);
-            $img->resizeDown(1200);
-            $encoded = $img->toWebp(80)->toString();
+            try {
+                $manager = new ImageManager(new Driver);
+                $img = $manager->read($file);
+                $img->resizeDown(1200);
+                $encoded = $img->toWebp(85)->toString();
+            } catch (\Throwable $e) {
+                $ext = $file->getClientOriginalExtension() ?: 'jpg';
+                $filename = time().'_blog.'.$ext;
+                $path = 'uploads/blog/'.$filename;
+                $encoded = file_get_contents($file->getRealPath());
+            }
 
             Storage::disk('public')->put($path, $encoded);
+
+            try {
+                $publicDir = public_path('storage/uploads/blog');
+                if (! file_exists($publicDir)) {
+                    @mkdir($publicDir, 0755, true);
+                }
+                @file_put_contents($publicDir.'/'.$filename, $encoded);
+            } catch (\Throwable $e) {
+            }
 
             return response()->json([
                 'url' => Storage::disk('public')->url($path),
@@ -191,12 +207,28 @@ class AdminBlogController extends Controller
         $filename = time().'_thumb.webp';
         $path = 'uploads/blog/thumbnails/'.$filename;
 
-        $manager = new ImageManager(new Driver);
-        $img = $manager->read($file);
-        $img->resizeDown(800);
-        $encoded = $img->toWebp(80)->toString();
+        try {
+            $manager = new ImageManager(new Driver);
+            $img = $manager->read($file);
+            $img->resizeDown(800);
+            $encoded = $img->toWebp(85)->toString();
+        } catch (\Throwable $e) {
+            $ext = $file->getClientOriginalExtension() ?: 'jpg';
+            $filename = time().'_thumb.'.$ext;
+            $path = 'uploads/blog/thumbnails/'.$filename;
+            $encoded = file_get_contents($file->getRealPath());
+        }
 
         Storage::disk('public')->put($path, $encoded);
+
+        try {
+            $publicDir = public_path('storage/uploads/blog/thumbnails');
+            if (! file_exists($publicDir)) {
+                @mkdir($publicDir, 0755, true);
+            }
+            @file_put_contents($publicDir.'/'.$filename, $encoded);
+        } catch (\Throwable $e) {
+        }
 
         return $path;
     }
