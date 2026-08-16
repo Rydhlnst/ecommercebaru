@@ -176,9 +176,9 @@
 
 <div class="beres-card group bg-white overflow-hidden flex flex-col justify-between" style="border:1px solid #E8F0E5; border-radius:16px; min-height:100%;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
     {{-- Product Image Container (Standardized 4:5 Aspect Ratio) --}}
-    <a href="{{ $href }}" class="block relative w-full overflow-hidden shrink-0 flex items-center justify-center" style="aspect-ratio:4/5; height:260px; max-height:280px; background-color:{{ $bg }};">
+    <a href="{{ $href }}" class="block relative w-full overflow-hidden shrink-0 flex items-center justify-center" style="aspect-ratio:4/5; height:260px; max-height:280px; background-color:#ffffff;">
         @if ($image)
-            <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy">
+            <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy">
         @else
             {{-- Placeholder when no image uploaded --}}
             <div class="flex flex-col items-center justify-center gap-2 opacity-50">

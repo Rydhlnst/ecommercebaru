@@ -34,6 +34,27 @@ class AdminSettingController extends Controller
     ];
 
     /**
+     * Mapping section title form fields → core config keys.
+     */
+    protected array $sectionConfigMap = [
+        'section_new_eyebrow' => 'beres_storefront.sections.new_eyebrow',
+        'section_new_title' => 'beres_storefront.sections.new_title',
+        'section_bundle_eyebrow' => 'beres_storefront.sections.bundle_eyebrow',
+        'section_bundle_title' => 'beres_storefront.sections.bundle_title',
+        'section_cat_eyebrow' => 'beres_storefront.sections.cat_eyebrow',
+        'section_cat_title' => 'beres_storefront.sections.cat_title',
+        'section_best_eyebrow' => 'beres_storefront.sections.best_eyebrow',
+        'section_best_title' => 'beres_storefront.sections.best_title',
+        'section_seed_eyebrow' => 'beres_storefront.sections.seed_eyebrow',
+        'section_seed_title' => 'beres_storefront.sections.seed_title',
+        'section_review_eyebrow' => 'beres_storefront.sections.review_eyebrow',
+        'section_review_title' => 'beres_storefront.sections.review_title',
+        'section_faq_title' => 'beres_storefront.sections.faq_title',
+        'section_blog_eyebrow' => 'beres_storefront.sections.blog_eyebrow',
+        'section_blog_title' => 'beres_storefront.sections.blog_title',
+    ];
+
+    /**
      * Simpan value ke core_config (sumber tunggal storefront).
      */
     protected function saveCoreConfig(string $code, ?string $value): void
@@ -124,6 +145,11 @@ class AdminSettingController extends Controller
             'seo_title_suffix' => (string) core()->getConfigData('beres_storefront.seo.title_suffix'),
         ]);
 
+        // Nilai section titles dari core_config
+        foreach ($this->sectionConfigMap as $formKey => $configKey) {
+            $settings[$formKey] = (string) core()->getConfigData($configKey);
+        }
+
         return view('admin.setting.store', compact('settings'));
     }
 
@@ -134,9 +160,9 @@ class AdminSettingController extends Controller
                 'hero_banner' => 'image|mimes:jpeg,png,jpg,webp|max:5120',
             ]);
             $file = $request->file('hero_banner');
-            $filename = 'hero-products.' . $file->getClientOriginalExtension();
+            $filename = 'hero-products.'.$file->getClientOriginalExtension();
             $file->move(public_path('images'), $filename);
-            SiteSetting::setValue('hero_banner_image', '/images/' . $filename . '?v=' . time());
+            SiteSetting::setValue('hero_banner_image', '/images/'.$filename.'?v='.time());
         }
 
         $validated = $request->validate([
@@ -160,6 +186,21 @@ class AdminSettingController extends Controller
             'seo_site_name' => 'nullable|string|max:255',
             'seo_home_title' => 'nullable|string|max:255',
             'seo_title_suffix' => 'nullable|string|max:255',
+            'section_new_eyebrow' => 'nullable|string|max:255',
+            'section_new_title' => 'nullable|string|max:255',
+            'section_bundle_eyebrow' => 'nullable|string|max:255',
+            'section_bundle_title' => 'nullable|string|max:255',
+            'section_cat_eyebrow' => 'nullable|string|max:255',
+            'section_cat_title' => 'nullable|string|max:255',
+            'section_best_eyebrow' => 'nullable|string|max:255',
+            'section_best_title' => 'nullable|string|max:255',
+            'section_seed_eyebrow' => 'nullable|string|max:255',
+            'section_seed_title' => 'nullable|string|max:255',
+            'section_review_eyebrow' => 'nullable|string|max:255',
+            'section_review_title' => 'nullable|string|max:255',
+            'section_faq_title' => 'nullable|string|max:255',
+            'section_blog_eyebrow' => 'nullable|string|max:255',
+            'section_blog_title' => 'nullable|string|max:255',
         ]);
 
         foreach ($validated as $key => $value) {
@@ -175,6 +216,12 @@ class AdminSettingController extends Controller
         }
 
         foreach ($this->seoConfigMap as $formKey => $configKey) {
+            if (array_key_exists($formKey, $validated)) {
+                $this->saveCoreConfig($configKey, $validated[$formKey]);
+            }
+        }
+
+        foreach ($this->sectionConfigMap as $formKey => $configKey) {
             if (array_key_exists($formKey, $validated)) {
                 $this->saveCoreConfig($configKey, $validated[$formKey]);
             }

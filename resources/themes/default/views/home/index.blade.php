@@ -554,7 +554,7 @@
         <section class="bg-white beres-reveal">
             <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
                 <div class="flex items-center justify-between mb-6 md:mb-8">
-                    <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">Biji & Superfood Kami</h2>
+                    <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.seed_title', 'Biji & Superfood Kami') }}</h2>
                     <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat Semua</a>
                 </div>
 
@@ -671,9 +671,9 @@
                     <div class="space-y-2">
                         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-[#E8F0E5] text-[#2D5A27]">
                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-                            <span>Artikel & Wawasan</span>
+                            <span>{{ $c('sections.blog_eyebrow', 'Artikel & Wawasan') }}</span>
                         </div>
-                        <h2 class="text-3xl md:text-4xl text-[#171717] font-bold tracking-tight">Artikel & Tips Terbaru</h2>
+                        <h2 class="text-3xl md:text-4xl text-[#171717] font-bold tracking-tight">{{ $c('sections.blog_title', 'Artikel & Tips Terbaru') }}</h2>
                     </div>
                     <a href="{{ route('shop.blog.index') }}" class="inline-flex items-center gap-2 text-sm font-bold text-[#2D5A27] hover:text-[#1E3A1E] transition-colors group">
                         <span>Lihat Semua Artikel</span>

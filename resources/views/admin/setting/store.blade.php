@@ -160,6 +160,82 @@
             </div>
         </div>
 
+        {{-- Section Titles Homepage --}}
+        @php
+            $sectionKeys = [
+                'new_eyebrow' => ['label' => 'New Arrivals — Eyebrow', 'placeholder' => 'Baru datang'],
+                'new_title' => ['label' => 'New Arrivals — Judul', 'placeholder' => 'Produk terbaru.'],
+                'bundle_eyebrow' => ['label' => 'Kits & Bundles — Eyebrow', 'placeholder' => 'Bundle hemat'],
+                'bundle_title' => ['label' => 'Kits & Bundles — Judul', 'placeholder' => 'Paket & bundle pilihan.'],
+                'cat_eyebrow' => ['label' => 'Kategori — Eyebrow', 'placeholder' => 'Belanja per kategori'],
+                'cat_title' => ['label' => 'Kategori — Judul', 'placeholder' => 'Semua kebutuhan dapur.'],
+                'best_eyebrow' => ['label' => 'Best Sellers — Eyebrow', 'placeholder' => 'Favorit pelanggan'],
+                'best_title' => ['label' => 'Best Sellers — Judul', 'placeholder' => 'Best seller.'],
+                'seed_eyebrow' => ['label' => 'Seeds & Superfoods — Eyebrow', 'placeholder' => 'Pilihan terbaik'],
+                'seed_title' => ['label' => 'Seeds & Superfoods — Judul', 'placeholder' => 'Biji & Superfood Kami.'],
+                'review_eyebrow' => ['label' => 'Reviews — Eyebrow', 'placeholder' => '4.8 dari 2.400+ ulasan'],
+                'review_title' => ['label' => 'Reviews — Judul', 'placeholder' => 'Ulasan pelanggan'],
+                'faq_title' => ['label' => 'FAQ — Judul', 'placeholder' => 'Pertanyaan umum.'],
+                'blog_eyebrow' => ['label' => 'Blog — Eyebrow', 'placeholder' => 'Artikel & Wawasan'],
+                'blog_title' => ['label' => 'Blog — Judul', 'placeholder' => 'Artikel & Tips Terbaru'],
+            ];
+        @endphp
+        <div class="admin-panel-card lg:col-span-2">
+            <h3 class="font-semibold text-gray-900 mb-1">
+                <i class="fas fa-heading mr-2 text-green-600"></i>Judul Section Homepage
+            </h3>
+            <p class="text-xs text-gray-500 mb-5">
+                Atur teks eyebrow (label kecil) dan judul utama setiap section di halaman utama toko.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @foreach($sectionKeys as $key => $meta)
+                    <div class="p-3 bg-gray-50/80 border border-gray-200 rounded-xl">
+                        <label class="form-label text-xs font-semibold text-gray-700">{{ $meta['label'] }}</label>
+                        <input type="text" name="section_{{ $key }}" value="{{ old('section_'.$key, core()->getConfigData('beres_storefront.sections.'.$key) ?? '') }}" placeholder="{{ $meta['placeholder'] }}" class="form-input text-sm bg-white">
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Natural Banner --}}
+        <div class="admin-panel-card">
+            <h3 class="font-semibold text-gray-900 mb-1">
+                <i class="fas fa-leaf mr-2 text-green-700"></i>Banner Natural
+            </h3>
+            <p class="text-xs text-gray-500 mb-4">Banner hijau "100% NATURAL · LAB CERTIFIED".</p>
+
+            <div class="mb-3">
+                <label class="form-label">Text Kiri</label>
+                <input type="text" name="natural_text1" value="{{ old('natural_text1', core()->getConfigData('beres_storefront.natural_banner.text1') ?? '100% NATURAL') }}" class="form-input">
+            </div>
+            <div>
+                <label class="form-label">Text Kanan</label>
+                <input type="text" name="natural_text2" value="{{ old('natural_text2', core()->getConfigData('beres_storefront.natural_banner.text2') ?? 'LAB CERTIFIED') }}" class="form-input">
+            </div>
+        </div>
+
+        {{-- Newsletter --}}
+        <div class="admin-panel-card">
+            <h3 class="font-semibold text-gray-900 mb-1">
+                <i class="fas fa-envelope mr-2 text-blue-500"></i>Newsletter
+            </h3>
+            <p class="text-xs text-gray-500 mb-4">Section signup email di dekat footer.</p>
+
+            <div class="mb-3">
+                <label class="form-label">Judul</label>
+                <input type="text" name="newsletter_title" value="{{ old('newsletter_title', core()->getConfigData('beres_storefront.newsletter.title') ?? 'Resep, tips, dan promo mingguan.') }}" class="form-input">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Deskripsi</label>
+                <textarea name="newsletter_desc" rows="2" class="form-input">{{ old('newsletter_desc', core()->getConfigData('beres_storefront.newsletter.description') ?? '') }}</textarea>
+            </div>
+            <div>
+                <label class="form-label">Tombol</label>
+                <input type="text" name="newsletter_button" value="{{ old('newsletter_button', core()->getConfigData('beres_storefront.newsletter.button') ?? 'Daftar') }}" class="form-input">
+            </div>
+        </div>
+
         {{-- Header Navigation Menu Settings --}}
         <div class="admin-panel-card lg:col-span-2">
             <h3 class="font-semibold text-gray-900 mb-4">
