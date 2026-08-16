@@ -79,6 +79,8 @@ return [
             ['name' => 'review_eyebrow', 'title' => 'Review — Eyebrow', 'type' => 'text', 'default' => '4.8 dari 2.400+ ulasan'],
             ['name' => 'review_title',   'title' => 'Review — Judul',   'type' => 'text', 'default' => 'Ulasan pelanggan'],
             ['name' => 'faq_title',      'title' => 'FAQ — Judul',      'type' => 'text', 'default' => 'Pertanyaan umum.'],
+            ['name' => 'google_review_eyebrow', 'title' => 'Google Review — Eyebrow', 'type' => 'text', 'default' => ''],
+            ['name' => 'google_review_title',   'title' => 'Google Review — Judul',   'type' => 'text', 'default' => 'Ulasan Google Pelanggan'],
             ['name' => 'seed_eyebrow',   'title' => 'Seeds — Eyebrow',  'type' => 'text', 'default' => 'Pilihan terbaik'],
             ['name' => 'seed_title',     'title' => 'Seeds — Judul',    'type' => 'text', 'default' => 'Biji & Superfood Kami.'],
             ['name' => 'blog_eyebrow',   'title' => 'Blog — Eyebrow',   'type' => 'text', 'default' => 'Artikel & Wawasan'],

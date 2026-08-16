@@ -50,6 +50,8 @@ class AdminSettingController extends Controller
         'section_review_eyebrow' => 'beres_storefront.sections.review_eyebrow',
         'section_review_title' => 'beres_storefront.sections.review_title',
         'section_faq_title' => 'beres_storefront.sections.faq_title',
+        'section_google_review_eyebrow' => 'beres_storefront.sections.google_review_eyebrow',
+        'section_google_review_title' => 'beres_storefront.sections.google_review_title',
         'section_blog_eyebrow' => 'beres_storefront.sections.blog_eyebrow',
         'section_blog_title' => 'beres_storefront.sections.blog_title',
     ];
@@ -199,6 +201,8 @@ class AdminSettingController extends Controller
             'section_review_eyebrow' => 'nullable|string|max:255',
             'section_review_title' => 'nullable|string|max:255',
             'section_faq_title' => 'nullable|string|max:255',
+            'section_google_review_eyebrow' => 'nullable|string|max:255',
+            'section_google_review_title' => 'nullable|string|max:255',
             'section_blog_eyebrow' => 'nullable|string|max:255',
             'section_blog_title' => 'nullable|string|max:255',
         ]);

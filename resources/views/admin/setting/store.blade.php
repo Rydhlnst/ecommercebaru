@@ -176,6 +176,8 @@
                 'review_eyebrow' => ['label' => 'Reviews — Eyebrow', 'placeholder' => '4.8 dari 2.400+ ulasan'],
                 'review_title' => ['label' => 'Reviews — Judul', 'placeholder' => 'Ulasan pelanggan'],
                 'faq_title' => ['label' => 'FAQ — Judul', 'placeholder' => 'Pertanyaan umum.'],
+                'google_review_eyebrow' => ['label' => 'Google Review — Eyebrow', 'placeholder' => ''],
+                'google_review_title' => ['label' => 'Google Review — Judul', 'placeholder' => 'Ulasan Google Pelanggan'],
                 'blog_eyebrow' => ['label' => 'Blog — Eyebrow', 'placeholder' => 'Artikel & Wawasan'],
                 'blog_title' => ['label' => 'Blog — Judul', 'placeholder' => 'Artikel & Tips Terbaru'],
             ];

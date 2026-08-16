@@ -642,6 +642,112 @@
         </section>
     @endif
 
+    {{-- ============ GOOGLE REVIEWS (Empty State — ready for Google Business Profile integration) ============ --}}
+    @php
+        $googleReviews = [];
+        $googleRating = 0;
+        $googleReviewCount = 0;
+        $googleReviewUrl = $c('contact.google_review_url', 'https://www.google.com/search?q=Ankesh+Online+Store');
+    @endphp
+    <section class="bg-white beres-reveal border-t" style="border-color:#E8F0E5;">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+            {{-- Header --}}
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-2xl md:text-3xl text-[#171717]" style="font-weight:700;">{{ $c('sections.google_review_title', 'Ulasan Google Pelanggan') }}</h2>
+                    @if ($googleReviewCount > 0)
+                        <div class="flex items-center gap-2 mt-2">
+                            <div class="flex items-center gap-0.5 text-[#EAB308]">
+                                @for ($i = 1; $i <= 5; $i++)
+                                    @if ($i <= floor($googleRating))
+                                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                    @elseif ($i - $googleRating < 1 && $i - $googleRating > 0)
+                                        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" opacity="0.5"/></svg>
+                                    @else
+                                        <svg class="w-5 h-5 text-gray-300 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                    @endif
+                                @endfor
+                            </div>
+                            <span class="text-lg font-bold text-[#171717]">{{ number_format($googleRating, 1) }}</span>
+                            <span class="text-sm text-[#737373]">({{ number_format($googleReviewCount) }} ulasan)</span>
+                        </div>
+                    @endif
+                </div>
+                <a href="{{ $googleReviewUrl }}" target="_blank" rel="noopener"
+                   class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white transition-all"
+                   style="background-color:#2D5A27; border-radius:10px;"
+                   onmouseover="this.style.backgroundColor='#1E3D1A';"
+                   onmouseout="this.style.backgroundColor='#2D5A27';">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    Tulis Ulasan
+                </a>
+            </div>
+
+            {{-- Empty State --}}
+            @if (empty($googleReviews))
+                <div class="flex flex-col items-center justify-center py-16 text-center">
+                    <div class="w-20 h-20 rounded-full flex items-center justify-center mb-5" style="background-color:#F5F9F3;">
+                        <svg class="w-10 h-10 text-[#2D5A27]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-[#171717] mb-2">Belum ada ulasan Google</h3>
+                    <p class="text-sm text-[#737373] max-w-md mb-6">Ulasan dari Google Business Profile akan muncul di sini setelah terhubung. Bagikan pengalaman belanja Anda!</p>
+                    <a href="{{ $googleReviewUrl }}" target="_blank" rel="noopener"
+                       class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold transition-all"
+                       style="border:1.5px solid #2D5A27; color:#2D5A27; border-radius:10px;"
+                       onmouseover="this.style.backgroundColor='#E8F0E5';"
+                       onmouseout="this.style.backgroundColor='transparent';">
+                        Jadilah yang pertama memberi ulasan
+                    </a>
+                </div>
+            @else
+                {{-- Review Cards Horizontal Scroll --}}
+                <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-none" style="-ms-overflow-style:none; scrollbar-width:none;">
+                    @foreach ($googleReviews as $review)
+                        <div class="shrink-0 w-[300px] md:w-[340px] p-5 bg-[#F9FAFB] beres-card" style="border-radius:14px;">
+                            <div class="flex items-center gap-3 mb-3">
+                                @if (!empty($review['avatar']))
+                                    <img src="{{ $review['avatar'] }}" alt="{{ $review['name'] ?? 'Reviewer' }}" class="w-10 h-10 rounded-full object-cover">
+                                @else
+                                    <span class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm" style="background-color:#2D5A27; font-weight:600;">
+                                        {{ strtoupper(mb_substr($review['name'] ?? 'A', 0, 1)) }}
+                                    </span>
+                                @endif
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-[#171717] truncate">{{ $review['name'] ?? 'Anonim' }}</p>
+                                    <p class="text-xs text-[#737373]">{{ $review['time'] ?? '' }}</p>
+                                </div>
+                                <div class="flex items-center gap-0.5 text-[#EAB308] shrink-0">
+                                    @for ($i = 1; $i <= 5; $i++)
+                                        @if ($i <= ($review['rating'] ?? 5))
+                                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                        @else
+                                            <svg class="w-3.5 h-3.5 text-gray-300 fill-current" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                        @endif
+                                    @endfor
+                                </div>
+                            </div>
+                            <p class="text-sm text-[#404040] leading-relaxed line-clamp-4">{{ $review['text'] ?? '' }}</p>
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- See All Link --}}
+                <div class="mt-8 text-center">
+                    <a href="{{ $googleReviewUrl }}" target="_blank" rel="noopener"
+                       class="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold transition-all"
+                       style="border:1.5px solid #E8F0E5; color:#2D5A27; border-radius:10px;"
+                       onmouseover="this.style.borderColor='#2D5A27';"
+                       onmouseout="this.style.borderColor='#E8F0E5';">
+                        Lihat Semua Ulasan
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+            @endif
+        </div>
+    </section>
+
     {{-- ============ FAQ (Only show if real FAQs exist in DB) ============ --}}
     @if ($faqsDb->isNotEmpty())
         <section class="bg-white beres-reveal">
