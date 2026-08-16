@@ -110,6 +110,13 @@
             body { top: 0 !important; }
         </style>
 
+        <!-- Global: justify all description text -->
+        <style>
+            .prose, .prose p, .text-justify, [class*="description"] p, [class*="deskripsi"] p {
+                text-align: justify;
+            }
+        </style>
+
         @if(core()->getConfigData('general.content.speculation_rules.enabled'))
             <script type="speculationrules">
                 @json(core()->getSpeculationRules(), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
