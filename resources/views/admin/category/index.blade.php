@@ -58,10 +58,10 @@
                     <td>{{ $category->products_count ?? $category->products()->count() }}</td>
                     <td>
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.categories.edit', $category) }}" class="btn-primary btn-sm">
+                            <a href="{{ route('admin.categories.edit', $category->id) }}" class="btn-primary btn-sm">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" onsubmit="return confirmDelete(this)">
+                            <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" onsubmit="return confirmDelete(this)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn-danger btn-sm">

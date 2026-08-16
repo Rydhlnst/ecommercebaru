@@ -59,10 +59,10 @@
                             <td class="text-gray-500 text-sm">{{ $post->published_at ? $post->published_at->format('d M Y') : '-' }}</td>
                             <td>
                                 <div class="flex items-center gap-2">
-                                    <a href="{{ route('admin.blog.edit', $post) }}" class="btn-primary btn-sm">
+                                    <a href="{{ route('admin.blog.edit', $post->id) }}" class="btn-primary btn-sm">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.blog.destroy', $post) }}" method="POST" onsubmit="return confirmDelete(this)">
+                                    <form action="{{ route('admin.blog.destroy', $post->id) }}" method="POST" onsubmit="return confirmDelete(this)">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-danger btn-sm">

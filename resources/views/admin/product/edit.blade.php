@@ -11,7 +11,7 @@
     </a>
 </div>
 
-<form method="POST" action="{{ route('admin.products.update', $product) }}" enctype="multipart/form-data" id="product-form">
+<form method="POST" action="{{ route('admin.products.update', $product->id) }}" enctype="multipart/form-data" id="product-form">
     @csrf
     @method('PUT')
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

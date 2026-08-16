@@ -84,10 +84,10 @@
                     </td>
                     <td>
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.products.edit', $product) }}" class="btn-primary btn-sm">
+                            <a href="{{ route('admin.products.edit', $product->id) }}" class="btn-primary btn-sm">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirmDelete(this)">
+                            <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" onsubmit="return confirmDelete(this)">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn-danger btn-sm">

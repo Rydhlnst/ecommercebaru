@@ -12,7 +12,7 @@
 </div>
 
 <div class="admin-panel-card max-w-2xl">
-    <form method="POST" action="{{ route('admin.categories.update', $category) }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('admin.categories.update', $category->id) }}" enctype="multipart/form-data">
         @csrf
         @method('PUT')
 

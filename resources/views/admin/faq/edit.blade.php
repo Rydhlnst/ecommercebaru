@@ -12,7 +12,7 @@
 </div>
 
 <div class="admin-panel-card max-w-2xl">
-    <form method="POST" action="{{ route('admin.faqs.update', $faq) }}">
+    <form method="POST" action="{{ route('admin.faqs.update', $faq->id) }}">
         @csrf
         @method('PUT')
         <div class="mb-4">
