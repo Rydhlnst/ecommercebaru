@@ -28,7 +28,7 @@
         }
         * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         body { background: var(--bg-body); }
-        .sidebar { width: 260px; min-height: 100vh; background: var(--sidebar-bg); transition: transform 0.3s ease; }
+        .sidebar { width: 260px; height: 100vh; background: var(--sidebar-bg); transition: transform 0.3s ease; }
         .sidebar.collapsed { transform: translateX(-260px); }
         .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 40; }
         .sidebar-overlay.active { display: block; }
