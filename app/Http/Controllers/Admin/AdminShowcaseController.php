@@ -55,13 +55,13 @@ class AdminShowcaseController extends Controller
             if ($showcase->image) {
                 Storage::disk('public')->delete($showcase->image);
             }
-            $filename = time().'_showcase.webp';
+            $filename = time().'_showcase.jpg';
             $path = 'uploads/showcase/'.$filename;
 
             $manager = new ImageManager(new Driver);
             $img = $manager->read($request->file('image'));
-            $img->resizeDown(800);
-            $encoded = $img->toWebp(80)->toString();
+            $img->resizeDown(1200);
+            $encoded = $img->toJpeg(90)->toString();
 
             Storage::disk('public')->put($path, $encoded);
             $showcase->image = $path;

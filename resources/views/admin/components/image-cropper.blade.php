@@ -262,13 +262,13 @@ window.AdminCropper = (function() {
 
         canvas.toBlob(function(blob) {
             const ext = currentFile.name.split('.').pop();
-            const fileName = currentFile.name.replace(/\.[^/.]+$/, "") + "_cropped.webp";
-            const croppedFile = new File([blob], fileName, { type: 'image/webp', lastModified: Date.now() });
+            const fileName = currentFile.name.replace(/\.[^/.]+$/, "") + "_cropped.jpg";
+            const croppedFile = new File([blob], fileName, { type: 'image/jpeg', lastModified: Date.now() });
 
             processedFiles.push(croppedFile);
             currentFileIndex++;
             processNextInQueue();
-        }, 'image/webp', 0.92);
+        }, 'image/jpeg', 0.92);
     }
 
     function finishCropping() {

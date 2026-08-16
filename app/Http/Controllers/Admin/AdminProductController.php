@@ -215,15 +215,15 @@ class AdminProductController extends Controller
         }
 
         foreach ($files as $index => $file) {
-            $filename = time().'_'.uniqid().'_'.$index.'.webp';
+            $filename = time().'_'.uniqid().'_'.$index.'.jpg';
             $path = 'uploads/products/'.$filename;
 
             $encoded = null;
             if ($manager) {
                 try {
                     $img = $manager->read($file);
-                    $img->resizeDown(800);
-                    $encoded = $img->toWebp(85)->toString();
+                    $img->resizeDown(1600);
+                    $encoded = $img->toJpeg(92)->toString();
                 } catch (\Throwable $e) {
                     $encoded = null;
                 }

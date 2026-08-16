@@ -154,15 +154,15 @@ class AdminCategoryController extends Controller
             $manager = null;
         }
 
-        $filename = time().'_'.uniqid().'.webp';
+        $filename = time().'_'.uniqid().'.jpg';
         $path = 'uploads/categories/'.$filename;
 
         $encoded = null;
         if ($manager) {
             try {
                 $img = $manager->read($file);
-                $img->resizeDown(500);
-                $encoded = $img->toWebp(85)->toString();
+                $img->resizeDown(800);
+                $encoded = $img->toJpeg(90)->toString();
             } catch (\Throwable $e) {
                 $encoded = null;
             }

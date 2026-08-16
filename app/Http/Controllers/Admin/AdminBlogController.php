@@ -176,14 +176,14 @@ class AdminBlogController extends Controller
     {
         if ($request->hasFile('upload')) {
             $file = $request->file('upload');
-            $filename = time().'_blog.webp';
+            $filename = time().'_blog.jpg';
             $path = 'uploads/blog/'.$filename;
 
             try {
                 $manager = new ImageManager(new Driver);
                 $img = $manager->read($file);
-                $img->resizeDown(1200);
-                $encoded = $img->toWebp(85)->toString();
+                $img->resizeDown(1600);
+                $encoded = $img->toJpeg(92)->toString();
             } catch (\Throwable $e) {
                 $ext = $file->getClientOriginalExtension() ?: 'jpg';
                 $filename = time().'_blog.'.$ext;
@@ -212,14 +212,14 @@ class AdminBlogController extends Controller
 
     private function uploadThumbnail($file)
     {
-        $filename = time().'_thumb.webp';
+        $filename = time().'_thumb.jpg';
         $path = 'uploads/blog/thumbnails/'.$filename;
 
         try {
             $manager = new ImageManager(new Driver);
             $img = $manager->read($file);
-            $img->resizeDown(800);
-            $encoded = $img->toWebp(85)->toString();
+            $img->resizeDown(1200);
+            $encoded = $img->toJpeg(90)->toString();
         } catch (\Throwable $e) {
             $ext = $file->getClientOriginalExtension() ?: 'jpg';
             $filename = time().'_thumb.'.$ext;
