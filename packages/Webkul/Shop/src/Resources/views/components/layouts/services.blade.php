@@ -45,7 +45,7 @@
                     <div>
                         <p class="font-bold text-base text-white">{{ $service['title'] ?? '' }}</p>
                         @if(!empty($service['description']))
-                            <p class="mt-1 text-xs text-white/70 max-w-[240px] leading-relaxed">{{ $service['description'] }}</p>
+                            <p class="mt-1 text-xs text-white max-w-[240px] leading-relaxed">{{ $service['description'] }}</p>
                         @endif
                     </div>
                 </div>
