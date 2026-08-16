@@ -61,7 +61,7 @@ class AdminSeeder extends Seeder
         $kopi = AdminCategory::updateOrCreate(['name' => 'Kopi & Teh'], ['slug' => 'kopi-teh', 'parent_id' => $minuman->id]);
 
         // ─── Products ────────────────────────────────────────────────────────
-        // Variasi (weight in kg): 0.25 = 250g, 0.50 = 500g, 1.00 = 1000g.
+        // Variasi (weight in grams): 250, 500, 1000, etc.
         // Urutkan ascending agar "first variant" = berat/termurah (auto-select).
         $products = [
             // Makanan
@@ -75,8 +75,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Nasi goreng dengan ayam, telur, sayuran, dan bumbu rahasia. Porsi besar, rasa mantap.',
                 'variations' => [
-                    ['weight' => 0.35, 'price' => 35000, 'stock' => 30],
-                    ['weight' => 0.70, 'price' => 60000, 'stock' => 20],
+                    ['weight' => 350, 'price' => 35000, 'stock' => 30],
+                    ['weight' => 700, 'price' => 60000, 'stock' => 20],
                 ],
             ],
             [
@@ -89,8 +89,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Ayam bakar dengan bumbu madu khas, dibakar hingga kecokelatan. Cocok dengan nasi putih hangat.',
                 'variations' => [
-                    ['weight' => 0.50, 'price' => 45000, 'stock' => 20],
-                    ['weight' => 1.00, 'price' => 85000, 'stock' => 10],
+                    ['weight' => 500, 'price' => 45000, 'stock' => 20],
+                    ['weight' => 1000, 'price' => 85000, 'stock' => 10],
                 ],
             ],
             [
@@ -103,8 +103,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Sate ayam 10 tusuk dengan bumbu kacang khas Madura. Saus dan lontong disertakan.',
                 'variations' => [
-                    ['weight' => 0.50, 'price' => 25000, 'stock' => 60],
-                    ['weight' => 1.00, 'price' => 45000, 'stock' => 40],
+                    ['weight' => 500, 'price' => 25000, 'stock' => 60],
+                    ['weight' => 1000, 'price' => 45000, 'stock' => 40],
                 ],
             ],
             [
@@ -117,8 +117,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Rendang daging sapi Padang autentik, dimasak perlahan dengan rempah pilihan. Tahan lama, cocok untuk stok.',
                 'variations' => [
-                    ['weight' => 0.25, 'price' => 85000, 'stock' => 15],
-                    ['weight' => 0.50, 'price' => 160000, 'stock' => 10],
+                    ['weight' => 250, 'price' => 85000, 'stock' => 15],
+                    ['weight' => 500, 'price' => 160000, 'stock' => 10],
                 ],
             ],
             [
@@ -131,8 +131,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Gado-gado dengan sayuran segar, tahu, tempe, dan bumbu kacang. Porsi lengkap.',
                 'variations' => [
-                    ['weight' => 0.30, 'price' => 28000, 'stock' => 25],
-                    ['weight' => 0.60, 'price' => 50000, 'stock' => 15],
+                    ['weight' => 300, 'price' => 28000, 'stock' => 25],
+                    ['weight' => 600, 'price' => 50000, 'stock' => 15],
                 ],
             ],
 
@@ -147,8 +147,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Keripik tempe renyah dengan bumbu original. Camilan ringan khas Jawa.',
                 'variations' => [
-                    ['weight' => 0.25, 'price' => 18000, 'stock' => 45],
-                    ['weight' => 0.50, 'price' => 32000, 'stock' => 35],
+                    ['weight' => 250, 'price' => 18000, 'stock' => 45],
+                    ['weight' => 500, 'price' => 32000, 'stock' => 35],
                 ],
             ],
             [
@@ -161,8 +161,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Kue lumpur khas Bogor, lembut dan manis. Isian kentang pilihan, cocok untuk teman teh.',
                 'variations' => [
-                    ['weight' => 0.25, 'price' => 22000, 'stock' => 20],
-                    ['weight' => 0.50, 'price' => 40000, 'stock' => 15],
+                    ['weight' => 250, 'price' => 22000, 'stock' => 20],
+                    ['weight' => 500, 'price' => 40000, 'stock' => 15],
                 ],
             ],
             [
@@ -175,8 +175,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Pastel goreng dengan isian abon sapi dan sayuran. Kulit renyah, isian melimpah.',
                 'variations' => [
-                    ['weight' => 0.25, 'price' => 15000, 'stock' => 35],
-                    ['weight' => 0.50, 'price' => 28000, 'stock' => 25],
+                    ['weight' => 250, 'price' => 15000, 'stock' => 35],
+                    ['weight' => 500, 'price' => 28000, 'stock' => 25],
                 ],
             ],
 
@@ -191,9 +191,9 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Kopi arabika Gayo single origin, roasted medium. Aroma kuat, rasa fruity.',
                 'variations' => [
-                    ['weight' => 0.25, 'price' => 45000, 'stock' => 0],
-                    ['weight' => 0.50, 'price' => 85000, 'stock' => 0],
-                    ['weight' => 1.00, 'price' => 160000, 'stock' => 0],
+                    ['weight' => 250, 'price' => 45000, 'stock' => 0],
+                    ['weight' => 500, 'price' => 85000, 'stock' => 0],
+                    ['weight' => 1000, 'price' => 160000, 'stock' => 0],
                 ],
             ],
             [
@@ -206,8 +206,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Teh melati pilihan, dikeringkan secara alami. Aroma harum, rasa lembut.',
                 'variations' => [
-                    ['weight' => 0.25, 'price' => 35000, 'stock' => 25],
-                    ['weight' => 0.50, 'price' => 65000, 'stock' => 20],
+                    ['weight' => 250, 'price' => 35000, 'stock' => 25],
+                    ['weight' => 500, 'price' => 65000, 'stock' => 20],
                 ],
             ],
             [
@@ -220,8 +220,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Jus jeruk peras segar tanpa pemanis buatan. Diperas langsung dari jeruk segar.',
                 'variations' => [
-                    ['weight' => 0.35, 'price' => 18000, 'stock' => 60],
-                    ['weight' => 0.50, 'price' => 25000, 'stock' => 40],
+                    ['weight' => 350, 'price' => 18000, 'stock' => 60],
+                    ['weight' => 500, 'price' => 25000, 'stock' => 40],
                 ],
             ],
             [
@@ -234,8 +234,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Jus alpukat kocok dengan susu coklat dan es. Creamy dan menyegarkan.',
                 'variations' => [
-                    ['weight' => 0.35, 'price' => 22000, 'stock' => 30],
-                    ['weight' => 0.50, 'price' => 30000, 'stock' => 20],
+                    ['weight' => 350, 'price' => 22000, 'stock' => 30],
+                    ['weight' => 500, 'price' => 30000, 'stock' => 20],
                 ],
             ],
 
@@ -250,8 +250,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Bayam segar organik, dipetik hari ini. Cocok untuk tumis, sup, atau salad.',
                 'variations' => [
-                    ['weight' => 0.25, 'price' => 7000, 'stock' => 40],
-                    ['weight' => 0.50, 'price' => 12000, 'stock' => 30],
+                    ['weight' => 250, 'price' => 7000, 'stock' => 40],
+                    ['weight' => 500, 'price' => 12000, 'stock' => 30],
                 ],
             ],
             [
@@ -264,8 +264,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Wortel impor kualitas premium, ukuran besar. Manis dan renyah.',
                 'variations' => [
-                    ['weight' => 0.50, 'price' => 8500, 'stock' => 35],
-                    ['weight' => 1.00, 'price' => 15000, 'stock' => 25],
+                    ['weight' => 500, 'price' => 8500, 'stock' => 35],
+                    ['weight' => 1000, 'price' => 15000, 'stock' => 25],
                 ],
             ],
             [
@@ -278,8 +278,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Brokoli hijau segar, kaya vitamin. Cocok untuk tumis, sup, atau steam.',
                 'variations' => [
-                    ['weight' => 0.25, 'price' => 10000, 'stock' => 20],
-                    ['weight' => 0.50, 'price' => 18000, 'stock' => 20],
+                    ['weight' => 250, 'price' => 10000, 'stock' => 20],
+                    ['weight' => 500, 'price' => 18000, 'stock' => 20],
                 ],
             ],
 
@@ -294,8 +294,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Mangga harumanis pilihan, manis dan harum. Dipetik saat matang pohon.',
                 'variations' => [
-                    ['weight' => 1.00, 'price' => 30000, 'stock' => 15],
-                    ['weight' => 2.00, 'price' => 55000, 'stock' => 10],
+                    ['weight' => 1000, 'price' => 30000, 'stock' => 15],
+                    ['weight' => 2000, 'price' => 55000, 'stock' => 10],
                 ],
             ],
             [
@@ -308,8 +308,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Jeruk mandarin manis, kulit tipis, mudah dikupas. Cocok untuk jus atau dimakan langsung.',
                 'variations' => [
-                    ['weight' => 0.50, 'price' => 18000, 'stock' => 30],
-                    ['weight' => 1.00, 'price' => 32000, 'stock' => 20],
+                    ['weight' => 500, 'price' => 18000, 'stock' => 30],
+                    ['weight' => 1000, 'price' => 32000, 'stock' => 20],
                 ],
             ],
             [
@@ -322,8 +322,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Pisang cavendish import, ukuran besar. Manis dan lembut, cocok untuk diet.',
                 'variations' => [
-                    ['weight' => 0.50, 'price' => 10000, 'stock' => 45],
-                    ['weight' => 1.00, 'price' => 18000, 'stock' => 35],
+                    ['weight' => 500, 'price' => 10000, 'stock' => 45],
+                    ['weight' => 1000, 'price' => 18000, 'stock' => 35],
                 ],
             ],
 
@@ -338,8 +338,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Dada ayam fillet segar, tanpa tulang dan kulit. Cocok untuk masak apa saja.',
                 'variations' => [
-                    ['weight' => 0.50, 'price' => 42000, 'stock' => 20],
-                    ['weight' => 1.00, 'price' => 80000, 'stock' => 15],
+                    ['weight' => 500, 'price' => 42000, 'stock' => 20],
+                    ['weight' => 1000, 'price' => 80000, 'stock' => 15],
                 ],
             ],
             [
@@ -352,8 +352,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Salmon steak segar, potongan tebal. Kaya omega-3, cocok untuk grill atau pan-fry.',
                 'variations' => [
-                    ['weight' => 0.25, 'price' => 65000, 'stock' => 10],
-                    ['weight' => 0.50, 'price' => 125000, 'stock' => 5],
+                    ['weight' => 250, 'price' => 65000, 'stock' => 10],
+                    ['weight' => 500, 'price' => 125000, 'stock' => 5],
                 ],
             ],
             [
@@ -366,8 +366,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Udang vaname segar, ukuran besar. Cocok untuk tumis, goreng, atau bakar.',
                 'variations' => [
-                    ['weight' => 0.50, 'price' => 75000, 'stock' => 12],
-                    ['weight' => 1.00, 'price' => 140000, 'stock' => 8],
+                    ['weight' => 500, 'price' => 75000, 'stock' => 12],
+                    ['weight' => 1000, 'price' => 140000, 'stock' => 8],
                 ],
             ],
 
@@ -382,9 +382,9 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Bumbu rendang instan, tinggal campur daging. Rasa autentik Padang.',
                 'variations' => [
-                    ['weight' => 0.25, 'price' => 35000, 'stock' => 30],
-                    ['weight' => 0.50, 'price' => 60000, 'stock' => 20],
-                    ['weight' => 1.00, 'price' => 110000, 'stock' => 10],
+                    ['weight' => 250, 'price' => 35000, 'stock' => 30],
+                    ['weight' => 500, 'price' => 60000, 'stock' => 20],
+                    ['weight' => 1000, 'price' => 110000, 'stock' => 10],
                 ],
             ],
             [
@@ -397,8 +397,8 @@ class AdminSeeder extends Seeder
                 'has_variations' => true,
                 'description' => 'Sambal terasi homemade, pedas dan gurih. Cocok untuk semua masakan.',
                 'variations' => [
-                    ['weight' => 0.15, 'price' => 22000, 'stock' => 35],
-                    ['weight' => 0.30, 'price' => 40000, 'stock' => 20],
+                    ['weight' => 150, 'price' => 22000, 'stock' => 35],
+                    ['weight' => 300, 'price' => 40000, 'stock' => 20],
                 ],
             ],
         ];

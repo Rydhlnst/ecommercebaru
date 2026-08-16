@@ -12,7 +12,7 @@ class AdminProductVariation extends Model
     protected function casts(): array
     {
         return [
-            'weight' => 'decimal:2',
+            'weight' => 'integer',
             'price' => 'decimal:2',
         ];
     }
@@ -23,12 +23,10 @@ class AdminProductVariation extends Model
     }
 
     /**
-     * Weight stored as kg (decimal). Display as grams, e.g. 0.50 -> "500g", 1.00 -> "1000g".
+     * Weight stored in grams (integer). Display as grams, e.g. 500 -> "500g", 1000 -> "1000g".
      */
     public function getWeightLabelAttribute(): string
     {
-        $grams = (int) round(((float) $this->weight) * 1000);
-
-        return $grams.'g';
+        return (int) $this->weight . 'g';
     }
 }

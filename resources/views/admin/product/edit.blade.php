@@ -99,9 +99,8 @@
                             @foreach(old('variation_price', $product->variations) as $i => $v)
                                 <div class="variation-row flex gap-3 items-end">
                                     <div class="flex-1">
-                                        <label class="form-label">Berat (kg)</label>
-                                        <input type="number" name="variation_weight[]" step="0.01" value="{{ is_object($v) ? $v->weight : (old('variation_weight')[$i] ?? '') }}" class="form-input" oninput="updateGramHint(this)">
-                                        <span class="berat-hint text-xs text-gray-400"></span>
+                                        <label class="form-label">Berat (gram)</label>
+                                        <input type="number" name="variation_weight[]" step="1" min="0" value="{{ is_object($v) ? $v->weight : (old('variation_weight')[$i] ?? '') }}" class="form-input" placeholder="contoh: 500, 1000">
                                     </div>
                                     <div class="flex-1">
                                         <label class="form-label">Harga (Rp)</label>
@@ -163,9 +162,8 @@ function addVariation() {
     row.className = 'variation-row flex gap-3 items-end';
     row.innerHTML = `
         <div class="flex-1">
-            <label class="form-label">Berat (kg)</label>
-            <input type="number" name="variation_weight[]" step="0.01" class="form-input" oninput="updateGramHint(this)">
-            <span class="berat-hint text-xs text-gray-400"></span>
+            <label class="form-label">Berat (gram)</label>
+            <input type="number" name="variation_weight[]" step="1" min="0" class="form-input" placeholder="contoh: 500, 1000">
         </div>
         <div class="flex-1">
             <label class="form-label">Harga (Rp)</label>
@@ -183,15 +181,6 @@ function addVariation() {
 function removeVariation(btn) {
     btn.closest('.variation-row').remove();
 }
-
-function updateGramHint(input) {
-    const span = input.parentElement.querySelector('.berat-hint');
-    if (!span) return;
-    const val = parseFloat(input.value);
-    span.textContent = (!isNaN(val) && val > 0) ? '= ' + Math.round(val * 1000) + 'g' : '';
-}
-
-document.querySelectorAll('input[name="variation_weight[]"]').forEach(updateGramHint);
 
 function handleProductFileInput(input) {
     if (input.files && input.files.length > 0) {

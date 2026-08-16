@@ -17,12 +17,9 @@ class ShippingCalculatorService
     public function calculateShippingCosts(
         int $originCityId,
         int $destinationCityId,
-        float $weightKg,
+        int $weightGrams,
         array $couriers = null
     ): array {
-        // Convert weight to grams
-        $weightGrams = (int) ($weightKg * 1000);
-
         // Get default couriers if not specified
         $couriers = $couriers ?? config('rajaongkir.couriers');
 

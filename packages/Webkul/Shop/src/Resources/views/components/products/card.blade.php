@@ -170,10 +170,10 @@
                         <button
                             type="button"
                             class="px-3 py-1 text-xs rounded-full border transition-all duration-200 font-medium"
-                            :class="selectedWeight == '1kg' ? 'border-[#2D5A27] bg-[#2D5A27] text-white shadow-sm' : 'border-zinc-300 bg-white text-ink hover:border-[#2D5A27]'"
-                            @click="selectedWeight = '1kg'"
+                            :class="selectedWeight == '1000g' ? 'border-[#2D5A27] bg-[#2D5A27] text-white shadow-sm' : 'border-zinc-300 bg-white text-ink hover:border-[#2D5A27]'"
+                            @click="selectedWeight = '1000g'"
                         >
-                            1kg
+                            1000g
                         </button>
                     </div>
                 </div>

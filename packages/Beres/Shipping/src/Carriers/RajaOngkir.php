@@ -97,18 +97,18 @@ class RajaOngkir extends AbstractShipping
     }
 
     /**
-     * Sum cart items shipping weight (kg → grams). Minimum 1kg (RajaOngkir rule).
+     * Sum cart items shipping weight in grams. Minimum 1000g (1kg RajaOngkir rule).
      */
     protected function totalWeightGrams($cart): int
     {
-        $totalKg = 0.0;
+        $totalGrams = 0;
 
         foreach ($cart->items as $item) {
-            $itemWeight = (float) ($item->product?->weight ?? 0);
-            $totalKg   += $itemWeight * (int) $item->quantity;
+            $itemWeight = (int) ($item->product?->weight ?? 0);
+            $totalGrams += $itemWeight * (int) $item->quantity;
         }
 
-        return (int) round($totalKg * 1000);
+        return max(1000, $totalGrams);
     }
 
     /**
