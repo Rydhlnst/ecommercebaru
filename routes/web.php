@@ -110,6 +110,33 @@ Route::get('/blog/{slug}', [BlogFrontendController::class, 'show'])->name('shop.
 
 /*
 |--------------------------------------------------------------------------
+| Blog API Routes
+|--------------------------------------------------------------------------
+*/
+use App\Http\Controllers\BlogApiController;
+
+Route::prefix('api')->group(function () {
+    // Public blog API
+    Route::get('/blogs', [BlogApiController::class, 'index'])->name('api.blogs.index');
+    Route::get('/blogs/{slug}', [BlogApiController::class, 'show'])->name('api.blogs.show');
+    Route::get('/blog/categories', [BlogApiController::class, 'categories'])->name('api.blogs.categories');
+
+    // Admin blog API (requires authentication)
+    Route::prefix('admin')->name('api.admin.')->middleware(['web', 'admin.auth'])->group(function () {
+        Route::get('/blogs', [BlogApiController::class, 'adminIndex'])->name('blogs.index');
+        Route::post('/blogs', [BlogApiController::class, 'store'])->name('blogs.store');
+        Route::put('/blogs/{post}', [BlogApiController::class, 'update'])->name('blogs.update');
+        Route::delete('/blogs/{post}', [BlogApiController::class, 'destroy'])->name('blogs.destroy');
+        Route::post('/blogs/upload-image', [BlogApiController::class, 'uploadImage'])->name('blogs.uploadImage');
+        Route::get('/blog/categories', [BlogApiController::class, 'adminCategories'])->name('blogs.categories.index');
+        Route::post('/blog/categories', [BlogApiController::class, 'storeCategory'])->name('blogs.categories.store');
+        Route::put('/blog/categories/{category}', [BlogApiController::class, 'updateCategory'])->name('blogs.categories.update');
+        Route::delete('/blog/categories/{category}', [BlogApiController::class, 'destroyCategory'])->name('blogs.categories.destroy');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
 | Panel Routes (admin CRUD)
 |--------------------------------------------------------------------------
 */
@@ -221,4 +248,3 @@ Route::get('/storage/{path}', function (string $path) {
 
     abort(404);
 })->where('path', '.*')->name('storage.fallback');
-

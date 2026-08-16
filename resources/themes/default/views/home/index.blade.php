@@ -683,25 +683,15 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     @foreach ($blogsDb as $i => $page)
                         @php
-                            $blogTitle    = $page->title ?? ($page->page_title ?? 'Wellness & Healthy Living');
-                            $blogCategory = $page->category?->name ?? 'Ankesh Mart';
-                            $blogExcerpt  = \Illuminate\Support\Str::limit(strip_tags($page->content ?? ($page->html_content ?? '')), 120);
+                            $blogTitle    = $page->title ?? '';
+                            $blogCategory = $page->category?->name ?? 'Artikel & Tips';
+                            $blogExcerpt  = \Illuminate\Support\Str::limit(strip_tags($page->content ?? ''), 120);
                             $blogUrl      = $page->slug ? route('shop.blog.show', $page->slug) : '#';
-                            $blogDate     = $page->published_at ? $page->published_at->format('d M Y') : ($page->created_at ? $page->created_at->format('d M Y') : '');
-
-                            $blogImg = null;
-                            if ($page->thumbnail) {
-                                if (file_exists(public_path('storage/' . $page->thumbnail))) {
-                                    $blogImg = asset('storage/' . $page->thumbnail);
-                                } elseif (file_exists(public_path($page->thumbnail))) {
-                                    $blogImg = asset($page->thumbnail);
-                                } else {
-                                    $blogImg = asset('storage/' . $page->thumbnail);
-                                }
-                            }
+                            $blogDate     = $page->published_at ? $page->published_at->format('d F Y') : ($page->created_at ? $page->created_at->format('d F Y') : '');
+                            $blogImg      = $page->thumbnail_url;
                         @endphp
-                        <article class="group flex flex-col bg-white rounded-2xl border border-[#E8F0E5] overflow-hidden shadow-xs hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 h-full cursor-pointer" onclick="window.location.href='{{ $blogUrl }}';">
-                            {{-- Unified 16:9 Thumbnail Banner Container --}}
+                        <article class="group flex flex-col bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-1 h-full cursor-pointer" onclick="window.location.href='{{ $blogUrl }}';">
+                            {{-- Unified 16:9 Thumbnail Banner --}}
                             <a href="{{ $blogUrl }}" class="block relative w-full overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] shrink-0" style="aspect-ratio:16/9; height:200px; max-height:220px;">
                                 @if ($blogImg)
                                     <img src="{{ $blogImg }}" alt="{{ $blogTitle }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" style="width:100%; height:100%; object-fit:contain;" loading="lazy">
@@ -730,7 +720,7 @@
                                             <svg class="w-3.5 h-3.5 text-[#2D5A27]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                                             </svg>
-                                            <span>{{ strtoupper($blogDate) }}</span>
+                                            <span>{{ $blogDate }}</span>
                                         </div>
                                     @endif
 
@@ -740,7 +730,7 @@
                                         </h3>
                                     </a>
 
-                                    <p class="mt-2.5 text-sm text-[#555555] leading-relaxed line-clamp-3">
+                                    <p class="mt-2.5 text-sm text-zinc-600 leading-relaxed line-clamp-3">
                                         {{ $blogExcerpt }}
                                     </p>
                                 </div>
