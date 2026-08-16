@@ -13,6 +13,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Spatie\ResponseCache\ResponseCache;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 
@@ -88,6 +89,7 @@ class AdminProductController extends Controller
             $this->saveImages($product, $request->file('images'));
         }
 
+        ResponseCache::clear();
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
@@ -155,6 +157,7 @@ class AdminProductController extends Controller
             $this->saveImages($product, $request->file('images'));
         }
 
+        ResponseCache::clear();
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
@@ -176,6 +179,7 @@ class AdminProductController extends Controller
             ->delete();
 
         $product->delete();
+        ResponseCache::clear();
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus.');
     }

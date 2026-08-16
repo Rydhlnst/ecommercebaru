@@ -10,6 +10,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Spatie\ResponseCache\ResponseCache;
+use Spatie\ResponseCache\ResponseCache;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -67,6 +69,7 @@ class AdminCategoryController extends Controller
 
         AdminCategory::create($validated);
 
+        ResponseCache::clear();
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
@@ -106,6 +109,7 @@ class AdminCategoryController extends Controller
 
         $category->update($validated);
 
+        ResponseCache::clear();
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil diperbarui.');
     }
 
@@ -126,6 +130,7 @@ class AdminCategoryController extends Controller
         }
 
         $category->delete();
+        ResponseCache::clear();
 
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil dihapus.');
     }

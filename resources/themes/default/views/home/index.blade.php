@@ -14,13 +14,14 @@
 
     // ============ HOMEPAGE HIGHLIGHTS — via HomepageHighlightService ============
     $highlightService = app(\Beres\Highlight\Services\HomepageHighlightService::class);
+    $sectionLimits = \Beres\Highlight\Models\HomepageHighlight::getSectionDefinitions();
 
     try {
-        $newProductsDb   = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_NEW_ARRIVALS, 8);
+        $newProductsDb   = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_NEW_ARRIVALS, $sectionLimits[\Beres\Highlight\Models\HomepageHighlight::SECTION_NEW_ARRIVALS]['limit']);
         $featuredProduct = $highlightService->getFeaturedProduct();
-        $bundlesDb       = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_KITS_BUNDLES, 8);
-        $bestSellersDb   = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_BEST_SELLERS, 8);
-        $superfoodsDb    = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_SEEDS, 8);
+        $bundlesDb       = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_KITS_BUNDLES, $sectionLimits[\Beres\Highlight\Models\HomepageHighlight::SECTION_KITS_BUNDLES]['limit']);
+        $bestSellersDb   = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_BEST_SELLERS, $sectionLimits[\Beres\Highlight\Models\HomepageHighlight::SECTION_BEST_SELLERS]['limit']);
+        $superfoodsDb    = $highlightService->getProducts(\Beres\Highlight\Models\HomepageHighlight::SECTION_SEEDS, $sectionLimits[\Beres\Highlight\Models\HomepageHighlight::SECTION_SEEDS]['limit']);
     } catch (\Throwable $e) {
         $newProductsDb   = collect();
         $featuredProduct = null;
@@ -31,9 +32,9 @@
 
     // ============ CATEGORIES — from admin_categories ============
     try {
-        $categoriesDb = $highlightService->getCategories(8);
+        $categoriesDb = $highlightService->getCategories($sectionLimits[\Beres\Highlight\Models\HomepageHighlight::SECTION_CATEGORIES]['limit']);
     } catch (\Throwable $e) {
-        $categoriesDb = AdminCategory::withCount('products')->orderByDesc('products_count')->limit(8)->get()
+        $categoriesDb = AdminCategory::withCount('products')->orderByDesc('products_count')->limit($sectionLimits[\Beres\Highlight\Models\HomepageHighlight::SECTION_CATEGORIES]['limit'])->get()
             ->map(fn ($cat) => ['id' => $cat->id, 'name' => $cat->name, 'slug' => $cat->slug, 'image' => $cat->image ? asset('storage/'.$cat->image) : null]);
     }
 
@@ -480,7 +481,7 @@
     {{-- ============ SHOP BY CATEGORY ============ --}}
     @php
         $homeCats = app(\Beres\Highlight\Services\HomepageHighlightService::class)
-            ->getCategories(12);
+            ->getCategories($sectionLimits[\Beres\Highlight\Models\HomepageHighlight::SECTION_CATEGORIES]['limit']);
     @endphp
     @if ($homeCats->isNotEmpty())
         <section class="bg-white beres-reveal">

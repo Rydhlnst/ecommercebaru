@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Spatie\ResponseCache\ResponseCache;
+use Spatie\ResponseCache\ResponseCache;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
@@ -78,6 +80,7 @@ class AdminBlogController extends Controller
 
         BlogPost::create($validated);
 
+        ResponseCache::clear();
         return redirect()->route('admin.blog.index')->with('success', 'Postingan berhasil ditambahkan.');
     }
 
@@ -123,6 +126,7 @@ class AdminBlogController extends Controller
 
         $post->update($validated);
 
+        ResponseCache::clear();
         return redirect()->route('admin.blog.index')->with('success', 'Postingan berhasil diperbarui.');
     }
 
@@ -134,6 +138,7 @@ class AdminBlogController extends Controller
             Storage::disk('public')->delete($post->thumbnail);
         }
         $post->delete();
+        ResponseCache::clear();
 
         return redirect()->route('admin.blog.index')->with('success', 'Postingan berhasil dihapus.');
     }
@@ -147,6 +152,7 @@ class AdminBlogController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
         BlogCategory::create($validated);
 
+        ResponseCache::clear();
         return redirect()->route('admin.blog.index')->with('success', 'Kategori blog berhasil ditambahkan.');
     }
 
@@ -161,6 +167,7 @@ class AdminBlogController extends Controller
         $validated['slug'] = Str::slug($validated['name']);
         $category->update($validated);
 
+        ResponseCache::clear();
         return redirect()->route('admin.blog.index')->with('success', 'Kategori blog berhasil diperbarui.');
     }
 
@@ -168,6 +175,7 @@ class AdminBlogController extends Controller
     {
         $category = BlogCategory::findOrFail($id);
         $category->delete();
+        ResponseCache::clear();
 
         return redirect()->route('admin.blog.index')->with('success', 'Kategori blog berhasil dihapus.');
     }
