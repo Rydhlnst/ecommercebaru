@@ -64,7 +64,7 @@
                         {{-- Unified 16:9 Thumbnail Banner --}}
                         <a href="{{ $postUrl }}" class="block relative w-full overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] shrink-0" style="aspect-ratio:16/9; height:200px; max-height:220px;">
                             @if($postImg)
-                                <img src="{{ $postImg }}" alt="{{ $post->title }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" style="width:100%; height:100%; object-fit:contain;" loading="lazy">
+                                <img src="{{ $postImg }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                             @else
                                 <div class="w-full h-full flex flex-col justify-between p-5 bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] group-hover:scale-105 transition-transform duration-500" style="width:100%; height:100%;">
                                     <span class="inline-block px-3 py-1 text-xs font-semibold text-[#2D5A27] bg-white/90 backdrop-blur-md rounded-full shadow-xs w-fit">

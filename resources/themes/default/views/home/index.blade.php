@@ -132,7 +132,7 @@
     .beres-hero{position:relative;width:100%;overflow:hidden;background:#f8f9fa;}
     .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform;}
     .beres-hero__slide{flex:0 0 100%;width:100%;aspect-ratio:16/7;background:#f8f9fa;}
-    .beres-hero__slide img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;}
+    .beres-hero__slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
     @media (max-width:768px){.beres-hero__slide{aspect-ratio:4/5;}}
     .beres-hero__nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:rgba(255,255,255,.85);color:#1A3E1A;border:0;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.15);}
     .beres-hero__nav:hover{background:#fff;}
@@ -695,7 +695,7 @@
                             {{-- Unified 16:9 Thumbnail Banner --}}
                             <a href="{{ $blogUrl }}" class="block relative w-full overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] shrink-0" style="aspect-ratio:16/9; height:200px; max-height:220px;">
                                 @if ($blogImg)
-                                    <img src="{{ $blogImg }}" alt="{{ $blogTitle }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500" style="width:100%; height:100%; object-fit:contain;" loading="lazy">
+                                    <img src="{{ $blogImg }}" alt="{{ $blogTitle }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                                 @else
                                     <div class="w-full h-full flex flex-col justify-between p-5 bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] group-hover:scale-105 transition-transform duration-500" style="width:100%; height:100%;">
                                         <span class="inline-block px-3 py-1 text-xs font-semibold text-[#2D5A27] bg-white/90 backdrop-blur-md rounded-full shadow-xs w-fit">

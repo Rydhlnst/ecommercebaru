@@ -22,7 +22,7 @@
         {{-- Clean Landscape Banner (No dark overlay, crisp clean rounded container) --}}
         @if($postImg && $post->thumbnail)
             <div class="w-full max-h-[420px] aspect-[16/9] md:aspect-[21/9] rounded-2xl md:rounded-3xl overflow-hidden mb-8 shadow-xs bg-white flex items-center justify-center">
-                <img src="{{ $postImg }}" alt="{{ $post->title }}" class="w-full h-full object-contain md:object-cover object-center" loading="eager">
+                <img src="{{ $postImg }}" alt="{{ $post->title }}" class="w-full h-full object-cover object-center" loading="eager">
             </div>
         @endif
 
