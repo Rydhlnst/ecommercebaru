@@ -85,37 +85,48 @@
 @endsection
 
 @section('scripts')
+function AnkeshUploadAdapter(loader) {
+    this.loader = loader;
+    this.upload = function() {
+        return this.loader.file.then(function(file) {
+            return new Promise(function(resolve, reject) {
+                const data = new FormData();
+                data.append('upload', file);
+                fetch('{{ route("admin.blog.uploadImage") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    body: data
+                })
+                .then(function(res) { return res.json(); })
+                .then(function(json) {
+                    if (json.url) {
+                        resolve({ default: json.url });
+                    } else {
+                        reject(json.error || 'Upload gagal');
+                    }
+                })
+                .catch(reject);
+            });
+        });
+    };
+    this.abort = function() {};
+}
+function AnkeshUploadAdapterPlugin(editor) {
+    editor.plugins.get('FileRepository').createUploadAdapter = function(loader) {
+        return new AnkeshUploadAdapter(loader);
+    };
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     ClassicEditor.create(document.querySelector('#content-editor'), {
+        extraPlugins: [AnkeshUploadAdapterPlugin],
         toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'blockQuote', '|', 'imageUpload', 'insertTable', 'mediaEmbed', '|', 'undo', 'redo'],
         image: {
             upload: {
-                types: ['jpeg', 'png', 'webp'],
-                handler: function(loader) {
-                    loader.file.then(function(file) {
-                        const data = new FormData();
-                        data.append('upload', file);
-                        fetch('{{ route("admin.blog.uploadImage") }}', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json'
-                            },
-                            body: data
-                        })
-                        .then(function(res) { return res.json(); })
-                        .then(function(json) {
-                            if (json.url) {
-                                loader.resolve({ default: json.url });
-                            } else {
-                                loader.fail({ message: 'Upload gagal' });
-                            }
-                        })
-                        .catch(function(err) {
-                            loader.fail(err);
-                        });
-                    });
-                }
+                types: ['jpeg', 'png', 'webp']
             }
         }
     }).catch(console.error);

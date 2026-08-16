@@ -121,17 +121,18 @@
 
         <!-- Default category layout -->
         <div
-            class="flex items-center"
+            class="w-full bg-mist border-b border-[#C4C4C4]"
             v-else-if="'{{ core()->getConfigData('general.design.categories.category_view') }}' !== 'sidebar'"
         >
+            <div class="flex items-center px-[60px] max-1180:px-8">
             <div
-                class="group relative flex h-[77px] items-center border-b-4 border-transparent hover:border-b-4 hover:border-ink"
+                class="group relative flex h-10 items-center border-b-2 border-transparent hover:border-b-2 hover:border-ink"
                 v-for="category in categories"
             >
                 <span>
                     <a
                         :href="category.url"
-                        class="inline-block px-5 uppercase"
+                        class="inline-block px-4 text-sm font-medium uppercase text-cocoa hover:text-ink transition-colors"
                     >
                         @{{ category.name }}
                     </a>
@@ -171,19 +172,20 @@
                     </div>
                 </div>
             </div>
+            </div>
         </div>
 
         <!-- Sidebar category layout -->
-        <div v-else>
+        <div v-else class="w-full bg-mist border-b border-[#C4C4C4]">
             <!-- Categories Navigation -->
-            <div class="flex items-center">
+            <div class="flex items-center px-[60px] max-1180:px-8">
                 <!-- "All" button for opening the category drawer -->
                 <div
-                    class="flex h-[77px] cursor-pointer items-center border-b-4 border-transparent hover:border-b-4 hover:border-ink"
+                    class="flex h-10 cursor-pointer items-center border-b-2 border-transparent hover:border-b-2 hover:border-ink"
                     @click="toggleCategoryDrawer"
                 >
-                    <span class="flex items-center gap-1 px-5 uppercase">
-                        <span class="text-xl icon-hamburger"></span>
+                    <span class="flex items-center gap-1 px-4 text-sm font-medium uppercase text-cocoa hover:text-ink transition-colors">
+                        <span class="text-base icon-hamburger"></span>
 
                         @lang('shop::app.components.layouts.header.desktop.bottom.all')
                     </span>
@@ -191,13 +193,13 @@
 
                 <!-- Show only first 4 categories in main navigation -->
                 <div
-                    class="group relative flex h-[77px] items-center border-b-4 border-transparent hover:border-b-4 hover:border-ink"
+                    class="group relative flex h-10 items-center border-b-2 border-transparent hover:border-b-2 hover:border-ink"
                     v-for="category in categories.slice(0, 4)"
                 >
                     <span>
                         <a
                             :href="category.url"
-                            class="inline-block px-5 uppercase"
+                            class="inline-block px-4 text-sm font-medium uppercase text-cocoa hover:text-ink transition-colors"
                         >
                             @{{ category.name }}
                         </a>
@@ -205,7 +207,7 @@
 
                     <!-- Dropdown for each category -->
                     <div
-                        class="pointer-events-none absolute top-[78px] z-[1] max-h-[580px] w-max max-w-[1260px] translate-y-1 overflow-auto overflow-x-auto border border-b-0 border-l-0 border-r-0 border-t border-[#F3F3F3] bg-white p-9 opacity-0 shadow-[0_6px_6px_1px_rgba(0,0,0,.3)] transition duration-300 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-hover:duration-200 group-hover:ease-in ltr:-left-9 rtl:-right-9"
+                        class="pointer-events-none absolute top-[42px] z-[1] max-h-[580px] w-max max-w-[1260px] translate-y-1 overflow-auto overflow-x-auto border border-b-0 border-l-0 border-r-0 border-t border-[#F3F3F3] bg-white p-9 opacity-0 shadow-[0_6px_6px_1px_rgba(0,0,0,.3)] transition duration-300 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100 group-hover:duration-200 group-hover:ease-in ltr:-left-9 rtl:-right-9"
                         v-if="category.children && category.children.length"
                     >
                         <div class="flex justify-between gap-x-[70px]">
