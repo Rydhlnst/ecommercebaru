@@ -175,8 +175,8 @@
             {!! view_render_event('bagisto.shop.layout.content.after') !!}
 
 
-            <!-- Page Services Blade Component -->
-            @if ($hasFeature)
+            <!-- Page Services Blade Component (skip on homepage — rendered inline before Google Reviews) -->
+            @if ($hasFeature && !request()->is('/'))
                 <x-shop::layouts.services />
             @endif
 

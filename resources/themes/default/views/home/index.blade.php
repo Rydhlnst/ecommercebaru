@@ -635,6 +635,9 @@
         </section>
     @endif
 
+    {{-- ============ SERVICES / TRUST BADGES ============ --}}
+    <x-shop::layouts.services />
+
     {{-- ============ GOOGLE REVIEWS (Empty State — ready for Google Business Profile integration) ============ --}}
     @php
         $googleReviews = [];
