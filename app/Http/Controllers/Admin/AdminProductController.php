@@ -169,6 +169,12 @@ class AdminProductController extends Controller
         foreach ($product->images as $img) {
             Storage::disk('public')->delete($img->image_path);
         }
+
+        \DB::table('homepage_highlights')
+            ->where('entity_type', 'product')
+            ->where('entity_id', $product->id)
+            ->delete();
+
         $product->delete();
 
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil dihapus.');
