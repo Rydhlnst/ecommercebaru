@@ -131,7 +131,7 @@
     }
     .beres-hero{position:relative;width:100%;overflow:hidden;background:#f8f9fa;}
     .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform;}
-    .beres-hero__slide{flex:0 0 100%;width:100%;aspect-ratio:16/7;background:#f8f9fa;}
+    .beres-hero__slide{flex:0 0 100%;width:100%;aspect-ratio:3/2;background:#f8f9fa;}
     .beres-hero__slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
     @media (max-width:768px){.beres-hero__slide{aspect-ratio:4/5;}}
     .beres-hero__nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:rgba(255,255,255,.85);color:#1A3E1A;border:0;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.15);}
