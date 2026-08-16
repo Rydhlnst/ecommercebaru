@@ -27,7 +27,7 @@
 @endphp
 
 @if (!empty($servicesList))
-    <div class="bg-[#F5F9F3] border-t border-[#E8F0E5]" v-pre>
+    <div class="bg-[#2D5A27] border-t border-[#1E3D1A]" v-pre>
         <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             @foreach ($servicesList as $service)
                 @php
@@ -36,16 +36,16 @@
                 @endphp
                 <div class="flex flex-col items-center gap-3 group">
                     <span
-                        class="flex items-center justify-center w-14 h-14 rounded-full bg-white border border-[#E8F0E5] shadow-xs group-hover:scale-110 transition-transform duration-300"
+                        class="flex items-center justify-center w-14 h-14 rounded-full bg-white/20 border border-white/30 shadow-xs group-hover:scale-110 transition-transform duration-300"
                         role="presentation"
                     >
-                        <svg class="w-6 h-6 text-[#2D5A27]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $svgPath !!}</svg>
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $svgPath !!}</svg>
                     </span>
 
                     <div>
-                        <p class="font-bold text-base text-[#171717]">{{ $service['title'] ?? '' }}</p>
+                        <p class="font-bold text-base text-white">{{ $service['title'] ?? '' }}</p>
                         @if(!empty($service['description']))
-                            <p class="mt-1 text-xs text-zinc-500 max-w-[240px] leading-relaxed">{{ $service['description'] }}</p>
+                            <p class="mt-1 text-xs text-white/70 max-w-[240px] leading-relaxed">{{ $service['description'] }}</p>
                         @endif
                     </div>
                 </div>
