@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AdminReview;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 
 class AdminReviewController extends Controller
@@ -26,15 +25,17 @@ class AdminReviewController extends Controller
         return view('admin.review.index', compact('reviews'));
     }
 
-    public function approve(AdminReview $review)
+    public function approve($id)
     {
+        $review = AdminReview::findOrFail($id);
         $review->update(['is_approved' => true]);
 
         return redirect()->route('admin.reviews.index')->with('success', 'Review berhasil disetujui.');
     }
 
-    public function destroy(AdminReview $review)
+    public function destroy($id)
     {
+        $review = AdminReview::findOrFail($id);
         $review->delete();
 
         return redirect()->route('admin.reviews.index')->with('success', 'Review berhasil dihapus.');

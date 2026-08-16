@@ -162,39 +162,50 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         Route::post('/categories/clear-all', [AdminCategoryController::class, 'clearAll'])->name('categories.clearAll');
-        Route::resource('categories', AdminCategoryController::class)->parameters([
-            'categories' => 'category',
-        ]);
+        Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+        Route::get('/categories/create', [AdminCategoryController::class, 'create'])->name('categories.create');
+        Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
+        Route::get('/categories/{id}/edit', [AdminCategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('/categories/{id}', [AdminCategoryController::class, 'update'])->name('categories.update');
+        Route::delete('/categories/{id}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
         Route::post('/products/clear-all', [AdminProductController::class, 'clearAll'])->name('products.clearAll');
-        Route::resource('products', AdminProductController::class)->parameters([
-            'products' => 'product',
-        ]);
+        Route::get('/products', [AdminProductController::class, 'index'])->name('products.index');
+        Route::get('/products/create', [AdminProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [AdminProductController::class, 'store'])->name('products.store');
+        Route::get('/products/{id}/edit', [AdminProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{id}', [AdminProductController::class, 'update'])->name('products.update');
+        Route::delete('/products/{id}', [AdminProductController::class, 'destroy'])->name('products.destroy');
 
         Route::get('/showcase', [AdminShowcaseController::class, 'index'])->name('showcase.index');
         Route::post('/showcase', [AdminShowcaseController::class, 'store'])->name('showcase.store');
 
-        Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'destroy']);
-        Route::post('/orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+        Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
+        Route::delete('/orders/{id}', [AdminOrderController::class, 'destroy'])->name('orders.destroy');
+        Route::post('/orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
         Route::get('/blog', [AdminBlogController::class, 'index'])->name('blog.index');
         Route::get('/blog/create', [AdminBlogController::class, 'create'])->name('blog.create');
         Route::post('/blog', [AdminBlogController::class, 'store'])->name('blog.store');
-        Route::get('/blog/{post}/edit', [AdminBlogController::class, 'edit'])->name('blog.edit');
-        Route::put('/blog/{post}', [AdminBlogController::class, 'update'])->name('blog.update');
-        Route::delete('/blog/{post}', [AdminBlogController::class, 'destroy'])->name('blog.destroy');
+        Route::get('/blog/{id}/edit', [AdminBlogController::class, 'edit'])->name('blog.edit');
+        Route::put('/blog/{id}', [AdminBlogController::class, 'update'])->name('blog.update');
+        Route::delete('/blog/{id}', [AdminBlogController::class, 'destroy'])->name('blog.destroy');
         Route::post('/blog/upload-image', [AdminBlogController::class, 'uploadImage'])->name('blog.uploadImage');
         Route::post('/blog/categories', [AdminBlogController::class, 'storeCategory'])->name('blog.storeCategory');
-        Route::put('/blog/categories/{category}', [AdminBlogController::class, 'updateCategory'])->name('blog.updateCategory');
-        Route::delete('/blog/categories/{category}', [AdminBlogController::class, 'destroyCategory'])->name('blog.destroyCategory');
+        Route::put('/blog/categories/{id}', [AdminBlogController::class, 'updateCategory'])->name('blog.updateCategory');
+        Route::delete('/blog/categories/{id}', [AdminBlogController::class, 'destroyCategory'])->name('blog.destroyCategory');
 
         Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
-        Route::post('/reviews/{review}/approve', [AdminReviewController::class, 'approve'])->name('reviews.approve');
-        Route::delete('/reviews/{review}', [AdminReviewController::class, 'destroy'])->name('reviews.destroy');
+        Route::post('/reviews/{id}/approve', [AdminReviewController::class, 'approve'])->name('reviews.approve');
+        Route::delete('/reviews/{id}', [AdminReviewController::class, 'destroy'])->name('reviews.destroy');
 
-        Route::resource('faqs', AdminFaqController::class)->parameters([
-            'faqs' => 'faq',
-        ]);
+        Route::get('/faqs', [AdminFaqController::class, 'index'])->name('faqs.index');
+        Route::get('/faqs/create', [AdminFaqController::class, 'create'])->name('faqs.create');
+        Route::post('/faqs', [AdminFaqController::class, 'store'])->name('faqs.store');
+        Route::get('/faqs/{id}/edit', [AdminFaqController::class, 'edit'])->name('faqs.edit');
+        Route::put('/faqs/{id}', [AdminFaqController::class, 'update'])->name('faqs.update');
+        Route::delete('/faqs/{id}', [AdminFaqController::class, 'destroy'])->name('faqs.destroy');
 
         Route::get('/settings/integrations', [AdminSettingController::class, 'integrations'])->name('settings.integrations');
         Route::post('/settings/integrations', [AdminSettingController::class, 'updateIntegrations'])->name('settings.integrations.update');

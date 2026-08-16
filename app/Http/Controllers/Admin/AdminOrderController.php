@@ -26,15 +26,18 @@ class AdminOrderController extends Controller
         return view('admin.order.index', compact('orders'));
     }
 
-    public function show(AdminOrder $order)
+    public function show($id)
     {
+        $order = AdminOrder::findOrFail($id);
         $order->load('items.product');
 
         return view('admin.order.show', compact('order'));
     }
 
-    public function updateStatus(Request $request, AdminOrder $order)
+    public function updateStatus(Request $request, $id)
     {
+        $order = AdminOrder::findOrFail($id);
+
         $validated = $request->validate([
             'status' => 'required|in:pending,processing,completed,cancelled',
             'payment_status' => 'required|in:pending,paid',
@@ -42,11 +45,13 @@ class AdminOrderController extends Controller
 
         $order->update($validated);
 
-        return redirect()->route('admin.orders.show', $order)->with('success', 'Status pesanan berhasil diperbarui.');
+        return redirect()->route('admin.orders.show', $order->id)->with('success', 'Status pesanan berhasil diperbarui.');
     }
 
-    public function destroy(AdminOrder $order)
+    public function destroy($id)
     {
+        $order = AdminOrder::findOrFail($id);
+
         $order->items()->delete();
         $order->delete();
 

@@ -48,13 +48,17 @@ class AdminFaqController extends Controller
         return redirect()->route('admin.faqs.index')->with('success', 'FAQ berhasil ditambahkan.');
     }
 
-    public function edit(Faq $faq)
+    public function edit($id)
     {
+        $faq = Faq::findOrFail($id);
+
         return view('admin.faq.edit', compact('faq'));
     }
 
-    public function update(Request $request, Faq $faq)
+    public function update(Request $request, $id)
     {
+        $faq = Faq::findOrFail($id);
+
         $validated = $request->validate([
             'question' => 'required|string|max:255',
             'answer' => 'required|string',
@@ -70,8 +74,9 @@ class AdminFaqController extends Controller
         return redirect()->route('admin.faqs.index')->with('success', 'FAQ berhasil diperbarui.');
     }
 
-    public function destroy(Faq $faq)
+    public function destroy($id)
     {
+        $faq = Faq::findOrFail($id);
         $faq->delete();
 
         return redirect()->route('admin.faqs.index')->with('success', 'FAQ berhasil dihapus.');

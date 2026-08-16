@@ -81,15 +81,18 @@ class AdminBlogController extends Controller
         return redirect()->route('admin.blog.index')->with('success', 'Postingan berhasil ditambahkan.');
     }
 
-    public function edit(BlogPost $post)
+    public function edit($id)
     {
+        $post = BlogPost::findOrFail($id);
         $categories = BlogCategory::all();
 
         return view('admin.blog.edit', compact('post', 'categories'));
     }
 
-    public function update(Request $request, BlogPost $post)
+    public function update(Request $request, $id)
     {
+        $post = BlogPost::findOrFail($id);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
@@ -123,8 +126,10 @@ class AdminBlogController extends Controller
         return redirect()->route('admin.blog.index')->with('success', 'Postingan berhasil diperbarui.');
     }
 
-    public function destroy(BlogPost $post)
+    public function destroy($id)
     {
+        $post = BlogPost::findOrFail($id);
+
         if ($post->thumbnail) {
             Storage::disk('public')->delete($post->thumbnail);
         }
@@ -145,8 +150,10 @@ class AdminBlogController extends Controller
         return redirect()->route('admin.blog.index')->with('success', 'Kategori blog berhasil ditambahkan.');
     }
 
-    public function updateCategory(Request $request, BlogCategory $category)
+    public function updateCategory(Request $request, $id)
     {
+        $category = BlogCategory::findOrFail($id);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:blog_categories,name,'.$category->id,
         ]);
@@ -157,8 +164,9 @@ class AdminBlogController extends Controller
         return redirect()->route('admin.blog.index')->with('success', 'Kategori blog berhasil diperbarui.');
     }
 
-    public function destroyCategory(BlogCategory $category)
+    public function destroyCategory($id)
     {
+        $category = BlogCategory::findOrFail($id);
         $category->delete();
 
         return redirect()->route('admin.blog.index')->with('success', 'Kategori blog berhasil dihapus.');
