@@ -36,10 +36,10 @@
                 @endphp
                 <div class="flex flex-col items-center gap-3 group">
                     <span
-                        class="flex items-center justify-center w-14 h-14 rounded-full bg-white/20 border border-white/30 shadow-xs group-hover:scale-110 transition-transform duration-300"
+                        class="flex items-center justify-center w-14 h-14 rounded-full bg-white shadow-xs group-hover:scale-110 transition-transform duration-300"
                         role="presentation"
                     >
-                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $svgPath !!}</svg>
+                        <svg class="w-6 h-6 text-[#2D5A27]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $svgPath !!}</svg>
                     </span>
 
                     <div>
