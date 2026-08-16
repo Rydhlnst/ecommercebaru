@@ -200,14 +200,9 @@
                                 <td class="px-4 py-4 align-top">
                                     <div class="flex items-start gap-3">
                                         @if ($item->orderItem->product?->images?->first())
-                                            <img
-                                                src="{{ asset('storage/' . $item->orderItem->product->images->first()->path) }}"
-                                                class="h-16 w-16 shrink-0 rounded-lg border object-cover"
-                                            />
+                                            <x-shop::product-image :image="asset('storage/' . $item->orderItem->product->images->first()->path)" :alt="$item->orderItem->name" size="sm" class="h-16 w-16 shrink-0 rounded-lg border object-cover" />
                                         @else
-                                            <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-dashed text-gray-300">
-                                                <span class="text-xs">No Image</span>
-                                            </div>
+                                            <x-shop::product-image :image="null" :alt="$item->orderItem->name" size="sm" class="h-16 w-16 shrink-0 rounded-lg border object-cover" />
                                         @endif
 
                                         <div class="min-w-0">
@@ -278,14 +273,9 @@
                     <div class="rounded-xl border shadow-sm p-4 space-y-3">
                         <div class="flex items-center gap-3">
                             @if ($item->orderItem->product?->images?->first())
-                                <img 
-                                    src="{{ asset('storage/' . $item->orderItem->product->images->first()->path) }}" 
-                                    class="w-16 h-16 object-cover rounded border"
-                                />
+                                <x-shop::product-image :image="asset('storage/' . $item->orderItem->product->images->first()->path)" :alt="$item->orderItem->name" size="sm" class="w-16 h-16 object-cover rounded border" />
                             @else
-                                <div class="w-16 h-16 border border-dashed rounded flex items-center justify-center text-gray-300">
-                                    <span class="text-xs">No Image</span>
-                                </div>
+                                <x-shop::product-image :image="null" :alt="$item->orderItem->name" size="sm" class="w-16 h-16 object-cover rounded border" />
                             @endif
 
                             <div class="flex-1">

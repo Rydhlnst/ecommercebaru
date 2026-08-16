@@ -177,19 +177,7 @@
 <div class="beres-card group bg-white overflow-hidden flex flex-col justify-between" style="border:1px solid #E8F0E5; border-radius:16px; min-height:100%;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
     {{-- Product Image Container (Standardized 4:5 Aspect Ratio) --}}
     <a href="{{ $href }}" class="block relative w-full overflow-hidden shrink-0 flex items-center justify-center" style="aspect-ratio:4/5; height:260px; max-height:280px; background-color:#ffffff;">
-        @if ($image)
-            <img src="{{ $image }}" alt="{{ $name }}" class="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.03]" loading="lazy">
-        @else
-            {{-- Placeholder when no image uploaded --}}
-            <div class="flex flex-col items-center justify-center gap-2 opacity-50">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#2D5A27" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
-                </svg>
-                <span class="text-[10px] text-[#2D5A27] font-medium tracking-wide uppercase">Gambar Produk</span>
-            </div>
-        @endif
+        <x-shop::product-image :image="$image" :alt="$name" class="w-full h-full object-contain p-4 transition-transform duration-500 group-hover:scale-[1.03]" />
 
         {{-- Numbered badge --}}
         <span class="absolute top-3 left-3 w-7 h-7 flex items-center justify-center bg-white text-[#171717] text-xs font-bold" style="border-radius:999px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">
