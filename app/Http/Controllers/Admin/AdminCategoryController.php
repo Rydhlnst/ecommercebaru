@@ -70,8 +70,9 @@ class AdminCategoryController extends Controller
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil ditambahkan.');
     }
 
-    public function edit(AdminCategory $category)
+    public function edit($id)
     {
+        $category = AdminCategory::findOrFail($id);
         $parentCategories = AdminCategory::whereNull('parent_id')
             ->where('id', '!=', $category->id)
             ->get();
@@ -79,8 +80,10 @@ class AdminCategoryController extends Controller
         return view('admin.category.edit', compact('category', 'parentCategories'));
     }
 
-    public function update(Request $request, AdminCategory $category)
+    public function update(Request $request, $id)
     {
+        $category = AdminCategory::findOrFail($id);
+
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:admin_categories,name,'.$category->id,
             'parent_id' => 'nullable|exists:admin_categories,id',
@@ -106,8 +109,10 @@ class AdminCategoryController extends Controller
         return redirect()->route('admin.categories.index')->with('success', 'Kategori berhasil diperbarui.');
     }
 
-    public function destroy(AdminCategory $category)
+    public function destroy($id)
     {
+        $category = AdminCategory::findOrFail($id);
+
         if ($category->products()->count() > 0) {
             return back()->with('error', 'Tidak bisa menghapus kategori yang masih memiliki produk.');
         }
