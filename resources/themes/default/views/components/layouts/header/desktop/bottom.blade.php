@@ -193,8 +193,8 @@
     {{-- Row 2: horizontal category nav (editable via admin → Configure → Storefront → Header Category Nav) --}}
     @php
         $navPath    = request()->path();
-        $navActive  = 'bg-[#2D5A27] text-white rounded-md px-3 py-2 font-semibold shadow-sm';
-        $navInactive= 'text-stone hover:bg-[#E8F0E5] hover:text-[#2D5A27] rounded-md px-3 py-2 transition-colors';
+        $navActive  = 'bg-[#1E3D1A] text-white rounded-md px-3 py-2 font-semibold shadow-sm';
+        $navInactive= 'text-white hover:bg-[#1E3D1A] hover:text-white rounded-md px-3 py-2 transition-colors';
 
         $siteNav = null;
         try {
@@ -238,14 +238,14 @@
             $navItems[] = [$label, $href, $active];
         }
     @endphp
-    <nav class="w-full px-6 md:px-10 lg:px-14 pt-2 pb-4 border-t border-mist" aria-label="Category navigation">
-        <ul class="flex items-center gap-8 lg:gap-12 text-[14px] text-ink">
+    <nav class="w-full px-6 md:px-10 lg:px-14 pt-2 pb-4 border-t border-[#2D5A27]" style="background-color:#2D5A27;" aria-label="Category navigation">
+        <ul class="flex items-center gap-8 lg:gap-12 text-[14px] text-white">
             @foreach ($navItems as [$label, $href, $active])
                 <li>
                     <a
                         href="{{ $href }}"
                         class="{{ $active ? $navActive : $navInactive }}"
-                        style="{{ $active ? 'display:inline-block; background-color:#2D5A27 !important; color:#FFFFFF !important; border-radius:6px; padding:8px 12px;' : 'display:inline-block; padding:8px 12px;' }}"
+                        style="{{ $active ? 'display:inline-block; background-color:#1E3D1A !important; color:#FFFFFF !important; border-radius:6px; padding:8px 12px;' : 'display:inline-block; color:#FFFFFF !important; padding:8px 12px;' }}"
                     >
                         {{ $label }}
                     </a>
