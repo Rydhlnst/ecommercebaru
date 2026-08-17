@@ -193,8 +193,8 @@
     {{-- Row 2: horizontal category nav (editable via admin → Configure → Storefront → Header Category Nav) --}}
     @php
         $navPath    = request()->path();
-        $navActive  = 'text-[#2D5A27] border-b-2 border-[#2D5A27] pb-1 font-semibold';
-        $navInactive= 'text-stone hover:text-[#2D5A27] transition-colors';
+        $navActive  = 'bg-[#2D5A27] text-white rounded-md px-3 py-2 font-semibold shadow-sm';
+        $navInactive= 'text-stone hover:bg-[#E8F0E5] hover:text-[#2D5A27] rounded-md px-3 py-2 transition-colors';
 
         $siteNav = null;
         try {

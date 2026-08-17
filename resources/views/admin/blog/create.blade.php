@@ -129,6 +129,7 @@ function handleBlogThumbInput(input) {
     if (input.files && input.files[0]) {
         window.AdminCropper.initForInput(input, {
             aspectRatio: 16/9,
+            ratioLabel: '16:9 (Blog)',
             onComplete: function(inputEl) {
                 previewThumbnail(inputEl);
             }

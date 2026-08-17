@@ -29,26 +29,12 @@
                 </div>
             </div>
 
-            {{-- Controls & Aspect Ratio Presets --}}
+            {{-- Controls & Locked Aspect Ratio --}}
             <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-                {{-- Aspect Ratio Presets --}}
+                {{-- The upload context supplies exactly one locked ratio. --}}
                 <div class="flex items-center gap-1.5 flex-wrap" id="cropperRatioButtons">
                     <span class="text-xs font-semibold text-slate-500 mr-1"><i class="fas fa-shapes mr-1"></i>Rasio:</span>
-                    <button type="button" data-ratio="1" onclick="window.AdminCropper.setAspectRatio(1, this)" class="cropper-ratio-btn px-2.5 py-1 text-xs font-semibold rounded-lg border bg-white text-slate-700 hover:border-blue-500 transition-all">
-                        1:1 (Persegi)
-                    </button>
-                    <button type="button" data-ratio="0.8" onclick="window.AdminCropper.setAspectRatio(0.8, this)" class="cropper-ratio-btn px-2.5 py-1 text-xs font-semibold rounded-lg border bg-white text-slate-700 hover:border-blue-500 transition-all">
-                        4:5 (Produk/Mobile)
-                    </button>
-                    <button type="button" data-ratio="2.2857142857142856" onclick="window.AdminCropper.setAspectRatio(16/7, this)" class="cropper-ratio-btn px-2.5 py-1 text-xs font-semibold rounded-lg border bg-white text-slate-700 hover:border-blue-500 transition-all">
-                        16:7 (Hero Banner)
-                    </button>
-                    <button type="button" data-ratio="1.7777777777777777" onclick="window.AdminCropper.setAspectRatio(16/9, this)" class="cropper-ratio-btn px-2.5 py-1 text-xs font-semibold rounded-lg border bg-white text-slate-700 hover:border-blue-500 transition-all">
-                        16:9 (Blog/Banner)
-                    </button>
-                    <button type="button" data-ratio="NaN" onclick="window.AdminCropper.setAspectRatio(NaN, this)" class="cropper-ratio-btn px-2.5 py-1 text-xs font-semibold rounded-lg border bg-white text-slate-700 hover:border-blue-500 transition-all">
-                        Bebas (Free)
-                    </button>
+                    <span id="cropperLockedRatio" class="px-2.5 py-1 text-xs font-bold rounded-lg border border-blue-600 bg-blue-600 text-white" aria-live="polite"></span>
                 </div>
 
                 {{-- Toolbar Actions (Rotate, Flip, Zoom, Reset) --}}
@@ -76,9 +62,7 @@
 
             {{-- Footer Buttons --}}
             <div class="px-6 py-4 border-t border-slate-200 flex items-center justify-between bg-white">
-                <button type="button" onclick="window.AdminCropper.skipCurrent()" class="text-xs font-semibold text-slate-500 hover:text-slate-800 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors">
-                    Lewati (Gunakan Gambar Asli)
-                </button>
+                <span class="text-xs text-slate-500">Rasio dikunci sesuai kebutuhan gambar</span>
                 <div class="flex items-center gap-3">
                     <button type="button" onclick="window.AdminCropper.close()" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
                         Batal
@@ -99,6 +83,8 @@ window.AdminCropper = (function() {
     let targetInput = null;
     let previewCallback = null;
     let defaultRatio = 1;
+    let lockedRatio = 1;
+    let ratioLabel = '1:1';
     let fileQueue = [];
     let currentFileIndex = 0;
     let processedFiles = [];
@@ -115,6 +101,8 @@ window.AdminCropper = (function() {
 
         targetInput = inputElement;
         defaultRatio = typeof options.aspectRatio !== 'undefined' ? options.aspectRatio : 1;
+        lockedRatio = defaultRatio;
+        ratioLabel = options.ratioLabel || `${defaultRatio}:1`;
         previewCallback = options.onComplete || null;
 
         fileQueue = Array.from(inputElement.files);
@@ -167,8 +155,7 @@ window.AdminCropper = (function() {
         scaleX = 1;
         scaleY = 1;
 
-        // Highlight active ratio button
-        updateRatioButtonsActiveState(defaultRatio);
+        document.getElementById('cropperLockedRatio').textContent = ratioLabel;
 
         // Wait for image render
         setTimeout(() => {
@@ -188,25 +175,10 @@ window.AdminCropper = (function() {
         }, 100);
     }
 
-    function updateRatioButtonsActiveState(ratio) {
-        document.querySelectorAll('.cropper-ratio-btn').forEach(btn => {
-            const btnRatio = parseFloat(btn.dataset.ratio);
-            if ((isNaN(ratio) && isNaN(btnRatio)) || (Math.abs(btnRatio - ratio) < 0.05)) {
-                btn.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-                btn.classList.remove('bg-white', 'text-slate-700');
-            } else {
-                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-                btn.classList.add('bg-white', 'text-slate-700');
-            }
-        });
-    }
-
     function setAspectRatio(ratio, btnElement) {
-        defaultRatio = ratio;
-        if (cropperInstance) {
-            cropperInstance.setAspectRatio(ratio);
-        }
-        updateRatioButtonsActiveState(ratio);
+        // Kept for backwards compatibility, but uploads always use their locked profile.
+        defaultRatio = lockedRatio;
+        if (cropperInstance) cropperInstance.setAspectRatio(lockedRatio);
     }
 
     function rotate(degrees) {
