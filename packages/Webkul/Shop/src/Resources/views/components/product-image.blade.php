@@ -15,9 +15,9 @@
 @endphp
 
 @if ($image)
-    <img src="{{ $image }}" alt="{{ $alt }}" class="{{ $class }}" loading="lazy">
+    <img src="{{ $image }}" alt="{{ $alt }}" class="{{ $class }}" {{ $attributes }} loading="lazy">
 @else
-    <div class="flex flex-col items-center justify-center gap-2 opacity-50 {{ $class }}">
+    <div class="flex flex-col items-center justify-center gap-2 opacity-50 {{ $class }}" {{ $attributes }}>
         <svg class="{{ $size['svg'] }}" viewBox="0 0 24 24" fill="none" stroke="#2D5A27" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
             <circle cx="8.5" cy="8.5" r="1.5"/>
