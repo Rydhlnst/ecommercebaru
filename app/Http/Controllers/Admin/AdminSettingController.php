@@ -7,6 +7,7 @@ use App\Models\SiteSetting;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use Spatie\ResponseCache\ResponseCache;
 use Webkul\Core\Models\CoreConfig;
 
 class AdminSettingController extends Controller
@@ -22,6 +23,7 @@ class AdminSettingController extends Controller
         'store_email' => 'beres_storefront.contact.email',
         'store_address' => 'beres_storefront.contact.address',
         'store_country' => 'beres_storefront.contact.country',
+        'store_google_review_url' => 'beres_storefront.contact.google_review_url',
     ];
 
     /**
@@ -63,6 +65,29 @@ class AdminSettingController extends Controller
         'natural_text1' => 'beres_storefront.natural_banner.text1',
         'natural_text2' => 'beres_storefront.natural_banner.text2',
         'natural_link' => 'beres_storefront.natural_banner.link',
+    ];
+
+    /**
+     * Mapping trust badge form fields → core config keys.
+     */
+    protected array $trustBadgeConfigMap = [
+        'trust_badge1_title' => 'beres_storefront.trust.badge1_title',
+        'trust_badge1_desc' => 'beres_storefront.trust.badge1_desc',
+        'trust_badge2_title' => 'beres_storefront.trust.badge2_title',
+        'trust_badge2_desc' => 'beres_storefront.trust.badge2_desc',
+        'trust_badge3_title' => 'beres_storefront.trust.badge3_title',
+        'trust_badge3_desc' => 'beres_storefront.trust.badge3_desc',
+        'trust_badge4_title' => 'beres_storefront.trust.badge4_title',
+        'trust_badge4_desc' => 'beres_storefront.trust.badge4_desc',
+    ];
+
+    /**
+     * Mapping newsletter form fields → core config keys.
+     */
+    protected array $newsletterConfigMap = [
+        'newsletter_title' => 'beres_storefront.newsletter.title',
+        'newsletter_desc' => 'beres_storefront.newsletter.description',
+        'newsletter_button' => 'beres_storefront.newsletter.button',
     ];
 
     /**
@@ -154,6 +179,7 @@ class AdminSettingController extends Controller
             'seo_site_name' => (string) core()->getConfigData('beres_storefront.seo.site_name'),
             'seo_home_title' => (string) core()->getConfigData('beres_storefront.seo.home_title'),
             'seo_title_suffix' => (string) core()->getConfigData('beres_storefront.seo.title_suffix'),
+            'channel_name' => (string) (core()->getCurrentChannel()->name ?? ''),
         ]);
 
         // Nilai section titles dari core_config
@@ -188,6 +214,7 @@ class AdminSettingController extends Controller
             'store_address' => 'nullable|string',
             'store_phone' => 'nullable|string|max:20',
             'store_email' => 'nullable|email|max:255',
+            'store_google_review_url' => 'nullable|string|max:500',
             'store_shopee' => 'nullable|url|max:255',
             'store_tokopedia' => 'nullable|url|max:255',
             'store_lazada' => 'nullable|url|max:255',
@@ -202,6 +229,7 @@ class AdminSettingController extends Controller
             'seo_site_name' => 'nullable|string|max:255',
             'seo_home_title' => 'nullable|string|max:255',
             'seo_title_suffix' => 'nullable|string|max:255',
+            'channel_name' => 'nullable|string|max:255',
             'section_new_eyebrow' => 'nullable|string|max:255',
             'section_new_title' => 'nullable|string|max:255',
             'section_bundle_eyebrow' => 'nullable|string|max:255',
@@ -222,7 +250,26 @@ class AdminSettingController extends Controller
             'natural_text1' => 'nullable|string|max:255',
             'natural_text2' => 'nullable|string|max:255',
             'natural_link' => 'nullable|string|max:255',
+            'trust_badge1_title' => 'nullable|string|max:255',
+            'trust_badge1_desc' => 'nullable|string|max:255',
+            'trust_badge2_title' => 'nullable|string|max:255',
+            'trust_badge2_desc' => 'nullable|string|max:255',
+            'trust_badge3_title' => 'nullable|string|max:255',
+            'trust_badge3_desc' => 'nullable|string|max:255',
+            'trust_badge4_title' => 'nullable|string|max:255',
+            'trust_badge4_desc' => 'nullable|string|max:255',
+            'newsletter_title' => 'nullable|string|max:255',
+            'newsletter_desc' => 'nullable|string|max:500',
+            'newsletter_button' => 'nullable|string|max:100',
         ]);
+
+        // Update nama channel (sumber nama tab browser, default "Demo Store")
+        $channelName = trim((string) ($validated['channel_name'] ?? ''));
+        unset($validated['channel_name']);
+
+        if ($channelName !== '') {
+            core()->getCurrentChannel()->update(['name' => $channelName]);
+        }
 
         foreach ($validated as $key => $value) {
             SiteSetting::setValue($key, $value);
@@ -249,6 +296,18 @@ class AdminSettingController extends Controller
         }
 
         foreach ($this->naturalBannerConfigMap as $formKey => $configKey) {
+            if (array_key_exists($formKey, $validated)) {
+                $this->saveCoreConfig($configKey, $validated[$formKey]);
+            }
+        }
+
+        foreach ($this->trustBadgeConfigMap as $formKey => $configKey) {
+            if (array_key_exists($formKey, $validated)) {
+                $this->saveCoreConfig($configKey, $validated[$formKey]);
+            }
+        }
+
+        foreach ($this->newsletterConfigMap as $formKey => $configKey) {
             if (array_key_exists($formKey, $validated)) {
                 $this->saveCoreConfig($configKey, $validated[$formKey]);
             }
@@ -300,6 +359,8 @@ class AdminSettingController extends Controller
             }
             SiteSetting::setValue('footer_col2_links', implode("\n", $lines));
         }
+
+        ResponseCache::clear();
 
         return redirect()->route('admin.settings.store')->with('success', 'Pengaturan toko berhasil diperbarui.');
     }

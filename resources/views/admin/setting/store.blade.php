@@ -73,6 +73,12 @@
                 <label class="form-label">Alamat</label>
                 <textarea name="store_address" rows="3" class="form-input">{{ old('store_address', $settings['store_address'] ?? '') }}</textarea>
             </div>
+
+            <div>
+                <label class="form-label">Link Ulasan Google</label>
+                <input type="text" name="store_google_review_url" value="{{ old('store_google_review_url', core()->getConfigData('beres_storefront.contact.google_review_url') ?? '') }}" class="form-input" placeholder="https://www.google.com/search?q=Nama+Toko">
+                <p class="text-xs text-gray-400 mt-1">URL tujuan tombol "Tulis ulasan" di section Google Reviews homepage.</p>
+            </div>
         </div>
 
         <div class="admin-panel-card">
@@ -141,6 +147,14 @@
                 Atur nama tab browser (title) website. Perubahan langsung berlaku di semua halaman.
             </p>
 
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="form-label">Nama Toko (Channel) <span class="text-red-500">*</span></label>
+                    <input type="text" name="channel_name" value="{{ old('channel_name', $settings['channel_name'] ?? '') }}" class="form-input" placeholder="Ankesh Mart">
+                    <p class="text-xs text-gray-400 mt-1">Nama utama toko — sumber nama tab browser & fallback semua title. Mengubah ini langsung mengganti "Demo Store" bawaan.</p>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                     <label class="form-label">Nama Situs</label>
@@ -195,6 +209,44 @@
                     <div class="p-3 bg-gray-50/80 border border-gray-200 rounded-xl">
                         <label class="form-label text-xs font-semibold text-gray-700">{{ $meta['label'] }}</label>
                         <input type="text" name="section_{{ $key }}" value="{{ old('section_'.$key, core()->getConfigData('beres_storefront.sections.'.$key) ?? '') }}" placeholder="{{ $meta['placeholder'] }}" class="form-input text-sm bg-white">
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Trust Badges --}}
+        @php
+            $trustDefaults = [
+                1 => ['title' => 'Pick Up', 'desc' => 'Ambil langsung di toko'],
+                2 => ['title' => 'Fastest Delivery', 'desc' => 'Kirim kilat Jakarta same-day'],
+                3 => ['title' => 'Best Offer Zone', 'desc' => 'Harga terbaik, diskon setiap hari'],
+                4 => ['title' => 'Best Quality', 'desc' => '100% alami, tanpa pengawet'],
+            ];
+        @endphp
+        <div class="admin-panel-card lg:col-span-2">
+            <h3 class="font-semibold text-gray-900 mb-1">
+                <i class="fas fa-badge-check mr-2 text-emerald-600"></i>Trust Badges (Bar Hijau Bawah Hero)
+            </h3>
+            <p class="text-xs text-gray-500 mb-5">
+                4 keunggulan yang muncul di bar hijau tepat di bawah hero banner. Judul & deskripsi bisa diubah.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                @foreach([1,2,3,4] as $n)
+                    <div class="p-4 bg-gray-50/80 border border-gray-200 rounded-xl space-y-3">
+                        <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Badge {{ $n }}</span>
+                        <div>
+                            <label class="form-label text-xs font-semibold text-gray-700">Judul</label>
+                            <input type="text" name="trust_badge{{ $n }}_title"
+                                value="{{ old('trust_badge'.$n.'_title', core()->getConfigData('beres_storefront.trust.badge'.$n.'_title') ?? $trustDefaults[$n]['title']) }}"
+                                placeholder="{{ $trustDefaults[$n]['title'] }}" class="form-input text-sm bg-white">
+                        </div>
+                        <div>
+                            <label class="form-label text-xs font-semibold text-gray-700">Deskripsi</label>
+                            <input type="text" name="trust_badge{{ $n }}_desc"
+                                value="{{ old('trust_badge'.$n.'_desc', core()->getConfigData('beres_storefront.trust.badge'.$n.'_desc') ?? $trustDefaults[$n]['desc']) }}"
+                                placeholder="{{ $trustDefaults[$n]['desc'] }}" class="form-input text-sm bg-white">
+                        </div>
                     </div>
                 @endforeach
             </div>
