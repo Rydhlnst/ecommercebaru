@@ -263,12 +263,21 @@ class AdminSettingController extends Controller
             'newsletter_button' => 'nullable|string|max:100',
         ]);
 
-        // Update nama channel (sumber nama tab browser, default "Demo Store")
+        // Update nama channel (sumber nama tab browser, default "Demo Store").
+        // home_seo.meta_title di-set Bagisto ke "Demo Store" dan prioritasnya
+        // lebih tinggi dari nama channel, jadi harus ikut disinkronkan.
         $channelName = trim((string) ($validated['channel_name'] ?? ''));
         unset($validated['channel_name']);
 
         if ($channelName !== '') {
-            core()->getCurrentChannel()->update(['name' => $channelName]);
+            $channel = core()->getCurrentChannel();
+            $homeSeo = $channel->home_seo ?? [];
+            $homeSeo['meta_title'] = $channelName;
+
+            $channel->update([
+                'name' => $channelName,
+                'home_seo' => $homeSeo,
+            ]);
         }
 
         foreach ($validated as $key => $value) {
