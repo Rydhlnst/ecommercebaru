@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
-use Spatie\ResponseCache\ResponseCache;
+use Spatie\ResponseCache\Facades\ResponseCache;
 
 class AdminProductController extends Controller
 {

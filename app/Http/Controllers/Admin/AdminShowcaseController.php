@@ -9,10 +9,9 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
-use Spatie\ResponseCache\ResponseCache;
-use Spatie\ResponseCache\ResponseCache;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Spatie\ResponseCache\Facades\ResponseCache;
 
 class AdminShowcaseController extends Controller
 {
@@ -82,6 +81,7 @@ class AdminShowcaseController extends Controller
         $showcase->save();
 
         ResponseCache::clear();
+
         return redirect()->route('admin.showcase.index')->with('success', 'Showcase berhasil diperbarui.');
     }
 }

@@ -10,11 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
-use Spatie\ResponseCache\ResponseCache;
-use Spatie\ResponseCache\ResponseCache;
 use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Spatie\ResponseCache\Facades\ResponseCache;
 
 class AdminBlogController extends Controller
 {
@@ -81,6 +80,7 @@ class AdminBlogController extends Controller
         BlogPost::create($validated);
 
         ResponseCache::clear();
+
         return redirect()->route('admin.blog.index')->with('success', 'Postingan berhasil ditambahkan.');
     }
 
@@ -127,6 +127,7 @@ class AdminBlogController extends Controller
         $post->update($validated);
 
         ResponseCache::clear();
+
         return redirect()->route('admin.blog.index')->with('success', 'Postingan berhasil diperbarui.');
     }
 
@@ -153,6 +154,7 @@ class AdminBlogController extends Controller
         BlogCategory::create($validated);
 
         ResponseCache::clear();
+
         return redirect()->route('admin.blog.index')->with('success', 'Kategori blog berhasil ditambahkan.');
     }
 
@@ -168,6 +170,7 @@ class AdminBlogController extends Controller
         $category->update($validated);
 
         ResponseCache::clear();
+
         return redirect()->route('admin.blog.index')->with('success', 'Kategori blog berhasil diperbarui.');
     }
 

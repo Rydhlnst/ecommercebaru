@@ -6,7 +6,7 @@ use Beres\Highlight\Models\HomepageHighlight;
 use Beres\Highlight\Repositories\HomepageHighlightRepository;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Spatie\ResponseCache\ResponseCache;
+use Spatie\ResponseCache\Facades\ResponseCache;
 use Webkul\Category\Models\Category;
 use Webkul\Product\Models\Product;
 
@@ -85,6 +85,7 @@ class HomepageHighlightController extends Controller
             : $highlight->category;
 
         ResponseCache::clear();
+
         return response()->json([
             'success' => true,
             'message_key' => 'pin_success',
@@ -128,6 +129,7 @@ class HomepageHighlightController extends Controller
         $this->repository->reorder($validated['section'], $validated['ids']);
 
         ResponseCache::clear();
+
         return response()->json([
             'success' => true,
             'message_key' => 'reorder_success',

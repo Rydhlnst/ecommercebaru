@@ -7,7 +7,7 @@ use App\Models\SiteSetting;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
-use Spatie\ResponseCache\ResponseCache;
+use Spatie\ResponseCache\Facades\ResponseCache;
 use Webkul\Core\Models\CoreConfig;
 
 class AdminSettingController extends Controller
