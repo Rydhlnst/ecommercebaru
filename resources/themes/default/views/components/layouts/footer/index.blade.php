@@ -37,6 +37,9 @@
     }
 @endphp
 
+{{-- Always rendered directly before the footer, after the service highlights. --}}
+@include('shop::components.layouts.map-section')
+
 <footer class="text-cream" style="background-color:#2D5A27;">
     <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-8">
         <div class="grid gap-6 lg:grid-cols-5">

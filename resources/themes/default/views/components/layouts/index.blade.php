@@ -350,9 +350,6 @@
                 <x-shop::layouts.services />
             @endif
 
-            <!-- Store Location + Map on every storefront page -->
-            @include('shop::components.layouts.map-section')
-
             <!-- Page Footer Blade Component -->
             @if ($hasFooter)
                 <x-shop::layouts.footer />
