@@ -28,6 +28,13 @@
             $vars     = $product->variations;
             $hasVars  = $vars && $vars->count() > 0;
 
+            // Compare at price (strikethrough / sale)
+            $compareAt = (float) ($product->compare_at_price ?? 0);
+            if ($compareAt > 0 && $compareAt > $priceNum) {
+                $compare   = 'Rp ' . number_format($compareAt, 0, ',', '.');
+                $salePrice = $price;
+            }
+
             // In stock: strictly true unless badge is explicitly 'habis_terjual'
             if ($product->badge === 'habis_terjual') {
                 $inStock = false;
@@ -50,11 +57,12 @@
             if ($hasVars) {
                 foreach ($vars as $i => $var) {
                     $vPriceNum = (float) ($var->price > 0 ? $var->price : $priceNum);
+                    $vCompareAt = (float) ($var->compare_at_price ?? 0);
                     $childVariants[] = [
                         'id'            => $var->id,
                         'label'         => $var->weight ? $var->weight_label : ($i === 0 ? '500g' : '1000g'),
                         'price'         => 'Rp ' . number_format($vPriceNum, 0, ',', '.'),
-                        'regular_price' => null,
+                        'regular_price' => ($vCompareAt > $vPriceNum) ? 'Rp ' . number_format($vCompareAt, 0, ',', '.') : null,
                         'special_price' => $vPriceNum,
                     ];
                 }

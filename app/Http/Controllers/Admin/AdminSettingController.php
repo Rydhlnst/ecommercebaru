@@ -57,6 +57,15 @@ class AdminSettingController extends Controller
     ];
 
     /**
+     * Mapping natural banner form fields → core config keys.
+     */
+    protected array $naturalBannerConfigMap = [
+        'natural_text1' => 'beres_storefront.natural_banner.text1',
+        'natural_text2' => 'beres_storefront.natural_banner.text2',
+        'natural_link' => 'beres_storefront.natural_banner.link',
+    ];
+
+    /**
      * Simpan value ke core_config (sumber tunggal storefront).
      */
     protected function saveCoreConfig(string $code, ?string $value): void
@@ -152,6 +161,11 @@ class AdminSettingController extends Controller
             $settings[$formKey] = (string) core()->getConfigData($configKey);
         }
 
+        // Nilai natural banner dari core_config
+        foreach ($this->naturalBannerConfigMap as $formKey => $configKey) {
+            $settings[$formKey] = (string) core()->getConfigData($configKey);
+        }
+
         return view('admin.setting.store', compact('settings'));
     }
 
@@ -205,6 +219,9 @@ class AdminSettingController extends Controller
             'section_google_review_title' => 'nullable|string|max:255',
             'section_blog_eyebrow' => 'nullable|string|max:255',
             'section_blog_title' => 'nullable|string|max:255',
+            'natural_text1' => 'nullable|string|max:255',
+            'natural_text2' => 'nullable|string|max:255',
+            'natural_link' => 'nullable|string|max:255',
         ]);
 
         foreach ($validated as $key => $value) {
@@ -226,6 +243,12 @@ class AdminSettingController extends Controller
         }
 
         foreach ($this->sectionConfigMap as $formKey => $configKey) {
+            if (array_key_exists($formKey, $validated)) {
+                $this->saveCoreConfig($configKey, $validated[$formKey]);
+            }
+        }
+
+        foreach ($this->naturalBannerConfigMap as $formKey => $configKey) {
             if (array_key_exists($formKey, $validated)) {
                 $this->saveCoreConfig($configKey, $validated[$formKey]);
             }

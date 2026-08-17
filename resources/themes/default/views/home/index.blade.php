@@ -461,14 +461,21 @@
     @endif
 
     {{-- ============ 100% NATURAL BANNER ============ --}}
+    @php $naturalLink = $c('natural_banner.link', ''); @endphp
     <section class="beres-reveal" style="background-color:#2D5A27;">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-10">
-            <div class="flex items-center justify-center gap-6 md:gap-16 text-white text-center">
-                <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text1', '100% ALAMI') }}</p>
-                <span class="text-white/40 text-2xl">✦</span>
-                <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text2', 'BERSERTIFIKAT LAB') }}</p>
+        @if($naturalLink)
+            <a href="{{ $naturalLink }}" class="block hover:opacity-90 transition-opacity">
+        @endif
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-10">
+                <div class="flex items-center justify-center gap-6 md:gap-16 text-white text-center">
+                    <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text1', '100% ALAMI') }}</p>
+                    <span class="text-white/40 text-2xl">✦</span>
+                    <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text2', 'BERSERTIFIKAT LAB') }}</p>
+                </div>
             </div>
-        </div>
+        @if($naturalLink)
+            </a>
+        @endif
     </section>
 
     {{-- ============ SHOP BY CATEGORY ============ --}}
@@ -582,10 +589,14 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                     @php
                         $badgeIcons = [
-                            '<path d="M3 3h5v5H3zM3 16h5v5H3zM16 3h5v5h-5zM16 16h5v5h-5z"/>',
-                            '<path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/>',
-                            '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>',
-                            '<circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/>',
+                            // Pick Up — storefront
+                            '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+                            // Fastest Delivery — truck
+                            '<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>',
+                            // Best Offer Zone — tag
+                            '<path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>',
+                            // Best Quality — shield/check
+                            '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>',
                         ];
                     @endphp
                     @foreach ($trustBadges as $i => [$title, $desc])
@@ -634,9 +645,6 @@
             </div>
         </section>
     @endif
-
-    {{-- ============ SERVICES / TRUST BADGES ============ --}}
-    <x-shop::layouts.services />
 
     {{-- ============ GOOGLE REVIEWS (Empty State — ready for Google Business Profile integration) ============ --}}
     @php

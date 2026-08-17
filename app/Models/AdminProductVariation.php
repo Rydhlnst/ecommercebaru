@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AdminProductVariation extends Model
 {
-    protected $fillable = ['product_id', 'weight', 'price', 'stock'];
+    protected $fillable = ['product_id', 'weight', 'price', 'compare_at_price', 'stock'];
 
     protected function casts(): array
     {
         return [
             'weight' => 'integer',
             'price' => 'decimal:2',
+            'compare_at_price' => 'decimal:2',
         ];
     }
 
@@ -27,6 +28,6 @@ class AdminProductVariation extends Model
      */
     public function getWeightLabelAttribute(): string
     {
-        return (int) $this->weight . 'g';
+        return (int) $this->weight.'g';
     }
 }

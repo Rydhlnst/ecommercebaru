@@ -209,11 +209,16 @@
 
             <div class="mb-3">
                 <label class="form-label">Text Kiri</label>
-                <input type="text" name="natural_text1" value="{{ old('natural_text1', core()->getConfigData('beres_storefront.natural_banner.text1') ?? '100% NATURAL') }}" class="form-input">
+                <input type="text" name="natural_text1" value="{{ old('natural_text1', $settings['natural_text1'] ?? '100% NATURAL') }}" class="form-input">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Text Kanan</label>
+                <input type="text" name="natural_text2" value="{{ old('natural_text2', $settings['natural_text2'] ?? 'LAB CERTIFIED') }}" class="form-input">
             </div>
             <div>
-                <label class="form-label">Text Kanan</label>
-                <input type="text" name="natural_text2" value="{{ old('natural_text2', core()->getConfigData('beres_storefront.natural_banner.text2') ?? 'LAB CERTIFIED') }}" class="form-input">
+                <label class="form-label">Link (opsional)</label>
+                <input type="text" name="natural_link" value="{{ old('natural_link', $settings['natural_link'] ?? '') }}" class="form-input" placeholder="Contoh: /page/awards">
+                <p class="text-xs text-gray-400 mt-1">URL tujuan saat banner diklik. Kosongkan jika tidak ingin di-link.</p>
             </div>
         </div>
 

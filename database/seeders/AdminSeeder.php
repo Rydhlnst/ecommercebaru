@@ -84,13 +84,14 @@ class AdminSeeder extends Seeder
                 'category_id' => $makanan->id,
                 'badge' => 'sale',
                 'price' => 45000,
+                'compare_at_price' => 55000,
                 'stock' => 30,
                 'is_featured' => true,
                 'has_variations' => true,
                 'description' => 'Ayam bakar dengan bumbu madu khas, dibakar hingga kecokelatan. Cocok dengan nasi putih hangat.',
                 'variations' => [
-                    ['weight' => 500, 'price' => 45000, 'stock' => 20],
-                    ['weight' => 1000, 'price' => 85000, 'stock' => 10],
+                    ['weight' => 500, 'price' => 45000, 'compare_at_price' => 55000, 'stock' => 20],
+                    ['weight' => 1000, 'price' => 85000, 'compare_at_price' => 100000, 'stock' => 10],
                 ],
             ],
             [
@@ -98,13 +99,14 @@ class AdminSeeder extends Seeder
                 'category_id' => $makanan->id,
                 'badge' => null,
                 'price' => 25000,
+                'compare_at_price' => 30000,
                 'stock' => 100,
                 'is_featured' => false,
                 'has_variations' => true,
                 'description' => 'Sate ayam 10 tusuk dengan bumbu kacang khas Madura. Saus dan lontong disertakan.',
                 'variations' => [
-                    ['weight' => 500, 'price' => 25000, 'stock' => 60],
-                    ['weight' => 1000, 'price' => 45000, 'stock' => 40],
+                    ['weight' => 500, 'price' => 25000, 'compare_at_price' => 30000, 'stock' => 60],
+                    ['weight' => 1000, 'price' => 45000, 'compare_at_price' => 55000, 'stock' => 40],
                 ],
             ],
             [
@@ -112,13 +114,14 @@ class AdminSeeder extends Seeder
                 'category_id' => $makanan->id,
                 'badge' => 'new',
                 'price' => 85000,
+                'compare_at_price' => 99000,
                 'stock' => 25,
                 'is_featured' => true,
                 'has_variations' => true,
                 'description' => 'Rendang daging sapi Padang autentik, dimasak perlahan dengan rempah pilihan. Tahan lama, cocok untuk stok.',
                 'variations' => [
-                    ['weight' => 250, 'price' => 85000, 'stock' => 15],
-                    ['weight' => 500, 'price' => 160000, 'stock' => 10],
+                    ['weight' => 250, 'price' => 85000, 'compare_at_price' => 99000, 'stock' => 15],
+                    ['weight' => 500, 'price' => 160000, 'compare_at_price' => 185000, 'stock' => 10],
                 ],
             ],
             [
@@ -229,13 +232,14 @@ class AdminSeeder extends Seeder
                 'category_id' => $minuman->id,
                 'badge' => 'sale',
                 'price' => 22000,
+                'compare_at_price' => 28000,
                 'stock' => 50,
                 'is_featured' => false,
                 'has_variations' => true,
                 'description' => 'Jus alpukat kocok dengan susu coklat dan es. Creamy dan menyegarkan.',
                 'variations' => [
-                    ['weight' => 350, 'price' => 22000, 'stock' => 30],
-                    ['weight' => 500, 'price' => 30000, 'stock' => 20],
+                    ['weight' => 350, 'price' => 22000, 'compare_at_price' => 28000, 'stock' => 30],
+                    ['weight' => 500, 'price' => 30000, 'compare_at_price' => 38000, 'stock' => 20],
                 ],
             ],
 
@@ -423,12 +427,14 @@ class AdminSeeder extends Seeder
                     $product->variations()->create([
                         'weight' => $v['weight'],
                         'price' => $v['price'],
+                        'compare_at_price' => $v['compare_at_price'] ?? null,
                         'stock' => $v['stock'],
                     ]);
                 }
 
                 $product->update([
                     'price' => $seedVariations[0]['price'],
+                    'compare_at_price' => $seedVariations[0]['compare_at_price'] ?? null,
                     'stock' => array_sum(array_column($seedVariations, 'stock')),
                 ]);
             }

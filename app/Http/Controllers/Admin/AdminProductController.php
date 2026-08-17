@@ -13,9 +13,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
-use Spatie\ResponseCache\ResponseCache;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
+use Spatie\ResponseCache\ResponseCache;
 
 class AdminProductController extends Controller
 {
@@ -64,12 +64,14 @@ class AdminProductController extends Controller
             'is_featured' => 'nullable|boolean',
             'has_variations' => 'nullable|boolean',
             'price' => $hasVariations ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
+            'compare_at_price' => 'nullable|numeric|min:0',
             'stock' => $hasVariations ? 'nullable|integer|min:0' : 'required|integer|min:0',
             'status' => 'nullable|in:active,inactive',
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:10240',
             'variation_weight' => 'nullable|array',
             'variation_price' => 'nullable|array',
+            'variation_compare_at_price' => 'nullable|array',
             'variation_stock' => 'nullable|array',
         ]);
 
@@ -78,6 +80,7 @@ class AdminProductController extends Controller
         $validated['status'] = $validated['status'] ?? 'active';
         $validated['price'] = $validated['price'] ?? 0;
         $validated['stock'] = $validated['stock'] ?? 0;
+        $validated['compare_at_price'] = $validated['compare_at_price'] ?? null;
 
         $product = AdminProduct::create($validated);
 
@@ -90,6 +93,7 @@ class AdminProductController extends Controller
         }
 
         ResponseCache::clear();
+
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil ditambahkan.');
     }
 
@@ -125,12 +129,14 @@ class AdminProductController extends Controller
             'is_featured' => 'nullable|boolean',
             'has_variations' => 'nullable|boolean',
             'price' => $hasVariations ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
+            'compare_at_price' => 'nullable|numeric|min:0',
             'stock' => $hasVariations ? 'nullable|integer|min:0' : 'required|integer|min:0',
             'status' => 'nullable|in:active,inactive',
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:10240',
             'variation_weight' => 'nullable|array',
             'variation_price' => 'nullable|array',
+            'variation_compare_at_price' => 'nullable|array',
             'variation_stock' => 'nullable|array',
         ]);
 
@@ -139,6 +145,7 @@ class AdminProductController extends Controller
         $validated['status'] = $validated['status'] ?? 'active';
         $validated['price'] = $validated['price'] ?? 0;
         $validated['stock'] = $validated['stock'] ?? 0;
+        $validated['compare_at_price'] = $validated['compare_at_price'] ?? null;
 
         $product->update($validated);
 
@@ -158,6 +165,7 @@ class AdminProductController extends Controller
         }
 
         ResponseCache::clear();
+
         return redirect()->route('admin.products.index')->with('success', 'Produk berhasil diperbarui.');
     }
 
@@ -188,6 +196,7 @@ class AdminProductController extends Controller
     {
         $weights = $request->input('variation_weight', []);
         $prices = $request->input('variation_price', []);
+        $comparePrices = $request->input('variation_compare_at_price', []);
         $stocks = $request->input('variation_stock', []);
 
         foreach ($prices as $index => $price) {
@@ -197,6 +206,7 @@ class AdminProductController extends Controller
             $product->variations()->create([
                 'weight' => $weights[$index] ?? 0,
                 'price' => $price,
+                'compare_at_price' => $comparePrices[$index] ?? null,
                 'stock' => $stocks[$index] ?? 0,
             ]);
         }
@@ -205,6 +215,7 @@ class AdminProductController extends Controller
         if ($firstVariation) {
             $product->update([
                 'price' => $firstVariation->price,
+                'compare_at_price' => $firstVariation->compare_at_price,
                 'stock' => $product->variations()->sum('stock'),
             ]);
         }

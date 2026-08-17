@@ -11,7 +11,7 @@ class AdminProduct extends Model
 {
     protected $fillable = [
         'name', 'slug', 'category_id', 'badge', 'description',
-        'is_featured', 'has_variations', 'price', 'stock', 'status',
+        'is_featured', 'has_variations', 'price', 'compare_at_price', 'stock', 'status',
     ];
 
     protected $appends = ['image_url'];
@@ -22,6 +22,7 @@ class AdminProduct extends Model
             'is_featured' => 'boolean',
             'has_variations' => 'boolean',
             'price' => 'decimal:2',
+            'compare_at_price' => 'decimal:2',
         ];
     }
 

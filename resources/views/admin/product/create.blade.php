@@ -100,6 +100,10 @@
                                         <input type="number" name="variation_price[]" value="{{ $v }}" class="form-input">
                                     </div>
                                     <div class="flex-1">
+                                        <label class="form-label">Harga Coret (Rp)</label>
+                                        <input type="number" name="variation_compare_at_price[]" value="{{ old('variation_compare_at_price')[$i] ?? '' }}" min="0" class="form-input" placeholder="Opsional">
+                                    </div>
+                                    <div class="flex-1">
                                         <label class="form-label">Stok</label>
                                         <input type="number" name="variation_stock[]" value="{{ old('variation_stock')[$i] ?? '' }}" class="form-input">
                                     </div>
@@ -125,6 +129,10 @@
                             <input type="number" name="stock" value="{{ old('stock', 0) }}" required class="form-input">
                             @error('stock') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="form-label">Harga Coret <span class="text-gray-400">(opsional, untuk label Sale)</span></label>
+                        <input type="number" name="compare_at_price" value="{{ old('compare_at_price') }}" min="0" class="form-input" placeholder="Kosongkan jika tidak ada harga coret">
                     </div>
                 </div>
             </div>
@@ -163,6 +171,10 @@ function addVariation() {
         <div class="flex-1">
             <label class="form-label">Harga (Rp)</label>
             <input type="number" name="variation_price[]" class="form-input">
+        </div>
+        <div class="flex-1">
+            <label class="form-label">Harga Coret (Rp)</label>
+            <input type="number" name="variation_compare_at_price[]" min="0" class="form-input" placeholder="Opsional">
         </div>
         <div class="flex-1">
             <label class="form-label">Stok</label>
