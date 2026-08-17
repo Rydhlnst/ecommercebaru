@@ -117,28 +117,28 @@
                         <h3 class="text-base font-bold text-[#171717] mb-5">
                             In the spotlight
                         </h3>
-                        <div class="space-y-3.5">
+                        <div class="space-y-2">
                             @foreach($recentPosts as $rec)
                                 @php
                                     $recImg = $rec->thumbnail_url;
                                     $recDate = $rec->published_at ? $rec->published_at->format('d M Y') : ($rec->created_at ? $rec->created_at->format('d M Y') : '');
                                 @endphp
-                                <a href="{{ route('shop.blog.show', $rec->slug) }}" class="group flex items-center gap-3.5 p-2 rounded-xl hover:bg-zinc-50 transition-all duration-200">
-                                    <div class="w-20 h-16 rounded-xl overflow-hidden bg-zinc-100 shrink-0 relative flex items-center justify-center">
+                                <a href="{{ route('shop.blog.show', $rec->slug) }}" class="group flex items-center gap-4 p-3 rounded-xl hover:bg-zinc-50 transition-all duration-200">
+                                    <div class="w-28 h-24 rounded-xl overflow-hidden bg-zinc-100 shrink-0 relative flex items-center justify-center">
                                         @if($recImg && $rec->thumbnail)
                                             <img src="{{ $recImg }}" alt="{{ $rec->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                         @else
                                             <div class="w-full h-full bg-zinc-100 flex items-center justify-center text-zinc-400">
-                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
+                                                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
                                             </div>
                                         @endif
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <h4 class="text-sm font-semibold text-[#171717] group-hover:text-[#2D5A27] transition-colors leading-snug line-clamp-2">
+                                        <h4 class="text-sm font-semibold text-[#171717] group-hover:text-[#2D5A27] transition-colors leading-snug line-clamp-3">
                                             {{ $rec->title }}
                                         </h4>
                                         @if($recDate)
-                                            <p class="text-xs text-zinc-400 mt-1 font-medium">{{ $recDate }}</p>
+                                            <p class="text-xs text-zinc-400 mt-1.5 font-medium">{{ $recDate }}</p>
                                         @endif
                                     </div>
                                 </a>
