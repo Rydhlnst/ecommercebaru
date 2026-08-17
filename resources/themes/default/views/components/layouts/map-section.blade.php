@@ -4,11 +4,11 @@
     $eyebrow  = $c('eyebrow',     'Kunjungi kami');
     $title    = $c('title',       'Lokasi & kontak.');
     $desc     = $c('description', 'Mampir ke gerai fisik kami untuk pengalaman belanja langsung, atau hubungi tim kami untuk pertanyaan seputar produk & pengiriman.');
-    $address  = $c('address',     "Pasar Modern BSD, Blok C-12\nJl. Letnan Sutopo No. 12, Serpong\nTangerang Selatan 15321");
+    $address  = $c('address',     (string) (\App\Models\SiteSetting::getValue('store_address') ?: "Pasar Modern BSD, Blok C-12\nJl. Letnan Sutopo No. 12, Serpong\nTangerang Selatan 15321"));
     $hours    = $c('hours',       "Senin – Sabtu · 07.00 – 21.00\nMinggu · 08.00 – 20.00");
-    $phone    = $c('phone',       '+62 21 555 1234');
-    $email    = $c('email',       'halo@ecommerce.beres.io');
-    $mapQuery = $c('map_query',   'Pasar Modern BSD, Serpong, Tangerang');
+    $phone    = $c('phone',       (string) (\App\Models\SiteSetting::getValue('store_phone') ?: \App\Models\SiteSetting::getValue('store_whatsapp') ?: '+62 21 555 1234'));
+    $email    = $c('email',       (string) (\App\Models\SiteSetting::getValue('store_email') ?: 'halo@ecommerce.beres.io'));
+    $mapQuery = $c('map_query',   $address);
     $country  = $c('country',     'Indonesia');
 @endphp
 
