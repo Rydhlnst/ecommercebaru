@@ -187,7 +187,7 @@
 <div class="beres-card group bg-white overflow-hidden flex flex-col justify-between" style="border:1px solid #E8F0E5; border-radius:16px; min-height:100%;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
     {{-- Product Image Container (Standardized 4:5 Aspect Ratio) --}}
     <a href="{{ $href }}" class="block relative w-full overflow-hidden shrink-0" style="aspect-ratio:4 / 5 !important; height:auto !important; min-height:0; background-color:#F5F9F3;">
-        <x-shop::product-image :image="$image" :alt="$name" class="absolute inset-0 block w-full h-full object-cover p-0 transition-transform duration-500" style="transform:scale({{ $imageScale }});" />
+        <x-shop::product-image :image="$image" :alt="$name" class="absolute inset-0 block w-full h-full object-contain p-0 transition-transform duration-500" style="transform:scale({{ $imageScale }});" />
 
         {{-- Numbered badge --}}
         <span class="absolute top-3 left-3 w-7 h-7 flex items-center justify-center bg-white text-[#171717] text-xs font-bold" style="border-radius:999px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">
