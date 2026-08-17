@@ -203,7 +203,19 @@ class AdminSettingController extends Controller
             ]);
             $file = $request->file('hero_banner');
             $filename = 'hero-products.'.$file->getClientOriginalExtension();
-            $file->move(public_path('images'), $filename);
+            try {
+                if (! is_dir(public_path('images')) && ! @mkdir(public_path('images'), 0775, true) && ! is_dir(public_path('images'))) {
+                    throw new \RuntimeException('Unable to create the hero banner directory.');
+                }
+
+                if (! $file->move(public_path('images'), $filename)) {
+                    throw new \RuntimeException('Unable to write the hero banner.');
+                }
+            } catch (\Throwable $e) {
+                report($e);
+
+                return back()->withInput()->with('error', 'Hero banner upload failed. Please check storage permissions.');
+            }
             SiteSetting::setValue('hero_banner_image', '/images/'.$filename.'?v='.time());
         }
 

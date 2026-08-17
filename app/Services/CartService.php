@@ -30,6 +30,10 @@ class CartService
             throw new \RuntimeException('Produk tidak ditemukan.');
         }
 
+        if ($product->status !== 'active') {
+            throw new \RuntimeException('Produk tidak tersedia.');
+        }
+
         $variation = null;
 
         if ($variationId) {
@@ -48,13 +52,18 @@ class CartService
 
         $unitPrice = $variation?->price ?? $product->price;
         $stock = $variation?->stock ?? $product->stock;
+
+        if ((int) $stock < 1) {
+            throw new \RuntimeException('Stok produk habis.');
+        }
+
         $key = $product->id.':'.($variation->id ?? 0);
         $qty = max(1, (int) $qty);
 
         $cart = Session::get(self::SESSION_KEY, []);
 
         if (isset($cart[$key])) {
-            $cart[$key]['quantity'] = min($cart[$key]['quantity'] + $qty, max(1, $stock), 99);
+            $cart[$key]['quantity'] = min($cart[$key]['quantity'] + $qty, (int) $stock, 99);
         } else {
             $cart[$key] = [
                 'key' => $key,
@@ -66,7 +75,7 @@ class CartService
                 'price' => (float) $unitPrice,
                 'stock' => (int) $stock,
                 'image' => $product->images->first()?->image_path,
-                'quantity' => min($qty, max(1, $stock), 99),
+                'quantity' => min($qty, (int) $stock, 99),
             ];
         }
 

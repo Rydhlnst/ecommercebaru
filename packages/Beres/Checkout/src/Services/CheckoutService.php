@@ -4,6 +4,8 @@ namespace Beres\Checkout\Services;
 
 use App\Models\AdminOrder;
 use App\Models\AdminOrderItem;
+use App\Models\AdminProduct;
+use App\Models\AdminProductVariation;
 use App\Services\CartService;
 use Beres\Checkout\Contracts\CheckoutSessionRepositoryInterface;
 use Beres\Checkout\DTOs\CheckoutDTO;
@@ -34,6 +36,25 @@ class CheckoutService
 
         if ($cart['count'] === 0) {
             throw new \Exception('Cart is empty');
+        }
+
+        foreach ($cart['items'] as $line) {
+            $product = AdminProduct::find($line['product_id'] ?? 0);
+
+            if (! $product || $product->status !== 'active') {
+                throw new \Exception('One of the products is no longer available.');
+            }
+
+            $stock = $product->stock;
+            if (! empty($line['variation_id'])) {
+                $variation = AdminProductVariation::where('product_id', $product->id)
+                    ->find($line['variation_id']);
+                $stock = $variation?->stock ?? 0;
+            }
+
+            if ((int) $stock < (int) ($line['quantity'] ?? 0)) {
+                throw new \Exception('Insufficient stock for '.$product->name.'.');
+            }
         }
 
         return OrderSummaryDTO::fromArray([
@@ -107,7 +128,7 @@ class CheckoutService
 
         $notes = trim('Metode pembayaran: '.($session->payment_method ?? '-')."\n".($session->notes ?? ''));
 
-        return DB::transaction(function () use ($session, $cart, $fullName, $fullAddress, $subtotal, $shippingCost, $notes, $sessionId) {
+        return DB::transaction(function () use ($session, $cart, $ship, $fullName, $fullAddress, $subtotal, $shippingCost, $notes, $sessionId) {
             $order = AdminOrder::create([
                 'customer_name' => $fullName ?: '-',
                 'customer_phone' => $ship['phone'] ?? null,

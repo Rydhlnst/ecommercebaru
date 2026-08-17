@@ -35,11 +35,12 @@
                 $salePrice = $price;
             }
 
-            // In stock: strictly true unless badge is explicitly 'habis_terjual'
+            // Availability must follow actual stock, not only the display badge.
+            $inStock = $hasVars
+                ? (int) $vars->sum('stock') > 0
+                : (int) ($product->stock ?? 0) > 0;
             if ($product->badge === 'habis_terjual') {
                 $inStock = false;
-            } else {
-                $inStock = true;
             }
 
             $href     = route('shop.admin_product.show', $product->slug);

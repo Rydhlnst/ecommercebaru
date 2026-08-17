@@ -63,7 +63,11 @@ class AdminCategoryController extends Controller
         $validated['parent_id'] = ! empty($validated['parent_id']) ? (int) $validated['parent_id'] : null;
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $this->compressImage($request->file('image'));
+            try {
+                $validated['image'] = $this->compressImage($request->file('image'));
+            } catch (\Throwable $e) {
+                return back()->withInput()->with('error', 'Category image could not be uploaded. Please check storage permissions.');
+            }
         }
 
         AdminCategory::create($validated);
@@ -102,9 +106,13 @@ class AdminCategoryController extends Controller
 
         if ($request->hasFile('image')) {
             if ($category->image) {
-                Storage::disk('public')->delete($category->image);
+                $this->deleteStoredFile($category->image);
             }
-            $validated['image'] = $this->compressImage($request->file('image'));
+            try {
+                $validated['image'] = $this->compressImage($request->file('image'));
+            } catch (\Throwable $e) {
+                return back()->withInput()->with('error', 'Category image could not be replaced. Please check storage permissions.');
+            }
         }
 
         $category->update($validated);
@@ -127,7 +135,7 @@ class AdminCategoryController extends Controller
         }
 
         if ($category->image) {
-            Storage::disk('public')->delete($category->image);
+            $this->deleteStoredFile($category->image);
         }
 
         $category->delete();
@@ -140,6 +148,9 @@ class AdminCategoryController extends Controller
     {
         try {
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+            AdminCategory::query()->each(function (AdminCategory $category) {
+                $this->deleteStoredFile($category->image);
+            });
             AdminCategory::truncate();
             if (Schema::hasTable('homepage_highlights')) {
                 DB::table('homepage_highlights')->where('section', 'categories')->delete();
@@ -181,25 +192,47 @@ class AdminCategoryController extends Controller
             $encoded = file_get_contents($file->getRealPath());
         }
 
-        Storage::disk('public')->put($path, $encoded);
+        if (! Storage::disk('public')->put($path, $encoded)) {
+            throw new \RuntimeException('Unable to write category image to the public storage disk.');
+        }
 
         // Also write directly to public/storage AND public/uploads for cPanel environments
         try {
             $dir1 = public_path('storage/uploads/categories');
-            if (! file_exists($dir1)) {
-                @mkdir($dir1, 0777, true);
+            if (! is_dir($dir1) && ! @mkdir($dir1, 0777, true) && ! is_dir($dir1)) {
+                throw new \RuntimeException('Unable to create the category upload directory.');
             }
-            @file_put_contents($dir1.'/'.$filename, $encoded);
+            if (@file_put_contents($dir1.'/'.$filename, $encoded) === false) {
+                throw new \RuntimeException('Unable to publish the category image.');
+            }
 
             $dir2 = public_path('uploads/categories');
-            if (! file_exists($dir2)) {
-                @mkdir($dir2, 0777, true);
+            if (! is_dir($dir2) && ! @mkdir($dir2, 0777, true) && ! is_dir($dir2)) {
+                throw new \RuntimeException('Unable to create the category public upload directory.');
             }
-            @file_put_contents($dir2.'/'.$filename, $encoded);
+            if (@file_put_contents($dir2.'/'.$filename, $encoded) === false) {
+                throw new \RuntimeException('Unable to publish the category public image.');
+            }
         } catch (\Throwable $e) {
-            // Ignore fallback error
+            throw $e;
         }
 
         return $path;
+    }
+
+    private function deleteStoredFile(?string $path): void
+    {
+        if (! $path || str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return;
+        }
+
+        $path = ltrim($path, '/');
+        Storage::disk('public')->delete($path);
+
+        foreach ([public_path('storage/'.$path), public_path($path)] as $filePath) {
+            if (is_file($filePath)) {
+                @unlink($filePath);
+            }
+        }
     }
 }

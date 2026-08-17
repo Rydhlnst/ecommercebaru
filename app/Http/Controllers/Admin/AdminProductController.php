@@ -71,10 +71,13 @@ class AdminProductController extends Controller
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:10240',
             'variation_weight' => 'nullable|array',
+            'variation_weight.*' => 'required|numeric|min:0',
             'variation_price' => 'nullable|array',
+            'variation_price.*' => 'required|numeric|min:0',
             'variation_compare_at_price' => 'nullable|array',
             'variation_compare_at_price.*' => 'nullable|numeric|min:0',
             'variation_stock' => 'nullable|array',
+            'variation_stock.*' => 'required|integer|min:0',
         ]);
 
         $validated['is_featured'] = $request->boolean('is_featured');
@@ -91,7 +94,16 @@ class AdminProductController extends Controller
         }
 
         if ($request->hasFile('images')) {
-            $this->saveImages($product, $request->file('images'));
+            try {
+                $this->saveImages($product, $request->file('images'));
+            } catch (\Throwable $e) {
+                foreach ($product->fresh()->images ?? [] as $image) {
+                    $this->deleteStoredFile($image->image_path);
+                }
+                $product->delete();
+
+                return back()->withInput()->with('error', 'Product images could not be uploaded. Please check storage permissions.');
+            }
         }
 
         ResponseCache::clear();
@@ -138,10 +150,13 @@ class AdminProductController extends Controller
             'images' => 'nullable|array|max:5',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:10240',
             'variation_weight' => 'nullable|array',
+            'variation_weight.*' => 'required|numeric|min:0',
             'variation_price' => 'nullable|array',
+            'variation_price.*' => 'required|numeric|min:0',
             'variation_compare_at_price' => 'nullable|array',
             'variation_compare_at_price.*' => 'nullable|numeric|min:0',
             'variation_stock' => 'nullable|array',
+            'variation_stock.*' => 'required|integer|min:0',
         ]);
 
         $validated['is_featured'] = $request->boolean('is_featured');
@@ -162,10 +177,19 @@ class AdminProductController extends Controller
 
         if ($request->hasFile('images')) {
             foreach ($product->images as $img) {
-                Storage::disk('public')->delete($img->image_path);
+                $this->deleteStoredFile($img->image_path);
                 $img->delete();
             }
-            $this->saveImages($product, $request->file('images'));
+
+            try {
+                $this->saveImages($product, $request->file('images'));
+            } catch (\Throwable $e) {
+                foreach ($product->fresh()->images ?? [] as $image) {
+                    $this->deleteStoredFile($image->image_path);
+                    $image->delete();
+                }
+                return back()->withInput()->with('error', 'Product images could not be replaced. Please check storage permissions.');
+            }
         }
 
         ResponseCache::clear();
@@ -182,13 +206,15 @@ class AdminProductController extends Controller
         }
 
         foreach ($product->images as $img) {
-            Storage::disk('public')->delete($img->image_path);
+            $this->deleteStoredFile($img->image_path);
         }
 
-        \DB::table('homepage_highlights')
-            ->where('entity_type', 'product')
-            ->where('entity_id', $product->id)
-            ->delete();
+        if (Schema::hasTable('homepage_highlights')) {
+            DB::table('homepage_highlights')
+                ->where('entity_type', 'product')
+                ->where('entity_id', $product->id)
+                ->delete();
+        }
 
         $product->delete();
         ResponseCache::clear();
@@ -281,23 +307,29 @@ class AdminProductController extends Controller
                 $encoded = file_get_contents($file->getRealPath());
             }
 
-            Storage::disk('public')->put($path, $encoded);
+            if (! Storage::disk('public')->put($path, $encoded)) {
+                throw new \RuntimeException('Unable to write product image to the public storage disk.');
+            }
 
             // Also write directly to public/storage AND public/uploads for cPanel environments
             try {
                 $dir1 = public_path('storage/uploads/products');
-                if (! file_exists($dir1)) {
-                    @mkdir($dir1, 0777, true);
+                if (! is_dir($dir1) && ! @mkdir($dir1, 0777, true) && ! is_dir($dir1)) {
+                    throw new \RuntimeException('Unable to create the product upload directory.');
                 }
-                @file_put_contents($dir1.'/'.$filename, $encoded);
+                if (@file_put_contents($dir1.'/'.$filename, $encoded) === false) {
+                    throw new \RuntimeException('Unable to publish the product image.');
+                }
 
                 $dir2 = public_path('uploads/products');
-                if (! file_exists($dir2)) {
-                    @mkdir($dir2, 0777, true);
+                if (! is_dir($dir2) && ! @mkdir($dir2, 0777, true) && ! is_dir($dir2)) {
+                    throw new \RuntimeException('Unable to create the product public upload directory.');
                 }
-                @file_put_contents($dir2.'/'.$filename, $encoded);
+                if (@file_put_contents($dir2.'/'.$filename, $encoded) === false) {
+                    throw new \RuntimeException('Unable to publish the product public image.');
+                }
             } catch (\Throwable $e) {
-                // Ignore fallback error
+                throw $e;
             }
 
             AdminProductImage::create([
@@ -308,11 +340,28 @@ class AdminProductController extends Controller
         }
     }
 
+    private function deleteStoredFile(?string $path): void
+    {
+        if (! $path || str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return;
+        }
+
+        $path = ltrim($path, '/');
+        Storage::disk('public')->delete($path);
+
+        foreach ([public_path('storage/'.$path), public_path($path)] as $filePath) {
+            if (is_file($filePath)) {
+                @unlink($filePath);
+            }
+        }
+    }
+
     public function clearAll()
     {
         try {
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             if (Schema::hasTable('admin_product_images')) {
+                AdminProductImage::query()->each(fn (AdminProductImage $image) => $this->deleteStoredFile($image->image_path));
                 AdminProductImage::truncate();
             }
             if (Schema::hasTable('admin_product_variations')) {

@@ -74,7 +74,11 @@ class AdminBlogController extends Controller
         }
 
         if ($request->hasFile('thumbnail')) {
-            $validated['thumbnail'] = $this->uploadThumbnail($request->file('thumbnail'));
+            try {
+                $validated['thumbnail'] = $this->uploadThumbnail($request->file('thumbnail'));
+            } catch (\Throwable $e) {
+                return back()->withInput()->with('error', 'Blog thumbnail could not be uploaded. Please check storage permissions.');
+            }
         }
 
         BlogPost::create($validated);
@@ -119,9 +123,13 @@ class AdminBlogController extends Controller
 
         if ($request->hasFile('thumbnail')) {
             if ($post->thumbnail) {
-                Storage::disk('public')->delete($post->thumbnail);
+                $this->deleteStoredFile($post->thumbnail);
             }
-            $validated['thumbnail'] = $this->uploadThumbnail($request->file('thumbnail'));
+            try {
+                $validated['thumbnail'] = $this->uploadThumbnail($request->file('thumbnail'));
+            } catch (\Throwable $e) {
+                return back()->withInput()->with('error', 'Blog thumbnail could not be replaced. Please check storage permissions.');
+            }
         }
 
         $post->update($validated);
@@ -136,7 +144,7 @@ class AdminBlogController extends Controller
         $post = BlogPost::findOrFail($id);
 
         if ($post->thumbnail) {
-            Storage::disk('public')->delete($post->thumbnail);
+            $this->deleteStoredFile($post->thumbnail);
         }
         $post->delete();
         ResponseCache::clear();
@@ -185,10 +193,13 @@ class AdminBlogController extends Controller
 
     public function uploadImage(Request $request)
     {
-        if ($request->hasFile('upload')) {
-            $file = $request->file('upload');
-            $filename = time().'_blog.jpg';
-            $path = 'uploads/blog/'.$filename;
+        $request->validate([
+            'upload' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
+        ]);
+
+        $file = $request->file('upload');
+        $filename = time().'_'.uniqid().'_blog.jpg';
+        $path = 'uploads/blog/'.$filename;
 
             try {
                 $manager = new ImageManager(new Driver);
@@ -197,33 +208,43 @@ class AdminBlogController extends Controller
                 $encoded = $img->toJpeg(92)->toString();
             } catch (\Throwable $e) {
                 $ext = $file->getClientOriginalExtension() ?: 'jpg';
-                $filename = time().'_blog.'.$ext;
+                $filename = time().'_'.uniqid().'_blog.'.$ext;
                 $path = 'uploads/blog/'.$filename;
                 $encoded = file_get_contents($file->getRealPath());
             }
 
-            Storage::disk('public')->put($path, $encoded);
+            try {
+                if (! Storage::disk('public')->put($path, $encoded)) {
+                    throw new \RuntimeException('Unable to write blog image to the public storage disk.');
+                }
+            } catch (\Throwable $e) {
+                report($e);
+
+                return response()->json(['error' => 'Image upload failed. Please check storage permissions.'], 500);
+            }
 
             try {
                 $publicDir = public_path('storage/uploads/blog');
-                if (! file_exists($publicDir)) {
-                    @mkdir($publicDir, 0755, true);
+                if (! is_dir($publicDir) && ! @mkdir($publicDir, 0755, true) && ! is_dir($publicDir)) {
+                    throw new \RuntimeException('Unable to create the blog upload directory.');
                 }
-                @file_put_contents($publicDir.'/'.$filename, $encoded);
+                if (@file_put_contents($publicDir.'/'.$filename, $encoded) === false) {
+                    throw new \RuntimeException('Unable to publish the blog image.');
+                }
             } catch (\Throwable $e) {
+                report($e);
+
+                return response()->json(['error' => 'Image could not be published. Please check storage permissions.'], 500);
             }
 
-            return response()->json([
-                'url' => Storage::disk('public')->url($path),
-            ]);
-        }
-
-        return response()->json(['error' => 'No file uploaded'], 400);
+        return response()->json([
+            'url' => Storage::disk('public')->url($path),
+        ]);
     }
 
     private function uploadThumbnail($file)
     {
-        $filename = time().'_thumb.jpg';
+        $filename = time().'_'.uniqid().'_thumb.jpg';
         $path = 'uploads/blog/thumbnails/'.$filename;
 
         try {
@@ -233,28 +254,51 @@ class AdminBlogController extends Controller
             $encoded = $img->toJpeg(90)->toString();
         } catch (\Throwable $e) {
             $ext = $file->getClientOriginalExtension() ?: 'jpg';
-            $filename = time().'_thumb.'.$ext;
+            $filename = time().'_'.uniqid().'_thumb.'.$ext;
             $path = 'uploads/blog/thumbnails/'.$filename;
             $encoded = file_get_contents($file->getRealPath());
         }
 
-        Storage::disk('public')->put($path, $encoded);
+        if (! Storage::disk('public')->put($path, $encoded)) {
+            throw new \RuntimeException('Unable to write blog thumbnail to the public storage disk.');
+        }
 
         try {
             $dir1 = public_path('storage/uploads/blog/thumbnails');
-            if (! file_exists($dir1)) {
-                @mkdir($dir1, 0777, true);
+            if (! is_dir($dir1) && ! @mkdir($dir1, 0777, true) && ! is_dir($dir1)) {
+                throw new \RuntimeException('Unable to create the blog thumbnail directory.');
             }
-            @file_put_contents($dir1.'/'.$filename, $encoded);
+            if (@file_put_contents($dir1.'/'.$filename, $encoded) === false) {
+                throw new \RuntimeException('Unable to publish the blog thumbnail.');
+            }
 
             $dir2 = public_path('uploads/blog/thumbnails');
-            if (! file_exists($dir2)) {
-                @mkdir($dir2, 0777, true);
+            if (! is_dir($dir2) && ! @mkdir($dir2, 0777, true) && ! is_dir($dir2)) {
+                throw new \RuntimeException('Unable to create the blog public thumbnail directory.');
             }
-            @file_put_contents($dir2.'/'.$filename, $encoded);
+            if (@file_put_contents($dir2.'/'.$filename, $encoded) === false) {
+                throw new \RuntimeException('Unable to publish the blog public thumbnail.');
+            }
         } catch (\Throwable $e) {
+            throw $e;
         }
 
         return $path;
+    }
+
+    private function deleteStoredFile(?string $path): void
+    {
+        if (! $path || str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return;
+        }
+
+        $path = ltrim($path, '/');
+        Storage::disk('public')->delete($path);
+
+        foreach ([public_path('storage/'.$path), public_path($path)] as $filePath) {
+            if (is_file($filePath)) {
+                @unlink($filePath);
+            }
+        }
     }
 }

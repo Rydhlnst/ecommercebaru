@@ -43,7 +43,7 @@ class AdminShowcaseController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'nullable|exists:admin_products,id',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
             'title' => 'nullable|string|max:255',
             'param_name' => 'nullable|string|max:255',
             'param_value' => 'nullable|array',
@@ -54,17 +54,36 @@ class AdminShowcaseController extends Controller
 
         if ($request->hasFile('image')) {
             if ($showcase->image) {
-                Storage::disk('public')->delete($showcase->image);
+                $this->deleteStoredFile($showcase->image);
             }
-            $filename = time().'_showcase.jpg';
+            $filename = time().'_'.uniqid().'_showcase.jpg';
             $path = 'uploads/showcase/'.$filename;
 
-            $manager = new ImageManager(new Driver);
-            $img = $manager->read($request->file('image'));
-            $img->resizeDown(1200);
-            $encoded = $img->toJpeg(90)->toString();
+            try {
+                $manager = new ImageManager(new Driver);
+                $img = $manager->read($request->file('image'));
+                $img->resizeDown(1200);
+                $encoded = $img->toJpeg(90)->toString();
 
-            Storage::disk('public')->put($path, $encoded);
+                if (! Storage::disk('public')->put($path, $encoded)) {
+                    throw new \RuntimeException('Unable to write showcase image to the public storage disk.');
+                }
+
+                foreach ([public_path('storage/uploads/showcase'), public_path('uploads/showcase')] as $directory) {
+                    if (! is_dir($directory) && ! @mkdir($directory, 0777, true) && ! is_dir($directory)) {
+                        throw new \RuntimeException('Unable to create the showcase upload directory.');
+                    }
+
+                    if (@file_put_contents($directory.'/'.$filename, $encoded) === false) {
+                        throw new \RuntimeException('Unable to publish the showcase image.');
+                    }
+                }
+            } catch (\Throwable $e) {
+                report($e);
+
+                return back()->withInput()->with('error', 'Showcase image could not be uploaded. Please check storage permissions.');
+            }
+
             $showcase->image = $path;
         }
 
@@ -83,5 +102,21 @@ class AdminShowcaseController extends Controller
         ResponseCache::clear();
 
         return redirect()->route('admin.showcase.index')->with('success', 'Showcase berhasil diperbarui.');
+    }
+
+    private function deleteStoredFile(?string $path): void
+    {
+        if (! $path || str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return;
+        }
+
+        $path = ltrim($path, '/');
+        Storage::disk('public')->delete($path);
+
+        foreach ([public_path('storage/'.$path), public_path($path)] as $filePath) {
+            if (is_file($filePath)) {
+                @unlink($filePath);
+            }
+        }
     }
 }

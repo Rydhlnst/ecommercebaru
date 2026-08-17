@@ -627,7 +627,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                     @foreach ($reviewsDb as $review)
                         @php
-                            $revName    = $review->name ?? 'Anonim';
+                    $revName    = $review->customer_name ?? 'Anonim';
                             $revInitial = strtoupper(mb_substr($revName, 0, 1));
                             $revText    = $review->comment ?? $review->title ?? '';
                             $revStars   = str_repeat('★', (int) ($review->rating ?? 5)) . str_repeat('☆', 5 - (int) ($review->rating ?? 5));
