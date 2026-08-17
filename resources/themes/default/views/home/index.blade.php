@@ -85,6 +85,16 @@
 @push('styles')
 <style>
     @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .beres-value-marquee { overflow: hidden; }
+    .beres-value-marquee__track {
+        display: flex;
+        width: max-content;
+        animation: marquee 28s linear infinite;
+    }
+    .beres-value-marquee:hover .beres-value-marquee__track { animation-play-state: paused; }
+    @media (prefers-reduced-motion: reduce) {
+        .beres-value-marquee__track { animation: none; transform: translateX(0); }
+    }
 
     /* Responsive product grid for homepage product sections */
     .product-scroll-mobile {
@@ -364,7 +374,7 @@
             <div class="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
                     <a href="{{ $fpUrl }}" class="block aspect-[4/3] overflow-hidden rounded-2xl relative" style="background-color:#E8F0E5;">
-                        <x-shop::product-image :image="$fpImage" :alt="$fpName" size="lg" class="w-full h-full object-contain scale-[1.04] transition-transform duration-500" />
+                        <x-shop::product-image :image="$fpImage" :alt="$fpName" size="lg" class="w-full h-full transition-transform duration-500" style="object-fit:fill !important; transform:scale(1.02);" />
                     </a>
 
                     <div>
@@ -438,11 +448,14 @@
         @if($naturalLink)
             <a href="{{ $naturalLink }}" class="block hover:opacity-90 transition-opacity">
         @endif
-            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-10">
-                <div class="flex items-center justify-center gap-6 md:gap-16 text-white text-center">
-                    <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text1', '100% ALAMI') }}</p>
-                    <span class="text-white/40 text-2xl">✦</span>
-                    <p class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em]" style="font-weight:700;">{{ $c('natural_banner.text2', 'BERSERTIFIKAT LAB') }}</p>
+            <div class="beres-value-marquee py-6 md:py-8" aria-label="{{ $c('natural_banner.text1', '100% ALAMI') }} — {{ $c('natural_banner.text2', 'BERSERTIFIKAT LAB') }}">
+                <div class="beres-value-marquee__track items-center gap-8 md:gap-16 text-white">
+                    @for ($rep = 0; $rep < 6; $rep++)
+                        <span class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em] whitespace-nowrap" style="font-weight:700;">{{ $c('natural_banner.text1', '100% ALAMI') }}</span>
+                        <span class="text-white/40 text-2xl" aria-hidden="true">✦</span>
+                        <span class="text-lg md:text-2xl lg:text-3xl tracking-[0.15em] whitespace-nowrap" style="font-weight:700;">{{ $c('natural_banner.text2', 'BERSERTIFIKAT LAB') }}</span>
+                        <span class="text-white/40 text-2xl" aria-hidden="true">✦</span>
+                    @endfor
                 </div>
             </div>
         @if($naturalLink)
