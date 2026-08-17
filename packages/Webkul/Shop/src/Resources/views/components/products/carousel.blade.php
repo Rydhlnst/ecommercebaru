@@ -33,36 +33,13 @@
                         </p>
                     </a>
 
-                    <template v-if="products.length > 3">
-                        <span
-                            v-if="products.length > 4 || (products.length > 3 && isScreenMax2xl)"
-                            class="icon-arrow-left-stylish rtl:icon-arrow-right-stylish inline-block cursor-pointer text-2xl max-lg:hidden"
-                            role="button"
-                            aria-label="@lang('shop::app.components.products.carousel.previous')"
-                            tabindex="0"
-                            @click="swipeLeft"
-                        >
-                        </span>
-
-                        <span
-                            v-if="products.length > 4 || (products.length > 3 && isScreenMax2xl)"
-                            class="icon-arrow-right-stylish rtl:icon-arrow-left-stylish inline-block cursor-pointer text-2xl max-lg:hidden"
-                            role="button"
-                            aria-label="@lang('shop::app.components.products.carousel.next')"
-                            tabindex="0"
-                            @click="swipeRight"
-                        >
-                        </span>
-                    </template>
                 </div>
             </div>
 
             <div
-                ref="swiperContainer"
-                class="flex gap-8 pb-2.5 [&>*]:flex-[0] mt-10 overflow-auto scroll-smooth scrollbar-hide max-md:gap-7 max-md:mt-5 max-sm:gap-4 max-md:pb-0 max-md:whitespace-nowrap"
+                class="mt-10 grid grid-cols-2 gap-4 max-md:mt-5 sm:grid-cols-3 lg:grid-cols-5 lg:gap-6"
             >
                 <x-shop::products.card
-                    class="min-w-[291px] max-md:h-fit max-md:min-w-56 max-sm:min-w-[192px]"
                     v-for="product in products"
                 />
             </div>
@@ -99,22 +76,11 @@
 
                     products: [],
 
-                    offset: 323,
-
-                    isScreenMax2xl: window.innerWidth <= 1440,
                 };
             },
 
             mounted() {
                 this.getProducts();
-            },
-
-            created() {
-                window.addEventListener('resize', this.updateScreenSize);
-            },
-
-            beforeDestroy() {
-                window.removeEventListener('resize', this.updateScreenSize);
             },
 
             methods: {
@@ -129,28 +95,6 @@
                         });
                 },
 
-                updateScreenSize() {
-                    this.isScreenMax2xl = window.innerWidth <= 1440;
-                },
-
-                swipeLeft() {
-                    const container = this.$refs.swiperContainer;
-
-                    container.scrollLeft -= this.offset;
-                },
-
-                swipeRight() {
-                    const container = this.$refs.swiperContainer;
-
-                    // Check if scroll reaches the end
-                    if (container.scrollLeft + container.clientWidth >= container.scrollWidth) {
-                        // Reset scroll to the beginning
-                        container.scrollLeft = 0;
-                    } else {
-                        // Scroll to the right
-                        container.scrollLeft += this.offset;
-                    }
-                },
             },
         });
     </script>

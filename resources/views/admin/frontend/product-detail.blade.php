@@ -89,7 +89,7 @@
 
                 {{-- Description --}}
                 @if($product->description)
-                    <div class="prose prose-sm text-zinc-700 max-w-none mb-6 leading-relaxed">
+                    <div class="prose prose-sm text-zinc-700 text-justify max-w-none mb-6 leading-relaxed">
                         {!! $product->description !!}
                     </div>
                 @endif
