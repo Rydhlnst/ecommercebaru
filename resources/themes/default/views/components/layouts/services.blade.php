@@ -28,7 +28,7 @@
 
 @if (!empty($servicesList))
     <div class="bg-[#2D5A27] border-t border-[#1E3D1A]" v-pre>
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-5 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             @foreach ($servicesList as $service)
                 @php
                     $iconClass = $service['icon'] ?? 'fas fa-shield-halved';

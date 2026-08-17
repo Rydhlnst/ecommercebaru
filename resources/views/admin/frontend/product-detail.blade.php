@@ -18,13 +18,13 @@
             <div>
                 @if($product->images->count())
                     <div class="aspect-square rounded-2xl overflow-hidden bg-[#F5F9F3] border border-[#E8F0E5] mb-4">
-                        <img src="{{ $product->images->first()->url }}" alt="{{ $product->name }}" class="w-full h-full object-cover" id="main-image">
+                        <img src="{{ $product->images->first()->url }}" alt="{{ $product->name }}" class="w-full h-full object-contain" id="main-image">
                     </div>
                     @if($product->images->count() > 1)
                         <div class="grid grid-cols-5 gap-2">
                             @foreach($product->images as $img)
                                 <button type="button" onclick="document.getElementById('main-image').src='{{ $img->url }}'" class="aspect-square rounded-lg overflow-hidden border-2 border-transparent hover:border-[#2D5A27] transition-colors bg-[#F5F9F3]">
-                                    <img src="{{ $img->url }}" alt="{{ $product->name }}" class="w-full h-full object-cover">
+                                    <img src="{{ $img->url }}" alt="{{ $product->name }}" class="w-full h-full object-contain">
                                 </button>
                             @endforeach
                         </div>

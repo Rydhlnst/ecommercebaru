@@ -71,7 +71,7 @@
                 <div class="mb-4">
                     <label class="form-label">Upload Foto (Maks. 5)</label>
                     <input type="file" name="images[]" accept="image/*" multiple class="form-input" onchange="handleProductFileInput(this)" id="image-input">
-                    <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB per foto). Crop otomatis 4:5 untuk setiap foto.</p>
+                    <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB per foto). Gambar akan ditampilkan penuh.</p>
                 </div>
                 <div id="image-preview" class="grid grid-cols-5 gap-2"></div>
                 @error('images') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -191,13 +191,7 @@ function removeVariation(btn) {
 
 function handleProductFileInput(input) {
     if (input.files && input.files.length > 0) {
-        window.AdminCropper.initForInput(input, {
-            aspectRatio: 4/5,
-            ratioLabel: '4:5 (Produk)',
-            onComplete: function(inputEl) {
-                previewImages(inputEl);
-            }
-        });
+        previewImages(input);
     }
 }
 

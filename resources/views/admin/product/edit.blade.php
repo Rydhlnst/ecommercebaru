@@ -80,7 +80,7 @@
                     <p class="text-xs text-gray-400 mb-2">Gambar saat ini. Upload baru akan mengganti semua gambar.</p>
                 @endif
                 <input type="file" name="images[]" id="product-images-input" accept="image/*" multiple class="form-input" onchange="handleProductFileInput(this)">
-                <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB per foto). Crop otomatis 4:5 untuk setiap foto.</p>
+                <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB per foto). Gambar akan ditampilkan penuh.</p>
                 <div id="image-preview" class="grid grid-cols-5 gap-2 mt-2"></div>
             </div>
 
@@ -196,13 +196,7 @@ function removeVariation(btn) {
 
 function handleProductFileInput(input) {
     if (input.files && input.files.length > 0) {
-        window.AdminCropper.initForInput(input, {
-            aspectRatio: 4/5,
-            ratioLabel: '4:5 (Produk)',
-            onComplete: function(inputEl) {
-                previewImages(inputEl);
-            }
-        });
+        previewImages(input);
     }
 }
 

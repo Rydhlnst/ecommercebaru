@@ -65,11 +65,11 @@
             @endif
         </div>
 
-        {{-- Image Upload with locked 1:1 Cropper --}}
+        {{-- Image Upload --}}
         <div class="mb-6">
             <label class="form-label">Gambar Kategori (Opsional)</label>
             <input type="file" name="image" id="category-image-input" accept="image/*" class="form-input" onchange="handleCategoryFileInput(this)">
-            <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB). Crop otomatis 1:1 untuk gambar kategori.</p>
+            <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB). Gambar akan ditampilkan penuh.</p>
             <div id="image-preview" class="mt-2 hidden">
                 <img src="" alt="Preview" class="w-32 h-32 object-cover rounded-lg border">
             </div>
@@ -111,13 +111,7 @@ function toggleCategoryType(type) {
 
 function handleCategoryFileInput(input) {
     if (input.files && input.files[0]) {
-        window.AdminCropper.initForInput(input, {
-            aspectRatio: 1,
-            ratioLabel: '1:1 (Kategori)',
-            onComplete: function(inputEl) {
-                previewImage(inputEl);
-            }
-        });
+        previewImage(input);
     }
 }
 

@@ -2,6 +2,7 @@
 
 namespace Webkul\Shop\Http\Controllers;
 
+use App\Models\AdminProduct;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
@@ -42,7 +43,12 @@ class HomeController extends Controller
 
         $categories = CategoryTreeResource::collection($categories);
 
-        return view('shop::home.index', compact('customizations', 'categories'));
+        $homeProducts = AdminProduct::with(['images', 'variations'])
+            ->where('status', 'active')
+            ->latest()
+            ->get();
+
+        return view('shop::home.index', compact('customizations', 'categories', 'homeProducts'));
     }
 
     /**

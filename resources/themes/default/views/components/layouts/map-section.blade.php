@@ -13,12 +13,12 @@
 @endphp
 
 {{-- Store location + map — compact horizontal layout --}}
-<section id="lokasi" class="bg-white mb-12 md:mb-16">
-    <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-14">
-        <div class="grid gap-6 md:gap-8 lg:grid-cols-5 items-start">
+<section id="lokasi" class="bg-white mb-6 md:mb-8">
+    <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-5 md:py-7">
+        <div class="grid gap-6 md:gap-8 lg:grid-cols-5 items-stretch">
 
             {{-- Map embed — takes 3/5 width --}}
-            <div class="relative w-full overflow-hidden lg:col-span-3 h-[360px] md:h-[420px] min-h-[320px] rounded-2xl bg-zinc-100">
+            <div class="relative w-full overflow-hidden lg:col-span-3 h-full min-h-[320px] rounded-2xl bg-zinc-100">
                 @php
                     $embedUrl = str_contains($mapQuery, 'pb=') || str_contains($mapQuery, 'embed')
                         ? $mapQuery
@@ -46,7 +46,7 @@
             </div>
 
             {{-- Contact info — takes 2/5 width --}}
-            <div class="lg:col-span-2 px-2">
+            <div class="lg:col-span-2 px-2 flex h-full flex-col justify-center">
                 <h2 class="text-2xl md:text-3xl text-[#171717] mb-6" style="font-weight:700;">{{ $country }}</h2>
 
                 <div class="space-y-5">

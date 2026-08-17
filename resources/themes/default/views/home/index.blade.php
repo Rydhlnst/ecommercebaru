@@ -132,7 +132,7 @@
     .beres-hero{position:relative;width:100%;overflow:hidden;background:#f8f9fa;}
     .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform;}
     .beres-hero__slide{flex:0 0 100%;width:100%;aspect-ratio:3/2;background:#f8f9fa;}
-    .beres-hero__slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
+    .beres-hero__slide img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;}
     @media (max-width:768px){.beres-hero__slide{aspect-ratio:4/5;}}
     .beres-hero__nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:rgba(255,255,255,.85);color:#1A3E1A;border:0;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.15);}
     .beres-hero__nav:hover{background:#fff;}
@@ -389,7 +389,7 @@
             }
         @endphp
         <section class="bg-white beres-reveal">
-            <div class="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+            <div class="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
                     <a href="{{ $fpUrl }}" class="block aspect-square md:aspect-[4/5] overflow-hidden rounded-2xl relative" style="background-color:#E8F0E5;">
                         <x-shop::product-image :image="$fpImage" :alt="$fpName" size="lg" class="w-full h-full object-contain p-3 transition-transform duration-500 hover:scale-[1.02]" />
@@ -433,7 +433,7 @@
     {{-- ============ NEW ARRIVALS ============ --}}
     @if ($newProductsDb->isNotEmpty())
         <section class="bg-white beres-reveal">
-            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.new_title', 'Produk Terbaru') }}</h2>
 
                 <div class="product-scroll-mobile">
@@ -448,7 +448,7 @@
     {{-- ============ KITS & BUNDLES ============ --}}
     @if ($bundlesDb->isNotEmpty())
         <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
-            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.bundle_title', 'Paket & Bundel') }}</h2>
 
                 <div class="product-scroll-mobile">
@@ -485,7 +485,7 @@
     @endphp
     @if ($homeCats->isNotEmpty())
         <section class="bg-white beres-reveal">
-            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <div class="flex items-center justify-between mb-6 md:mb-8">
                     <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.cat_title', 'All Kitchen Needs') }}</h2>
                     <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">See All Categories</a>
@@ -518,7 +518,7 @@
     {{-- ============ ALL TIME BEST SELLER ============ --}}
     @if ($bestSellersDb->isNotEmpty())
         <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
-            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <h2 class="text-xl md:text-2xl text-[#171717] mb-6 md:mb-8" style="font-weight:600;">{{ $c('sections.best_title', 'Produk Terlaris') }}</h2>
 
                 <div class="product-scroll-mobile">
@@ -552,7 +552,7 @@
     {{-- ============ SEEDS & SUPERFOODS ============ --}}
     @if ($superfoodsDb->isNotEmpty())
         <section class="bg-white beres-reveal">
-            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <div class="flex items-center justify-between mb-6 md:mb-8">
                     <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.seed_title', 'Biji & Superfood Kami') }}</h2>
                     <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat Semua</a>
@@ -569,7 +569,7 @@
 
     {{-- Empty catalog notice when no products exist --}}
     @if ($newProductsDb->isEmpty() && $bundlesDb->isEmpty() && $bestSellersDb->isEmpty() && $superfoodsDb->isEmpty() && !$featuredProduct)
-        <section class="bg-white py-20 text-center beres-reveal">
+        <section class="bg-white py-10 text-center beres-reveal">
             <div class="mx-auto max-w-md px-4">
                 <div class="w-16 h-16 bg-[#E8F0E5] text-[#2D5A27] rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -585,7 +585,7 @@
     {{-- ============ TRUST BADGES with icons ============ --}}
     @if (!empty($trustBadges))
         <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
-            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-10 md:py-14">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-5 md:py-7">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                     @php
                         $badgeIcons = [
@@ -616,7 +616,7 @@
            {{-- ============ CUSTOMER REVIEWS (Only show if real approved reviews exist in DB) ============ --}}
     @if ($reviewsDb->isNotEmpty())
         <section class="beres-reveal" style="background-color:#F5F9F3;">
-            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+            <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-8">
                     <div>
                         <p class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.review_title', 'Ulasan Pelanggan') }}</p>
@@ -755,7 +755,7 @@
     {{-- ============ FAQ (Only show if real FAQs exist in DB) ============ --}}
     @if ($faqsDb->isNotEmpty())
         <section class="bg-white beres-reveal">
-            <div class="mx-auto max-w-4xl px-4 sm:px-6 md:px-10 py-16 md:py-24">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 md:px-10 py-8 md:py-12">
                 <h2 class="text-2xl md:text-3xl text-[#171717] mb-8" style="font-weight:600;">{{ $c('sections.faq_title', 'FAQ') }}</h2>
 
                 <div class="space-y-3">
@@ -775,7 +775,7 @@
 
     {{-- ============ LATEST BLOGS & ARTICLES (Only show if real blogs exist in DB) ============ --}}
     @if ($blogsDb->isNotEmpty())
-        <section class="bg-gradient-to-b from-white to-[#F7FAF6] py-16 md:py-24 border-t border-[#E8F0E5]/60 beres-reveal">
+        <section class="bg-gradient-to-b from-white to-[#F7FAF6] py-8 md:py-12 border-t border-[#E8F0E5]/60 beres-reveal">
             <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14">
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10 md:mb-12">
                     <div class="space-y-2">
@@ -805,7 +805,7 @@
                             {{-- Unified 16:9 Thumbnail Banner --}}
                             <a href="{{ $blogUrl }}" class="block relative w-full overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] shrink-0" style="aspect-ratio:16/9; height:200px; max-height:220px;">
                                 @if ($blogImg)
-                                    <img src="{{ $blogImg }}" alt="{{ $blogTitle }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                            <img src="{{ $blogImg }}" alt="{{ $blogTitle }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" loading="lazy">
                                 @else
                                     <div class="w-full h-full flex flex-col justify-between p-5 bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] group-hover:scale-105 transition-transform duration-500" style="width:100%; height:100%;">
                                         <span class="inline-block px-3 py-1 text-xs font-semibold text-[#2D5A27] bg-white/90 backdrop-blur-md rounded-full shadow-xs w-fit">

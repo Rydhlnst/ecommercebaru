@@ -55,7 +55,7 @@
                         </div>
                     @endif
                     <input type="file" name="thumbnail" id="blog-thumb-input" accept="image/*" class="form-input" onchange="handleBlogThumbInput(this)">
-                    <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB). Cropper interaktif 16:9 banner akan otomatis terbuka.</p>
+                    <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB). Gambar akan ditampilkan penuh.</p>
                     <div id="thumb-preview" class="mt-2 hidden">
                         <img src="" alt="Preview" class="w-full h-32 object-cover rounded-lg border">
                     </div>
@@ -134,13 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function handleBlogThumbInput(input) {
     if (input.files && input.files[0]) {
-        window.AdminCropper.initForInput(input, {
-            aspectRatio: 16/9,
-            ratioLabel: '16:9 (Blog)',
-            onComplete: function(inputEl) {
-                previewThumbnail(inputEl);
-            }
-        });
+        previewThumbnail(input);
     }
 }
 

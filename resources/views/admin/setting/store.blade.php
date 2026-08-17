@@ -24,7 +24,7 @@
                 <div class="w-full md:w-1/2">
                     <label class="form-label text-xs font-semibold text-gray-700 mb-2 block">Upload Gambar Banner Baru</label>
                     <input type="file" name="hero_banner" id="hero-banner-input" accept="image/*" class="form-input text-sm bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" onchange="handleHeroBannerInput(this)">
-                    <p class="text-xs text-gray-400 mt-2">Format: JPG, PNG, WEBP. Crop otomatis 2.743:1 khusus banner.</p>
+                    <p class="text-xs text-gray-400 mt-2">Format: JPG, PNG, WEBP. Gambar banner akan ditampilkan penuh.</p>
                 </div>
                 <div class="w-full md:w-1/2">
                     <label class="form-label text-xs font-semibold text-gray-700 mb-2 block">Preview Banner Saat Ini</label>
@@ -515,17 +515,9 @@
 @section('scripts')
 function handleHeroBannerInput(input) {
     if (input.files && input.files[0]) {
-        window.AdminCropper.initForInput(input, {
-            aspectRatio: 2.743,
-            ratioLabel: '2.743:1 (Banner)',
-            onComplete: function(inputEl) {
-                const file = inputEl.files && inputEl.files[0];
-                if (!file) return;
-
-                const preview = inputEl.closest('.flex').querySelector('img');
-                if (preview) preview.src = URL.createObjectURL(file);
-            }
-        });
+        const file = input.files[0];
+        const preview = input.closest('.flex').querySelector('img');
+        if (preview) preview.src = URL.createObjectURL(file);
     }
 }
 

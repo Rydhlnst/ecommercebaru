@@ -48,6 +48,28 @@
         </div>
     </section>
 
+    {{-- Highlighted products --}}
+    @if ($homeProducts->isNotEmpty())
+        <section class="bg-canvas">
+            <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-16 md:py-20">
+                <div class="mb-10">
+                    <p class="eyebrow mb-3">Featured Products</p>
+                    <h2 class="font-serif text-4xl md:text-5xl text-ink">Our Highlights</h2>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
+                    @foreach ($homeProducts as $index => $product)
+                        @include('shop::components.layouts._product-card', [
+                            'product' => $product,
+                            'index' => $index,
+                            'bg' => ['#E8F0E5', '#DCE8D6', '#F0F5EC', '#EAF1E4'][$index % 4],
+                        ])
+                    @endforeach
+                </div>
+            </div>
+        </section>
+    @endif
+
     {{-- Category tiles quick-links --}}
     <section class="bg-cream">
         <div class="mx-auto max-w-[1600px] px-6 md:px-10 lg:px-14 py-16 md:py-20">
