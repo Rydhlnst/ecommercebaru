@@ -242,7 +242,11 @@
         <ul class="flex items-center gap-8 lg:gap-12 text-[14px] text-ink">
             @foreach ($navItems as [$label, $href, $active])
                 <li>
-                    <a href="{{ $href }}" class="{{ $active ? $navActive : $navInactive }}">
+                    <a
+                        href="{{ $href }}"
+                        class="{{ $active ? $navActive : $navInactive }}"
+                        style="{{ $active ? 'display:inline-block; background-color:#2D5A27 !important; color:#FFFFFF !important; border-radius:6px; padding:8px 12px;' : 'display:inline-block; padding:8px 12px;' }}"
+                    >
                         {{ $label }}
                     </a>
                 </li>
