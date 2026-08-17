@@ -8,6 +8,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Schema;
+use Spatie\ResponseCache\Facades\ResponseCache;
 
 class AdminFaqController extends Controller
 {
@@ -45,6 +46,8 @@ class AdminFaqController extends Controller
 
         Faq::create($validated);
 
+        ResponseCache::clear();
+
         return redirect()->route('admin.faqs.index')->with('success', 'FAQ berhasil ditambahkan.');
     }
 
@@ -71,6 +74,8 @@ class AdminFaqController extends Controller
 
         $faq->update($validated);
 
+        ResponseCache::clear();
+
         return redirect()->route('admin.faqs.index')->with('success', 'FAQ berhasil diperbarui.');
     }
 
@@ -78,6 +83,8 @@ class AdminFaqController extends Controller
     {
         $faq = Faq::findOrFail($id);
         $faq->delete();
+
+        ResponseCache::clear();
 
         return redirect()->route('admin.faqs.index')->with('success', 'FAQ berhasil dihapus.');
     }

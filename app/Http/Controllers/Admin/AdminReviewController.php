@@ -7,6 +7,7 @@ use App\Models\AdminReview;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Schema;
+use Spatie\ResponseCache\Facades\ResponseCache;
 
 class AdminReviewController extends Controller
 {
@@ -30,6 +31,8 @@ class AdminReviewController extends Controller
         $review = AdminReview::findOrFail($id);
         $review->update(['is_approved' => true]);
 
+        ResponseCache::clear();
+
         return redirect()->route('admin.reviews.index')->with('success', 'Review berhasil disetujui.');
     }
 
@@ -37,6 +40,8 @@ class AdminReviewController extends Controller
     {
         $review = AdminReview::findOrFail($id);
         $review->delete();
+
+        ResponseCache::clear();
 
         return redirect()->route('admin.reviews.index')->with('success', 'Review berhasil dihapus.');
     }
