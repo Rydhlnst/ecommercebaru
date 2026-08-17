@@ -86,53 +86,25 @@
 <style>
     @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-    /* Responsive, compact product scroll & grid (4-5 in view on desktop) */
+    /* Responsive product grid for homepage product sections */
     .product-scroll-mobile {
-        display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
-        scrollbar-color: #2D5A27 #E8F0E5;
-        padding-bottom: 1rem;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 1.25rem;
     }
-    .product-scroll-mobile > * {
-        flex: 0 0 270px;
-        max-width: 280px;
-        scroll-snap-align: start;
-    }
     @media (max-width: 1024px) {
-        .product-scroll-mobile > * {
-            flex: 0 0 250px;
-            max-width: 260px;
-        }
+        .product-scroll-mobile { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     }
     @media (max-width: 640px) {
-        .product-scroll-mobile > * {
-            flex: 0 0 220px;
-            max-width: 230px;
+        .product-scroll-mobile {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: .75rem;
         }
-    }
-    /* Webkit scrollbar (Chrome, Safari, Edge) */
-    .product-scroll-mobile::-webkit-scrollbar {
-        height: 6px;
-    }
-    .product-scroll-mobile::-webkit-scrollbar-track {
-        background: #E8F0E5;
-        border-radius: 10px;
-    }
-    .product-scroll-mobile::-webkit-scrollbar-thumb {
-        background: #2D5A27;
-        border-radius: 10px;
-    }
-    .product-scroll-mobile::-webkit-scrollbar-thumb:hover {
-        background: #1E3D1A;
     }
     .beres-hero{position:relative;width:100%;overflow:hidden;background:#f8f9fa;}
     .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform;}
     .beres-hero__slide{flex:0 0 100%;width:100%;aspect-ratio:3/2;background:#f8f9fa;}
-    .beres-hero__slide img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;}
+    .beres-hero__slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;}
     @media (max-width:768px){.beres-hero__slide{aspect-ratio:4/5;}}
     .beres-hero__nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:rgba(255,255,255,.85);color:#1A3E1A;border:0;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.15);}
     .beres-hero__nav:hover{background:#fff;}
@@ -392,7 +364,7 @@
             <div class="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
                     <a href="{{ $fpUrl }}" class="block aspect-square md:aspect-[4/5] overflow-hidden rounded-2xl relative" style="background-color:#E8F0E5;">
-                        <x-shop::product-image :image="$fpImage" :alt="$fpName" size="lg" class="w-full h-full object-contain p-3 transition-transform duration-500 hover:scale-[1.02]" />
+                        <x-shop::product-image :image="$fpImage" :alt="$fpName" size="lg" class="w-full h-full object-cover scale-[1.04] transition-transform duration-500" />
                     </a>
 
                     <div>
@@ -400,7 +372,7 @@
                         <p class="mt-2 text-2xl md:text-3xl" style="color:#2D5A27; font-weight:700;">{{ $fpPrice }}</p>
 
                         @if (!empty($fpDesc))
-                            <div class="mt-6 text-sm text-[#404040] leading-relaxed prose prose-sm max-w-none">
+                            <div class="mt-6 text-sm text-[#404040] leading-relaxed text-justify prose prose-sm max-w-none">
                                 @if ($featuredProduct instanceof \App\Models\AdminProduct)
                                     <p>{{ $fpDesc }}</p>
                                 @else
@@ -497,7 +469,7 @@
                         <a href="{{ route('shop.admin_category.show', $cat['slug']) }}" class="group block shrink-0 w-[150px] sm:w-[170px] md:w-[190px]">
                             <div class="aspect-square overflow-hidden transition-transform duration-500 group-hover:scale-[1.03] rounded-2xl relative flex items-center justify-center border border-[#E8F0E5] shadow-xs" style="background-color:{{ $bgPick($i) }};">
                                 @if(!empty($cat['image']))
-                                    <img src="{{ $cat['image'] }}" alt="{{ $cat['name'] }}" class="w-full h-full object-contain p-1">
+                                    <img src="{{ $cat['image'] }}" alt="{{ $cat['name'] }}" class="w-full h-full object-cover scale-[1.04] transition-transform duration-500">
                                 @else
                                     <div class="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-gradient-to-br from-[#F5F9F3] to-[#E8F0E5] text-[#2D5A27]">
                                         <svg class="w-8 h-8 mb-2 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
@@ -654,7 +626,7 @@
         $googleReviewUrl = $c('contact.google_review_url', 'https://www.google.com/search?q=Ankesh+Online+Store');
     @endphp
     <section class="bg-white beres-reveal border-t" style="border-color:#E8F0E5;">
-        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-16 md:py-24">
+        <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
             {{-- Header --}}
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                 <div>
@@ -689,14 +661,14 @@
 
             {{-- Empty State --}}
             @if (empty($googleReviews))
-                <div class="flex flex-col items-center justify-center py-16 text-center">
-                    <div class="w-20 h-20 rounded-full flex items-center justify-center mb-5" style="background-color:#F5F9F3;">
+                <div class="flex flex-col items-center justify-center py-8 md:py-10 text-center">
+                    <div class="w-20 h-20 rounded-full flex items-center justify-center mb-4" style="background-color:#F5F9F3;">
                         <svg class="w-10 h-10 text-[#2D5A27]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-[#171717] mb-2">Belum ada ulasan Google</h3>
-                    <p class="text-sm text-[#737373] max-w-md mb-6">Ulasan dari Google Business Profile akan muncul di sini setelah terhubung. Bagikan pengalaman belanja Anda!</p>
+                    <p class="text-sm text-[#737373] max-w-md mb-4">Ulasan dari Google Business Profile akan muncul di sini setelah terhubung. Bagikan pengalaman belanja Anda!</p>
                     <a href="{{ $googleReviewUrl }}" target="_blank" rel="noopener"
                        class="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold transition-all"
                        style="border:1.5px solid #2D5A27; color:#2D5A27; border-radius:10px;"
@@ -755,7 +727,7 @@
     {{-- ============ FAQ (Only show if real FAQs exist in DB) ============ --}}
     @if ($faqsDb->isNotEmpty())
         <section class="bg-white beres-reveal">
-        <div class="mx-auto max-w-4xl px-4 sm:px-6 md:px-10 py-8 md:py-12">
+        <div class="mx-auto max-w-4xl px-4 sm:px-6 md:px-10 py-6 md:py-8">
                 <h2 class="text-2xl md:text-3xl text-[#171717] mb-8" style="font-weight:600;">{{ $c('sections.faq_title', 'FAQ') }}</h2>
 
                 <div class="space-y-3">
@@ -805,7 +777,7 @@
                             {{-- Unified 16:9 Thumbnail Banner --}}
                             <a href="{{ $blogUrl }}" class="block relative w-full overflow-hidden bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] shrink-0" style="aspect-ratio:16/9; height:200px; max-height:220px;">
                                 @if ($blogImg)
-                            <img src="{{ $blogImg }}" alt="{{ $blogTitle }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                            <img src="{{ $blogImg }}" alt="{{ $blogTitle }}" class="w-full h-full object-cover scale-[1.04] group-hover:scale-105 transition-transform duration-500" loading="lazy">
                                 @else
                                     <div class="w-full h-full flex flex-col justify-between p-5 bg-gradient-to-br from-[#F5F9F3] via-[#E8F0E5] to-[#D5E5CE] group-hover:scale-105 transition-transform duration-500" style="width:100%; height:100%;">
                                         <span class="inline-block px-3 py-1 text-xs font-semibold text-[#2D5A27] bg-white/90 backdrop-blur-md rounded-full shadow-xs w-fit">
