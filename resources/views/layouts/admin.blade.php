@@ -207,14 +207,14 @@
             @if(session('success'))
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({ icon: 'success', title: 'Berhasil!', text: '{{ session('success') }}', timer: 3000, showConfirmButton: false });
+                        Swal.fire({ icon: 'success', title: 'Berhasil!', text: {{ json_encode(session('success')) }}, timer: 3000, showConfirmButton: false });
                     });
                 </script>
             @endif
             @if(session('error'))
                 <script>
                     document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({ icon: 'error', title: 'Gagal!', text: '{{ session('error') }}', timer: 3000, showConfirmButton: false });
+                        Swal.fire({ icon: 'error', title: 'Gagal!', html: {{ json_encode(session('error')) }}, confirmButtonText: 'Mengerti', confirmButtonColor: '#dc2626' });
                     });
                 </script>
             @endif

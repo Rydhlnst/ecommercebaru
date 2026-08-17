@@ -14,7 +14,7 @@ class AdminProductVariation extends Model
         return [
             'weight' => 'integer',
             'price' => 'decimal:2',
-            'compare_at_price' => 'decimal:2',
+            'compare_at_price' => 'float',
         ];
     }
 

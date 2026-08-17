@@ -22,7 +22,7 @@ class AdminProduct extends Model
             'is_featured' => 'boolean',
             'has_variations' => 'boolean',
             'price' => 'decimal:2',
-            'compare_at_price' => 'decimal:2',
+            'compare_at_price' => 'float',
         ];
     }
 

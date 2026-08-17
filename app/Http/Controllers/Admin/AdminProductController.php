@@ -55,6 +55,7 @@ class AdminProductController extends Controller
     public function store(Request $request)
     {
         $hasVariations = $request->boolean('has_variations');
+        $this->normalizeEmptyPrices($request);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -72,6 +73,7 @@ class AdminProductController extends Controller
             'variation_weight' => 'nullable|array',
             'variation_price' => 'nullable|array',
             'variation_compare_at_price' => 'nullable|array',
+            'variation_compare_at_price.*' => 'nullable|numeric|min:0',
             'variation_stock' => 'nullable|array',
         ]);
 
@@ -120,6 +122,7 @@ class AdminProductController extends Controller
         }
 
         $hasVariations = $request->boolean('has_variations');
+        $this->normalizeEmptyPrices($request);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -137,6 +140,7 @@ class AdminProductController extends Controller
             'variation_weight' => 'nullable|array',
             'variation_price' => 'nullable|array',
             'variation_compare_at_price' => 'nullable|array',
+            'variation_compare_at_price.*' => 'nullable|numeric|min:0',
             'variation_stock' => 'nullable|array',
         ]);
 
@@ -203,10 +207,13 @@ class AdminProductController extends Controller
             if (empty($price)) {
                 continue;
             }
+
+            $comparePrice = trim((string) ($comparePrices[$index] ?? ''));
+
             $product->variations()->create([
                 'weight' => $weights[$index] ?? 0,
                 'price' => $price,
-                'compare_at_price' => $comparePrices[$index] ?? null,
+                'compare_at_price' => $comparePrice === '' ? null : $comparePrice,
                 'stock' => $stocks[$index] ?? 0,
             ]);
         }
@@ -217,6 +224,29 @@ class AdminProductController extends Controller
                 'price' => $firstVariation->price,
                 'compare_at_price' => $firstVariation->compare_at_price,
                 'stock' => $product->variations()->sum('stock'),
+            ]);
+        }
+    }
+
+    /**
+     * ConvertEmptyStringsToNull middleware dimatikan secara global,
+     * jadi field harga opsional yang dikosongkan mengirim string kosong
+     * yang akan gagal validasi numeric. Normalisasi ke null di sini.
+     */
+    private function normalizeEmptyPrices(Request $request): void
+    {
+        $request->merge([
+            'compare_at_price' => $request->filled('compare_at_price') ? $request->input('compare_at_price') : null,
+        ]);
+
+        $variationCompares = $request->input('variation_compare_at_price', []);
+
+        if (is_array($variationCompares)) {
+            $request->merge([
+                'variation_compare_at_price' => array_map(
+                    fn ($v) => ($v === null || trim((string) $v) === '') ? null : $v,
+                    $variationCompares
+                ),
             ]);
         }
     }
