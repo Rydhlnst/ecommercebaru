@@ -61,34 +61,63 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         /**
-         * Graceful admin error handling: any unexpected error on a write
-         * action (POST/PUT/PATCH/DELETE) in the admin panel is converted
-         * to a flash "error" message so the dashboard shows a toast
-         * instead of a debug/500 page. The real exception is still logged.
+         * Graceful error handling: tidak ada lagi halaman debug Laravel.
+         *
+         * - Validation di admin  -> redirect back + toast error pertama + error field tetap terisi
+         * - Write action di admin (POST/PUT/DELETE) -> redirect back + toast error
+         * - GET di admin -> halaman error custom (resources/views/errors) dengan detail
+         * - Storefront -> halaman error custom (APP_DEBUG=false di production)
+         *
+         * Semua exception tetap di-log ke laravel.log.
          */
         $exceptions->render(function (Throwable $e, Request $request) {
-            if ($e instanceof ValidationException
-                || $e instanceof AuthenticationException
-                || $e instanceof HttpException) {
+            $isAdmin = $request->is('admin') || $request->is('admin/*');
+            $isWrite = ! in_array($request->getMethod(), ['GET', 'HEAD', 'OPTIONS']);
+
+            if ($e instanceof ValidationException) {
+                if ($isAdmin && ! $request->expectsJson()) {
+                    $first = collect($e->errors())->flatten()->first();
+
+                    return redirect()->back()
+                        ->withInput()
+                        ->withErrors($e->errors())
+                        ->with('error', $first ?: 'Periksa kembali isian formulir.');
+                }
+
                 return null;
             }
 
-            if (! $request->is('admin') && ! $request->is('admin/*')) {
+            if ($e instanceof AuthenticationException || $e instanceof HttpException) {
                 return null;
             }
 
             report($e);
 
-            $message = mb_substr('Terjadi kesalahan: '.$e->getMessage(), 0, 300);
+            $message = mb_substr($e->getMessage(), 0, 300);
 
             if ($request->expectsJson()) {
-                return response()->json(['message' => $message], 500);
+                return response()->json(['message' => 'Terjadi kesalahan: '.$message], 500);
             }
 
-            if (in_array($request->getMethod(), ['GET', 'HEAD', 'OPTIONS'])) {
-                return null;
+            if ($isAdmin && $isWrite) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Terjadi kesalahan: '.$message);
             }
 
-            return redirect()->back()->withInput()->with('error', $message);
+            $code = (int) ($e->getCode() ?: 500);
+            if ($code < 400 || $code > 599) {
+                $code = 500;
+            }
+
+            if (view()->exists("errors.$code")) {
+                return response()->view("errors.$code", [
+                    'detail' => $isAdmin ? $message : null,
+                ], $code);
+            }
+
+            return response()->view('errors.500', [
+                'detail' => $isAdmin ? $message : null,
+            ], 500);
         });
     })->create();

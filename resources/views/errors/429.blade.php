@@ -1,0 +1,1 @@
+@include('errors._base', ['code' => 429, 'title' => 'Terlalu Banyak Permintaan', 'message' => 'Anda melakukan terlalu banyak permintaan. Tunggu sebentar lalu coba lagi.'])

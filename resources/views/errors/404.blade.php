@@ -1,0 +1,1 @@
+@include('errors._base', ['code' => 404, 'title' => 'Halaman Tidak Ditemukan', 'message' => 'Halaman yang Anda cari tidak ada atau sudah dipindahkan.'])

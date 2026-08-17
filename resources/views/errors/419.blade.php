@@ -1,0 +1,1 @@
+@include('errors._base', ['code' => 419, 'title' => 'Sesi Berakhir', 'message' => 'Sesi Anda sudah berakhir. Silakan muat ulang halaman dan coba lagi.'])

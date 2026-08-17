@@ -1,0 +1,1 @@
+@include('errors._base', ['code' => 500, 'title' => 'Terjadi Kesalahan Server', 'message' => 'Maaf, terjadi kesalahan yang tidak terduga. Tim kami sudah mencatat masalah ini.'])
