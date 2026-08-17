@@ -350,10 +350,8 @@
                 <x-shop::layouts.services />
             @endif
 
-            <!-- Store Location + Map (front page only) -->
-            @if (request()->routeIs('shop.home.index'))
-                @include('shop::components.layouts.map-section')
-            @endif
+            <!-- Store Location + Map on every storefront page -->
+            @include('shop::components.layouts.map-section')
 
             <!-- Page Footer Blade Component -->
             @if ($hasFooter)
