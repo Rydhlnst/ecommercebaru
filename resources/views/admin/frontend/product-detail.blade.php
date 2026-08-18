@@ -18,13 +18,14 @@
             <div>
                 @if($product->images->count())
                     <div class="aspect-square rounded-2xl overflow-hidden bg-[#F5F9F3] border border-[#E8F0E5] mb-4">
-                        <img src="{{ $product->images->first()->url }}" alt="{{ $product->name }}" class="w-full h-full object-contain" id="main-image">
+                        @php $mainImage = $product->images->first(); @endphp
+                        <img src="{{ $mainImage->detail_url }}" alt="{{ $mainImage->alt_text ?: $product->name }}" class="w-full h-full" style="object-fit:{{ $mainImage->fit_mode }}; object-position:{{ $mainImage->focal_x }}% {{ $mainImage->focal_y }}%; padding:{{ $mainImage->fit_mode === 'contain' ? '1rem' : '0' }};" id="main-image">
                     </div>
                     @if($product->images->count() > 1)
                         <div class="grid grid-cols-5 gap-2">
                             @foreach($product->images as $img)
-                                <button type="button" onclick="document.getElementById('main-image').src='{{ $img->url }}'" class="aspect-square rounded-lg overflow-hidden border-2 border-transparent hover:border-[#2D5A27] transition-colors bg-[#F5F9F3]">
-                                    <img src="{{ $img->url }}" alt="{{ $product->name }}" class="w-full h-full object-contain">
+                                <button type="button" data-image-url="{{ $img->detail_url }}" data-image-fit="{{ $img->fit_mode }}" data-image-x="{{ $img->focal_x }}" data-image-y="{{ $img->focal_y }}" onclick="setProductImage(this)" class="aspect-square rounded-lg overflow-hidden border-2 border-transparent hover:border-[#2D5A27] transition-colors bg-[#F5F9F3]">
+                                <img src="{{ $img->card_url }}" alt="{{ $img->alt_text ?: $product->name }}" class="w-full h-full" style="object-fit:{{ $img->fit_mode }}; object-position:{{ $img->focal_x }}% {{ $img->focal_y }}%; padding:{{ $img->fit_mode === 'contain' ? '0.5rem' : '0' }};">
                                 </button>
                             @endforeach
                         </div>
@@ -35,6 +36,16 @@
                     </div>
                 @endif
             </div>
+
+            <script>
+                function setProductImage(button) {
+                    const image = document.getElementById('main-image');
+                    image.src = button.dataset.imageUrl;
+                    image.style.objectFit = button.dataset.imageFit || 'cover';
+                    image.style.objectPosition = `${button.dataset.imageX || 50}% ${button.dataset.imageY || 50}%`;
+                    image.style.padding = button.dataset.imageFit === 'contain' ? '1rem' : '0';
+                }
+            </script>
 
             {{-- Product Info --}}
             <div class="flex flex-col items-start text-left">

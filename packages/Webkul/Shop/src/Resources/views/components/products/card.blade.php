@@ -142,9 +142,9 @@
                 {!! view_render_event('bagisto.shop.components.products.card.average_ratings.after') !!}
 
                 <!-- Super Attributes / Variant Button Selectors on Product Card -->
-                <div class="mt-2 flex flex-col gap-1.5">
+                <div class="mt-2 flex flex-col gap-1.5" v-if="product.super_attributes && product.super_attributes.length">
                     <span class="text-xs text-stone font-medium uppercase tracking-wider">Pilih Varian / Berat</span>
-                    <div class="flex flex-wrap gap-1.5" v-if="product.super_attributes && product.super_attributes.length">
+                    <div class="flex flex-wrap gap-1.5">
                         <template v-for="attribute in product.super_attributes" :key="attribute.id">
                             <button
                                 v-for="option in attribute.options"
@@ -157,24 +157,6 @@
                                 @{{ option.label }}
                             </button>
                         </template>
-                    </div>
-                    <div class="flex flex-wrap gap-1.5" v-else>
-                        <button
-                            type="button"
-                            class="px-3 py-1 text-xs rounded-full border transition-all duration-200 font-medium"
-                            :class="selectedWeight == '500g' ? 'border-[#2D5A27] bg-[#2D5A27] text-white shadow-sm' : 'border-zinc-300 bg-white text-ink hover:border-[#2D5A27]'"
-                            @click="selectedWeight = '500g'"
-                        >
-                            500g
-                        </button>
-                        <button
-                            type="button"
-                            class="px-3 py-1 text-xs rounded-full border transition-all duration-200 font-medium"
-                            :class="selectedWeight == '1000g' ? 'border-[#2D5A27] bg-[#2D5A27] text-white shadow-sm' : 'border-zinc-300 bg-white text-ink hover:border-[#2D5A27]'"
-                            @click="selectedWeight = '1000g'"
-                        >
-                            1000g
-                        </button>
                     </div>
                 </div>
 
@@ -334,7 +316,6 @@
                     isAddingToCart: false,
                     quantity: 1,
                     selectedSuperAttributes: {},
-                    selectedWeight: '500g',
                 }
             },
 

@@ -41,10 +41,10 @@ class AdminProduct extends Model
     public function getImageUrlAttribute(): ?string
     {
         if ($this->relationLoaded('images')) {
-            return $this->images->first()?->url;
+            return $this->images->first()?->card_url;
         }
 
-        return $this->images()->first()?->url;
+        return $this->images()->first()?->card_url;
     }
 
     protected static function booted(): void

@@ -46,8 +46,11 @@
 
             $href     = route('shop.admin_product.show', $product->slug);
             $image    = $product->images->count()
-                            ? $product->images->first()->url
+                            ? $product->images->first()->card_url
                             : null;
+            $imageFit = $product->images->first()?->fit_mode ?? 'cover';
+            $imageX   = $product->images->first()?->focal_x ?? 50;
+            $imageY   = $product->images->first()?->focal_y ?? 50;
 
             // Badge
             $badge = ($product->badge && $product->badge !== 'habis_terjual') ? $product->badge : ($isNew ? 'new' : null);
@@ -55,14 +58,14 @@
             // Description
             $description = $product->description ?? null;
 
-            // Variations (pills 500g, 1000g, etc.)
+            // Variations from the database.
             if ($hasVars) {
                 foreach ($vars as $i => $var) {
                     $vPriceNum = (float) ($var->price > 0 ? $var->price : $priceNum);
                     $vCompareAt = (float) ($var->compare_at_price ?? 0);
                     $childVariants[] = [
                         'id'            => $var->id,
-                        'label'         => $var->weight ? $var->weight_label : ($i === 0 ? '500g' : '1000g'),
+                        'label'         => $var->weight_label,
                         'price'         => 'Rp ' . number_format($vPriceNum, 0, ',', '.'),
                         'regular_price' => ($vCompareAt > $vPriceNum) ? 'Rp ' . number_format($vCompareAt, 0, ',', '.') : null,
                         'special_price' => $vPriceNum,
@@ -71,23 +74,6 @@
                 if ($priceNum == 0 && count($childVariants)) {
                     $price = $childVariants[0]['price'];
                 }
-            } else {
-                // Always provide 500g and 1000g variant pills on every card
-                $childVariants[] = [
-                    'id'            => 'var_500g',
-                    'label'         => '500g',
-                    'price'         => $price,
-                    'regular_price' => null,
-                    'special_price' => $priceNum,
-                ];
-                $var1000Price = $priceNum > 0 ? ($priceNum * 1.85) : 185000;
-                $childVariants[] = [
-                    'id'            => 'var_1000g',
-                    'label'         => '1000g',
-                    'price'         => 'Rp ' . number_format($var1000Price, 0, ',', '.'),
-                    'regular_price' => null,
-                    'special_price' => $var1000Price,
-                ];
             }
 
             $isConfigurable = false;
@@ -111,6 +97,9 @@
                             ? route('shop.product_or_category.index', $product->url_key)
                             : route('shop.search.index');
             $image    = product_image()->getProductBaseImage($product)['small_image_url'] ?? null;
+            $imageFit = 'cover';
+            $imageX   = 50;
+            $imageY   = 50;
             $badge    = null;
             $description = $product->short_description ?? null;
 
@@ -148,23 +137,6 @@
                 } catch (\Throwable $e) {}
             }
 
-            if (empty($childVariants)) {
-                $childVariants[] = [
-                    'id'            => 'var_500g',
-                    'label'         => '500g',
-                    'price'         => $price,
-                    'regular_price' => null,
-                    'special_price' => $minPrice,
-                ];
-                $var1000Price = $minPrice > 0 ? ($minPrice * 1.85) : 185000;
-                $childVariants[] = [
-                    'id'            => 'var_1000g',
-                    'label'         => '1000g',
-                    'price'         => 'Rp ' . number_format($var1000Price, 0, ',', '.'),
-                    'regular_price' => null,
-                    'special_price' => $var1000Price,
-                ];
-            }
         }
     } else {
         $name     = $name     ?? 'Produk Segar';
@@ -177,17 +149,14 @@
         $description = null;
         $isConfigurable = false;
         $superAttrId    = null;
-        $childVariants  = [
-            ['id' => 'var_500g', 'label' => '500g', 'price' => $price, 'regular_price' => null, 'special_price' => null],
-            ['id' => 'var_1000g', 'label' => '1000g', 'price' => 'Rp 185.000', 'regular_price' => null, 'special_price' => null],
-        ];
+        $childVariants  = [];
     }
 @endphp
 
-<div class="beres-card group bg-white overflow-hidden flex flex-col justify-between" style="border:1px solid #E8F0E5; border-radius:16px; min-height:100%;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
+<div class="beres-card group bg-white overflow-hidden flex flex-col justify-between" style="border:1px solid #E8F0E5; border-radius:16px; height:100%; min-height:100%;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
     {{-- Product Image Container (Standardized 4:5 Aspect Ratio) --}}
     <a href="{{ $href }}" class="block relative w-full overflow-hidden shrink-0" style="aspect-ratio:4 / 5 !important; height:auto !important; min-height:0; background-color:#F5F9F3;">
-        <x-shop::product-image :image="$image" :alt="$name" class="absolute inset-0 block w-full h-full p-0 transition-transform duration-500" style="width:100% !important; height:100% !important; display:block !important; object-fit:fill !important; transform:scale({{ $imageScale }});" />
+        <x-shop::product-image :image="$image" :alt="$name" class="absolute inset-0 block w-full h-full transition-transform duration-500" style="width:100% !important; height:100% !important; display:block !important; object-fit:{{ $imageFit }} !important; object-position:{{ $imageX }}% {{ $imageY }}%; padding:{{ $imageFit === 'contain' ? '1rem' : '0' }} !important; transform:scale({{ $imageFit === 'contain' ? '1' : $imageScale }});" />
 
         {{-- Numbered badge --}}
         <span class="absolute top-3 left-3 w-7 h-7 flex items-center justify-center bg-white text-[#171717] text-xs font-bold" style="border-radius:999px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">

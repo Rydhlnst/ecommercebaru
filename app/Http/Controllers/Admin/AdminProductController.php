@@ -11,8 +11,10 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Spatie\ResponseCache\Facades\ResponseCache;
@@ -69,7 +71,10 @@ class AdminProductController extends Controller
             'stock' => $hasVariations ? 'nullable|integer|min:0' : 'required|integer|min:0',
             'status' => 'nullable|in:active,inactive',
             'images' => 'nullable|array|max:5',
-            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:10240',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp,avif|max:10240',
+            'image_meta' => 'nullable|json',
+            'remove_image_ids' => 'nullable|array',
+            'remove_image_ids.*' => 'integer',
             'variation_weight' => 'nullable|array',
             'variation_weight.*' => 'required|numeric|min:0',
             'variation_price' => 'nullable|array',
@@ -87,23 +92,28 @@ class AdminProductController extends Controller
         $validated['stock'] = $validated['stock'] ?? 0;
         $validated['compare_at_price'] = $validated['compare_at_price'] ?? null;
 
-        $product = AdminProduct::create($validated);
+        try {
+            [$product, $filesToDelete] = DB::transaction(function () use ($validated, $request) {
+                $product = AdminProduct::create($validated);
 
-        if ($validated['has_variations'] && $request->has('variation_price')) {
-            $this->saveVariations($product, $request);
-        }
-
-        if ($request->hasFile('images')) {
-            try {
-                $this->saveImages($product, $request->file('images'));
-            } catch (\Throwable $e) {
-                foreach ($product->fresh()->images ?? [] as $image) {
-                    $this->deleteStoredFile($image->image_path);
+                if ($validated['has_variations'] && $request->has('variation_price')) {
+                    $this->saveVariations($product, $request);
                 }
-                $product->delete();
 
-                return back()->withInput()->with('error', 'Product images could not be uploaded. Please check storage permissions.');
+                $filesToDelete = $this->syncProductImages($product, $request);
+
+                return [$product, $filesToDelete];
+            });
+
+            foreach ($filesToDelete as $path) {
+                $this->deleteStoredFile($path);
             }
+        } catch (\Throwable $e) {
+            Log::error('Product image upload failed during product creation.', [
+                'exception' => $e,
+            ]);
+
+            return back()->withInput()->with('error', 'Foto produk gagal diproses. Silakan coba upload kembali.');
         }
 
         ResponseCache::clear();
@@ -166,30 +176,28 @@ class AdminProductController extends Controller
         $validated['stock'] = $validated['stock'] ?? 0;
         $validated['compare_at_price'] = $validated['compare_at_price'] ?? null;
 
-        $product->update($validated);
+        try {
+            [$filesToDelete] = DB::transaction(function () use ($product, $validated, $request) {
+                $product->update($validated);
 
-        if ($validated['has_variations'] && $request->has('variation_price')) {
-            $product->variations()->delete();
-            $this->saveVariations($product, $request);
-        } else {
-            $product->variations()->delete();
-        }
-
-        if ($request->hasFile('images')) {
-            foreach ($product->images as $img) {
-                $this->deleteStoredFile($img->image_path);
-                $img->delete();
-            }
-
-            try {
-                $this->saveImages($product, $request->file('images'));
-            } catch (\Throwable $e) {
-                foreach ($product->fresh()->images ?? [] as $image) {
-                    $this->deleteStoredFile($image->image_path);
-                    $image->delete();
+                $product->variations()->delete();
+                if ($validated['has_variations'] && $request->has('variation_price')) {
+                    $this->saveVariations($product, $request);
                 }
-                return back()->withInput()->with('error', 'Product images could not be replaced. Please check storage permissions.');
+
+                return [$this->syncProductImages($product, $request)];
+            });
+
+            foreach ($filesToDelete as $path) {
+                $this->deleteStoredFile($path);
             }
+        } catch (\Throwable $e) {
+            Log::error('Product image upload failed during product update.', [
+                'product_id' => $product->id,
+                'exception' => $e,
+            ]);
+
+            return back()->withInput()->with('error', 'Foto produk gagal diproses. Perubahan belum disimpan.');
         }
 
         ResponseCache::clear();
@@ -206,7 +214,9 @@ class AdminProductController extends Controller
         }
 
         foreach ($product->images as $img) {
-            $this->deleteStoredFile($img->image_path);
+            foreach ($this->imagePaths($img) as $path) {
+                $this->deleteStoredFile($path);
+            }
         }
 
         if (Schema::hasTable('homepage_highlights')) {
@@ -277,67 +287,138 @@ class AdminProductController extends Controller
         }
     }
 
-    private function saveImages(AdminProduct $product, array $files): void
+    private function syncProductImages(AdminProduct $product, Request $request): array
     {
-        try {
-            $manager = new ImageManager(new Driver);
-        } catch (\Throwable $e) {
-            $manager = null;
+        $meta = json_decode((string) $request->input('image_meta', ''), true);
+        $files = array_values($request->file('images', []));
+        $existing = $product->images()->get()->keyBy('id');
+        $filesToDelete = [];
+
+        if (! $request->has('image_meta') && ! $request->hasFile('images') && ! $request->has('remove_image_ids')) {
+            return [];
         }
 
-        foreach ($files as $index => $file) {
-            $filename = time().'_'.uniqid().'_'.$index.'.jpg';
-            $path = 'uploads/products/'.$filename;
-
-            $encoded = null;
-            if ($manager) {
-                try {
-                    $img = $manager->read($file);
-                    $img->resizeDown(1600);
-                    $encoded = $img->toJpeg(92)->toString();
-                } catch (\Throwable $e) {
-                    $encoded = null;
-                }
+        if (! is_array($meta)) {
+            $meta = [];
+            foreach ($files as $index => $file) {
+                $meta[] = ['file_index' => $index];
             }
-
-            if ($encoded === null) {
-                $ext = $file->getClientOriginalExtension() ?: 'jpg';
-                $filename = time().'_'.uniqid().'_'.$index.'.'.$ext;
-                $path = 'uploads/products/'.$filename;
-                $encoded = file_get_contents($file->getRealPath());
-            }
-
-            if (! Storage::disk('public')->put($path, $encoded)) {
-                throw new \RuntimeException('Unable to write product image to the public storage disk.');
-            }
-
-            // Also write directly to public/storage AND public/uploads for cPanel environments
-            try {
-                $dir1 = public_path('storage/uploads/products');
-                if (! is_dir($dir1) && ! @mkdir($dir1, 0777, true) && ! is_dir($dir1)) {
-                    throw new \RuntimeException('Unable to create the product upload directory.');
-                }
-                if (@file_put_contents($dir1.'/'.$filename, $encoded) === false) {
-                    throw new \RuntimeException('Unable to publish the product image.');
-                }
-
-                $dir2 = public_path('uploads/products');
-                if (! is_dir($dir2) && ! @mkdir($dir2, 0777, true) && ! is_dir($dir2)) {
-                    throw new \RuntimeException('Unable to create the product public upload directory.');
-                }
-                if (@file_put_contents($dir2.'/'.$filename, $encoded) === false) {
-                    throw new \RuntimeException('Unable to publish the product public image.');
-                }
-            } catch (\Throwable $e) {
-                throw $e;
-            }
-
-            AdminProductImage::create([
-                'product_id' => $product->id,
-                'image_path' => $path,
-                'sort_order' => $index,
-            ]);
         }
+
+        if ($existing->isNotEmpty() && $meta === [] && $files === [] && ! $request->has('remove_image_ids')) {
+            return [];
+        }
+
+        $keptIds = collect($meta)
+            ->pluck('id')
+            ->filter(fn ($id) => is_numeric($id))
+            ->map(fn ($id) => (int) $id)
+            ->all();
+        $removeIds = collect($request->input('remove_image_ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->merge($existing->keys()->diff($keptIds))
+            ->unique()
+            ->all();
+
+        foreach ($removeIds as $id) {
+            $image = $existing->get($id);
+            if ($image) {
+                $filesToDelete = array_merge($filesToDelete, $this->imagePaths($image));
+                $image->delete();
+            }
+        }
+
+        foreach (array_values($meta) as $sortOrder => $item) {
+            $image = isset($item['id']) ? $existing->get((int) $item['id']) : null;
+            $fileIndex = isset($item['file_index']) ? (int) $item['file_index'] : null;
+
+            if (! $image && $fileIndex !== null && isset($files[$fileIndex])) {
+                $image = $this->storeProductImage($product, $files[$fileIndex], $item, $sortOrder);
+            }
+
+            if (! $image) {
+                continue;
+            }
+
+            $image->update(array_merge(
+                $this->imagePresentationData($item),
+                ['sort_order' => $sortOrder]
+            ));
+        }
+
+        return $filesToDelete;
+    }
+
+    private function storeProductImage(AdminProduct $product, $file, array $meta, int $sortOrder): AdminProductImage
+    {
+        $manager = new ImageManager(new Driver);
+        $image = $manager->read($file->getRealPath())->orient();
+        $directory = 'uploads/products/'.$product->id.'/'.Str::uuid();
+        $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        $originalPath = $directory.'/original.'.$extension;
+        $originalContents = file_get_contents($file->getRealPath());
+
+        if ($originalContents === false) {
+            throw new \RuntimeException('Unable to read uploaded product image.');
+        }
+
+        $this->publishProductFile($originalPath, $originalContents);
+
+        $derivatives = [];
+        foreach ([480, 800, 1600] as $size) {
+            $variant = clone $image;
+            $contents = $variant->resizeDown($size)->toWebp(85)->toString();
+            $path = $directory.'/'.$size.'.webp';
+            $this->publishProductFile($path, $contents);
+            $derivatives['image_'.$size.'_path'] = $path;
+        }
+
+        $presentation = $this->imagePresentationData($meta);
+        $presentation['alt_text'] = $presentation['alt_text'] ?: $product->name;
+
+        return $product->images()->create(array_merge([
+            'image_path' => $originalPath,
+            'width' => $image->width(),
+            'height' => $image->height(),
+            'sort_order' => $sortOrder,
+        ], $derivatives, $presentation));
+    }
+
+    private function imagePresentationData(array $meta): array
+    {
+        return [
+            'fit_mode' => ($meta['fit_mode'] ?? 'cover') === 'contain' ? 'contain' : 'cover',
+            'focal_x' => max(0, min(100, (int) ($meta['focal_x'] ?? 50))),
+            'focal_y' => max(0, min(100, (int) ($meta['focal_y'] ?? 50))),
+            'alt_text' => isset($meta['alt_text']) ? trim((string) $meta['alt_text']) : null,
+        ];
+    }
+
+    private function publishProductFile(string $path, string $contents): void
+    {
+        if (! Storage::disk('public')->put($path, $contents)) {
+            throw new \RuntimeException('Unable to write product image to public storage.');
+        }
+
+        foreach ([public_path('storage/'.$path), public_path($path)] as $destination) {
+            $directory = dirname($destination);
+            if (! is_dir($directory) && ! @mkdir($directory, 0777, true) && ! is_dir($directory)) {
+                throw new \RuntimeException('Unable to create the product image directory.');
+            }
+            if (@file_put_contents($destination, $contents) === false) {
+                throw new \RuntimeException('Unable to publish the product image.');
+            }
+        }
+    }
+
+    private function imagePaths(AdminProductImage $image): array
+    {
+        return array_values(array_filter([
+            $image->image_path,
+            $image->image_480_path,
+            $image->image_800_path,
+            $image->image_1600_path,
+        ]));
     }
 
     private function deleteStoredFile(?string $path): void
@@ -361,7 +442,11 @@ class AdminProductController extends Controller
         try {
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             if (Schema::hasTable('admin_product_images')) {
-                AdminProductImage::query()->each(fn (AdminProductImage $image) => $this->deleteStoredFile($image->image_path));
+                AdminProductImage::query()->each(function (AdminProductImage $image) {
+                    foreach ($this->imagePaths($image) as $path) {
+                        $this->deleteStoredFile($path);
+                    }
+                });
                 AdminProductImage::truncate();
             }
             if (Schema::hasTable('admin_product_variations')) {

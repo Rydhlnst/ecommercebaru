@@ -362,7 +362,7 @@
             if ($featuredProduct instanceof \App\Models\AdminProduct) {
                 $fpPrice = 'Rp ' . number_format($featuredProduct->price ?? 0, 0, ',', '.');
                 $fpUrl   = route('shop.admin_product.show', $featuredProduct->slug ?? '#');
-                $fpImage = $featuredProduct->image_url ?? ($featuredProduct->images && $featuredProduct->images->count() ? $featuredProduct->images->first()->url : null);
+                $fpImage = $featuredProduct->image_url ?? ($featuredProduct->images && $featuredProduct->images->count() ? $featuredProduct->images->first()->card_url : null);
                 $fpDesc  = $featuredProduct->description ?? null;
             } else {
                 $minP = 0;
@@ -377,7 +377,7 @@
             <div class="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
                     <a href="{{ $fpUrl }}" class="block aspect-[4/3] overflow-hidden rounded-2xl relative" style="background-color:#E8F0E5;">
-                        <x-shop::product-image :image="$fpImage" :alt="$fpName" size="lg" class="w-full h-full transition-transform duration-500" style="object-fit:fill !important; transform:scale(1.02);" />
+                        <x-shop::product-image :image="$fpImage" :alt="$fpName" size="lg" class="w-full h-full transition-transform duration-500" style="object-fit:cover !important; transform:scale(1.02);" />
                     </a>
 
                     <div>

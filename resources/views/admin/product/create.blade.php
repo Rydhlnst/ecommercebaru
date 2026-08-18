@@ -66,16 +66,7 @@
                 </div>
             </div>
 
-            <div class="admin-panel-card">
-                <h3 class="font-semibold text-gray-900 mb-4">Foto Produk</h3>
-                <div class="mb-4">
-                    <label class="form-label">Upload Foto (Maks. 5)</label>
-                    <input type="file" name="images[]" accept="image/*" multiple class="form-input" onchange="handleProductFileInput(this)" id="image-input">
-                    <p class="text-xs text-gray-400 mt-1">Format: JPG, PNG, WEBP (maks. 10MB per foto). Gambar akan ditampilkan penuh.</p>
-                </div>
-                <div id="image-preview" class="grid grid-cols-5 gap-2"></div>
-                @error('images') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
+            @include('admin.product._image-manager')
 
             <div class="admin-panel-card">
                 <div class="flex items-center justify-between mb-4">
@@ -93,7 +84,7 @@
                                 <div class="variation-row flex gap-3 items-end">
                                     <div class="flex-1">
                                         <label class="form-label">Berat (gram)</label>
-                                        <input type="number" name="variation_weight[]" step="1" min="0" value="{{ old('variation_weight')[$i] ?? '' }}" class="form-input" placeholder="contoh: 500, 1000">
+                                        <input type="number" name="variation_weight[]" step="1" min="0" value="{{ old('variation_weight')[$i] ?? '' }}" class="form-input" placeholder="Masukkan berat dalam gram">
                                     </div>
                                     <div class="flex-1">
                                         <label class="form-label">Harga (Rp)</label>
@@ -166,7 +157,7 @@ function addVariation() {
     row.innerHTML = `
         <div class="flex-1">
             <label class="form-label">Berat (gram)</label>
-            <input type="number" name="variation_weight[]" step="1" min="0" class="form-input" placeholder="contoh: 500, 1000">
+            <input type="number" name="variation_weight[]" step="1" min="0" class="form-input" placeholder="Masukkan berat dalam gram">
         </div>
         <div class="flex-1">
             <label class="form-label">Harga (Rp)</label>
@@ -189,26 +180,5 @@ function removeVariation(btn) {
     btn.closest('.variation-row').remove();
 }
 
-function handleProductFileInput(input) {
-    if (input.files && input.files.length > 0) {
-        previewImages(input);
-    }
-}
-
-function previewImages(input) {
-    const preview = document.getElementById('image-preview');
-    preview.innerHTML = '';
-    const files = Array.from(input.files).slice(0, 5);
-    files.forEach(file => {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const div = document.createElement('div');
-            div.className = 'relative';
-            div.innerHTML = `<img src="${e.target.result}" class="w-full h-24 object-cover rounded-lg border">`;
-            preview.appendChild(div);
-        };
-        reader.readAsDataURL(file);
-    });
-}
 @endverbatim
 @endsection

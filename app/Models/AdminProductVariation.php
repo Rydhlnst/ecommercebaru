@@ -24,7 +24,7 @@ class AdminProductVariation extends Model
     }
 
     /**
-     * Weight stored in grams (integer). Display as grams, e.g. 500 -> "500g", 1000 -> "1000g".
+     * Weight stored in grams and displayed with a gram suffix.
      */
     public function getWeightLabelAttribute(): string
     {
