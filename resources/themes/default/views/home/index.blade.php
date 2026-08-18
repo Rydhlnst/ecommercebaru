@@ -96,23 +96,39 @@
         .beres-value-marquee__track { animation: none; transform: translateX(0); }
     }
 
-    /* Responsive product grid for homepage product sections */
-    .product-scroll-mobile {
+    /* One-row product carousels for homepage product sections */
+    .product-carousel__viewport { overflow: hidden; }
+    .product-carousel__track {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-auto-flow: column;
+        grid-auto-columns: calc((100% - 5rem) / 5);
         gap: 1.25rem;
+        transition: transform .35s ease;
+        will-change: transform;
     }
-    .product-scroll-mobile > :nth-child(n + 6) { display: none; }
+    .product-carousel__track > * { min-width: 0; }
+    .product-carousel__controls { display: flex; gap: .5rem; }
+    .product-carousel__button {
+        width: 2.25rem;
+        height: 2.25rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #C8DBBE;
+        border-radius: 999px;
+        background: #fff;
+        color: #2D5A27;
+        cursor: pointer;
+        transition: background-color .2s, color .2s, opacity .2s;
+    }
+    .product-carousel__button:hover:not(:disabled) { background: #2D5A27; color: #fff; }
+    .product-carousel__button:disabled { cursor: default; opacity: .35; }
     @media (max-width: 1024px) {
-        .product-scroll-mobile { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        .product-scroll-mobile > :nth-child(n + 4) { display: none; }
+        .product-carousel__track { grid-auto-columns: calc((100% - 2.5rem) / 3); }
     }
     @media (max-width: 640px) {
-        .product-scroll-mobile {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: .75rem;
-        }
-        .product-scroll-mobile > :nth-child(n + 3) { display: none; }
+        .product-carousel__track { grid-auto-columns: calc((100% - .75rem) / 2); gap: .75rem; }
+        .product-carousel__button { width: 2rem; height: 2rem; }
     }
     .beres-hero{position:relative;width:100%;overflow:hidden;background:#f8f9fa;}
     .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform;}
@@ -262,6 +278,70 @@
     };
     window.beresSelectVariant = window.beresSelectVariantInline;
 
+    // Homepage product sections: one-row responsive carousels.
+    (function () {
+        document.querySelectorAll('[data-carousel]').forEach(function (viewport) {
+            const name = viewport.dataset.carousel;
+            const track = viewport.querySelector('.product-carousel__track');
+            const previous = document.querySelector(`[data-carousel-prev="${name}"]`);
+            const next = document.querySelector(`[data-carousel-next="${name}"]`);
+            if (!track || !previous || !next) return;
+
+            let startIndex = 0;
+
+            function update() {
+                const firstCard = track.firstElementChild;
+                if (!firstCard) return;
+
+                const cardWidth = firstCard.getBoundingClientRect().width;
+                const styles = window.getComputedStyle(track);
+                const gap = parseFloat(styles.columnGap || styles.gap || 0);
+                const visibleCount = Math.max(1, Math.floor((viewport.clientWidth + gap + 1) / (cardWidth + gap)));
+                const maxStartIndex = Math.max(0, track.children.length - visibleCount);
+                startIndex = Math.min(startIndex, maxStartIndex);
+                track.style.transform = `translateX(-${startIndex * (cardWidth + gap)}px)`;
+                previous.disabled = startIndex <= 0;
+                next.disabled = startIndex >= maxStartIndex;
+                document.querySelector(`[data-carousel-controls="${name}"]`)?.classList.toggle('hidden', maxStartIndex <= 0);
+            }
+
+            previous.addEventListener('click', function () {
+                const firstCard = track.firstElementChild;
+                if (!firstCard) return;
+                const cardWidth = firstCard.getBoundingClientRect().width;
+                const gap = parseFloat(window.getComputedStyle(track).columnGap || 0);
+                const visibleCount = Math.max(1, Math.floor((viewport.clientWidth + gap + 1) / (cardWidth + gap)));
+                startIndex = Math.max(0, startIndex - visibleCount);
+                update();
+            });
+
+            next.addEventListener('click', function () {
+                const firstCard = track.firstElementChild;
+                if (!firstCard) return;
+                const cardWidth = firstCard.getBoundingClientRect().width;
+                const gap = parseFloat(window.getComputedStyle(track).columnGap || 0);
+                const visibleCount = Math.max(1, Math.floor((viewport.clientWidth + gap + 1) / (cardWidth + gap)));
+                const maxStartIndex = Math.max(0, track.children.length - visibleCount);
+                startIndex = Math.min(maxStartIndex, startIndex + visibleCount);
+                update();
+            });
+
+            let startX = 0;
+            viewport.addEventListener('touchstart', function (event) {
+                startX = event.touches[0].clientX;
+            }, { passive: true });
+            viewport.addEventListener('touchend', function (event) {
+                const distance = event.changedTouches[0].clientX - startX;
+                if (Math.abs(distance) > 40) {
+                    (distance < 0 ? next : previous).click();
+                }
+            }, { passive: true });
+
+            window.addEventListener('resize', update);
+            update();
+        });
+    })();
+
     // Wishlist toggle → Bagisto API
     window.beresToggleWishlist = async function(btn, productId) {
         const token = document.querySelector('meta[name="csrf-token"]')?.content;
@@ -376,7 +456,7 @@
         <section class="bg-white beres-reveal">
             <div class="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
-                    <a href="{{ $fpUrl }}" class="block aspect-[4/3] overflow-hidden rounded-2xl relative" style="background-color:#E8F0E5;">
+                    <a href="{{ $fpUrl }}" class="block aspect-[4/5] overflow-hidden rounded-2xl relative" style="background-color:#E8F0E5;">
                         <x-shop::product-image :image="$fpImage" :alt="$fpName" size="lg" class="w-full h-full transition-transform duration-500" style="object-fit:contain !important; object-position:center; padding:1rem; transform:none;" />
                     </a>
 
@@ -419,12 +499,20 @@
     @if ($newProductsDb->isNotEmpty())
         <section class="bg-white beres-reveal">
             <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
-                <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.new_title', 'Produk Terbaru') }}</h2>
+                <div class="relative mb-8 md:mb-10">
+                    <h2 class="text-center text-2xl md:text-3xl text-[#171717]" style="font-weight:600;">{{ $c('sections.new_title', 'Produk Terbaru') }}</h2>
+                    <div class="product-carousel__controls absolute right-0 top-1/2 -translate-y-1/2" data-carousel-controls="new-products">
+                        <button type="button" class="product-carousel__button" data-carousel-prev="new-products" aria-label="Produk sebelumnya">←</button>
+                        <button type="button" class="product-carousel__button" data-carousel-next="new-products" aria-label="Produk berikutnya">→</button>
+                    </div>
+                </div>
 
-                <div class="product-scroll-mobile">
-                    @foreach ($newProductsDb as $i => $product)
-                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
-                    @endforeach
+                <div class="product-carousel__viewport" data-carousel="new-products">
+                    <div class="product-carousel__track">
+                        @foreach ($newProductsDb as $i => $product)
+                            @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </section>
@@ -434,12 +522,20 @@
     @if ($bundlesDb->isNotEmpty())
         <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
             <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
-                <h2 class="text-center text-2xl md:text-3xl text-[#171717] mb-8 md:mb-10" style="font-weight:600;">{{ $c('sections.bundle_title', 'Paket & Bundel') }}</h2>
+                <div class="relative mb-8 md:mb-10">
+                    <h2 class="text-center text-2xl md:text-3xl text-[#171717]" style="font-weight:600;">{{ $c('sections.bundle_title', 'Paket & Bundel') }}</h2>
+                    <div class="product-carousel__controls absolute right-0 top-1/2 -translate-y-1/2" data-carousel-controls="bundles">
+                        <button type="button" class="product-carousel__button" data-carousel-prev="bundles" aria-label="Produk sebelumnya">←</button>
+                        <button type="button" class="product-carousel__button" data-carousel-next="bundles" aria-label="Produk berikutnya">→</button>
+                    </div>
+                </div>
 
-                <div class="product-scroll-mobile">
-                    @foreach ($bundlesDb as $i => $product)
-                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
-                    @endforeach
+                <div class="product-carousel__viewport" data-carousel="bundles">
+                    <div class="product-carousel__track">
+                        @foreach ($bundlesDb as $i => $product)
+                            @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </section>
@@ -507,12 +603,20 @@
     @if ($bestSellersDb->isNotEmpty())
         <section class="bg-white border-t beres-reveal" style="border-color:#F5F9F3;">
             <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
-                <h2 class="text-xl md:text-2xl text-[#171717] mb-6 md:mb-8" style="font-weight:600;">{{ $c('sections.best_title', 'Produk Terlaris') }}</h2>
+                <div class="relative mb-6 md:mb-8">
+                    <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.best_title', 'Produk Terlaris') }}</h2>
+                    <div class="product-carousel__controls absolute right-0 top-1/2 -translate-y-1/2" data-carousel-controls="best-sellers">
+                        <button type="button" class="product-carousel__button" data-carousel-prev="best-sellers" aria-label="Produk sebelumnya">←</button>
+                        <button type="button" class="product-carousel__button" data-carousel-next="best-sellers" aria-label="Produk berikutnya">→</button>
+                    </div>
+                </div>
 
-                <div class="product-scroll-mobile">
-                    @foreach ($bestSellersDb as $i => $product)
-                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
-                    @endforeach
+                <div class="product-carousel__viewport" data-carousel="best-sellers">
+                    <div class="product-carousel__track">
+                        @foreach ($bestSellersDb as $i => $product)
+                            @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </section>
@@ -541,15 +645,21 @@
     @if ($superfoodsDb->isNotEmpty())
         <section class="bg-white beres-reveal">
             <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
-                <div class="flex items-center justify-between mb-6 md:mb-8">
+                <div class="relative mb-6 md:mb-8">
                     <h2 class="text-xl md:text-2xl text-[#171717]" style="font-weight:600;">{{ $c('sections.seed_title', 'Biji & Superfood Kami') }}</h2>
                     <a href="{{ route('shop.search.index') }}" class="text-sm underline text-[#2D5A27] hover:opacity-70">Lihat Semua</a>
+                    <div class="product-carousel__controls absolute right-0 top-1/2 -translate-y-1/2" data-carousel-controls="superfoods">
+                        <button type="button" class="product-carousel__button" data-carousel-prev="superfoods" aria-label="Produk sebelumnya">←</button>
+                        <button type="button" class="product-carousel__button" data-carousel-next="superfoods" aria-label="Produk berikutnya">→</button>
+                    </div>
                 </div>
 
-                <div class="product-scroll-mobile">
-                    @foreach ($superfoodsDb as $i => $product)
-                        @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
-                    @endforeach
+                <div class="product-carousel__viewport" data-carousel="superfoods">
+                    <div class="product-carousel__track">
+                        @foreach ($superfoodsDb as $i => $product)
+                            @include('shop::components.layouts._product-card', ['product'=>$product, 'bg'=>$bgPick($i), 'index'=>$i])
+                        @endforeach
+                    </div>
                 </div>
             </div>
         </section>

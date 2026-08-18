@@ -53,7 +53,7 @@
         <p class="mb-1 text-sm font-semibold text-[#171717]">Preview Highlighted Product</p>
         <p class="mb-3 text-xs text-[#737373]">Preview ini mengikuti tampilan produk unggulan di bawah hero section.</p>
         <div class="max-w-[520px] overflow-hidden rounded-2xl border border-[#E8F0E5] bg-white shadow-sm sm:grid sm:grid-cols-2">
-            <div class="relative aspect-[4/3] overflow-hidden bg-[#E8F0E5] sm:aspect-auto sm:min-h-[220px]">
+            <div class="relative aspect-[4/5] overflow-hidden bg-[#E8F0E5]">
                 <img id="highlighted-preview-image" src="" alt="Preview highlighted product" class="absolute inset-0 h-full w-full object-contain p-4">
                 <span id="highlighted-preview-placeholder" class="absolute inset-0 flex items-center justify-center px-5 text-center text-xs text-[#6D8A65]">Upload foto untuk melihat preview highlighted product</span>
             </div>

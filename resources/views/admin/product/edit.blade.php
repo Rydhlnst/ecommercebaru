@@ -55,8 +55,12 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">Deskripsi</label>
-                    <textarea name="description" rows="4" class="form-input">{{ old('description', $product->description) }}</textarea>
+                    <div class="mb-2 flex items-center justify-between gap-3">
+                        <label class="form-label mb-0">Deskripsi (Markdown)</label>
+                        <span class="text-[11px] text-gray-500">Mendukung heading, list, bold, link</span>
+                    </div>
+                    <textarea name="description" rows="8" class="form-input font-mono text-sm" id="product-description" placeholder="# Judul produk\n\nTulis deskripsi dengan **Markdown**...">{{ old('description', $product->description) }}</textarea>
+                    <p class="mt-2 text-xs text-gray-500">Contoh: <code>## Manfaat</code>, <code>**teks tebal**</code>, <code>- poin manfaat</code></p>
                 </div>
 
                 <div class="mb-4">
