@@ -102,14 +102,17 @@
         grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 1.25rem;
     }
+    .product-scroll-mobile > :nth-child(n + 6) { display: none; }
     @media (max-width: 1024px) {
         .product-scroll-mobile { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .product-scroll-mobile > :nth-child(n + 4) { display: none; }
     }
     @media (max-width: 640px) {
         .product-scroll-mobile {
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: .75rem;
         }
+        .product-scroll-mobile > :nth-child(n + 3) { display: none; }
     }
     .beres-hero{position:relative;width:100%;overflow:hidden;background:#f8f9fa;}
     .beres-hero__track{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1);will-change:transform;}

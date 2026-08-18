@@ -37,7 +37,7 @@
             </div>
 
             <div
-                class="mt-10 grid grid-cols-2 gap-4 max-md:mt-5 sm:grid-cols-3 lg:grid-cols-5 lg:gap-6"
+                class="product-recommendation-grid mt-10 grid grid-cols-2 gap-4 max-md:mt-5 sm:grid-cols-3 lg:grid-cols-5 lg:gap-6"
             >
                 <x-shop::products.card
                     v-for="product in products"
@@ -59,6 +59,20 @@
             <x-shop::shimmer.products.carousel :navigation-link="$navigationLink ?? false" />
         </template>
     </script>
+
+    @pushOnce('styles')
+        <style>
+            .product-recommendation-grid > :nth-child(n + 6) { display: none; }
+
+            @media (max-width: 1024px) {
+                .product-recommendation-grid > :nth-child(n + 4) { display: none; }
+            }
+
+            @media (max-width: 640px) {
+                .product-recommendation-grid > :nth-child(n + 3) { display: none; }
+            }
+        </style>
+    @endPushOnce
 
     <script type="module">
         app.component('v-products-carousel', {
