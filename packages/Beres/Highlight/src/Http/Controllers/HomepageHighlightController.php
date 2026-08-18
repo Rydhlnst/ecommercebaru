@@ -67,7 +67,7 @@ class HomepageHighlightController extends Controller
 
         $count = $this->repository->countActive($validated['section']);
 
-        if ($count >= $meta['limit']) {
+        if ($meta['limit'] !== null && $count >= $meta['limit']) {
             return response()->json([
                 'success' => false,
                 'message_key' => 'section_full',

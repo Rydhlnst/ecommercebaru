@@ -17,12 +17,15 @@ class HomepageHighlightService
     /**
      * Resolve products for a section.
      */
-    public function getProducts(string $section, int $limit = 4): Collection
+    public function getProducts(string $section, ?int $limit = null): Collection
     {
         $highlights = $this->repository->getActiveBySection($section);
 
         if ($highlights->isNotEmpty()) {
-            $ids = $highlights->pluck('entity_id')->take($limit)->values()->all();
+            $ids = $highlights->pluck('entity_id')
+                ->when($limit !== null, fn ($ids) => $ids->take($limit))
+                ->values()
+                ->all();
 
             $products = AdminProduct::with('category', 'images', 'variations')
                 ->whereIn('id', $ids)
@@ -83,7 +86,7 @@ class HomepageHighlightService
     /**
      * Fallback: return products from admin_products based on section type.
      */
-    protected function fallbackProducts(string $section, int $limit): Collection
+    protected function fallbackProducts(string $section, ?int $limit): Collection
     {
         $query = AdminProduct::with('category', 'images', 'variations')
             ->where('status', 'active');
@@ -110,11 +113,13 @@ class HomepageHighlightService
                     ->get();
 
             case HomepageHighlight::SECTION_BEST_SELLERS:
-                return $query
+                $query = $query
                     ->where('is_featured', true)
-                    ->orderBy('created_at', 'desc')
-                    ->limit($limit)
-                    ->get();
+                    ->orderBy('created_at', 'desc');
+
+                return $limit === null
+                    ? $query->get()
+                    : $query->limit($limit)->get();
         }
 
         return collect();

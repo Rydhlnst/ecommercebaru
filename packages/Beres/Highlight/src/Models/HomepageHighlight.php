@@ -92,7 +92,7 @@ class HomepageHighlight extends Model implements HomepageHighlightContract
                 'label' => 'Best Sellers',
                 'description' => 'Section produk terlaris',
                 'type' => self::TYPE_PRODUCT,
-                'limit' => 4,
+                'limit' => null,
             ],
             self::SECTION_SEEDS => [
                 'label' => 'Seeds & Superfoods',

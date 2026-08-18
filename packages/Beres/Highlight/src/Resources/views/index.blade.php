@@ -33,7 +33,7 @@
                         <p class="text-xs text-gray-400">{{ $meta['description'] }}</p>
                     </div>
                     <span class="shrink-0 text-xs font-medium px-2 py-1 rounded-full {{ $count > 0 ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' : 'bg-gray-100 text-gray-500 dark:bg-gray-800' }}">
-                        {{ $count }}/{{ $meta['limit'] }}
+                        {{ $count }}{{ $meta['limit'] !== null ? '/'.$meta['limit'] : '' }}
                         @if ($count === 0)
                             · Auto
                         @endif
@@ -90,7 +90,7 @@
                 </div>
 
                 {{-- Search & add --}}
-                @if ($count < $meta['limit'])
+                @if ($meta['limit'] === null || $count < $meta['limit'])
                         <div class="border-t border-gray-200 dark:border-gray-800 px-4 py-3 relative" data-search-container>
                             <input
                                 type="text"
