@@ -377,7 +377,7 @@
             <div class="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
                     <a href="{{ $fpUrl }}" class="block aspect-[4/3] overflow-hidden rounded-2xl relative" style="background-color:#E8F0E5;">
-                        <x-shop::product-image :image="$fpImage" :alt="$fpName" size="lg" class="w-full h-full transition-transform duration-500" style="object-fit:cover !important; transform:scale(1.02);" />
+                        <x-shop::product-image :image="$fpImage" :alt="$fpName" size="lg" class="w-full h-full transition-transform duration-500" style="object-fit:contain !important; object-position:center; padding:1rem; transform:none;" />
                     </a>
 
                     <div>

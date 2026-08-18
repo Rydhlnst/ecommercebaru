@@ -48,6 +48,22 @@
         </div>
         <p class="mt-3 text-xs text-[#2D5A27]"><i class="fas fa-check mr-1"></i>Foto sudah siap digunakan setelah Anda menyimpan produk.</p>
     </div>
+
+    <div class="mt-6 border-t border-[#E8F0E5] pt-5">
+        <p class="mb-1 text-sm font-semibold text-[#171717]">Preview Highlighted Product</p>
+        <p class="mb-3 text-xs text-[#737373]">Preview ini mengikuti tampilan produk unggulan di bawah hero section.</p>
+        <div class="max-w-[520px] overflow-hidden rounded-2xl border border-[#E8F0E5] bg-white shadow-sm sm:grid sm:grid-cols-2">
+            <div class="relative aspect-[4/3] overflow-hidden bg-[#E8F0E5] sm:aspect-auto sm:min-h-[220px]">
+                <img id="highlighted-preview-image" src="" alt="Preview highlighted product" class="absolute inset-0 h-full w-full object-contain p-4">
+                <span id="highlighted-preview-placeholder" class="absolute inset-0 flex items-center justify-center px-5 text-center text-xs text-[#6D8A65]">Upload foto untuk melihat preview highlighted product</span>
+            </div>
+            <div class="flex flex-col justify-center p-4">
+                <p id="highlighted-preview-name" class="text-lg font-semibold leading-tight text-[#171717]">Nama Produk</p>
+                <p id="highlighted-preview-price" class="mt-2 text-xl font-bold text-[#2D5A27]">Rp 0</p>
+                <p class="mt-3 text-xs leading-relaxed text-[#737373]">Foto ditampilkan penuh agar kemasan portrait tidak terpotong.</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="product-image-editor" class="fixed inset-0 z-[60] hidden items-center justify-center bg-[#171717]/70 p-4" role="dialog" aria-modal="true" aria-labelledby="product-image-editor-title">
@@ -176,6 +192,8 @@ window.ProductImageManager = (function () {
         const draft = drafts[0];
         const image = document.getElementById('catalog-preview-image');
         const placeholder = document.getElementById('catalog-preview-placeholder');
+        const highlightedImage = document.getElementById('highlighted-preview-image');
+        const highlightedPlaceholder = document.getElementById('highlighted-preview-placeholder');
         const name = document.getElementById('product-name');
         const price = document.querySelector('input[name="variation_price[]"]')?.value || document.querySelector('input[name="price"]')?.value;
         const category = document.querySelector('select[name="category_id"]');
@@ -188,6 +206,12 @@ window.ProductImageManager = (function () {
         document.getElementById('catalog-preview-name').textContent = name?.value || 'Nama Produk';
         document.getElementById('catalog-preview-price').textContent = `Rp ${new Intl.NumberFormat('id-ID').format(Number(price || 0))}`;
         document.getElementById('catalog-preview-category').textContent = categoryOption?.textContent || '';
+
+        highlightedImage.src = src;
+        highlightedImage.classList.toggle('hidden', !src);
+        highlightedPlaceholder.classList.toggle('hidden', !!src);
+        document.getElementById('highlighted-preview-name').textContent = name?.value || 'Nama Produk';
+        document.getElementById('highlighted-preview-price').textContent = `Rp ${new Intl.NumberFormat('id-ID').format(Number(price || 0))}`;
     }
 
     function addFiles(fileList) {
