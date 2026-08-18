@@ -1,6 +1,26 @@
 <x-shop::layouts>
     <x-slot:title>{{ $product->name }}</x-slot:title>
 
+    @push('styles')
+        <style>
+            @media (min-width: 768px) {
+                .pdp-media-panel,
+                .pdp-info-panel {
+                    height: clamp(560px, 72vh, 760px);
+                }
+
+                .pdp-media-panel {
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .pdp-info-panel {
+                    overflow-y: auto;
+                }
+            }
+        </style>
+    @endpush
+
     <div class="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-10 lg:px-14 py-8 md:py-12">
         {{-- Breadcrumb --}}
         <nav class="text-sm text-zinc-500 mb-6 flex items-center gap-2">
@@ -15,16 +35,16 @@
 
         <div class="grid grid-cols-1 items-stretch gap-8 md:grid-cols-2 lg:gap-10">
             {{-- Product Images --}}
-            <div>
+            <div class="pdp-media-panel rounded-3xl border border-[#F1F1F1] bg-[#FAFAFA] p-5 shadow-sm md:p-8">
                 @if($product->images->count())
-                    <div class="rounded-3xl border border-[#F1F1F1] bg-[#FAFAFA] p-5 shadow-sm md:p-8">
-                        @php $mainImage = $product->images->first(); @endphp
-                        <div class="aspect-[4/5] overflow-hidden rounded-2xl bg-white">
+                    @php $mainImage = $product->images->first(); @endphp
+                    <div class="flex min-h-0 flex-1 items-center justify-center">
+                        <div class="aspect-[4/5] h-full max-w-full overflow-hidden rounded-2xl bg-white">
                             <img src="{{ $mainImage->detail_url }}" alt="{{ $mainImage->alt_text ?: $product->name }}" class="h-full w-full" style="object-fit:{{ $mainImage->fit_mode }}; object-position:{{ $mainImage->focal_x }}% {{ $mainImage->focal_y }}%; padding:{{ $mainImage->fit_mode === 'contain' ? '1rem' : '0' }};" id="main-image">
                         </div>
                     </div>
                     @if($product->images->count() > 1)
-                        <div class="grid grid-cols-5 gap-2">
+                        <div class="mt-4 grid shrink-0 grid-cols-5 gap-2">
                             @foreach($product->images as $img)
                                 <button type="button" data-image-url="{{ $img->detail_url }}" data-image-fit="{{ $img->fit_mode }}" data-image-x="{{ $img->focal_x }}" data-image-y="{{ $img->focal_y }}" onclick="setProductImage(this)" class="aspect-[4/5] rounded-lg overflow-hidden border-2 border-transparent hover:border-[#2D5A27] transition-colors bg-[#F5F9F3]">
                                 <img src="{{ $img->card_url }}" alt="{{ $img->alt_text ?: $product->name }}" class="w-full h-full" style="object-fit:{{ $img->fit_mode }}; object-position:{{ $img->focal_x }}% {{ $img->focal_y }}%; padding:{{ $img->fit_mode === 'contain' ? '0.5rem' : '0' }};">
@@ -33,8 +53,10 @@
                         </div>
                     @endif
                 @else
-                    <div class="aspect-[4/5] rounded-3xl bg-[#FAFAFA] border border-[#E8F0E5] flex items-center justify-center">
+                    <div class="flex min-h-0 flex-1 items-center justify-center">
+                        <div class="aspect-[4/5] flex h-full max-w-full items-center justify-center rounded-2xl bg-white">
                         <span class="text-6xl text-[#C8DBBE]">🌿</span>
+                        </div>
                     </div>
                 @endif
             </div>
@@ -50,7 +72,7 @@
             </script>
 
             {{-- Product Info --}}
-            <div class="flex flex-col items-start rounded-3xl bg-[#FAFAFA] p-6 text-left md:p-10">
+            <div class="pdp-info-panel flex flex-col items-start rounded-3xl bg-[#FAFAFA] p-6 text-left md:p-10">
                 {{-- Badge (Strictly fit-content width, never full width) --}}
                 @if($product->badge)
                     <div class="mb-3">
@@ -69,7 +91,7 @@
 
                 {{-- Price & Stock calculation --}}
                 @php
-                    $pdpVariations = ($product->has_variations && $product->variations->count())
+                    $pdpVariations = $product->variations->count()
                         ? $product->variations->values()
                         : collect();
                     $firstVar = $pdpVariations->first();
@@ -187,7 +209,7 @@
                     'allow_unsafe_links' => false,
                 ]);
             @endphp
-            <section class="mt-10 overflow-hidden rounded-3xl bg-[#8D4A3D] px-6 py-10 text-white md:px-12 md:py-12">
+            <section class="mt-10 overflow-hidden rounded-3xl px-6 py-10 text-white md:px-12 md:py-12" style="background-color:#8D4A3D;">
                 <div class="mx-auto max-w-4xl">
                     <p class="text-xs font-bold uppercase tracking-[0.2em] text-white/70">Product information</p>
                     <h2 class="mt-3 text-2xl font-bold md:text-3xl">Tentang {{ $product->name }}</h2>
