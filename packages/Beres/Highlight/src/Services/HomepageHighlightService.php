@@ -100,17 +100,21 @@ class HomepageHighlightService
                     ->get();
 
             case HomepageHighlight::SECTION_NEW_ARRIVALS:
-                return $query
+                $query = $query
                     ->orderBy('created_at', 'desc')
-                    ->limit($limit)
-                    ->get();
+                    ;
+
+                return $limit === null
+                    ? $query->get()
+                    : $query->limit($limit)->get();
 
             case HomepageHighlight::SECTION_KITS_BUNDLES:
             case HomepageHighlight::SECTION_SEEDS:
-                return $query
-                    ->inRandomOrder()
-                    ->limit($limit)
-                    ->get();
+                $query = $query->inRandomOrder();
+
+                return $limit === null
+                    ? $query->get()
+                    : $query->limit($limit)->get();
 
             case HomepageHighlight::SECTION_BEST_SELLERS:
                 $query = $query

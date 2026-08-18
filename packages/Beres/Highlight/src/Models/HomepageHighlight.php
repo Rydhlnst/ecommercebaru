@@ -80,13 +80,13 @@ class HomepageHighlight extends Model implements HomepageHighlightContract
                 'label' => 'New Arrivals',
                 'description' => 'Section produk baru',
                 'type' => self::TYPE_PRODUCT,
-                'limit' => 4,
+                'limit' => null,
             ],
             self::SECTION_KITS_BUNDLES => [
                 'label' => 'Kits & Bundles',
                 'description' => 'Section paket & bundle',
                 'type' => self::TYPE_PRODUCT,
-                'limit' => 4,
+                'limit' => null,
             ],
             self::SECTION_BEST_SELLERS => [
                 'label' => 'Best Sellers',
@@ -98,7 +98,7 @@ class HomepageHighlight extends Model implements HomepageHighlightContract
                 'label' => 'Seeds & Superfoods',
                 'description' => 'Section seeds & superfoods',
                 'type' => self::TYPE_PRODUCT,
-                'limit' => 5,
+                'limit' => null,
             ],
             self::SECTION_CATEGORIES => [
                 'label' => 'Shop by Category',
