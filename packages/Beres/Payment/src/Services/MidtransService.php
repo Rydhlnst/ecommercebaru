@@ -65,12 +65,17 @@ class MidtransService
         return (bool) core()->getConfigData('beres_storefront.midtrans.active', true);
     }
 
+    public function isConfigured(): bool
+    {
+        return $this->getClientKey() !== '' && (string) $this->setting('server_key', '') !== '';
+    }
+
     /**
      * Get enabled payment types (comma-separated in admin, returns array).
      */
     public function getPaymentTypes(): array
     {
-        $raw = (string) core()->getConfigData('beres_storefront.midtrans.payment_types');
+        $raw = (string) $this->setting('payment_types', '');
         if ($raw === '') {
             return ['credit_card', 'bca_va', 'bni_va', 'bri_va', 'mandiri_va', 'gopay', 'shopeepay', 'qris'];
         }
@@ -212,6 +217,14 @@ class MidtransService
     public function getClientKey(): string
     {
         return (string) $this->setting('client_key', '');
+    }
+
+    public function verifySignatureData(string $orderId, string $statusCode, string $grossAmount, string $signature): bool
+    {
+        return hash_equals(
+            hash('sha512', $orderId.$statusCode.$grossAmount.(string) $this->setting('server_key', '')),
+            $signature
+        );
     }
 
     /**

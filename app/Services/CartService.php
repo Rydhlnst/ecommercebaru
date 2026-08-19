@@ -72,6 +72,7 @@ class CartService
                 'slug' => $product->slug,
                 'name' => $product->name.($variation ? ' — '.$variation->weight_label : ''),
                 'weight_label' => $variation?->weight_label,
+                'weight' => $variation?->weight,
                 'price' => (float) $unitPrice,
                 'stock' => (int) $stock,
                 'image' => $product->images->first()?->image_path,

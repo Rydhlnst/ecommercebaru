@@ -293,7 +293,7 @@
 @push('scripts')
 <style>
     html, body {
-        background-color: #2D5A27 !important;
+        background-color: var(--cream, #FAFAFA);
     }
 </style>
 @endpush

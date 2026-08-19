@@ -36,10 +36,13 @@ class CheckoutController extends Controller
         }
 
         $couriers = $this->shippingCalculator->getAvailableCouriers();
+        $midtrans = app(MidtransService::class);
 
         return view('beres-checkout::checkout.index', [
             'cart' => $cart,
             'couriers' => $couriers,
+            'midtransActive' => $midtrans->isActive() && $midtrans->isConfigured(),
+            'cartWeight' => max(1, (int) collect($cart['items'])->sum(fn ($item) => ($item['weight'] ?? 0) * ($item['quantity'] ?? 1))),
         ]);
     }
 
@@ -72,9 +75,10 @@ class CheckoutController extends Controller
                 'data' => $costs,
             ]);
         } catch (\Exception $e) {
+            Log::warning('Shipping calculation failed', ['exception' => $e]);
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => 'Biaya pengiriman belum dapat dihitung. Periksa kota tujuan dan coba lagi.',
             ], 500);
         }
     }
@@ -124,13 +128,21 @@ class CheckoutController extends Controller
             'shipping_address.phone' => 'required|string',
             'shipping_address.address1' => 'required|string',
             'shipping_address.city' => 'required|string',
+            'shipping_address.city_id' => 'required|integer|min:1',
             'shipping_address.state' => 'required|string',
             'shipping_address.postcode' => 'required|string',
             'shipping_address.country' => 'required|string',
-            'shipping_method' => 'required|string',
-            'payment_method' => 'required|string',
-            'shipping_cost' => 'nullable|numeric',
+            'shipping_method' => ['required', 'string', 'regex:/^[a-z0-9]+\|[^|]+$/i'],
+            'payment_method' => 'required|in:midtrans',
+            'shipping_cost' => 'nullable|numeric|min:0',
         ]);
+
+        if (! app(MidtransService::class)->isActive() || ! app(MidtransService::class)->isConfigured()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pembayaran Midtrans belum tersedia. Silakan hubungi administrator.',
+            ], 422);
+        }
 
         if ($this->cart->count() === 0) {
             return response()->json([
@@ -182,22 +194,53 @@ class CheckoutController extends Controller
             if ($session && $session->payment_method === 'midtrans') {
                 try {
                     $midtransService = app(MidtransService::class);
-                    if ($midtransService->isActive()) {
+                    if ($midtransService->isActive() && $midtransService->isConfigured()) {
+                        $items = $order->items->map(fn ($item) => [
+                            'id' => (string) ($item->product_id ?? $item->id),
+                            'price' => (int) $item->price,
+                            'quantity' => (int) $item->quantity,
+                            'name' => $item->product_name,
+                        ])->values()->all();
+                        if ((int) $order->shipping_cost > 0) {
+                            $items[] = [
+                                'id' => 'shipping',
+                                'price' => (int) $order->shipping_cost,
+                                'quantity' => 1,
+                                'name' => 'Shipping',
+                            ];
+                        }
                         $params = [
                             'transaction_details' => [
                                 'order_id' => $order->order_number,
                                 'gross_amount' => (int) $order->total,
                             ],
                             'customer_details' => [
-                                'first_name' => $order->customer_name,
+                                'first_name' => $session->shipping_address['first_name'] ?? $order->customer_name,
+                                'last_name' => $session->shipping_address['last_name'] ?? '',
+                                'email' => $session->shipping_address['email'] ?? '',
                                 'phone' => $order->customer_phone,
                             ],
+                            'item_details' => $items,
+                            'enabled_payments' => $midtransService->getPaymentTypes(),
                         ];
                         $paymentUrl = $midtransService->createSnapToken($params);
                     }
                 } catch (\Throwable $e) {
-                    Log::error('Midtrans token generation error: '.$e->getMessage());
+                    Log::error('Midtrans token generation error', ['exception' => $e, 'order_id' => $order->id]);
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Pesanan tersimpan, tetapi halaman pembayaran belum dapat dibuka. Silakan coba lagi.',
+                        'order_id' => $order->id,
+                    ], 502);
                 }
+            }
+
+            if ($session?->payment_method === 'midtrans' && ! $paymentUrl) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pembayaran Midtrans belum dapat dibuat. Silakan coba lagi.',
+                    'order_id' => $order->id,
+                ], 502);
             }
 
             return response()->json([

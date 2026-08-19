@@ -127,7 +127,7 @@
             html, body, #app {
                 margin-bottom: 0 !important;
                 padding-bottom: 0 !important;
-                background-color: #2D5A27 !important;
+                background-color: var(--cream, #FAFAFA);
             }
         </style>
 
