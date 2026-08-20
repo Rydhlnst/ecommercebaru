@@ -3,19 +3,27 @@
 
     @push('styles')
         <style>
+            .product-description-markdown.is-collapsed {
+                max-height: 4.5rem;
+                overflow: hidden;
+            }
+
+            .product-description-markdown.is-expanded {
+                max-height: none;
+            }
+
             @media (min-width: 768px) {
                 .pdp-media-panel,
                 .pdp-info-panel {
-                    height: clamp(560px, 72vh, 760px);
+                    height: auto;
                 }
 
                 .pdp-media-panel {
-                    display: flex;
-                    flex-direction: column;
+                    align-self: start;
                 }
 
                 .pdp-info-panel {
-                    overflow-y: auto;
+                    overflow: visible;
                 }
             }
         </style>
@@ -38,8 +46,8 @@
             <div class="pdp-media-panel rounded-3xl border border-[#F1F1F1] bg-[#FAFAFA] p-5 shadow-sm md:p-8">
                 @if($product->images->count())
                     @php $mainImage = $product->images->first(); @endphp
-                    <div class="flex min-h-0 flex-1 items-center justify-center">
-                        <div class="aspect-[4/5] h-full max-w-full overflow-hidden rounded-2xl bg-white">
+                    <div class="flex items-start justify-center">
+                        <div class="relative aspect-[4/5] w-full max-w-[520px] overflow-hidden rounded-2xl bg-white">
                             <img src="{{ $mainImage->detail_url }}" alt="{{ $mainImage->alt_text ?: $product->name }}" class="h-full w-full" style="object-fit:{{ $mainImage->fit_mode }}; object-position:{{ $mainImage->focal_x }}% {{ $mainImage->focal_y }}%; padding:{{ $mainImage->fit_mode === 'contain' ? '1rem' : '0' }};" id="main-image">
                         </div>
                     </div>
@@ -209,13 +217,23 @@
                     'allow_unsafe_links' => false,
                 ]);
             @endphp
-            <section class="mt-10 overflow-hidden rounded-3xl px-6 py-10 text-white md:px-12 md:py-12" style="background-color:#8D4A3D;">
+            <section class="mt-10 overflow-hidden rounded-3xl bg-[#2D5A27] px-6 py-10 text-white md:px-12 md:py-12">
                 <div class="mx-auto max-w-4xl">
                     <p class="text-xs font-bold uppercase tracking-[0.2em] text-white/70">Product information</p>
                     <h2 class="mt-3 text-2xl font-bold md:text-3xl">Tentang {{ $product->name }}</h2>
-                    <div class="product-description-markdown prose prose-sm mt-6 max-w-none text-white prose-headings:text-white prose-strong:text-white prose-a:text-white prose-li:marker:text-white/70">
+                    <div id="product-description" class="product-description-markdown is-collapsed prose prose-sm mt-6 max-w-none text-left text-white prose-headings:text-white prose-strong:text-white prose-a:text-white prose-li:marker:text-white/70">
                         {!! $descriptionHtml !!}
                     </div>
+                    <button
+                        type="button"
+                        id="product-description-toggle"
+                        class="mt-5 rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-[#2D5A27] transition-colors hover:bg-[#E8F0E5] focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#2D5A27]"
+                        aria-controls="product-description"
+                        aria-expanded="false"
+                    >
+                        <span data-more-label>See more</span>
+                        <span data-less-label hidden>See less</span>
+                    </button>
                 </div>
             </section>
         @endif
@@ -399,4 +417,32 @@
             }
         };
     </script>
+
+    @push('scripts')
+        <script>
+            (() => {
+                const description = document.getElementById('product-description');
+                const toggle = document.getElementById('product-description-toggle');
+
+                if (!description || !toggle) return;
+
+                const moreLabel = toggle.querySelector('[data-more-label]');
+                const lessLabel = toggle.querySelector('[data-less-label]');
+
+                if (description.scrollHeight <= description.clientHeight + 2) {
+                    toggle.hidden = true;
+                    description.classList.remove('is-collapsed');
+                    return;
+                }
+
+                toggle.addEventListener('click', () => {
+                    const expanded = description.classList.toggle('is-expanded');
+                    description.classList.toggle('is-collapsed', !expanded);
+                    toggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                    moreLabel.hidden = expanded;
+                    lessLabel.hidden = !expanded;
+                });
+            })();
+        </script>
+    @endpush
 </x-shop::layouts>
