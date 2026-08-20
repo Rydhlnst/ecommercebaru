@@ -668,7 +668,8 @@
             .search-overlay__product-img img {
                 width: 100%;
                 height: 100%;
-                object-fit: cover;
+                object-fit: contain;
+                padding: 4px;
             }
             .search-overlay__product-info {
                 flex: 1;

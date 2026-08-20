@@ -1,6 +1,10 @@
 <x-shop::layouts>
     <x-slot:title>Checkout</x-slot>
 
+    <style>
+        .object-cover { object-fit: contain !important; padding: 0.25rem; }
+    </style>
+
     <div class="min-h-screen bg-[#faf9f7] py-8 sm:py-12">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="mb-8 flex items-end justify-between border-b border-[#e6dfda] pb-5">

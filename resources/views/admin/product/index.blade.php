@@ -42,7 +42,7 @@
                 <tr>
                     <td>
                         @if($product->images->count())
-                            <img src="{{ asset('storage/' . $product->images->first()->image_path) }}" alt="{{ $product->name }}" class="w-10 h-10 rounded-lg object-cover">
+                            <img src="{{ asset('storage/' . $product->images->first()->image_path) }}" alt="{{ $product->name }}" class="w-10 h-10 rounded-lg object-contain p-1">
                         @else
                             <div class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                                 <i class="fas fa-image text-gray-400"></i>

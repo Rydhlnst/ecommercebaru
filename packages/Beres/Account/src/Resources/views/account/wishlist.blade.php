@@ -22,7 +22,7 @@
                             <img
                                 src="{{ asset('storage/' . $item['product']['images'][0]['path']) }}"
                                 alt="{{ $item['product']['name'] }}"
-                                class="h-full w-full object-cover transition-transform group-hover:scale-105"
+                                class="h-full w-full object-contain p-1 transition-transform"
                             />
                         @else
                             <div class="flex h-full w-full items-center justify-center">

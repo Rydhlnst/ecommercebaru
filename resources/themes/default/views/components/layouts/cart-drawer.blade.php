@@ -97,7 +97,7 @@
 
         host.innerHTML = cart.items.map(function (it) {
             var img = it.image_url
-                ? '<img src="' + it.image_url + '" alt="" style="width:56px; height:56px; object-fit:cover; border-radius:8px; background:#F5F9F3;">'
+                ? '<img src="' + it.image_url + '" alt="" style="width:56px; height:56px; object-fit:contain; padding:4px; border-radius:8px; background:#F5F9F3;">'
                 : '<div style="width:56px; height:56px; border-radius:8px; background:#F5F9F3; display:flex; align-items:center; justify-content:center; color:#C8DBBE;">🌿</div>';
 
             return '<div style="display:flex; gap:12px; padding:14px 0; border-bottom:1px solid #F0F0F0;" data-key="' + it.key + '">' +

@@ -106,7 +106,7 @@
                                     <td class="px-6 py-4">
                                         <div class="h-10 w-10 overflow-hidden rounded bg-gray-100">
                                             @if(isset($product['images'][0]))
-                                                <img src="{{ asset('storage/' . $product['images'][0]['path']) }}" alt="" class="h-full w-full object-cover" />
+                                                <img src="{{ asset('storage/' . $product['images'][0]['path']) }}" alt="" class="h-full w-full object-contain p-1" />
                                             @else
                                                 <div class="flex h-full w-full items-center justify-center text-gray-400">
                                                     <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

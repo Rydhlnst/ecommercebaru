@@ -147,7 +147,7 @@
                                         <img
                                             src="{{ asset('storage/' . $product['images'][0]['path']) }}"
                                             alt="{{ $product['name'] }}"
-                                            class="h-full w-full object-cover"
+                                            class="h-full w-full object-contain p-1"
                                         />
                                     @else
                                         <div class="flex h-full w-full items-center justify-center text-gray-400">
