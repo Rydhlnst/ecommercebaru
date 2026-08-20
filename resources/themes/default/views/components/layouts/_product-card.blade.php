@@ -48,7 +48,7 @@
             $image    = $product->images->count()
                             ? $product->images->first()->card_url
                             : null;
-            $imageFit = 'contain';
+            $imageFit = $product->images->first()?->fit_mode ?? 'cover';
             $imageX   = $product->images->first()?->focal_x ?? 50;
             $imageY   = $product->images->first()?->focal_y ?? 50;
 
@@ -156,7 +156,7 @@
 <div class="beres-card group bg-white overflow-hidden flex flex-col justify-between" style="border:1px solid #E8F0E5; border-radius:16px; height:100%; min-height:100%;" @if($superAttrId) data-super-attr-id="{{ $superAttrId }}" @endif>
     {{-- Product Image Container (Standardized 4:5 Aspect Ratio) --}}
     <a href="{{ $href }}" class="block relative w-full overflow-hidden shrink-0" style="aspect-ratio:4 / 5 !important; height:auto !important; min-height:0; background-color:#F5F9F3;">
-        <x-shop::product-image :image="$image" :alt="$name" class="absolute inset-0 block transition-transform duration-500" style="width:100% !important; height:100% !important; display:block !important; object-fit:contain !important; object-position:center; padding:1rem !important; transform:scale(1);" />
+        <x-shop::product-image :image="$image" :alt="$name" class="absolute inset-0 block transition-transform duration-500" style="width:100% !important; height:100% !important; display:block !important; object-fit:{{ $imageFit }} !important; object-position:{{ $imageX }}% {{ $imageY }}%; padding:{{ $imageFit === 'contain' ? '1rem' : '0' }} !important; transform:scale(1);" />
 
         {{-- Numbered badge --}}
         <span class="absolute top-3 left-3 w-7 h-7 flex items-center justify-center bg-white text-[#171717] text-xs font-bold" style="border-radius:999px; box-shadow:0 1px 4px rgba(0,0,0,0.1);">

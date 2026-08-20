@@ -78,7 +78,10 @@
         <div id="product-image-editor-stage" class="mx-auto my-5 aspect-[4/5] w-64 touch-none overflow-hidden rounded-xl bg-[#F5F9F3]">
             <img id="product-image-editor-image" src="" alt="Penyesuaian foto" class="h-full w-full select-none object-contain p-2" draggable="false">
         </div>
-        <div class="grid grid-cols-1 gap-3 px-5 pb-5">
+        <div class="grid grid-cols-2 gap-3 px-5 pb-5">
+            <button type="button" data-fit-mode="cover" class="image-fit-option rounded-xl border border-[#E8F0E5] bg-white px-3 py-2 text-left text-xs text-[#171717]">
+                <span class="block font-semibold">Isi Area</span><span class="mt-1 block text-[#737373]">Gunakan seluruh frame.</span>
+            </button>
             <button type="button" data-fit-mode="contain" class="image-fit-option rounded-xl border border-[#2D5A27] bg-[#2D5A27] px-3 py-2 text-left text-xs text-white">
                 <span class="block font-semibold">Foto Penuh</span><span class="mt-1 block text-[#737373]">Seluruh produk terlihat.</span>
             </button>
@@ -111,7 +114,7 @@ window.ProductImageManager = (function () {
     const editorClose = document.getElementById('product-image-editor-close');
     const editorCancel = document.getElementById('product-image-editor-cancel');
     const editorApply = document.getElementById('product-image-editor-apply');
-    const drafts = @json($imageDrafts).map(draft => ({ ...draft, fit_mode: 'contain' }));
+    const drafts = @json($imageDrafts).map(draft => ({ ...draft, fit_mode: draft.fit_mode || 'cover', focal_x: draft.focal_x ?? 50, focal_y: draft.focal_y ?? 50 }));
     let editorIndex = null;
     let editorDraft = null;
     let dragState = null;
@@ -138,7 +141,7 @@ window.ProductImageManager = (function () {
         const meta = drafts.map(draft => {
             const item = {
                 id: draft.id || null,
-                fit_mode: 'contain',
+                fit_mode: draft.fit_mode || 'cover',
                 focal_x: draft.focal_x ?? 50,
                 focal_y: draft.focal_y ?? 50,
                 alt_text: draft.alt_text || '',
@@ -157,7 +160,9 @@ window.ProductImageManager = (function () {
     drafts.removedIds = drafts.removedIds || [];
 
     function imageStyle(draft) {
-        return `object-fit:contain;object-position:center;background:#F5F9F3;`;
+        const fit = draft.fit_mode === 'contain' ? 'contain' : 'cover';
+        const padding = fit === 'contain' ? '1rem' : '0';
+        return `object-fit:${fit};object-position:${draft.focal_x ?? 50}% ${draft.focal_y ?? 50}%;background:#F5F9F3;padding:${padding};`;
     }
 
     function renderList() {
@@ -227,7 +232,7 @@ window.ProductImageManager = (function () {
                 return;
             }
             const previewUrl = URL.createObjectURL(file);
-            const draft = { id: null, file, previewUrl, fit_mode: 'contain', focal_x: 50, focal_y: 50, alt_text: '' };
+            const draft = { id: null, file, previewUrl, fit_mode: 'cover', focal_x: 50, focal_y: 50, alt_text: '' };
             const probe = new Image();
             probe.onload = () => {
                 draft.width = probe.naturalWidth;
@@ -259,7 +264,7 @@ window.ProductImageManager = (function () {
     function applyEditorStyle() {
         editorImage.style.cssText = imageStyle(editorDraft || {});
         document.querySelectorAll('.image-fit-option').forEach(button => {
-            const active = button.dataset.fitMode === (editorDraft?.fit_mode || 'contain');
+            const active = button.dataset.fitMode === (editorDraft?.fit_mode || 'cover');
             button.className = `image-fit-option rounded-xl border px-3 py-2 text-left text-xs ${active ? 'border-[#2D5A27] bg-[#2D5A27] text-white' : 'border-[#E8F0E5] bg-white text-[#171717]'}`;
         });
     }
@@ -287,7 +292,7 @@ window.ProductImageManager = (function () {
 
     document.querySelector('form#product-form')?.addEventListener('input', updateCatalogPreview);
     document.querySelectorAll('.image-fit-option').forEach(button => button.addEventListener('click', () => { editorDraft.fit_mode = button.dataset.fitMode; applyEditorStyle(); }));
-    editorStage.addEventListener('pointerdown', () => {});
+    editorStage.addEventListener('pointerdown', event => { if (!editorDraft || editorDraft.fit_mode !== 'cover') return; editorStage.setPointerCapture(event.pointerId); dragState = { x: event.clientX, y: event.clientY, focalX: editorDraft.focal_x, focalY: editorDraft.focal_y }; });
     editorStage.addEventListener('pointermove', event => { if (!dragState) return; editorDraft.focal_x = Math.max(0, Math.min(100, dragState.focalX - (event.clientX - dragState.x) / editorStage.clientWidth * 100)); editorDraft.focal_y = Math.max(0, Math.min(100, dragState.focalY - (event.clientY - dragState.y) / editorStage.clientHeight * 100)); applyEditorStyle(); });
     ['pointerup', 'pointercancel'].forEach(name => editorStage.addEventListener(name, () => { dragState = null; }));
     [editorClose, editorCancel].forEach(button => button.addEventListener('click', closeEditor));
