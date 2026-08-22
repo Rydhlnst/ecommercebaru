@@ -8,6 +8,7 @@ use Webkul\Shop\Http\Controllers\API\CompareController;
 use Webkul\Shop\Http\Controllers\API\CoreController;
 use Webkul\Shop\Http\Controllers\API\CustomerController;
 use Webkul\Shop\Http\Controllers\API\OnepageController;
+use Webkul\Shop\Http\Controllers\API\OrderController;
 use Webkul\Shop\Http\Controllers\API\ProductController;
 use Webkul\Shop\Http\Controllers\API\ReviewController;
 use Webkul\Shop\Http\Controllers\API\WishlistController;
@@ -37,6 +38,8 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('{id}/related', 'relatedProducts')->name('shop.api.products.related.index');
 
         Route::get('{id}/up-sell', 'upSellProducts')->name('shop.api.products.up-sell.index');
+
+        Route::get('{id}/frequently-bought-together', 'frequentlyBoughtTogether')->name('shop.api.products.frequently_bought_together.index');
     });
 
     Route::controller(ReviewController::class)->prefix('product/{id}')->group(function () {
@@ -96,9 +99,23 @@ Route::group(['prefix' => 'api'], function () {
      */
     Route::controller(CustomerController::class)->prefix('customer')->group(function () {
         Route::post('login', 'login')->name('shop.api.customers.session.create');
+
+        Route::post('register', 'register')->name('shop.api.customers.register');
     });
 
     Route::group(['middleware' => ['customer'], 'prefix' => 'customer'], function () {
+        Route::controller(CustomerController::class)->prefix('profile')->group(function () {
+            Route::get('', 'profile')->name('shop.api.customers.account.profile.index');
+
+            Route::put('', 'updateProfile')->name('shop.api.customers.account.profile.update');
+
+            Route::put('change-password', 'changePassword')->name('shop.api.customers.account.profile.change_password');
+        });
+
+        Route::controller(CustomerController::class)->group(function () {
+            Route::post('logout', 'logout')->name('shop.api.customers.session.destroy');
+        });
+
         Route::controller(AddressController::class)->prefix('addresses')->group(function () {
             Route::get('', 'index')->name('shop.api.customers.account.addresses.index');
 
@@ -117,6 +134,16 @@ Route::group(['prefix' => 'api'], function () {
             Route::delete('all', 'destroyAll')->name('shop.api.customers.account.wishlist.destroy_all');
 
             Route::delete('{id}', 'destroy')->name('shop.api.customers.account.wishlist.destroy');
+        });
+
+        Route::controller(OrderController::class)->prefix('orders')->group(function () {
+            Route::get('', 'index')->name('shop.api.customers.account.orders.index');
+
+            Route::get('{id}', 'view')->name('shop.api.customers.account.orders.view');
+
+            Route::post('{id}/cancel', 'cancel')->name('shop.api.customers.account.orders.cancel');
+
+            Route::post('{id}/reorder', 'reorder')->name('shop.api.customers.account.orders.reorder');
         });
     });
 });

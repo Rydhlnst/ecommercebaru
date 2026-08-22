@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Marketing\Jobs\UpdateCreateSearchTerm as UpdateCreateSearchTermJob;
+use Webkul\Product\Helpers\RecommendationHelper;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Shop\Helpers\CatalogApiCache;
 use Webkul\Shop\Http\Resources\ProductCardResource;
@@ -20,7 +21,8 @@ class ProductController extends APIController
     public function __construct(
         protected CategoryRepository $categoryRepository,
         protected ProductRepository $productRepository,
-        protected CatalogApiCache $catalogApiCache
+        protected CatalogApiCache $catalogApiCache,
+        protected RecommendationHelper $recommendationHelper
     ) {}
 
     /**
@@ -149,5 +151,22 @@ class ProductController extends APIController
             ->get();
 
         return ProductCardResource::collection($upSellProducts);
+    }
+
+    /**
+     * Frequently bought together product listings.
+     *
+     * Analyzes order history to find products that are frequently
+     * purchased together with the specified product.
+     *
+     * @param  int  $id
+     */
+    public function frequentlyBoughtTogether($id): JsonResource
+    {
+        $limit = core()->getConfigData('catalog.products.product_view_page.no_of_frequently_bought_together_products') ?: 10;
+
+        $products = $this->recommendationHelper->getFrequentlyBoughtTogether($id, $limit);
+
+        return ProductCardResource::collection($products);
     }
 }

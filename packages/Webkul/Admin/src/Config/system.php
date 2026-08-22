@@ -942,6 +942,11 @@ return [
                 'title' => 'admin::app.configuration.index.catalog.products.product-view-page.allow-no-of-up-sells-products',
                 'type' => 'number',
                 'validation' => 'integer|min:0',
+            ], [
+                'name' => 'no_of_frequently_bought_together_products',
+                'title' => 'admin::app.configuration.index.catalog.products.product-view-page.allow-no-of-frequently-bought-together-products',
+                'type' => 'number',
+                'validation' => 'integer|min:0',
             ],
         ],
     ], [

@@ -4464,6 +4464,7 @@ return [
                     'product-view-page' => [
                         'allow-no-of-related-products' => 'Allowed number of Related Products',
                         'allow-no-of-up-sells-products' => 'Allowed number of Up-Sell Products',
+                        'allow-no-of-frequently-bought-together-products' => 'Allowed number of Frequently Bought Together Products',
                         'title' => 'Product view page configuration',
                         'title-info' => 'Product view page configuration entails adjusting the layout and elements on a product\'s display page, enhancing user experience and information presentation.',
                     ],

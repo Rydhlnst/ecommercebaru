@@ -922,6 +922,12 @@
                         :title="trans('shop::app.products.view.up-sell-title')"
                         :src="route('shop.api.products.up-sell.index', ['id' => $product->id])"
                     />
+
+                    <!-- Frequently Bought Together -->
+                    <x-shop::products.carousel
+                        :title="trans('shop::app.products.view.frequently-bought-together-title')"
+                        :src="route('shop.api.products.frequently_bought_together.index', ['id' => $product->id])"
+                    />
                 </template>
             </div>
         </script>
