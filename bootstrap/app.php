@@ -17,6 +17,7 @@ use Webkul\Core\Http\Middleware\SecureHeaders;
 use Webkul\Installer\Http\Middleware\CanInstall;
 
 return Application::configure(basePath: dirname(__DIR__))
+    ->withCommands()
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',

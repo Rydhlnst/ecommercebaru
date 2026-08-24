@@ -92,8 +92,8 @@ MAINTENANCE_ENABLED=true
 log "Running database migrations"
 "$PHP_BIN" artisan migrate --force
 
-log "Seeding policy CMS pages"
-"$PHP_BIN" artisan db:seed --class='Database\Seeders\PolicyPageSeeder' --force
+log "Syncing policy CMS pages"
+"$PHP_BIN" artisan policy:sync --no-interaction
 
 log "Refreshing public storage"
 "$PHP_BIN" artisan storage:link --force 2>/dev/null || log "storage:link is unavailable; using copied public storage."
