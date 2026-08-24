@@ -10,12 +10,14 @@ class AdminAuth
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! auth()->guard('web')->check()) {
+        $guard = auth()->guard('web');
+
+        if (! $request->hasSession() || ! $guard->check()) {
             return redirect()->route('admin.login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        if (! auth()->guard('web')->user()->is_admin) {
-            auth()->guard('web')->logout();
+        if (! $guard->user()?->is_admin) {
+            $guard->logout();
 
             return redirect()->route('admin.login')->with('error', 'Anda tidak memiliki akses admin.');
         }

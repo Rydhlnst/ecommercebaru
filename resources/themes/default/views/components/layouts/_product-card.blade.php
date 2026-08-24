@@ -261,10 +261,10 @@
                 </div>
 
                 {{-- Action Buttons: 2 Side-by-Side Horizontal Buttons --}}
-                <div class="grid grid-cols-2 gap-2.5 pt-0.5">
+                <div class="grid grid-cols-1 gap-2.5 pt-0.5 min-[420px]:grid-cols-2">
                     {{-- Button 1: Add to Cart --}}
                     <button type="submit"
-                            class="h-10 px-2 text-[11px] font-bold tracking-wider uppercase text-white transition-all flex items-center justify-center gap-1.5 whitespace-nowrap shadow-xs cursor-pointer"
+                            class="flex h-11 min-w-0 w-full items-center justify-center gap-1.5 px-3 text-center text-[10px] font-bold uppercase leading-tight tracking-wide text-white transition-all shadow-xs cursor-pointer sm:text-[11px]"
                             style="background-color:#2D5A27; border:1.5px solid #2D5A27; border-radius:10px;"
                             onmouseover="this.style.backgroundColor='#1E3D1A'; this.style.borderColor='#1E3D1A';"
                             onmouseout="this.style.backgroundColor='#2D5A27'; this.style.borderColor='#2D5A27';">
@@ -275,7 +275,7 @@
                     {{-- Button 2: Buy Now (Borderless White with Green Text and Muted Green Hover) --}}
                     <button type="button"
                             onclick="beresBuyNow(this.form)"
-                            class="h-10 px-2 text-[11px] font-bold tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-1.5 whitespace-nowrap shadow-xs cursor-pointer"
+                            class="flex h-11 min-w-0 w-full items-center justify-center gap-1.5 px-3 text-center text-[10px] font-bold uppercase leading-tight tracking-wide transition-all duration-200 shadow-xs cursor-pointer sm:text-[11px]"
                             style="background-color:#FFFFFF; color:#2D5A27; border:none; border-radius:10px;"
                             onmouseover="this.style.backgroundColor='#E8F0E5';"
                             onmouseout="this.style.backgroundColor='#FFFFFF';">

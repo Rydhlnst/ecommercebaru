@@ -408,7 +408,7 @@
 
                 const data = await res.json().catch(() => ({}));
                 if (res.ok && data.success) {
-                    window.location.href = "{{ route('shop.checkout.onepage.index') }}";
+                    window.location.href = "{{ route('shop.checkout.index') }}";
                 } else {
                     alert(data.message || 'Gagal melanjutkan ke pembayaran.');
                 }

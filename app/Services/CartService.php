@@ -19,7 +19,7 @@ class CartService
 
     public function all(): array
     {
-        return array_values(Session::get(self::SESSION_KEY, []));
+        return array_values($this->sessionCart());
     }
 
     public function add(int $productId, ?int $variationId, int $qty): array
@@ -60,7 +60,7 @@ class CartService
         $key = $product->id.':'.($variation->id ?? 0);
         $qty = max(1, (int) $qty);
 
-        $cart = Session::get(self::SESSION_KEY, []);
+        $cart = $this->sessionCart();
 
         if (isset($cart[$key])) {
             $cart[$key]['quantity'] = min($cart[$key]['quantity'] + $qty, (int) $stock, 99);
@@ -87,7 +87,7 @@ class CartService
 
     public function update(string $key, int $qty): array
     {
-        $cart = Session::get(self::SESSION_KEY, []);
+        $cart = $this->sessionCart();
 
         if (isset($cart[$key])) {
             $cart[$key]['quantity'] = min(max(1, (int) $qty), max(1, $cart[$key]['stock'] ?? 99), 99);
@@ -99,7 +99,7 @@ class CartService
 
     public function remove(string $key): array
     {
-        $cart = Session::get(self::SESSION_KEY, []);
+        $cart = $this->sessionCart();
         unset($cart[$key]);
         Session::put(self::SESSION_KEY, $cart);
 
@@ -118,13 +118,16 @@ class CartService
 
     public function itemsQty(): int
     {
-        return (int) array_sum(array_column($this->all(), 'quantity'));
+        return (int) array_sum(array_map(
+            fn (array $line) => (int) ($line['quantity'] ?? 0),
+            $this->all()
+        ));
     }
 
     public function subtotal(): float
     {
         return (float) array_sum(array_map(
-            fn ($line) => $line['price'] * $line['quantity'],
+            fn (array $line) => (float) ($line['price'] ?? 0) * (int) ($line['quantity'] ?? 0),
             $this->all()
         ));
     }
@@ -139,14 +142,29 @@ class CartService
 
         return [
             'count' => count($lines),
-            'items_qty' => (int) array_sum(array_column($lines, 'quantity')),
+            'items_qty' => $this->itemsQty(),
             'subtotal' => $this->subtotal(),
-            'items' => array_map(fn ($line) => array_merge($line, [
-                'formatted_price' => 'Rp '.number_format($line['price'], 0, ',', '.'),
-                'formatted_total' => 'Rp '.number_format($line['price'] * $line['quantity'], 0, ',', '.'),
-                'image_url' => $line['image'] ? asset('storage/'.$line['image']) : null,
-                'product_url' => route('shop.admin_product.show', $line['slug']),
+            'items' => array_map(fn (array $line) => array_merge($line, [
+                'formatted_price' => 'Rp '.number_format((float) ($line['price'] ?? 0), 0, ',', '.'),
+                'formatted_total' => 'Rp '.number_format((float) ($line['price'] ?? 0) * (int) ($line['quantity'] ?? 0), 0, ',', '.'),
+                'image_url' => ! empty($line['image']) ? asset('storage/'.$line['image']) : null,
+                'product_url' => ! empty($line['slug']) ? route('shop.admin_product.show', $line['slug']) : null,
             ]), $lines),
         ];
+    }
+
+    /**
+     * Discard malformed lines left by an older cart schema instead of letting
+     * a stale browser session crash the cart response.
+     */
+    private function sessionCart(): array
+    {
+        $cart = Session::get(self::SESSION_KEY, []);
+
+        if (! is_array($cart)) {
+            return [];
+        }
+
+        return array_filter($cart, fn ($line) => is_array($line));
     }
 }

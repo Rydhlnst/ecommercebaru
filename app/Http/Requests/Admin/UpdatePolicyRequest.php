@@ -9,7 +9,7 @@ class UpdatePolicyRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return (bool) $this->user()?->is_admin;
+        return (bool) $this->user('web')?->is_admin;
     }
 
     public function rules(): array

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 /**
  * JSON cart endpoints for the custom AdminProduct catalogue.
@@ -32,20 +34,20 @@ class CartController extends Controller
 
     public function add(Request $request): JsonResponse
     {
-        $validated = $request->validate([
-            'product_id' => 'required|integer|exists:admin_products,id',
-            'quantity' => 'nullable|integer|min:1',
-            'variation_id' => 'nullable|integer|exists:admin_product_variations,id',
-            // Back-compat with the existing card markup, which posts the
-            // selected variant under Bagisto's conventional field name.
-            'selected_configurable_option' => 'nullable|integer',
-        ]);
-
-        $variationId = $validated['variation_id']
-            ?? $validated['selected_configurable_option']
-            ?? null;
-
         try {
+            $validated = $request->validate([
+                'product_id' => ['required', 'integer'],
+                'quantity' => ['nullable', 'integer', 'min:1', 'max:99'],
+                'variation_id' => ['nullable', 'integer'],
+                // Back-compat with the existing card markup, which posts the
+                // selected variant under Bagisto's conventional field name.
+                'selected_configurable_option' => ['nullable', 'integer'],
+            ]);
+
+            $variationId = $validated['variation_id']
+                ?? $validated['selected_configurable_option']
+                ?? null;
+
             return response()->json([
                 'success' => true,
                 'cart' => $this->cart->add(
@@ -54,11 +56,25 @@ class CartController extends Controller
                     (int) ($validated['quantity'] ?? 1),
                 ),
             ]);
-        } catch (\Throwable $e) {
+        } catch (ValidationException $e) {
+            throw $e;
+        } catch (\RuntimeException $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 422);
+        } catch (\Throwable $e) {
+            report($e);
+
+            Log::error('Custom cart add failed.', [
+                'product_id' => $request->input('product_id'),
+                'variation_id' => $request->input('variation_id', $request->input('selected_configurable_option')),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'The cart is temporarily unavailable. Please try again.',
+            ], 503);
         }
     }
 
