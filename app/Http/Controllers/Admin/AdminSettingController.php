@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdatePolicyRequest;
 use App\Models\SiteSetting;
+use App\Support\PolicyPages;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Spatie\ResponseCache\Facades\ResponseCache;
 use Webkul\Core\Models\CoreConfig;
@@ -107,38 +110,45 @@ class AdminSettingController extends Controller
 
     public function policy()
     {
-        $policies = [];
+        $policies = PolicyPages::defaults();
 
         try {
             if (Schema::hasTable('site_settings')) {
-                $policies = SiteSetting::getMany([
-                    'policy_privacy',
-                    'policy_refund',
-                    'policy_shipping',
-                    'policy_terms',
-                ]);
+                $policies = array_replace(
+                    $policies,
+                    array_filter(SiteSetting::getMany(PolicyPages::settingKeys()), fn ($value) => $value !== null)
+                );
             }
         } catch (QueryException $e) {
             // Table might not exist yet
         }
 
-        return view('admin.setting.policy', compact('policies'));
+        $policyDefinitions = PolicyPages::definitions();
+
+        return view('admin.setting.policy', compact('policies', 'policyDefinitions'));
     }
 
-    public function updatePolicy(Request $request)
+    public function updatePolicy(UpdatePolicyRequest $request)
     {
-        $validated = $request->validate([
-            'policy_privacy' => 'nullable|string',
-            'policy_refund' => 'nullable|string',
-            'policy_shipping' => 'nullable|string',
-            'policy_terms' => 'nullable|string',
-        ]);
+        try {
+            DB::transaction(function () use ($request) {
+                $policies = $request->validated();
 
-        foreach ($validated as $key => $value) {
-            SiteSetting::setValue($key, $value);
+                foreach ($policies as $key => $value) {
+                    SiteSetting::setValue($key, $value);
+                }
+
+                PolicyPages::sync($policies);
+            });
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->withInput()->with('error', 'Policy pages could not be saved. Please try again.');
         }
 
-        return redirect()->route('admin.settings.policy')->with('success', 'Kebijakan berhasil diperbarui.');
+        ResponseCache::clear();
+
+        return redirect()->route('admin.settings.policy')->with('success', 'All policy pages have been updated.');
     }
 
     public function store()

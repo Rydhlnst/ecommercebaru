@@ -13,6 +13,7 @@ use App\Models\Faq;
 use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -557,11 +558,6 @@ class AdminSeeder extends Seeder
         Faq::firstOrCreate(['question' => 'Metode pembayaran apa saja yang diterima?'], ['answer' => '<p>Kami menerima transfer bank, e-wallet (GoPay, OVO, Dana), dan kartu kredit.</p>', 'is_active' => true, 'sort_order' => 5]);
 
         // ─── Settings ────────────────────────────────────────────────────────
-        SiteSetting::setValue('policy_privacy', '<h3>Privacy Policy</h3><p>Kami menghargai privasi Anda. Data yang dikumpulkan hanya digunakan untuk keperluan transaksi.</p>');
-        SiteSetting::setValue('policy_refund', '<h3>Refund Policy</h3><p>Refund dilakukan dalam 1-3 hari kerja setelah pengajuan disetujui. Untuk produk makanan, refund hanya jika produk rusak.</p>');
-        SiteSetting::setValue('policy_shipping', '<h3>Shipping Policy</h3><p>Pengiriman dilakukan via JNE, J&T, dan SiCepat. Estimasi 2-3 hari kerja. Same day delivery untuk area Jakarta.</p>');
-        SiteSetting::setValue('policy_terms', '<h3>Terms of Service</h3><p>Dengan menggunakan situs ini, Anda menyetujui syarat dan ketentuan yang berlaku.</p>');
-
         SiteSetting::setValue('store_whatsapp', '6281234567890');
         SiteSetting::setValue('store_country', 'Indonesia');
         SiteSetting::setValue('store_address', 'Jl. Merdeka No. 123, Jakarta Selatan, DKI Jakarta 12345');

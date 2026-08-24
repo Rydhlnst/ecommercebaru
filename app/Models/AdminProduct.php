@@ -51,15 +51,31 @@ class AdminProduct extends Model
     {
         static::creating(function (AdminProduct $model) {
             if (empty($model->slug)) {
-                $model->slug = Str::slug($model->name).random_int(100, 999);
+                $model->slug = static::makeUniqueSlug($model->name);
             }
         });
 
         static::updating(function (AdminProduct $model) {
             if ($model->isDirty('name') && ! $model->isDirty('slug')) {
-                $model->slug = Str::slug($model->name).random_int(100, 999);
+                $model->slug = static::makeUniqueSlug($model->name, $model->id);
             }
         });
+    }
+
+    protected static function makeUniqueSlug(string $name, ?int $ignoreId = null): string
+    {
+        $baseSlug = Str::limit(Str::slug($name) ?: 'product', 240, '');
+        $slug = $baseSlug;
+        $suffix = 2;
+
+        while (static::query()
+            ->where('slug', $slug)
+            ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
+            ->exists()) {
+            $slug = $baseSlug.'-'.$suffix++;
+        }
+
+        return $slug;
     }
 
     public function category(): BelongsTo

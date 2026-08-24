@@ -41,6 +41,7 @@
             >
                 <x-shop::products.card
                     v-for="product in products"
+                    :key="product.id"
                 />
             </div>
 
@@ -58,6 +59,24 @@
         <template v-if="isLoading">
             <x-shop::shimmer.products.carousel :navigation-link="$navigationLink ?? false" />
         </template>
+
+        <div
+            v-else-if="hasError"
+            class="container mt-10 max-lg:px-8 max-sm:!px-4"
+            role="status"
+        >
+            <div class="flex items-center justify-between gap-4 border border-gray-200 px-4 py-3 text-sm text-gray-600">
+                <span>Unable to load products right now.</span>
+
+                <button
+                    type="button"
+                    class="font-medium text-navy hover:underline"
+                    @click="getProducts"
+                >
+                    Try again
+                </button>
+            </div>
+        </div>
     </script>
 
     @pushOnce('styles')
@@ -90,6 +109,8 @@
 
                     products: [],
 
+                    hasError: false,
+
                 };
             },
 
@@ -99,13 +120,17 @@
 
             methods: {
                 getProducts() {
+                    this.isLoading = true;
+                    this.hasError = false;
+
                     this.$axios.get(this.src)
                         .then(response => {
+                            this.products = response.data.data ?? [];
+                        }).catch(() => {
+                            this.products = [];
+                            this.hasError = true;
+                        }).finally(() => {
                             this.isLoading = false;
-
-                            this.products = response.data.data;
-                        }).catch(error => {
-                            console.log(error);
                         });
                 },
 

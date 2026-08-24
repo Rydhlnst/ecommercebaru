@@ -20,7 +20,7 @@ class OrderResource extends JsonResource
             'increment_id' => $this->increment_id,
             'status' => $this->status,
             'status_label' => $this->status_label,
-            'grand_total' => core()->formatPrice($this->grand_total, $this->order_currency_code),
+            'grand_total' => $this->grand_total,
             'base_grand_total' => $this->base_grand_total,
             'grand_total_invoiced' => $this->grand_total_invoiced,
             'grand_total_refunded' => $this->grand_total_refunded,
@@ -39,12 +39,8 @@ class OrderResource extends JsonResource
             'invoices' => $this->whenLoaded('invoices'),
             'shipments' => $this->whenLoaded('shipments'),
             'refunds' => $this->whenLoaded('refunds'),
-            'billing_address' => new OrderAddressResource($this->whenLoaded('addresses', function () {
-                return $this->addresses->where('address_type', 'billing')->first();
-            })),
-            'shipping_address' => new OrderAddressResource($this->whenLoaded('addresses', function () {
-                return $this->addresses->where('address_type', 'shipping')->first();
-            })),
+            'billing_address' => new OrderAddressResource($this->whenLoaded('addresses', fn () => $this->addresses->where('address_type', 'billing')->first())),
+            'shipping_address' => new OrderAddressResource($this->whenLoaded('addresses', fn () => $this->addresses->where('address_type', 'shipping')->first())),
             'can_cancel' => $this->canCancel(),
             'can_invoice' => $this->canInvoice(),
             'can_ship' => $this->canShip(),

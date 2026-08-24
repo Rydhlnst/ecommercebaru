@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Hash;
 use Webkul\Customer\Models\Customer;
 
 use function Pest\Laravel\getJson;
@@ -7,7 +8,11 @@ use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
 
 beforeEach(function () {
-    $this->customer = $this->loginAsCustomer();
+    $this->customer = Customer::factory()->create([
+        'password' => Hash::make('customer-password'),
+    ]);
+
+    $this->actingAs($this->customer);
 });
 
 it('returns customer profile', function () {
@@ -90,7 +95,7 @@ it('validates gender field for profile update', function () {
 it('changes password successfully', function () {
     // Arrange.
     $data = [
-        'current_password' => 'password',
+        'current_password' => 'customer-password',
         'new_password' => 'new-secret-password',
         'new_password_confirmation' => 'new-secret-password',
     ];
@@ -129,7 +134,7 @@ it('validates required fields for password change', function () {
 it('validates password confirmation for password change', function () {
     // Arrange.
     $data = [
-        'current_password' => 'password',
+        'current_password' => 'customer-password',
         'new_password' => 'new-secret-password',
         'new_password_confirmation' => 'different-password',
     ];

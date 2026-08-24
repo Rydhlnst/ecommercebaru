@@ -5,6 +5,7 @@ namespace Webkul\Shop\Http\Controllers\API;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Webkul\Checkout\Facades\Cart;
 use Webkul\Sales\Repositories\OrderRepository;
 use Webkul\Shop\Http\Resources\OrderResource;
@@ -120,21 +121,44 @@ class OrderController extends APIController
         }
 
         $skippedBooking = false;
+        $failedItemName = null;
+        $existingCartId = Cart::getCart()?->id;
 
-        foreach ($order->items as $item) {
-            if ($item->type === 'booking') {
-                $skippedBooking = true;
+        try {
+            DB::transaction(function () use ($order, &$skippedBooking, &$failedItemName) {
+                foreach ($order->items as $item) {
+                    if ($item->type === 'booking') {
+                        $skippedBooking = true;
 
-                continue;
+                        continue;
+                    }
+
+                    try {
+                        Cart::addProduct($item->product, array_merge([
+                            'product_id' => $item->product_id,
+                            'quantity' => $item->qty_ordered,
+                        ], $item->additional ?? []));
+                    } catch (\Throwable $e) {
+                        $failedItemName = $item->name;
+
+                        throw $e;
+                    }
+                }
+            });
+        } catch (\Throwable $e) {
+            Cart::resetCart();
+
+            if ($existingCartId) {
+                Cart::initCart($customer);
+            } else {
+                session()->forget('cart');
             }
 
-            try {
-                Cart::addProduct($item->product, $item->additional);
-            } catch (\Exception $e) {
-                return response()->json([
-                    'message' => 'Failed to add product to cart: '.$item->name,
-                ], Response::HTTP_BAD_REQUEST);
-            }
+            report($e);
+
+            return response()->json([
+                'message' => 'Failed to add product to cart: '.($failedItemName ?: 'order item'),
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         $message = 'Items have been added to your cart.';

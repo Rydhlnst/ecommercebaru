@@ -22,23 +22,25 @@ class OrderItemResource extends JsonResource
             'sku' => $this->sku,
             'type' => $this->type,
             'quantity' => $this->qty_ordered,
-            'price' => core()->formatPrice($this->price, $this->order?->order_currency_code),
+            'qty_invoiced' => $this->qty_invoiced,
+            'qty_shipped' => $this->qty_shipped,
+            'qty_refunded' => $this->qty_refunded,
+            'qty_canceled' => $this->qty_canceled,
+            'price' => $this->price,
             'base_price' => $this->base_price,
-            'total' => core()->formatPrice($this->total, $this->order?->order_currency_code),
+            'total' => $this->total,
             'base_total' => $this->base_total,
-            'tax_amount' => core()->formatPrice($this->tax_amount, $this->order?->order_currency_code),
+            'tax_amount' => $this->tax_amount,
             'base_tax_amount' => $this->base_tax_amount,
-            'discount_amount' => core()->formatPrice($this->discount_amount, $this->order?->order_currency_code),
+            'discount_amount' => $this->discount_amount,
             'base_discount_amount' => $this->base_discount_amount,
-            'product' => $this->whenLoaded('product', function () {
-                return [
-                    'id' => $this->product->id,
-                    'name' => $this->product->name,
-                    'sku' => $this->product->sku,
-                    'url_key' => $this->product->url_key,
-                    'base_image' => product_image()->getProductBaseImage($this->product),
-                ];
-            }),
+            'product' => $this->whenLoaded('product', fn () => [
+                'id' => $this->product->id,
+                'name' => $this->product->name,
+                'sku' => $this->product->sku,
+                'url_key' => $this->product->url_key,
+                'base_image' => product_image()->getProductBaseImage($this->product),
+            ]),
             'additional' => $this->additional,
         ];
     }

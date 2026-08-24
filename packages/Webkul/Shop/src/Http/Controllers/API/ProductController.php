@@ -163,6 +163,8 @@ class ProductController extends APIController
      */
     public function frequentlyBoughtTogether($id): JsonResource
     {
+        $this->productRepository->findOrFail($id);
+
         $limit = core()->getConfigData('catalog.products.product_view_page.no_of_frequently_bought_together_products') ?: 10;
 
         $products = $this->recommendationHelper->getFrequentlyBoughtTogether($id, $limit);

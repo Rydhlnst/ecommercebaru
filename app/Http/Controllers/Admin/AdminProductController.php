@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\SaveAdminProductRequest;
 use App\Models\AdminCategory;
 use App\Models\AdminProduct;
 use App\Models\AdminProductImage;
@@ -10,6 +11,7 @@ use App\Models\AdminProductVariation;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
@@ -54,49 +56,33 @@ class AdminProductController extends Controller
         return view('admin.product.create', compact('categories'));
     }
 
-    public function store(Request $request)
+    public function store(SaveAdminProductRequest $request)
     {
         $hasVariations = $request->boolean('has_variations');
-        $this->normalizeEmptyPrices($request);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:admin_categories,id',
-            'badge' => 'nullable|in:new,sale,habis_terjual',
-            'description' => 'nullable|string',
-            'is_featured' => 'nullable|boolean',
-            'has_variations' => 'nullable|boolean',
-            'price' => $hasVariations ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
-            'compare_at_price' => 'nullable|numeric|min:0',
-            'stock' => $hasVariations ? 'nullable|integer|min:0' : 'required|integer|min:0',
-            'status' => 'nullable|in:active,inactive',
-            'images' => 'nullable|array|max:5',
-            'images.*' => 'image|mimes:jpg,jpeg,png,webp,avif|max:10240',
-            'image_meta' => 'nullable|json',
-            'remove_image_ids' => 'nullable|array',
-            'remove_image_ids.*' => 'integer',
-            'variation_weight' => 'nullable|array',
-            'variation_weight.*' => 'required|numeric|min:0',
-            'variation_price' => 'nullable|array',
-            'variation_price.*' => 'required|numeric|min:0',
-            'variation_compare_at_price' => 'nullable|array',
-            'variation_compare_at_price.*' => 'nullable|numeric|min:0',
-            'variation_stock' => 'nullable|array',
-            'variation_stock.*' => 'required|integer|min:0',
+        $productData = Arr::only($request->validated(), [
+            'name',
+            'category_id',
+            'badge',
+            'description',
+            'price',
+            'compare_at_price',
+            'stock',
+            'status',
         ]);
 
-        $validated['is_featured'] = $request->boolean('is_featured');
-        $validated['has_variations'] = $hasVariations;
-        $validated['status'] = $validated['status'] ?? 'active';
-        $validated['price'] = $validated['price'] ?? 0;
-        $validated['stock'] = $validated['stock'] ?? 0;
-        $validated['compare_at_price'] = $validated['compare_at_price'] ?? null;
+        $productData['is_featured'] = $request->boolean('is_featured');
+        $productData['has_variations'] = $hasVariations;
+        $productData['status'] = $productData['status'] ?? 'active';
+        $productData['price'] = $productData['price'] ?? 0;
+        $productData['stock'] = $productData['stock'] ?? 0;
+        $productData['compare_at_price'] = $productData['compare_at_price'] ?? null;
 
         try {
-            [$product, $filesToDelete] = DB::transaction(function () use ($validated, $request) {
-                $product = AdminProduct::create($validated);
+            [$product, $filesToDelete] = DB::transaction(function () use ($productData, $request) {
+                $product = AdminProduct::create($productData);
 
-                if ($validated['has_variations'] && $request->has('variation_price')) {
+                if ($productData['has_variations']) {
                     $this->saveVariations($product, $request);
                 }
 
@@ -109,11 +95,11 @@ class AdminProductController extends Controller
                 $this->deleteStoredFile($path);
             }
         } catch (\Throwable $e) {
-            Log::error('Product image upload failed during product creation.', [
+            Log::error('Product creation failed.', [
                 'exception' => $e,
             ]);
 
-            return back()->withInput()->with('error', 'Foto produk gagal diproses. Silakan coba upload kembali.');
+            return back()->withInput()->with('error', 'Product could not be created. Please review the data and try again.');
         }
 
         ResponseCache::clear();
@@ -135,7 +121,7 @@ class AdminProductController extends Controller
         return view('admin.product.edit', compact('product', 'categories'));
     }
 
-    public function update(Request $request, $product)
+    public function update(SaveAdminProductRequest $request, $product)
     {
         if (! ($product instanceof AdminProduct)) {
             $product = AdminProduct::where('slug', $product)
@@ -144,44 +130,31 @@ class AdminProductController extends Controller
         }
 
         $hasVariations = $request->boolean('has_variations');
-        $this->normalizeEmptyPrices($request);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:admin_categories,id',
-            'badge' => 'nullable|in:new,sale,habis_terjual',
-            'description' => 'nullable|string',
-            'is_featured' => 'nullable|boolean',
-            'has_variations' => 'nullable|boolean',
-            'price' => $hasVariations ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
-            'compare_at_price' => 'nullable|numeric|min:0',
-            'stock' => $hasVariations ? 'nullable|integer|min:0' : 'required|integer|min:0',
-            'status' => 'nullable|in:active,inactive',
-            'images' => 'nullable|array|max:5',
-            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:10240',
-            'variation_weight' => 'nullable|array',
-            'variation_weight.*' => 'required|numeric|min:0',
-            'variation_price' => 'nullable|array',
-            'variation_price.*' => 'required|numeric|min:0',
-            'variation_compare_at_price' => 'nullable|array',
-            'variation_compare_at_price.*' => 'nullable|numeric|min:0',
-            'variation_stock' => 'nullable|array',
-            'variation_stock.*' => 'required|integer|min:0',
+        $productData = Arr::only($request->validated(), [
+            'name',
+            'category_id',
+            'badge',
+            'description',
+            'price',
+            'compare_at_price',
+            'stock',
+            'status',
         ]);
 
-        $validated['is_featured'] = $request->boolean('is_featured');
-        $validated['has_variations'] = $hasVariations;
-        $validated['status'] = $validated['status'] ?? 'active';
-        $validated['price'] = $validated['price'] ?? 0;
-        $validated['stock'] = $validated['stock'] ?? 0;
-        $validated['compare_at_price'] = $validated['compare_at_price'] ?? null;
+        $productData['is_featured'] = $request->boolean('is_featured');
+        $productData['has_variations'] = $hasVariations;
+        $productData['status'] = $productData['status'] ?? 'active';
+        $productData['price'] = $productData['price'] ?? 0;
+        $productData['stock'] = $productData['stock'] ?? 0;
+        $productData['compare_at_price'] = $productData['compare_at_price'] ?? null;
 
         try {
-            [$filesToDelete] = DB::transaction(function () use ($product, $validated, $request) {
-                $product->update($validated);
+            [$filesToDelete] = DB::transaction(function () use ($product, $productData, $request) {
+                $product->update($productData);
 
                 $product->variations()->delete();
-                if ($validated['has_variations'] && $request->has('variation_price')) {
+                if ($productData['has_variations']) {
                     $this->saveVariations($product, $request);
                 }
 
@@ -192,12 +165,12 @@ class AdminProductController extends Controller
                 $this->deleteStoredFile($path);
             }
         } catch (\Throwable $e) {
-            Log::error('Product image upload failed during product update.', [
+            Log::error('Product update failed.', [
                 'product_id' => $product->id,
                 'exception' => $e,
             ]);
 
-            return back()->withInput()->with('error', 'Foto produk gagal diproses. Perubahan belum disimpan.');
+            return back()->withInput()->with('error', 'Product could not be updated. Please review the data and try again.');
         }
 
         ResponseCache::clear();
@@ -240,10 +213,6 @@ class AdminProductController extends Controller
         $stocks = $request->input('variation_stock', []);
 
         foreach ($prices as $index => $price) {
-            if (empty($price)) {
-                continue;
-            }
-
             $comparePrice = trim((string) ($comparePrices[$index] ?? ''));
 
             $product->variations()->create([
@@ -254,35 +223,15 @@ class AdminProductController extends Controller
             ]);
         }
 
-        $firstVariation = $product->variations()->first();
+        $firstVariation = $product->variations()
+            ->orderBy('price')
+            ->orderBy('weight')
+            ->first();
         if ($firstVariation) {
             $product->update([
                 'price' => $firstVariation->price,
                 'compare_at_price' => $firstVariation->compare_at_price,
                 'stock' => $product->variations()->sum('stock'),
-            ]);
-        }
-    }
-
-    /**
-     * ConvertEmptyStringsToNull middleware dimatikan secara global,
-     * jadi field harga opsional yang dikosongkan mengirim string kosong
-     * yang akan gagal validasi numeric. Normalisasi ke null di sini.
-     */
-    private function normalizeEmptyPrices(Request $request): void
-    {
-        $request->merge([
-            'compare_at_price' => $request->filled('compare_at_price') ? $request->input('compare_at_price') : null,
-        ]);
-
-        $variationCompares = $request->input('variation_compare_at_price', []);
-
-        if (is_array($variationCompares)) {
-            $request->merge([
-                'variation_compare_at_price' => array_map(
-                    fn ($v) => ($v === null || trim((string) $v) === '') ? null : $v,
-                    $variationCompares
-                ),
             ]);
         }
     }

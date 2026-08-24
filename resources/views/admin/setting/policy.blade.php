@@ -5,35 +5,20 @@
 
 @section('admin_content')
 <div class="page-header">
-    <h1>Privacy & Policy</h1>
+    <h1>Policy Pages</h1>
 </div>
 
 <form method="POST" action="{{ route('admin.settings.policy.update') }}">
     @csrf
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="admin-panel-card">
-            <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-shield-alt mr-2 text-blue-500"></i>Privacy Policy</h3>
-            <textarea name="policy_privacy" rows="10" class="form-input font-mono text-sm">{{ old('policy_privacy', $policies['policy_privacy'] ?? '') }}</textarea>
-            <p class="text-xs text-gray-400 mt-1">Mendukung HTML.</p>
-        </div>
-
-        <div class="admin-panel-card">
-            <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-undo mr-2 text-yellow-500"></i>Refund Policy</h3>
-            <textarea name="policy_refund" rows="10" class="form-input font-mono text-sm">{{ old('policy_refund', $policies['policy_refund'] ?? '') }}</textarea>
-            <p class="text-xs text-gray-400 mt-1">Mendukung HTML.</p>
-        </div>
-
-        <div class="admin-panel-card">
-            <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-truck mr-2 text-green-500"></i>Shipping Policy</h3>
-            <textarea name="policy_shipping" rows="10" class="form-input font-mono text-sm">{{ old('policy_shipping', $policies['policy_shipping'] ?? '') }}</textarea>
-            <p class="text-xs text-gray-400 mt-1">Mendukung HTML.</p>
-        </div>
-
-        <div class="admin-panel-card">
-            <h3 class="font-semibold text-gray-900 mb-4"><i class="fas fa-file-contract mr-2 text-purple-500"></i>Terms of Service</h3>
-            <textarea name="policy_terms" rows="10" class="form-input font-mono text-sm">{{ old('policy_terms', $policies['policy_terms'] ?? '') }}</textarea>
-            <p class="text-xs text-gray-400 mt-1">Mendukung HTML.</p>
-        </div>
+        @foreach ($policyDefinitions as $key => $policy)
+            <div class="admin-panel-card">
+                <h3 class="font-semibold text-gray-900 mb-4"><i class="{{ $policy['icon'] }} mr-2 {{ $policy['icon_class'] }}"></i>{{ $policy['title'] }}</h3>
+                <textarea name="{{ $key }}" rows="10" class="form-input font-mono text-sm" required>{{ old($key, $policies[$key] ?? '') }}</textarea>
+                @error($key) <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                <p class="text-xs text-gray-400 mt-1">Safe HTML is supported. Changes are published to <code>/page/{{ $policy['url_key'] }}</code>.</p>
+            </div>
+        @endforeach
     </div>
 
     <div class="mt-6">
