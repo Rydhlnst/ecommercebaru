@@ -99,6 +99,11 @@
                 display: flex;
                 justify-content: space-between;
                 gap: 1rem;
+                padding: 0.4rem 0;
+            }
+
+            .checkout-page .checkout-summary-row.text-lg {
+                padding: 0.75rem 0 0.35rem;
             }
 
             .checkout-page .checkout-submit {
