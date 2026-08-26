@@ -261,11 +261,11 @@
                 </div>
 
                 {{-- Action Buttons: 2 Side-by-Side Horizontal Buttons --}}
-                <div class="grid grid-cols-1 gap-2.5 pt-0.5 min-[420px]:grid-cols-2">
+                <div class="beres-card-actions pt-0.5">
                     {{-- Button 1: Add to Cart --}}
                     <button type="submit"
-                            class="flex h-11 min-w-0 w-full items-center justify-center gap-1.5 px-3 text-center text-[10px] font-bold uppercase leading-tight tracking-wide text-white transition-all shadow-xs cursor-pointer sm:text-[11px]"
-                            style="background-color:#2D5A27; border:1.5px solid #2D5A27; border-radius:10px;"
+                            class="flex min-w-0 w-full items-center justify-center gap-1.5 text-center text-[11px] font-bold tracking-wider uppercase text-white transition-all shadow-xs cursor-pointer"
+                            style="min-height:44px; padding:0.5rem 0.75rem; white-space:normal; line-height:1.2; background-color:#2D5A27; border:1.5px solid #2D5A27; border-radius:10px;"
                             onmouseover="this.style.backgroundColor='#1E3D1A'; this.style.borderColor='#1E3D1A';"
                             onmouseout="this.style.backgroundColor='#2D5A27'; this.style.borderColor='#2D5A27';">
                         <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
@@ -275,8 +275,8 @@
                     {{-- Button 2: Buy Now (Borderless White with Green Text and Muted Green Hover) --}}
                     <button type="button"
                             onclick="beresBuyNow(this.form)"
-                            class="flex h-11 min-w-0 w-full items-center justify-center gap-1.5 px-3 text-center text-[10px] font-bold uppercase leading-tight tracking-wide transition-all duration-200 shadow-xs cursor-pointer sm:text-[11px]"
-                            style="background-color:#FFFFFF; color:#2D5A27; border:none; border-radius:10px;"
+                            class="flex min-w-0 w-full items-center justify-center gap-1.5 text-center text-[11px] font-bold tracking-wider uppercase transition-all duration-200 shadow-xs cursor-pointer"
+                            style="min-height:44px; padding:0.5rem 0.75rem; white-space:normal; line-height:1.2; background-color:#FFFFFF; color:#2D5A27; border:none; border-radius:10px;"
                             onmouseover="this.style.backgroundColor='#E8F0E5';"
                             onmouseout="this.style.backgroundColor='#FFFFFF';">
                         <svg class="w-3.5 h-3.5 shrink-0 text-[#2D5A27]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>

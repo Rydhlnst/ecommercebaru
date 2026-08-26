@@ -235,6 +235,8 @@
             /* Product card polish */
             .beres-card { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease, border-color .35s ease; }
             .beres-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(45,90,39,0.08); border-color: #C8DBBE !important; }
+            .beres-card-actions { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:0.625rem; }
+            @media (max-width: 419px) { .beres-card-actions { grid-template-columns:1fr; } }
 
             /* Button ripple-ish press */
             .beres-btn { position: relative; transition: transform .15s ease, background-color .25s ease, opacity .2s ease; }

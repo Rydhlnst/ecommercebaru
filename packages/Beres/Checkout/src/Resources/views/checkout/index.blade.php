@@ -6,7 +6,7 @@
     </style>
 
     <div class="min-h-screen bg-[#faf9f7] py-8 sm:py-12">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="mx-auto w-full px-4 sm:px-6 md:px-10 lg:px-14" style="max-width:1600px;">
             <div class="mb-8 flex items-end justify-between border-b border-[#e6dfda] pb-5">
                 <div><p class="text-xs font-semibold uppercase tracking-[0.22em] text-[#8d4a3d]">Beres Storefront</p><h1 class="mt-2 text-3xl font-semibold tracking-tight text-[#171514] sm:text-4xl">Checkout</h1></div>
                 <a href="{{ route('shop.home.index') }}" class="text-sm font-medium text-[#8d4a3d] hover:underline">Continue shopping</a>

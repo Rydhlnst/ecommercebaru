@@ -67,14 +67,16 @@ Route::get('/deploy/run', [DeployController::class, 'run'])
 
 use App\Http\Controllers\CustomCatalogController;
 
-Route::get('/product/{slug}', [CustomCatalogController::class, 'product'])
-    ->name('shop.admin_product.show');
+Route::middleware('shop')->group(function () {
+    Route::get('/product/{slug}', [CustomCatalogController::class, 'product'])
+        ->name('shop.admin_product.show');
 
-Route::get('/category/{slug}', [CustomCatalogController::class, 'category'])
-    ->name('shop.admin_category.show');
+    Route::get('/category/{slug}', [CustomCatalogController::class, 'category'])
+        ->name('shop.admin_category.show');
 
-Route::get('/search', [CustomCatalogController::class, 'search'])
-    ->name('shop.search.index');
+    Route::get('/search', [CustomCatalogController::class, 'search'])
+        ->name('shop.search.index');
+});
 
 /*
 |--------------------------------------------------------------------------
