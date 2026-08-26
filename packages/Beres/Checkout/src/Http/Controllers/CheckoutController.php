@@ -128,6 +128,12 @@ class CheckoutController extends Controller
     {
         $paymentMode = CheckoutSettings::paymentMode();
 
+        $shippingAddress = $request->input('shipping_address', []);
+        if (is_array($shippingAddress) && blank($shippingAddress['city_id'] ?? null)) {
+            $shippingAddress['city_id'] = null;
+            $request->merge(['shipping_address' => $shippingAddress]);
+        }
+
         $data = $request->validate([
             'shipping_address.first_name' => 'required|string|max:100',
             'shipping_address.last_name' => 'required|string|max:100',
@@ -136,7 +142,9 @@ class CheckoutController extends Controller
             'shipping_address.address1' => 'required|string|max:255',
             'shipping_address.address2' => 'nullable|string|max:255',
             'shipping_address.city' => 'required|string|max:150',
-            'shipping_address.city_id' => 'required|integer|min:1',
+            'shipping_address.city_id' => $paymentMode === CheckoutSettings::WHATSAPP
+                ? ['nullable', 'integer', 'min:1']
+                : ['required', 'integer', 'min:1'],
             'shipping_address.state' => 'required|string|max:150',
             'shipping_address.postcode' => 'required|string|max:20',
             'shipping_address.country' => 'required|string|max:3',
