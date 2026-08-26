@@ -159,6 +159,9 @@ class AdminSettingController extends Controller
             if (Schema::hasTable('site_settings')) {
                 $settings = SiteSetting::getMany([
                     'store_whatsapp',
+                    'checkout_payment_mode',
+                    'whatsapp_order_intro',
+                    'whatsapp_order_footer',
                     'store_maps_embed',
                     'store_country',
                     'store_address',
@@ -230,7 +233,10 @@ class AdminSettingController extends Controller
         }
 
         $validated = $request->validate([
-            'store_whatsapp' => 'nullable|string|max:20',
+            'store_whatsapp' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\-\s()]+$/'],
+            'checkout_payment_mode' => 'required|in:midtrans,whatsapp',
+            'whatsapp_order_intro' => 'nullable|string|max:500',
+            'whatsapp_order_footer' => 'nullable|string|max:500',
             'store_maps_embed' => 'nullable|string',
             'store_country' => 'nullable|string|max:100',
             'store_address' => 'nullable|string',

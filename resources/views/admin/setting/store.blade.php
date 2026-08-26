@@ -42,8 +42,9 @@
             </p>
 
             <div class="mb-4">
-                <label class="form-label">Nomor WhatsApp</label>
+                <label class="form-label">Nomor WhatsApp Admin / Pesanan</label>
                 <input type="text" name="store_whatsapp" value="{{ old('store_whatsapp', $settings['store_whatsapp'] ?? '') }}" class="form-input" placeholder="6281234567890">
+                <p class="text-xs text-gray-400 mt-1">Gunakan format internasional, contoh 6281234567890. Nomor ini menjadi tujuan order WhatsApp dan tombol WhatsApp di storefront.</p>
             </div>
 
             <div class="mb-4">
@@ -78,6 +79,41 @@
                 <label class="form-label">Link Ulasan Google</label>
                 <input type="text" name="store_google_review_url" value="{{ old('store_google_review_url', core()->getConfigData('beres_storefront.contact.google_review_url') ?? '') }}" class="form-input" placeholder="https://www.google.com/search?q=Nama+Toko">
                 <p class="text-xs text-gray-400 mt-1">URL tujuan tombol "Tulis ulasan" di section Google Reviews homepage.</p>
+            </div>
+        </div>
+
+        {{-- Checkout payment mode --}}
+        <div class="admin-panel-card lg:col-span-2">
+            <h3 class="font-semibold text-gray-900 mb-1 flex items-center gap-2">
+                <i class="fas fa-cash-register text-emerald-600"></i> Metode Checkout
+            </h3>
+            <p class="text-xs text-gray-500 mb-5">
+                Pilih apakah checkout memakai payment gateway otomatis atau membuat pesanan melalui WhatsApp Admin.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label">Metode Checkout</label>
+                    <select name="checkout_payment_mode" class="form-input">
+                        <option value="whatsapp" {{ old('checkout_payment_mode', $settings['checkout_payment_mode'] ?? 'whatsapp') === 'whatsapp' ? 'selected' : '' }}>WhatsApp Admin (Manual)</option>
+                        <option value="midtrans" {{ old('checkout_payment_mode', $settings['checkout_payment_mode'] ?? 'whatsapp') === 'midtrans' ? 'selected' : '' }}>Midtrans Payment Gateway</option>
+                    </select>
+                    <p class="text-xs text-gray-400 mt-1">Jika memilih Midtrans, gateway harus aktif dan credential-nya lengkap di menu Pembayaran & Ongkir (API).</p>
+                </div>
+
+                <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-800">
+                    Nomor tujuan order WhatsApp dapat diubah pada field <strong>Nomor WhatsApp Admin / Pesanan</strong> di bagian Informasi Toko.
+                </div>
+
+                <div>
+                    <label class="form-label">Pembuka Pesan WhatsApp</label>
+                    <textarea name="whatsapp_order_intro" rows="3" class="form-input" placeholder="Halo Admin, saya ingin melakukan pemesanan berikut:">{{ old('whatsapp_order_intro', $settings['whatsapp_order_intro'] ?? '') }}</textarea>
+                </div>
+
+                <div>
+                    <label class="form-label">Penutup Pesan WhatsApp</label>
+                    <textarea name="whatsapp_order_footer" rows="3" class="form-input" placeholder="Mohon konfirmasi ketersediaan dan total pembayaran.">{{ old('whatsapp_order_footer', $settings['whatsapp_order_footer'] ?? '') }}</textarea>
+                </div>
             </div>
         </div>
 

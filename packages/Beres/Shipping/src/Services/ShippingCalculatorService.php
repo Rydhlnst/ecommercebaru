@@ -57,6 +57,14 @@ class ShippingCalculatorService
     }
 
     /**
+     * Get the configured shipping origin city.
+     */
+    public function getOriginCity(): int
+    {
+        return $this->rajaOngkirService->getOriginCity();
+    }
+
+    /**
      * Get service types for a courier.
      */
     public function getServiceTypes(string $courier): array
