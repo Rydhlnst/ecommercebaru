@@ -140,7 +140,9 @@ class CheckoutController extends Controller
             'shipping_address.state' => 'required|string|max:150',
             'shipping_address.postcode' => 'required|string|max:20',
             'shipping_address.country' => 'required|string|max:3',
-            'shipping_method' => ['required', 'string', 'regex:/^[a-z0-9]+\|[^|]+$/i'],
+            'shipping_method' => $paymentMode === CheckoutSettings::WHATSAPP
+                ? ['nullable', 'string', 'regex:/^[a-z0-9]+\|[^|]+$/i']
+                : ['required', 'string', 'regex:/^[a-z0-9]+\|[^|]+$/i'],
             'payment_method' => ['required', \Illuminate\Validation\Rule::in([$paymentMode])],
             'shipping_cost' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string|max:2000',
@@ -170,17 +172,22 @@ class CheckoutController extends Controller
             ], 400);
         }
 
-        $shippingCost = $this->resolveShippingCost(
-            $data['shipping_address'],
-            $data['shipping_method'],
-            max(1, (int) collect($cart['items'])->sum(fn ($item) => ($item['weight'] ?? 0) * ($item['quantity'] ?? 1)))
-        );
+        $shippingMethod = $data['shipping_method'] ?? 'whatsapp|manual';
+        $shippingCost = 0.0;
 
-        if ($shippingCost === null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Layanan pengiriman yang dipilih sudah tidak tersedia. Silakan pilih ulang.',
-            ], 422);
+        if (filled($data['shipping_method'] ?? null)) {
+            $shippingCost = $this->resolveShippingCost(
+                $data['shipping_address'],
+                $data['shipping_method'],
+                max(1, (int) collect($cart['items'])->sum(fn ($item) => ($item['weight'] ?? 0) * ($item['quantity'] ?? 1)))
+            );
+
+            if ($shippingCost === null) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Layanan pengiriman yang dipilih sudah tidak tersedia. Silakan pilih ulang.',
+                ], 422);
+            }
         }
 
         $dto = CheckoutDTO::fromArray([
@@ -188,7 +195,7 @@ class CheckoutController extends Controller
             'customer_id' => auth()->guard('customer')->id(),
             'shipping_address' => $data['shipping_address'],
             'billing_address' => $request->input('billing_address'),
-            'shipping_method' => $data['shipping_method'],
+            'shipping_method' => $shippingMethod,
             // Always use the server-calculated rate. The browser value is not trusted.
             'shipping_cost' => $shippingCost,
             'payment_method' => $data['payment_method'],
