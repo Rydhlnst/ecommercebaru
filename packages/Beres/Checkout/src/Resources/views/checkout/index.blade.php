@@ -33,9 +33,9 @@
 
             .checkout-page .checkout-summary-card {
                 overflow: hidden;
-                border: 1px solid #e6dfda;
+                border: 1px solid #dcebd6;
                 border-radius: 1rem;
-                background: #f1efed;
+                background: #ffffff;
                 padding: 1.75rem;
             }
 
@@ -101,6 +101,34 @@
                 gap: 1rem;
             }
 
+            .checkout-page .checkout-submit {
+                display: block;
+                min-height: 52px;
+                border: 0;
+                border-radius: 0.75rem;
+                background-color: #2d5a27 !important;
+                color: #ffffff !important;
+                cursor: pointer;
+                font-weight: 600;
+                text-align: center;
+                transition: background-color 150ms ease, opacity 150ms ease;
+            }
+
+            .checkout-page .checkout-submit:hover:not(:disabled),
+            .checkout-page .checkout-submit:focus-visible {
+                background-color: #1e3a1e !important;
+            }
+
+            .checkout-page .checkout-submit:focus-visible {
+                outline: 3px solid rgba(45, 90, 39, 0.25);
+                outline-offset: 2px;
+            }
+
+            .checkout-page .checkout-submit:disabled {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+
             @media (max-width: 1023px) {
                 .checkout-page .checkout-main-grid {
                     grid-template-columns: minmax(0, 1fr) !important;
@@ -149,7 +177,7 @@
                     <section class="checkout-section"><h2 class="checkout-heading mb-5">Shipping method</h2><select id="courier-select" class="checkout-input" required><option value="">Select a courier</option>@foreach($couriers as $code => $name)<option value="{{ $code }}">{{ $name }}</option>@endforeach</select><p class="mt-3 text-sm text-[#746b66]">Choose a city and courier to see available services.</p><div id="shipping-options" class="mt-4 hidden space-y-2"></div><input type="hidden" name="shipping_method" id="shipping-method" required /><input type="hidden" name="shipping_cost" id="shipping-cost" value="0" /></section>
                     <section class="checkout-section"><h2 class="checkout-heading">Payment</h2><p class="mt-1 text-sm text-[#746b66]">All transactions are secure and encrypted.</p>@if($paymentMode === 'whatsapp')<input type="hidden" name="payment_method" value="whatsapp" />@if($whatsappConfigured)<div class="mt-5 rounded-xl border border-[#c9ddc2] bg-[#f3f8f0] p-4 text-sm text-[#31572c]"><strong class="block">Order via WhatsApp</strong><span>Your order will be saved and the complete order details will open in WhatsApp for admin confirmation.</span></div>@else<div class="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">WhatsApp checkout is not available yet. The admin must configure the WhatsApp number in Store Settings.</div>@endif @elseif($midtransActive)<label class="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-[#8d4a3d] bg-[#fbf5f2] p-4"><input type="radio" name="payment_method" value="midtrans" class="mt-1 accent-[#8d4a3d]" required checked /><span><strong class="block text-[#171514]">Midtrans</strong><span class="text-sm text-[#746b66]">Virtual account, QRIS, e-wallets, and cards.</span></span></label>@else<div class="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">Online payment is temporarily unavailable. Please contact the store administrator.</div>@endif<h3 class="mt-7 text-base font-semibold text-[#171514]">Billing address</h3><label class="mt-3 flex items-center gap-3 rounded-t-xl border border-[#e6dfda] bg-[#fbf5f2] p-4"><input type="radio" name="billing_choice" value="same" checked class="accent-[#8d4a3d]" /> Same as shipping address</label><label class="flex items-center gap-3 rounded-b-xl border-x border-b border-[#e6dfda] p-4"><input type="radio" name="billing_choice" value="different" class="accent-[#8d4a3d]" /> Use a different billing address</label><textarea name="notes" rows="3" class="checkout-input mt-5" placeholder="Order notes (optional)"></textarea></section>
                 </form>
-                <aside class="checkout-summary"><div class="checkout-summary-card"><h2 class="mb-6 text-xl font-semibold text-[#171514]">Order summary</h2><div class="checkout-summary-items">@foreach(($cart['items'] ?? []) as $item)<div class="checkout-summary-item"><div class="checkout-summary-image">@if(!empty($item['image_url']))<img src="{{ $item['image_url'] }}" alt="{{ $item['name'] }}" width="64" height="64" loading="lazy" />@endif<span class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#171514] px-1 text-[10px] text-white">{{ $item['quantity'] }}</span></div><div class="checkout-summary-info"><p class="checkout-summary-name">{{ $item['name'] }}</p><p class="text-xs text-[#746b66]">{{ $item['weight_label'] ?? 'Standard' }}</p></div><p class="checkout-summary-price">Rp {{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 1), 0, ',', '.') }}</p></div>@endforeach</div><div class="my-6 border-t border-[#d9d1cc]"></div><div class="space-y-3 text-sm"><div class="checkout-summary-row"><span class="text-[#746b66]">Subtotal</span><span>Rp {{ number_format($cart['subtotal'] ?? 0, 0, ',', '.') }}</span></div><div class="checkout-summary-row"><span class="text-[#746b66]">Shipping</span><span id="shipping-cost-display">Rp 0</span></div></div><div class="my-5 border-t border-[#d9d1cc]"></div><div class="checkout-summary-row text-lg font-semibold"><span>Total</span><span id="grand-total">Rp {{ number_format($cart['subtotal'] ?? 0, 0, ',', '.') }}</span></div>@php($checkoutAvailable = $paymentMode === 'whatsapp' ? $whatsappConfigured : $midtransActive)<button type="submit" form="checkout-form" id="complete-order" @disabled(!$checkoutAvailable) class="mt-7 w-full rounded-xl bg-[#8d4a3d] px-5 py-4 font-semibold text-white transition hover:bg-[#71392f] disabled:cursor-not-allowed disabled:opacity-50">{{ $paymentMode === 'whatsapp' ? 'Pesan via WhatsApp' : 'Complete order' }}</button><p class="mt-4 text-center text-xs text-[#746b66]">By placing your order, you agree to our terms and conditions.</p></div></aside>
+                <aside class="checkout-summary"><div class="checkout-summary-card"><h2 class="mb-6 text-xl font-semibold text-[#171514]">Order summary</h2><div class="checkout-summary-items">@foreach(($cart['items'] ?? []) as $item)<div class="checkout-summary-item"><div class="checkout-summary-image">@if(!empty($item['image_url']))<img src="{{ $item['image_url'] }}" alt="{{ $item['name'] }}" width="64" height="64" loading="lazy" />@endif<span class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#171514] px-1 text-[10px] text-white">{{ $item['quantity'] }}</span></div><div class="checkout-summary-info"><p class="checkout-summary-name">{{ $item['name'] }}</p><p class="text-xs text-[#746b66]">{{ $item['weight_label'] ?? 'Standard' }}</p></div><p class="checkout-summary-price">Rp {{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 1), 0, ',', '.') }}</p></div>@endforeach</div><div class="my-6 border-t border-[#d9d1cc]"></div><div class="space-y-3 text-sm"><div class="checkout-summary-row"><span class="text-[#746b66]">Subtotal</span><span>Rp {{ number_format($cart['subtotal'] ?? 0, 0, ',', '.') }}</span></div><div class="checkout-summary-row"><span class="text-[#746b66]">Shipping</span><span id="shipping-cost-display">Rp 0</span></div></div><div class="my-5 border-t border-[#d9d1cc]"></div><div class="checkout-summary-row text-lg font-semibold"><span>Total</span><span id="grand-total">Rp {{ number_format($cart['subtotal'] ?? 0, 0, ',', '.') }}</span></div>@php($checkoutAvailable = $paymentMode === 'whatsapp' ? $whatsappConfigured : $midtransActive)<button type="submit" form="checkout-form" id="complete-order" @disabled(!$checkoutAvailable) class="checkout-submit mt-7 w-full rounded-xl bg-[#2d5a27] px-5 py-4 font-semibold text-white transition hover:bg-[#1e3a1e] disabled:cursor-not-allowed disabled:opacity-50">{{ $paymentMode === 'whatsapp' ? 'Pesan via WhatsApp' : 'Complete order' }}</button><p class="mt-4 text-center text-xs text-[#746b66]">By placing your order, you agree to our terms and conditions.</p></div></aside>
             </div>
         </div>
     </div>
