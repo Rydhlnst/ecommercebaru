@@ -219,6 +219,57 @@ class CheckoutController extends Controller
     }
 
     /**
+     * JavaScript-free WhatsApp checkout fallback.
+     */
+    public function whatsappOrder(Request $request)
+    {
+        if (CheckoutSettings::paymentMode() !== CheckoutSettings::WHATSAPP) {
+            abort(404);
+        }
+
+        $sessionResponse = $this->createSession($request);
+
+        if ($sessionResponse instanceof \Illuminate\Http\RedirectResponse) {
+            return $sessionResponse;
+        }
+
+        if ($sessionResponse->getStatusCode() >= 400) {
+            $payload = json_decode($sessionResponse->getContent(), true) ?: [];
+
+            return back()
+                ->withInput()
+                ->with('error', $payload['message'] ?? 'Checkout WhatsApp gagal dibuat.');
+        }
+
+        try {
+            $payload = $sessionResponse->getData(true);
+            $sessionId = (int) data_get($payload, 'data.id');
+
+            if ($sessionId < 1) {
+                throw new \RuntimeException('Sesi checkout tidak valid.');
+            }
+
+            $session = $this->checkoutService->getSession($sessionId);
+            $order = $this->checkoutService->placeOrder($sessionId);
+
+            if (! $order) {
+                throw new \RuntimeException('Gagal membuat pesanan.');
+            }
+
+            return redirect()->away($this->whatsappOrder->urlFor(
+                $order,
+                $session->shipping_address ?? []
+            ));
+        } catch (\Throwable $e) {
+            Log::error('WhatsApp fallback checkout failed', ['exception' => $e]);
+
+            return back()
+                ->withInput()
+                ->with('error', 'Pesanan belum dapat dibuat. Silakan coba lagi.');
+        }
+    }
+
+    /**
      * Place order — creates an AdminOrder (+ items) from the session cart.
      */
     public function placeOrder(Request $request)

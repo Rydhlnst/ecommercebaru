@@ -20,6 +20,10 @@ Route::group(['prefix' => 'checkout', 'middleware' => ['web']], function () {
     Route::post('session', [CheckoutController::class, 'createSession'])
         ->name('shop.checkout.session.store');
 
+    // JavaScript-free WhatsApp fallback: creates the order and redirects directly.
+    Route::post('whatsapp', [CheckoutController::class, 'whatsappOrder'])
+        ->name('shop.checkout.whatsapp');
+
     // Place order
     Route::post('place-order', [CheckoutController::class, 'placeOrder'])
         ->name('shop.checkout.place_order');
