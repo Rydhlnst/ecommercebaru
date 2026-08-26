@@ -59,11 +59,18 @@ class CheckoutController extends Controller
         $request->validate([
             'city_id' => 'required|integer',
             'weight' => 'required|integer|min:1',
-            'courier' => 'required|string',
+            'courier' => 'required|string|alpha_dash',
         ]);
 
         try {
-            $originCity = config('rajaongkir.origin_city', '501');
+            if (! array_key_exists($request->input('courier'), $this->shippingCalculator->getAvailableCouriers())) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Kurir yang dipilih tidak tersedia.',
+                ], 422);
+            }
+
+            $originCity = $this->shippingCalculator->getOriginCity();
             $destinationCity = $request->input('city_id');
             $weight = $request->input('weight');
             $couriers = [$request->input('courier')];
@@ -74,6 +81,13 @@ class CheckoutController extends Controller
                 $weight,
                 $couriers
             );
+
+            if ($costs === []) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tidak ada layanan pengiriman untuk tujuan ini.',
+                ], 422);
+            }
 
             return response()->json([
                 'success' => true,

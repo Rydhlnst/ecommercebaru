@@ -251,13 +251,13 @@ return [
     [
         'key' => 'beres_storefront.shipping',
         'name' => 'Pengiriman (RajaOngkir)',
-        'info' => 'Konfigurasi ongkir via RajaOngkir API. Daftar di https://rajaongkir.com/akun/daftar',
+        'info' => 'Konfigurasi ongkir via RajaOngkir/Komerce API V2. Ambil API key dari https://collaborator.komerce.id',
         'sort' => 11,
         'fields' => [
             ['name' => 'active',        'title' => 'Aktifkan RajaOngkir', 'type' => 'boolean', 'default' => '0',
                 'channel_based' => false],
             ['name' => 'api_key',       'title' => 'API Key RajaOngkir',  'type' => 'password', 'default' => '',
-                'info' => 'API Key dari dashboard RajaOngkir. Starter = gratis 10.000 request/bulan.', 'channel_based' => false],
+                'info' => 'API key Shipping Cost dari dashboard Collaborator Komerce. Jangan tampilkan key ini di frontend.', 'channel_based' => false],
             ['name' => 'api_type',      'title' => 'Tipe API',            'type' => 'select',   'default' => 'starter',
                 'options' => [
                     ['title' => 'Starter (Gratis)', 'value' => 'starter'],
@@ -266,10 +266,10 @@ return [
                 ],
                 'channel_based' => false],
             ['name' => 'origin_city',   'title' => 'ID Kota Asal',       'type' => 'text',     'default' => '152',
-                'info' => 'ID kota asal pengiriman di RajaOngkir. 152 = Jakarta Pusat. Cek di https://rajaongkir.com/dokumentasi/kota',
+                'info' => 'ID lokasi asal dari hasil pencarian destination RajaOngkir/Komerce. Gunakan lokasi yang sesuai gudang toko.',
                 'channel_based' => false],
             ['name' => 'couriers',      'title' => 'Kurir Tersedia',     'type' => 'text',     'default' => 'jne,jnt,sicepat',
-                'info' => 'Comma-separated. Pilihan: jne,jnt,sicepat,anteraja,ninja,tiki,pos',
+                'info' => 'Comma-separated. Pilihan umum: jne,jnt,sicepat,anteraja,ninja,tiki,ide,sap,lion,wahana.',
                 'channel_based' => false],
         ],
     ],

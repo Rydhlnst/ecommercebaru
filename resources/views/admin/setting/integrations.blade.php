@@ -64,20 +64,20 @@
                 <h3 class="font-semibold text-gray-900 flex items-center">
                     <i class="fas fa-truck mr-2 text-green-600"></i> RajaOngkir (Kalkulator Ongkir)
                 </h3>
-                <span class="text-xs px-2.5 py-1 rounded-full font-medium {{ ($settings['rajaongkir_is_active'] ?? '1') == '1' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
-                    {{ ($settings['rajaongkir_is_active'] ?? '1') == '1' ? 'Aktif' : 'Nonaktif' }}
+                <span class="text-xs px-2.5 py-1 rounded-full font-medium {{ ($settings['rajaongkir_is_active'] ?? '0') == '1' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
+                    {{ ($settings['rajaongkir_is_active'] ?? '0') == '1' ? 'Aktif' : 'Nonaktif' }}
                 </span>
             </div>
 
             <p class="text-xs text-gray-500 mb-5">
-                Mendukung pengecekan tarif ongkos kirim real-time (JNE, POS, TIKI, J&T, SiCepat, AnterAja).
+                Menggunakan RajaOngkir/Komerce API V2 untuk tarif ongkos kirim real-time. API key hanya dipakai di server.
             </p>
 
             <div class="mb-4">
                 <label class="form-label">Status Ongkir Otomatis</label>
                 <select name="rajaongkir_is_active" class="form-input">
-                    <option value="1" {{ old('rajaongkir_is_active', $settings['rajaongkir_is_active'] ?? '1') == '1' ? 'selected' : '' }}>Aktif</option>
-                    <option value="0" {{ old('rajaongkir_is_active', $settings['rajaongkir_is_active'] ?? '1') == '0' ? 'selected' : '' }}>Nonaktif</option>
+                    <option value="1" {{ old('rajaongkir_is_active', $settings['rajaongkir_is_active'] ?? '0') == '1' ? 'selected' : '' }}>Aktif</option>
+                    <option value="0" {{ old('rajaongkir_is_active', $settings['rajaongkir_is_active'] ?? '0') == '0' ? 'selected' : '' }}>Nonaktif</option>
                 </select>
             </div>
 
@@ -99,6 +99,12 @@
                 <label class="form-label">ID Kota Asal Pengiriman</label>
                 <input type="text" name="rajaongkir_origin_city" value="{{ old('rajaongkir_origin_city', $settings['rajaongkir_origin_city'] ?? '152') }}" class="form-input" placeholder="Contoh: 152 (Jakarta Pusat), 501 (Bandung), 444 (Surabaya)">
                 <p class="text-xs text-gray-400 mt-1">Isi dengan ID Kota pengiriman barang toko Anda dari RajaOngkir.</p>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Kurir yang Ditampilkan</label>
+                <input type="text" name="rajaongkir_couriers" value="{{ old('rajaongkir_couriers', $settings['rajaongkir_couriers'] ?? 'jne,jnt,sicepat,anteraja') }}" class="form-input" placeholder="jne,jnt,sicepat,anteraja">
+                <p class="text-xs text-gray-400 mt-1">Pisahkan dengan koma. Contoh: jne,jnt,sicepat,anteraja,ninja,lion.</p>
             </div>
         </div>
     </div>

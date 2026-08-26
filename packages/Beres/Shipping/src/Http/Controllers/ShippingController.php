@@ -71,15 +71,36 @@ class ShippingController extends Controller
             'origin'      => 'required|integer',
             'destination' => 'required|integer',
             'weight'      => 'required|integer|min:1',
-            'couriers'    => 'required|array',
+            'couriers'    => 'required|array|min:1',
+            'couriers.*'  => 'required|string|alpha_dash',
         ]);
+
+        $availableCouriers = $this->shippingCalculator->getAvailableCouriers();
+        $couriers = array_values(array_intersect(
+            $request->input('couriers'),
+            array_keys($availableCouriers)
+        ));
+
+        if ($couriers === []) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kurir yang dipilih tidak tersedia.',
+            ], 422);
+        }
 
         $costs = $this->rajaOngkirService->calculateShippingCosts(
             $request->input('origin'),
             $request->input('destination'),
             $request->input('weight'),
-            $request->input('couriers')
+            $couriers
         );
+
+        if ($costs === []) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada layanan pengiriman untuk tujuan ini.',
+            ], 422);
+        }
 
         return response()->json([
             'success' => true,

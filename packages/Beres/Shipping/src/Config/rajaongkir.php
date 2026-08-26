@@ -17,7 +17,8 @@ return [
     | API URL
     |--------------------------------------------------------------------------
     */
-    'base_url' => 'https://api.rajaongkir.com/starter',
+    // RajaOngkir V1 was retired. Current RajaOngkir/Komerce shipping-cost API.
+    'base_url' => env('RAJAONGKIR_BASE_URL', 'https://rajaongkir.komerce.id/api/v1'),
 
     /*
     |--------------------------------------------------------------------------
@@ -37,7 +38,7 @@ return [
     'couriers' => [
         'jne',
         'tiki',
-        'pos',
+        'pov',
         'jnt',
         'sicepat',
         'anteraja',
@@ -72,5 +73,5 @@ return [
     | Kota asal untuk pengiriman
     |
     */
-    'origin_city' => env('RAJAONGKIR_ORIGIN_CITY', '501'), // Bandung
+    'origin_city' => env('RAJAONGKIR_ORIGIN_CITY', '152'), // Jakarta Pusat
 ];

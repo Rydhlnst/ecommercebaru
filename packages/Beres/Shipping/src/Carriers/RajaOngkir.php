@@ -44,8 +44,9 @@ class RajaOngkir extends AbstractShipping
      */
     public function isAvailable()
     {
-        return (bool) core()->getConfigData('beres_storefront.shipping.active')
-            && (string) core()->getConfigData('beres_storefront.shipping.api_key') !== '';
+        $service = app(RajaOngkirService::class);
+
+        return $service->isActive() && $service->isConfigured();
     }
 
     /**
@@ -129,19 +130,15 @@ class RajaOngkir extends AbstractShipping
         }
 
         try {
-            // Fetch province → cities. Uses the service's built-in cache.
-            $provinces = $service->getProvinces();
-
-            foreach ($provinces as $province) {
-                $cities = $service->getCities((int) ($province['province_id'] ?? 0));
-                foreach ($cities as $city) {
-                    $candidate = strtolower(($city['type'] ?? '') . ' ' . ($city['city_name'] ?? ''));
-                    if (str_contains($candidate, strtolower($cityName))
-                        || str_contains(strtolower($city['city_name'] ?? ''), strtolower($cityName))) {
-                        return (int) ($city['city_id'] ?? 0);
-                    }
+            $results = $service->searchAddress($cityName);
+            foreach ($results as $result) {
+                $candidate = strtolower((string) ($result['city_name'] ?? $result['label'] ?? ''));
+                if (str_contains($candidate, strtolower($cityName))) {
+                    return (int) ($result['id'] ?? $result['city_id'] ?? 0);
                 }
             }
+
+            return (int) ($results[0]['id'] ?? $results[0]['city_id'] ?? 0);
         } catch (\Throwable $e) {
             Log::warning('RajaOngkir city lookup failed: ' . $e->getMessage());
         }

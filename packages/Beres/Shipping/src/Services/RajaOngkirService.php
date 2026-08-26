@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 
 class RajaOngkirService
 {
+    protected const MODERN_BASE_URL = 'https://rajaongkir.komerce.id/api/v1';
+
     protected string $apiKey;
 
     protected string $baseUrl;
@@ -25,12 +27,9 @@ class RajaOngkirService
      */
     protected function readApiKey(): string
     {
-        try {
-            $siteKey = (string) SiteSetting::getValue('rajaongkir_api_key');
-            if ($siteKey !== '') {
-                return $siteKey;
-            }
-        } catch (\Throwable $e) {
+        $siteKey = $this->readSiteSetting('rajaongkir_api_key');
+        if ($siteKey !== null && $siteKey !== '') {
+            return $siteKey;
         }
 
         $adminKey = (string) core()->getConfigData('beres_storefront.shipping.api_key');
@@ -42,29 +41,18 @@ class RajaOngkirService
     }
 
     /**
-     * Build base URL from api_type (starter / basic / pro). Pro uses a different host.
+     * Use the current RajaOngkir/Komerce API V2 endpoint.
      */
     protected function readBaseUrl(): string
     {
-        $type = 'starter';
-        try {
-            $siteType = (string) SiteSetting::getValue('rajaongkir_api_type');
-            if ($siteType !== '') {
-                $type = $siteType;
-            } else {
-                $adminType = (string) core()->getConfigData('beres_storefront.shipping.api_type');
-                if ($adminType !== '') {
-                    $type = $adminType;
-                }
-            }
-        } catch (\Throwable $e) {
+        $configuredUrl = rtrim((string) config('rajaongkir.base_url', self::MODERN_BASE_URL), '/');
+
+        // Existing deployments may still contain the retired V1 URL in .env.
+        if (str_contains($configuredUrl, 'api.rajaongkir.com')) {
+            return self::MODERN_BASE_URL;
         }
 
-        return match ($type) {
-            'pro' => 'https://pro.rajaongkir.com/api',
-            'basic' => 'https://api.rajaongkir.com/basic',
-            default => (string) config('rajaongkir.base_url', 'https://api.rajaongkir.com/starter'),
-        };
+        return $configuredUrl;
     }
 
     /**
@@ -72,15 +60,20 @@ class RajaOngkirService
      */
     public function isActive(): bool
     {
-        try {
-            $siteActive = SiteSetting::getValue('rajaongkir_is_active');
-            if ($siteActive !== null && $siteActive !== '') {
-                return (bool) $siteActive;
-            }
-        } catch (\Throwable $e) {
+        $siteActive = $this->readSiteSetting('rajaongkir_is_active');
+        if ($siteActive !== null && $siteActive !== '') {
+            return in_array(strtolower($siteActive), ['1', 'true', 'yes', 'on'], true);
         }
 
-        return (bool) core()->getConfigData('beres_storefront.shipping.active', true);
+        return filter_var(core()->getConfigData('beres_storefront.shipping.active', false), FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Check that a usable API key and endpoint are available.
+     */
+    public function isConfigured(): bool
+    {
+        return $this->apiKey !== '' && $this->baseUrl !== '';
     }
 
     /**
@@ -88,20 +81,17 @@ class RajaOngkirService
      */
     public function getOriginCity(): int
     {
-        try {
-            $siteCity = (string) SiteSetting::getValue('rajaongkir_origin_city');
-            if ($siteCity !== '') {
-                return (int) $siteCity;
-            }
-        } catch (\Throwable $e) {
+        $siteCity = $this->readSiteSetting('rajaongkir_origin_city');
+        if ($siteCity !== null && $siteCity !== '') {
+            return max(0, (int) $siteCity);
         }
 
         $admin = (string) core()->getConfigData('beres_storefront.shipping.origin_city');
         if ($admin !== '') {
-            return (int) $admin;
+            return max(0, (int) $admin);
         }
 
-        return (int) config('rajaongkir.origin_city', 152);
+        return max(0, (int) config('rajaongkir.origin_city', 152));
     }
 
     /**
@@ -109,12 +99,19 @@ class RajaOngkirService
      */
     public function getEnabledCouriers(): array
     {
-        $raw = (string) core()->getConfigData('beres_storefront.shipping.couriers');
+        $raw = $this->readSiteSetting('rajaongkir_couriers');
+        $raw = $raw ?? (string) core()->getConfigData('beres_storefront.shipping.couriers');
+
         if ($raw === '') {
-            return (array) config('rajaongkir.couriers', ['jne', 'jnt', 'sicepat']);
+            $raw = implode(',', (array) config('rajaongkir.couriers', ['jne', 'jnt', 'sicepat']));
         }
 
-        return array_values(array_filter(array_map('trim', explode(',', $raw))));
+        $aliases = ['pos' => 'pov'];
+
+        return array_values(array_unique(array_filter(array_map(
+            fn ($courier) => $aliases[strtolower(trim($courier))] ?? strtolower(trim($courier)),
+            explode(',', $raw)
+        ))));
     }
 
     /**
@@ -122,32 +119,7 @@ class RajaOngkirService
      */
     public function getProvinces(): array
     {
-        $cacheKey = 'provinces';
-
-        if ($this->cacheRepository->has('province', $cacheKey)) {
-            return $this->cacheRepository->get('province', $cacheKey);
-        }
-
-        try {
-            $response = Http::withHeaders([
-                'key' => $this->apiKey,
-            ])->get("{$this->baseUrl}/province");
-
-            $data = $response->json();
-
-            if ($data['rajaongkir']['status']['code'] == 200) {
-                $provinces = $data['rajaongkir']['results'];
-                $this->cacheRepository->set('province', $cacheKey, $provinces);
-
-                return $provinces;
-            }
-
-            return [];
-        } catch (\Exception $e) {
-            Log::error('RajaOngkir Province Error: '.$e->getMessage());
-
-            return [];
-        }
+        return [];
     }
 
     /**
@@ -155,34 +127,7 @@ class RajaOngkirService
      */
     public function getCities(int $provinceId): array
     {
-        $cacheKey = "cities_{$provinceId}";
-
-        if ($this->cacheRepository->has('city', $cacheKey)) {
-            return $this->cacheRepository->get('city', $cacheKey);
-        }
-
-        try {
-            $response = Http::withHeaders([
-                'key' => $this->apiKey,
-            ])->get("{$this->baseUrl}/city", [
-                'province' => $provinceId,
-            ]);
-
-            $data = $response->json();
-
-            if ($data['rajaongkir']['status']['code'] == 200) {
-                $cities = $data['rajaongkir']['results'];
-                $this->cacheRepository->set('city', $cacheKey, $cities);
-
-                return $cities;
-            }
-
-            return [];
-        } catch (\Exception $e) {
-            Log::error('RajaOngkir City Error: '.$e->getMessage());
-
-            return [];
-        }
+        return [];
     }
 
     /**
@@ -190,34 +135,7 @@ class RajaOngkirService
      */
     public function getDistricts(int $cityId): array
     {
-        $cacheKey = "districts_{$cityId}";
-
-        if ($this->cacheRepository->has('district', $cacheKey)) {
-            return $this->cacheRepository->get('district', $cacheKey);
-        }
-
-        try {
-            $response = Http::withHeaders([
-                'key' => $this->apiKey,
-            ])->get("{$this->baseUrl}/subdistrict", [
-                'city' => $cityId,
-            ]);
-
-            $data = $response->json();
-
-            if ($data['rajaongkir']['status']['code'] == 200) {
-                $districts = $data['rajaongkir']['results'];
-                $this->cacheRepository->set('district', $cacheKey, $districts);
-
-                return $districts;
-            }
-
-            return [];
-        } catch (\Exception $e) {
-            Log::error('RajaOngkir District Error: '.$e->getMessage());
-
-            return [];
-        }
+        return [];
     }
 
     /**
@@ -229,37 +147,48 @@ class RajaOngkirService
         int $weight,
         array $couriers
     ): array {
+        if (! $this->isActive() || ! $this->isConfigured() || $origin <= 0 || $destination <= 0 || $weight <= 0) {
+            return [];
+        }
+
+        $couriers = array_values(array_unique(array_map('strtolower', $couriers)));
+        $couriers = array_values(array_intersect($couriers, $this->getEnabledCouriers()));
+        if ($couriers === []) {
+            return [];
+        }
+
+        sort($couriers);
         $cacheKey = "cost_{$origin}_{$destination}_{$weight}_".implode('_', $couriers);
 
         if ($this->cacheRepository->has('shipping_cost', $cacheKey)) {
             return $this->cacheRepository->get('shipping_cost', $cacheKey);
         }
 
-        try {
-            $response = Http::withHeaders([
-                'key' => $this->apiKey,
-            ])->post("{$this->baseUrl}/cost", [
-                'origin' => $origin,
-                'destination' => $destination,
-                'weight' => $weight,
-                'courier' => implode(',', $couriers),
-            ]);
+        $payload = $this->request('post', 'calculate/domestic-cost', [
+            'origin' => $origin,
+            'destination' => $destination,
+            'weight' => $weight,
+            'courier' => implode(',', $couriers),
+        ]);
 
-            $data = $response->json();
-
-            if ($data['rajaongkir']['status']['code'] == 200) {
-                $costs = $data['rajaongkir']['results'];
-                $this->cacheRepository->set('shipping_cost', $cacheKey, $costs, 60); // Cache for 1 hour
-
-                return $costs;
-            }
-
-            return [];
-        } catch (\Exception $e) {
-            Log::error('RajaOngkir Shipping Cost Error: '.$e->getMessage());
-
-            return [];
+        $costs = $this->normaliseCostResults($payload);
+        if ($costs !== []) {
+            $this->cacheRepository->set('shipping_cost', $cacheKey, $costs, 60);
         }
+
+        return $costs;
+    }
+
+    /**
+     * Backward-compatible plural alias used by older checkout controllers.
+     */
+    public function calculateShippingCosts(
+        int $origin,
+        int $destination,
+        int $weight,
+        array $couriers
+    ): array {
+        return $this->calculateShippingCost($origin, $destination, $weight, $couriers);
     }
 
     /**
@@ -267,24 +196,125 @@ class RajaOngkirService
      */
     public function searchAddress(string $query): array
     {
-        try {
-            $response = Http::withHeaders([
-                'key' => $this->apiKey,
-            ])->get("{$this->baseUrl}/destination/search", [
-                'query' => $query,
-            ]);
-
-            $data = $response->json();
-
-            if ($data['rajaongkir']['status']['code'] == 200) {
-                return $data['rajaongkir']['results'];
-            }
-
-            return [];
-        } catch (\Exception $e) {
-            Log::error('RajaOngkir Address Search Error: '.$e->getMessage());
-
+        $query = trim($query);
+        if (! $this->isConfigured() || ! $this->isActive() || mb_strlen($query) < 3) {
             return [];
         }
+
+        $cacheKey = sha1(mb_strtolower($query));
+        if ($this->cacheRepository->has('destination', $cacheKey)) {
+            return $this->cacheRepository->get('destination', $cacheKey) ?? [];
+        }
+
+        $payload = $this->request('get', 'destination/domestic-destination', [
+            'search' => $query,
+            'limit' => 10,
+            'offset' => 0,
+        ]);
+        $results = is_array($payload['data'] ?? null) ? $payload['data'] : [];
+        if ($results !== []) {
+            $this->cacheRepository->set('destination', $cacheKey, $results, 1440);
+        }
+
+        return $results;
+    }
+
+    protected function readSiteSetting(string $key): ?string
+    {
+        try {
+            return SiteSetting::getValue($key);
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    protected function request(string $method, string $path, array $parameters = []): ?array
+    {
+        if (! $this->isConfigured()) {
+            return null;
+        }
+
+        try {
+            $request = Http::acceptJson()
+                ->withHeaders(['key' => $this->apiKey])
+                ->connectTimeout(5)
+                ->timeout(15);
+
+            $response = $method === 'get'
+                ? $request->get("{$this->baseUrl}/{$path}", $parameters)
+                : $request->asForm()->post("{$this->baseUrl}/{$path}", $parameters);
+
+            $payload = $response->json();
+            $code = (int) data_get($payload, 'meta.code', data_get($payload, 'rajaongkir.status.code', 0));
+
+            if (! $response->successful() || $code !== 200) {
+                Log::warning('RajaOngkir API request failed.', [
+                    'path' => $path,
+                    'http_status' => $response->status(),
+                    'api_code' => $code,
+                    'message' => data_get($payload, 'meta.message', data_get($payload, 'rajaongkir.status.description')),
+                ]);
+
+                return null;
+            }
+
+            return is_array($payload) ? $payload : null;
+        } catch (\Throwable $e) {
+            Log::warning('RajaOngkir API request error.', [
+                'path' => $path,
+                'exception' => $e,
+            ]);
+
+            return null;
+        }
+    }
+
+    protected function normaliseCostResults(?array $payload): array
+    {
+        if (! $payload) {
+            return [];
+        }
+
+        $legacyResults = data_get($payload, 'rajaongkir.results');
+        if (is_array($legacyResults)) {
+            return $legacyResults;
+        }
+
+        $grouped = [];
+        foreach ((array) ($payload['data'] ?? []) as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            $code = strtolower((string) ($item['code'] ?? ''));
+            if ($code === '') {
+                continue;
+            }
+
+            $cost = is_array($item['cost'] ?? null)
+                ? (float) ($item['cost']['value'] ?? $item['cost'][0]['value'] ?? 0)
+                : (float) ($item['cost'] ?? 0);
+
+            if ($cost <= 0) {
+                continue;
+            }
+
+            $grouped[$code] ??= [
+                'code' => $code,
+                'name' => $item['name'] ?? strtoupper($code),
+                'costs' => [],
+            ];
+            $grouped[$code]['costs'][] = [
+                'service' => (string) ($item['service'] ?? ''),
+                'description' => (string) ($item['description'] ?? ''),
+                'cost' => [[
+                    'value' => $cost,
+                    'etd' => (string) ($item['etd'] ?? ''),
+                    'note' => (string) ($item['note'] ?? ''),
+                ]],
+            ];
+        }
+
+        return array_values($grouped);
     }
 }

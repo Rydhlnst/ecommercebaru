@@ -418,6 +418,7 @@ class AdminSettingController extends Controller
                     'rajaongkir_origin_city',
                     'rajaongkir_api_type',
                     'rajaongkir_is_active',
+                    'rajaongkir_couriers',
                 ]);
             }
         } catch (QueryException $e) {
@@ -439,11 +440,14 @@ class AdminSettingController extends Controller
             'rajaongkir_origin_city' => 'nullable|string',
             'rajaongkir_api_type' => 'nullable|string|in:starter,basic,pro',
             'rajaongkir_is_active' => 'nullable|in:0,1',
+            'rajaongkir_couriers' => ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(?:\s*,\s*[a-z0-9]+)*$/i'],
         ]);
 
         foreach ($validated as $key => $value) {
             SiteSetting::setValue($key, $value);
         }
+
+        ResponseCache::clear();
 
         return redirect()->route('admin.settings.integrations')->with('success', 'Pengaturan Pembayaran & Ongkir berhasil disimpan.');
     }

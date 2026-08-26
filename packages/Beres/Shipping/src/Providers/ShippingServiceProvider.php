@@ -60,6 +60,11 @@ class ShippingServiceProvider extends ServiceProvider
             'carriers'
         );
 
+        $this->mergeConfigFrom(
+            __DIR__ . '/../Config/rajaongkir.php',
+            'rajaongkir'
+        );
+
         $this->publishes([
             __DIR__ . '/../Config/rajaongkir.php' => config_path('rajaongkir.php'),
         ], 'beres-shipping-config');

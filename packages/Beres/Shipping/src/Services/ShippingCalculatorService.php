@@ -18,13 +18,11 @@ class ShippingCalculatorService
         int $originCityId,
         int $destinationCityId,
         int $weightGrams,
-        array $couriers = null
+        ?array $couriers = null
     ): array {
-        // Get default couriers if not specified
-        $couriers = $couriers ?? config('rajaongkir.couriers');
+        $couriers = $couriers ?? $this->rajaOngkirService->getEnabledCouriers();
 
-        // Calculate shipping costs
-        $results = $this->rajaOngkirService->calculateShippingCosts(
+        $results = $this->rajaOngkirService->calculateShippingCost(
             $originCityId,
             $destinationCityId,
             $weightGrams,
@@ -46,14 +44,24 @@ class ShippingCalculatorService
      */
     public function getAvailableCouriers(): array
     {
-        return [
+        if (! $this->rajaOngkirService->isActive() || ! $this->rajaOngkirService->isConfigured()) {
+            return [];
+        }
+
+        $couriers = [
             'jne'      => 'JNE',
             'tiki'     => 'TIKI',
-            'pos'      => 'POS Indonesia',
+            'pov'      => 'POS Indonesia',
             'jnt'      => 'J&T Express',
             'sicepat'  => 'SiCepat',
             'anteraja' => 'AnterAja',
+            'ninja'    => 'Ninja Xpress',
+            'ide'      => 'ID Express',
+            'sap'      => 'SAP Express',
+            'lion'     => 'Lion Parcel',
         ];
+
+        return array_intersect_key($couriers, array_flip($this->rajaOngkirService->getEnabledCouriers()));
     }
 
     /**
