@@ -1,25 +1,140 @@
 <x-shop::layouts>
     <x-slot:title>Checkout</x-slot>
 
-    <style>
-        .object-cover { object-fit: contain !important; padding: 0.25rem; }
-        .checkout-main-grid { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 2rem; align-items: start; }
-        .checkout-form { display: flex; flex-direction: column; gap: 1.5rem; min-width: 0; }
-        .checkout-summary { position: sticky; top: 1.5rem; align-self: start; min-width: 0; }
-        .checkout-summary-card { overflow: hidden; border: 1px solid #e6dfda; border-radius: 1rem; background: #f1efed; padding: 1.75rem; }
-        .checkout-summary-items { display: flex; flex-direction: column; gap: 1rem; }
-        .checkout-summary-item { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 0.75rem; align-items: center; min-width: 0; }
-        .checkout-summary-image { position: relative; width: 64px; height: 64px; overflow: hidden; flex: 0 0 64px; border: 1px solid #fff; border-radius: 0.75rem; background: #fff; }
-        .checkout-summary-image img { display: block; width: 100%; height: 100%; object-fit: contain; }
-        .checkout-summary-info { min-width: 0; }
-        .checkout-summary-name { overflow: hidden; margin: 0; color: #171514; font-size: 0.875rem; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
-        .checkout-summary-price { margin: 0; color: #171514; font-size: 0.875rem; font-weight: 500; white-space: nowrap; }
-        .checkout-summary-row { display: flex; justify-content: space-between; gap: 1rem; }
-        @media (max-width: 1023px) { .checkout-main-grid { grid-template-columns: minmax(0, 1fr); } .checkout-summary { position: static; } }
-        @media (max-width: 480px) { .checkout-summary-card { padding: 1.25rem; } .checkout-summary-item { grid-template-columns: 56px minmax(0, 1fr); } .checkout-summary-image { width: 56px; height: 56px; flex-basis: 56px; } .checkout-summary-price { grid-column: 2; } }
-    </style>
+    @push('styles')
+        <style>
+            .checkout-page {
+                overflow-x: hidden;
+            }
 
-    <div class="min-h-screen bg-[#faf9f7] py-8 sm:py-12">
+            .checkout-page .checkout-main-grid {
+                display: grid !important;
+                grid-template-columns: minmax(0, 1fr) minmax(300px, 380px) !important;
+                gap: 2rem;
+                align-items: start;
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .checkout-page .checkout-form {
+                display: flex;
+                flex-direction: column;
+                gap: 1.5rem;
+                min-width: 0;
+            }
+
+            .checkout-page .checkout-summary {
+                position: sticky;
+                top: 1.5rem;
+                align-self: start;
+                min-width: 0;
+                max-width: 380px;
+            }
+
+            .checkout-page .checkout-summary-card {
+                overflow: hidden;
+                border: 1px solid #e6dfda;
+                border-radius: 1rem;
+                background: #f1efed;
+                padding: 1.75rem;
+            }
+
+            .checkout-page .checkout-summary-items {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .checkout-page .checkout-summary-item {
+                display: grid;
+                grid-template-columns: 64px minmax(0, 1fr) auto;
+                gap: 0.75rem;
+                align-items: center;
+                min-width: 0;
+            }
+
+            .checkout-page .checkout-summary-image {
+                position: relative;
+                width: 64px !important;
+                min-width: 64px;
+                height: 64px !important;
+                overflow: hidden;
+                border: 1px solid #fff;
+                border-radius: 0.75rem;
+                background: #fff;
+            }
+
+            .checkout-page .checkout-summary-image img {
+                display: block;
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 100% !important;
+                max-height: 100% !important;
+                object-fit: contain !important;
+            }
+
+            .checkout-page .checkout-summary-info {
+                min-width: 0;
+            }
+
+            .checkout-page .checkout-summary-name {
+                overflow: hidden;
+                margin: 0;
+                color: #171514;
+                font-size: 0.875rem;
+                font-weight: 500;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+
+            .checkout-page .checkout-summary-price {
+                margin: 0;
+                color: #171514;
+                font-size: 0.875rem;
+                font-weight: 500;
+                white-space: nowrap;
+            }
+
+            .checkout-page .checkout-summary-row {
+                display: flex;
+                justify-content: space-between;
+                gap: 1rem;
+            }
+
+            @media (max-width: 1023px) {
+                .checkout-page .checkout-main-grid {
+                    grid-template-columns: minmax(0, 1fr) !important;
+                }
+
+                .checkout-page .checkout-summary {
+                    position: static;
+                    max-width: none;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .checkout-page .checkout-summary-card {
+                    padding: 1.25rem;
+                }
+
+                .checkout-page .checkout-summary-item {
+                    grid-template-columns: 56px minmax(0, 1fr);
+                }
+
+                .checkout-page .checkout-summary-image {
+                    width: 56px !important;
+                    min-width: 56px;
+                    height: 56px !important;
+                }
+
+                .checkout-page .checkout-summary-price {
+                    grid-column: 2;
+                }
+            }
+        </style>
+    @endpush
+
+    <div class="checkout-page min-h-screen bg-[#faf9f7] py-8 sm:py-12">
         <div class="mx-auto w-full px-4 sm:px-6 md:px-10 lg:px-14" style="max-width:1600px;">
             <div class="mb-8 flex items-end justify-between border-b border-[#e6dfda] pb-5">
                 <div><p class="text-xs font-semibold uppercase tracking-[0.22em] text-[#8d4a3d]">Beres Storefront</p><h1 class="mt-2 text-3xl font-semibold tracking-tight text-[#171514] sm:text-4xl">Checkout</h1></div>
