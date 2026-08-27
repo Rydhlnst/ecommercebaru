@@ -241,11 +241,12 @@
             </div>
         </div>
     </div>
-    @push('styles')<style>.checkout-section{border:1px solid #e6dfda;border-radius:1rem;background:#fff;padding:1.25rem;box-shadow:0 8px 30px rgba(60,35,20,.04)}.checkout-heading{font-size:1.25rem;font-weight:600;color:#171514}.checkout-input{border:1px solid #d9d1cc;border-radius:.75rem;background:#fff;padding:.8rem 1rem;color:#171514;outline:0}.checkout-input:focus{border-color:#8d4a3d;box-shadow:0 0 0 3px rgba(141,74,61,.12)}@media(min-width:640px){.checkout-section{padding:1.75rem}}</style>@endpush
+    @push('styles')<style>.checkout-section{border:1px solid #e6dfda;border-radius:1rem;background:#fff;padding:1.25rem;box-shadow:0 8px 30px rgba(60,35,20,.04)}.checkout-heading{font-size:1.25rem;font-weight:600;color:#171514}.checkout-input{border:1px solid #d9d1cc;border-radius:.75rem;background:#fff;padding:.8rem 1rem;color:#171514;outline:0}.checkout-input:focus{border-color:#8d4a3d;box-shadow:0 0 0 3px rgba(141,74,61,.12)}#city-search-button{background-color:#8d4a3d;color:#fff}#city-search-button:hover{background-color:#71392f}@media(min-width:640px){.checkout-section{padding:1.75rem}}</style>@endpush
     @push('scripts')
         <script>
             (() => {
-                const form = document.getElementById('checkout-form');
+                const initializeCheckout = () => {
+                    const form = document.getElementById('checkout-form');
                 const city = document.getElementById('city-name');
                 const cityId = document.getElementById('city-id');
                 const cityResults = document.getElementById('city-results');
@@ -276,9 +277,9 @@
                 let activeCityIndex = -1;
                 let selectedCityLabel = '';
 
-                if (!form || !city || !cityId || !cityResults || !citySearchButton || !courier || !options || !method || !cost) {
-                    return;
-                }
+                    if (!form || !city || !cityId || !cityResults || !citySearchButton || !courier || !options || !method || !cost) {
+                        return;
+                    }
 
                 city.setAttribute('role', 'combobox');
                 city.setAttribute('aria-autocomplete', 'list');
@@ -561,7 +562,7 @@
                 city.addEventListener('blur', () => setTimeout(hideCityResults, 150));
                 courier.addEventListener('change', calculateShipping);
 
-                form.addEventListener('submit', async (event) => {
+                    form.addEventListener('submit', async (event) => {
                     event.preventDefault();
                     errorBox.classList.add('hidden');
                     const button = document.getElementById('complete-order');
@@ -608,7 +609,16 @@
                         button.disabled = false;
                         button.textContent = submitLabel;
                     }
-                });
+                    });
+                };
+
+                const runAfterStorefrontMount = () => setTimeout(initializeCheckout, 0);
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', runAfterStorefrontMount, { once: true });
+                } else {
+                    runAfterStorefrontMount();
+                }
             })();
         </script>
     @endpush
