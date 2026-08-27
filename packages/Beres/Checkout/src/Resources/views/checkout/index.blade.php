@@ -207,11 +207,14 @@
                             <div class="sm:col-span-2">
                                 <label class="block text-sm font-medium text-[#514944]" for="city-name">Delivery location</label>
                                 <div class="relative mt-1">
-                                    <input id="city-name" type="text" name="shipping_address[city]" placeholder="Search city, district, or postal code" autocomplete="off" class="checkout-input w-full" required />
+                                    <div class="flex flex-col gap-2 sm:flex-row">
+                                        <input id="city-name" type="text" name="shipping_address[city]" placeholder="Search city, district, or postal code" autocomplete="off" class="checkout-input min-w-0 flex-1" required />
+                                        <button id="city-search-button" type="button" class="rounded-xl bg-[#8d4a3d] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#71392f] focus:outline-none focus:ring-2 focus:ring-[#8d4a3d] focus:ring-offset-2">Find location</button>
+                                    </div>
                                     <input id="city-id" type="hidden" name="shipping_address[city_id]" />
                                     <div id="city-results" class="absolute z-20 mt-1 hidden max-h-60 w-full overflow-auto rounded-xl border border-[#e6dfda] bg-white shadow-lg" aria-label="Delivery location results"></div>
                                 </div>
-                                <p class="mt-2 text-xs text-[#746b66]">Type at least 3 characters, then select the matching result.</p>
+                                <p class="mt-2 text-xs text-[#746b66]">Type at least 3 characters, click <strong>Find location</strong>, then select the matching result.</p>
                                 <p id="city-selection-status" class="mt-2 hidden text-xs text-[#31572c]" role="status" aria-live="polite"></p>
                             </div>
                             <label class="block text-sm font-medium text-[#514944]" for="delivery-state">Province / state<input id="delivery-state" type="text" name="shipping_address[state]" class="checkout-input mt-1 w-full" required /></label>
@@ -246,6 +249,7 @@
                 const city = document.getElementById('city-name');
                 const cityId = document.getElementById('city-id');
                 const cityResults = document.getElementById('city-results');
+                const citySearchButton = document.getElementById('city-search-button');
                 const citySelectionStatus = document.getElementById('city-selection-status');
                 const state = document.querySelector('[name="shipping_address[state]"]');
                 const postcode = document.querySelector('[name="shipping_address[postcode]"]');
@@ -272,7 +276,7 @@
                 let activeCityIndex = -1;
                 let selectedCityLabel = '';
 
-                if (!form || !city || !cityId || !cityResults || !courier || !options || !method || !cost) {
+                if (!form || !city || !cityId || !cityResults || !citySearchButton || !courier || !options || !method || !cost) {
                     return;
                 }
 
@@ -536,6 +540,10 @@
                     }
                 });
                 city.addEventListener('change', searchCities);
+                citySearchButton.addEventListener('click', () => {
+                    clearTimeout(searchTimer);
+                    searchCities();
+                });
                 city.addEventListener('keydown', (event) => {
                     if (event.key === 'ArrowDown' && cityItems.length) {
                         event.preventDefault();
