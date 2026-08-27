@@ -106,7 +106,7 @@ class RajaOngkirService
             $raw = implode(',', (array) config('rajaongkir.couriers', ['jne', 'jnt', 'sicepat']));
         }
 
-        $aliases = ['pos' => 'pov'];
+        $aliases = ['pov' => 'pos'];
 
         return array_values(array_unique(array_filter(array_map(
             fn ($courier) => $aliases[strtolower(trim($courier))] ?? strtolower(trim($courier)),
@@ -168,7 +168,8 @@ class RajaOngkirService
             'origin' => $origin,
             'destination' => $destination,
             'weight' => $weight,
-            'courier' => implode(',', $couriers),
+            'courier' => implode(':', $couriers),
+            'price' => 'lowest',
         ]);
 
         $costs = $this->normaliseCostResults($payload);

@@ -51,7 +51,7 @@ class ShippingCalculatorService
         $couriers = [
             'jne'      => 'JNE',
             'tiki'     => 'TIKI',
-            'pov'      => 'POS Indonesia',
+            'pos'      => 'POS Indonesia',
             'jnt'      => 'J&T Express',
             'sicepat'  => 'SiCepat',
             'anteraja' => 'AnterAja',

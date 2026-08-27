@@ -91,7 +91,10 @@ class CheckoutController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $costs,
+                'data' => array_map(
+                    static fn ($cost) => $cost->toArray(),
+                    $costs
+                ),
             ]);
         } catch (\Exception $e) {
             Log::warning('Shipping calculation failed', ['exception' => $e]);

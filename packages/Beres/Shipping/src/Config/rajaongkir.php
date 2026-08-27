@@ -38,7 +38,7 @@ return [
     'couriers' => [
         'jne',
         'tiki',
-        'pov',
+        'pos',
         'jnt',
         'sicepat',
         'anteraja',

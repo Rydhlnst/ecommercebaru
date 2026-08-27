@@ -1,6 +1,10 @@
 <x-shop::layouts>
     <x-slot:title>Checkout</x-slot>
 
+    @push('meta')
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+    @endpush
+
     @push('styles')
         <style>
             .checkout-page {
@@ -201,10 +205,278 @@
     @push('styles')<style>.checkout-section{border:1px solid #e6dfda;border-radius:1rem;background:#fff;padding:1.25rem;box-shadow:0 8px 30px rgba(60,35,20,.04)}.checkout-heading{font-size:1.25rem;font-weight:600;color:#171514}.checkout-input{border:1px solid #d9d1cc;border-radius:.75rem;background:#fff;padding:.8rem 1rem;color:#171514;outline:0}.checkout-input:focus{border-color:#8d4a3d;box-shadow:0 0 0 3px rgba(141,74,61,.12)}@media(min-width:640px){.checkout-section{padding:1.75rem}}</style>@endpush
     @push('scripts')
         <script>
-            const form=document.getElementById('checkout-form'),city=document.getElementById('city-name'),cityId=document.getElementById('city-id'),cityResults=document.getElementById('city-results'),courier=document.getElementById('courier-select'),options=document.getElementById('shipping-options'),method=document.getElementById('shipping-method'),cost=document.getElementById('shipping-cost'),errorBox=document.getElementById('checkout-error'),subtotal={{ (float)($cart['subtotal']??0) }},weight={{ $cartWeight }};let searchTimer;
-            city?.addEventListener('input',()=>{clearTimeout(searchTimer);cityId.value='';if(city.value.length<3)return cityResults.classList.add('hidden');searchTimer=setTimeout(()=>fetch('{{ route('api.shipping.search') }}?query='+encodeURIComponent(city.value)).then(r=>r.json()).then(data=>{cityResults.innerHTML='';(data.data||[]).slice(0,8).forEach(item=>{const b=document.createElement('button');b.type='button';b.className='block w-full px-4 py-2 text-left text-sm hover:bg-[#fbf5f2]';b.textContent=item.label||item.name||item.city_name;b.onclick=()=>{city.value=b.textContent;cityId.value=item.id||item.city_id;cityResults.classList.add('hidden');courier.dispatchEvent(new Event('change'))};cityResults.appendChild(b)});cityResults.classList.toggle('hidden',!cityResults.children.length)}).catch(()=>{}),250)});
-            courier?.addEventListener('change',()=>{if(!courier.value||!cityId.value)return;options.classList.remove('hidden');options.innerHTML='<p class="text-sm text-[#746b66]">Loading shipping services…</p>';fetch('{{ route('shop.checkout.calculate_shipping') }}',{method:'POST',credentials:'same-origin',headers:{'Accept':'application/json','X-CSRF-TOKEN':document.querySelector('meta[name=csrf-token]')?.content||form?.querySelector('input[name=_token]')?.value,'Content-Type':'application/json'},body:JSON.stringify({courier:courier.value,city_id:cityId.value,weight})}).then(r=>r.json()).then(data=>{options.innerHTML='';(data.data||[]).forEach(group=>(group.services||group.costs||[]).forEach(item=>{const label=document.createElement('label');label.className='flex cursor-pointer items-center gap-3 rounded-xl border border-[#e6dfda] p-4 hover:border-[#8d4a3d]';const value=Number(item.cost?.[0]?.value??item.cost??0);label.innerHTML='<input type="radio" name="shipping_service" value="'+courier.value+'|'+item.service+'" data-cost="'+value+'" class="accent-[#8d4a3d]" required><span class="flex-1"><strong class="block">'+item.service+'</strong><small class="text-[#746b66]">'+(item.description||'')+'</small></span><strong>Rp '+value.toLocaleString('id-ID')+'</strong>';label.querySelector('input').onchange=()=>{method.value=label.querySelector('input').value;cost.value=value;document.getElementById('shipping-cost-display').textContent='Rp '+value.toLocaleString('id-ID');document.getElementById('grand-total').textContent='Rp '+(subtotal+value).toLocaleString('id-ID')};options.appendChild(label)}));if(!options.children.length)options.innerHTML='<p class="text-sm text-red-700">No shipping service is available for this destination.</p>'}).catch(()=>options.innerHTML='<p class="text-sm text-red-700">Shipping calculation failed. Please try again.</p>')});
-            form?.addEventListener('submit',async e=>{e.preventDefault();errorBox.classList.add('hidden');const button=document.getElementById('complete-order');button.disabled=true;button.textContent='Processing…';try{const csrf=document.querySelector('meta[name=csrf-token]')?.content||form.querySelector('input[name=_token]')?.value;if(!csrf)throw Error('Checkout session expired. Please refresh and try again.');const json=async r=>{const d=await r.json().catch(()=>({}));if(!r.ok||!d.success)throw Error(d.message||'Unable to complete checkout.');return d},payload=new URLSearchParams(new FormData(form)),session=await fetch('{{ route('shop.checkout.session.store') }}',{method:'POST',credentials:'same-origin',headers:{'Accept':'application/json','X-CSRF-TOKEN':csrf,'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'},body:payload}).then(json),order=await fetch('{{ route('shop.checkout.place_order') }}',{method:'POST',credentials:'same-origin',headers:{'Accept':'application/json','X-CSRF-TOKEN':csrf,'Content-Type':'application/json'},body:JSON.stringify({session_id:session.data.id})}).then(json);if(order.whatsapp_url){window.location.assign(order.whatsapp_url);return}if('{{ $paymentMode }}'==='whatsapp')throw Error('WhatsApp redirect URL was not returned. Please refresh and try again.');if(order.payment_url){window.location.assign(order.payment_url);return}window.location.assign('{{ route('shop.checkout.success') }}?order_id='+order.order_id)}catch(err){errorBox.textContent=err.message;errorBox.classList.remove('hidden');button.disabled=false;button.textContent='{{ $paymentMode === 'whatsapp' ? 'Pesan via WhatsApp' : 'Complete order' }}'}});
+            (() => {
+                const form = document.getElementById('checkout-form');
+                const city = document.getElementById('city-name');
+                const cityId = document.getElementById('city-id');
+                const cityResults = document.getElementById('city-results');
+                const courier = document.getElementById('courier-select');
+                const options = document.getElementById('shipping-options');
+                const method = document.getElementById('shipping-method');
+                const cost = document.getElementById('shipping-cost');
+                const errorBox = document.getElementById('checkout-error');
+                const subtotal = {{ (float) ($cart['subtotal'] ?? 0) }};
+                const weight = {{ $cartWeight }};
+                const csrf = document.querySelector('meta[name="csrf-token"]')?.content
+                    || form?.querySelector('input[name="_token"]')?.value
+                    || '';
+                const searchUrl = @json(route('api.shipping.search'));
+                const calculateUrl = @json(route('shop.checkout.calculate_shipping'));
+                const sessionUrl = @json(route('shop.checkout.session.store'));
+                const placeOrderUrl = @json(route('shop.checkout.place_order'));
+                const successUrl = @json(route('shop.checkout.success'));
+                const submitLabel = @json($paymentMode === 'whatsapp' ? 'Pesan via WhatsApp' : 'Complete order');
+                let searchTimer;
+                let searchController;
+                let calculateController;
+
+                if (!form || !city || !cityId || !cityResults || !courier || !options || !method || !cost) {
+                    return;
+                }
+
+                const hideCityResults = () => {
+                    cityResults.classList.add('hidden');
+                    city.setAttribute('aria-expanded', 'false');
+                };
+
+                const showCityMessage = (message, isError = false) => {
+                    cityResults.replaceChildren();
+                    const messageElement = document.createElement('p');
+                    messageElement.className = `px-4 py-3 text-sm ${isError ? 'text-red-700' : 'text-[#746b66]'}`;
+                    messageElement.textContent = message;
+                    cityResults.appendChild(messageElement);
+                    cityResults.classList.remove('hidden');
+                    city.setAttribute('aria-expanded', 'true');
+                };
+
+                const updateTotal = (shippingCost) => {
+                    document.getElementById('shipping-cost-display').textContent = `Rp ${shippingCost.toLocaleString('id-ID')}`;
+                    document.getElementById('grand-total').textContent = `Rp ${(subtotal + shippingCost).toLocaleString('id-ID')}`;
+                };
+
+                const resetShipping = () => {
+                    method.value = '';
+                    cost.value = '0';
+                    options.replaceChildren();
+                    options.classList.add('hidden');
+                    updateTotal(0);
+                };
+
+                const renderCityResults = (items) => {
+                    cityResults.replaceChildren();
+
+                    if (!items.length) {
+                        showCityMessage('No matching destination found. Try a district, subdistrict, or postal code.');
+                        return;
+                    }
+
+                    items.forEach((item) => {
+                        const button = document.createElement('button');
+                        button.type = 'button';
+                        button.role = 'option';
+                        button.className = 'block w-full px-4 py-3 text-left text-sm hover:bg-[#fbf5f2]';
+                        button.textContent = item.label || item.name || item.city_name || 'Unknown destination';
+                        button.addEventListener('click', () => {
+                            city.value = button.textContent;
+                            cityId.value = String(item.id || item.city_id || '');
+                            hideCityResults();
+                            courier.dispatchEvent(new Event('change', { bubbles: true }));
+                        });
+                        cityResults.appendChild(button);
+                    });
+
+                    cityResults.classList.remove('hidden');
+                    city.setAttribute('aria-expanded', 'true');
+                };
+
+                const searchCities = async () => {
+                    const query = city.value.trim();
+                    cityId.value = '';
+                    resetShipping();
+
+                    if (query.length < 3) {
+                        hideCityResults();
+                        return;
+                    }
+
+                    searchController?.abort();
+                    searchController = new AbortController();
+                    showCityMessage('Searching destinations…');
+
+                    try {
+                        const response = await fetch(`${searchUrl}?${new URLSearchParams({ query })}`, {
+                            credentials: 'same-origin',
+                            headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                            signal: searchController.signal,
+                        });
+                        const payload = await response.json().catch(() => ({}));
+
+                        if (!response.ok || payload.success === false) {
+                            throw new Error(payload.message || 'Destination search failed.');
+                        }
+
+                        renderCityResults(Array.isArray(payload.data) ? payload.data : []);
+                    } catch (error) {
+                        if (error.name !== 'AbortError') {
+                            showCityMessage(error.message || 'Destination search failed. Please try again.', true);
+                        }
+                    }
+                };
+
+                const renderShippingOptions = (groups) => {
+                    const services = groups.flatMap((group) => {
+                        if (Array.isArray(group.services)) return group.services;
+                        if (Array.isArray(group.costs)) return group.costs;
+                        return group.service ? [group] : [];
+                    });
+
+                    options.replaceChildren();
+
+                    if (!services.length) {
+                        showShippingMessage('No shipping service is available for this destination.', true);
+                        return;
+                    }
+
+                    services.forEach((item) => {
+                        const service = item.service || item.name || 'Shipping service';
+                        const rawCost = Array.isArray(item.cost)
+                            ? (item.cost[0]?.value ?? item.cost[0] ?? 0)
+                            : (item.cost?.value ?? item.cost ?? 0);
+                        const shippingCost = Number(rawCost);
+                        const label = document.createElement('label');
+                        const input = document.createElement('input');
+                        const content = document.createElement('span');
+                        const title = document.createElement('strong');
+                        const description = document.createElement('small');
+                        const price = document.createElement('strong');
+
+                        label.className = 'flex cursor-pointer items-center gap-3 rounded-xl border border-[#e6dfda] p-4 hover:border-[#8d4a3d]';
+                        input.type = 'radio';
+                        input.name = 'shipping_service';
+                        input.value = `${courier.value}|${service}`;
+                        input.required = true;
+                        input.className = 'accent-[#8d4a3d]';
+                        content.className = 'flex-1';
+                        title.className = 'block';
+                        title.textContent = service;
+                        description.className = 'text-[#746b66]';
+                        description.textContent = item.description || '';
+                        price.textContent = `Rp ${shippingCost.toLocaleString('id-ID')}`;
+                        content.append(title, description);
+                        label.append(input, content, price);
+                        input.addEventListener('change', () => {
+                            method.value = input.value;
+                            cost.value = String(shippingCost);
+                            updateTotal(shippingCost);
+                        });
+                        options.appendChild(label);
+                    });
+                };
+
+                const showShippingMessage = (message, isError = false) => {
+                    options.replaceChildren();
+                    const messageElement = document.createElement('p');
+                    messageElement.className = `text-sm ${isError ? 'text-red-700' : 'text-[#746b66]'}`;
+                    messageElement.textContent = message;
+                    options.appendChild(messageElement);
+                };
+
+                const calculateShipping = async () => {
+                    if (!courier.value || !cityId.value) return;
+                    options.classList.remove('hidden');
+                    showShippingMessage('Loading shipping services…');
+
+                    if (!csrf) {
+                        showShippingMessage('Checkout session expired. Please refresh and try again.', true);
+                        return;
+                    }
+
+                    calculateController?.abort();
+                    calculateController = new AbortController();
+
+                    try {
+                        const response = await fetch(calculateUrl, {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': csrf,
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: JSON.stringify({ courier: courier.value, city_id: Number(cityId.value), weight }),
+                            signal: calculateController.signal,
+                        });
+                        const payload = await response.json().catch(() => ({}));
+
+                        if (!response.ok || payload.success === false) {
+                            throw new Error(payload.message || 'Shipping calculation failed.');
+                        }
+
+                        renderShippingOptions(Array.isArray(payload.data) ? payload.data : []);
+                    } catch (error) {
+                        if (error.name !== 'AbortError') {
+                            showShippingMessage(error.message || 'Shipping calculation failed. Please try again.', true);
+                        }
+                    }
+                };
+
+                city.addEventListener('input', () => {
+                    clearTimeout(searchTimer);
+                    searchTimer = setTimeout(searchCities, 300);
+                });
+                city.addEventListener('blur', () => setTimeout(hideCityResults, 150));
+                courier.addEventListener('change', calculateShipping);
+
+                form.addEventListener('submit', async (event) => {
+                    event.preventDefault();
+                    errorBox.classList.add('hidden');
+                    const button = document.getElementById('complete-order');
+                    button.disabled = true;
+                    button.textContent = 'Processing…';
+
+                    try {
+                        if (!csrf) throw new Error('Checkout session expired. Please refresh and try again.');
+
+                        const requestJson = async (url, request) => {
+                            const response = await fetch(url, request);
+                            const payload = await response.json().catch(() => ({}));
+
+                            if (!response.ok || !payload.success) {
+                                throw new Error(payload.message || 'Unable to complete checkout.');
+                            }
+
+                            return payload;
+                        };
+                        const headers = { Accept: 'application/json', 'X-CSRF-TOKEN': csrf, 'X-Requested-With': 'XMLHttpRequest' };
+                        const payload = new URLSearchParams(new FormData(form));
+                        const session = await requestJson(sessionUrl, {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { ...headers, 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+                            body: payload,
+                        });
+                        const order = await requestJson(placeOrderUrl, {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { ...headers, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ session_id: session.data.id }),
+                        });
+
+                        if (order.whatsapp_url || order.payment_url) {
+                            window.location.assign(order.whatsapp_url || order.payment_url);
+                            return;
+                        }
+
+                        window.location.assign(`${successUrl}?order_id=${order.order_id}`);
+                    } catch (error) {
+                        errorBox.textContent = error.message || 'Unable to complete checkout.';
+                        errorBox.classList.remove('hidden');
+                        button.disabled = false;
+                        button.textContent = submitLabel;
+                    }
+                });
+            })();
         </script>
     @endpush
 </x-shop::layouts>
