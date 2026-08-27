@@ -25,37 +25,52 @@ class WhatsAppOrderService
         $lines = [
             CheckoutSettings::whatsappIntro(),
             '',
-            '*Pesanan Baru*',
-            'Nomor pesanan: '.$order->order_number,
+            '*PESANAN BARU*',
+            'Nomor pesanan: *#'.$this->cleanLine($order->order_number).'*',
+            'Tanggal: '.$this->orderDate($order),
             '',
-            '*Produk:*',
+            '*DATA PELANGGAN*',
+            'Nama: '.$this->cleanLine($order->customer_name),
+            'Telepon: '.$this->cleanLine($order->customer_phone),
+            'Email: '.$this->cleanLine($shippingAddress['email'] ?? null),
+            '',
+            '*DAFTAR PRODUK*',
         ];
 
-        foreach ($order->items as $item) {
-            $lines[] = sprintf(
-                '- %s x%s — %s (Total %s)',
-                $item->product_name,
-                $item->quantity,
-                $this->formatRupiah((float) $item->price),
-                $this->formatRupiah((float) $item->total)
-            );
+        if ($order->items->isEmpty()) {
+            $lines[] = '- Tidak ada produk';
+        } else {
+            foreach ($order->items as $index => $item) {
+                $lines[] = sprintf(
+                    '%d. %s',
+                    $index + 1,
+                    $this->cleanLine($item->product_name)
+                );
+                $lines[] = sprintf(
+                    '   %s x %s = %s',
+                    $item->quantity,
+                    $this->formatRupiah((float) $item->price),
+                    $this->formatRupiah((float) $item->total)
+                );
+            }
         }
 
         $lines[] = '';
-        $lines[] = '*Ringkasan pembayaran:*';
+        $lines[] = '*RINGKASAN PEMBAYARAN*';
         $lines[] = 'Subtotal: '.$this->formatRupiah((float) $order->subtotal);
         $lines[] = 'Ongkir: '.$this->formatRupiah((float) $order->shipping_cost);
-        $lines[] = 'Total: '.$this->formatRupiah((float) $order->total);
+        $lines[] = '*TOTAL: '.$this->formatRupiah((float) $order->total).'*';
+        $lines[] = 'Pembayaran: WhatsApp (konfirmasi manual)';
         $lines[] = '';
-        $lines[] = '*Alamat pengiriman:*';
-        $lines[] = 'Nama: '.($order->customer_name ?: '-');
-        $lines[] = 'Telepon: '.($order->customer_phone ?: '-');
-        $lines[] = 'Email: '.($shippingAddress['email'] ?? '-');
-        $lines[] = 'Alamat: '.$this->address($shippingAddress);
-        $lines[] = 'Pengiriman: '.$this->shippingMethod($order);
+        $lines[] = '*PENGIRIMAN*';
+        $lines[] = 'Kurir/layanan: '.$this->shippingMethod($order);
+        $lines[] = 'Alamat:';
+        $lines = array_merge($lines, $this->addressLines($shippingAddress));
 
         if (filled($order->notes)) {
-            $lines[] = 'Catatan: '.$order->notes;
+            $lines[] = '';
+            $lines[] = '*CATATAN*';
+            $lines[] = $this->cleanLine($order->notes);
         }
 
         $footer = CheckoutSettings::whatsappFooter();
@@ -68,23 +83,61 @@ class WhatsAppOrderService
         return 'https://wa.me/'.$number.'?text='.rawurlencode(implode("\n", $lines));
     }
 
-    private function address(array $shippingAddress): string
+    private function addressLines(array $shippingAddress): array
     {
-        return collect([
-            $shippingAddress['address1'] ?? null,
-            $shippingAddress['address2'] ?? null,
+        $lines = [];
+
+        foreach (['address1', 'address2'] as $field) {
+            if (filled($shippingAddress[$field] ?? null)) {
+                $lines[] = '  '.$this->cleanLine($shippingAddress[$field]);
+            }
+        }
+
+        $locality = collect([
             $shippingAddress['city'] ?? null,
             $shippingAddress['state'] ?? null,
+        ])->filter(fn ($part) => filled($part))
+            ->map(fn ($part) => $this->cleanLine($part))
+            ->implode(', ');
+
+        if ($locality !== '') {
+            $lines[] = '  '.$locality;
+        }
+
+        $postalCountry = collect([
             $shippingAddress['postcode'] ?? null,
             $shippingAddress['country'] ?? null,
-        ])->filter(fn ($part) => filled($part))->implode(', ') ?: '-';
+        ])->filter(fn ($part) => filled($part))
+            ->map(fn ($part) => $this->cleanLine($part))
+            ->implode(' ');
+
+        if ($postalCountry !== '') {
+            $lines[] = '  '.$postalCountry;
+        }
+
+        return $lines ?: ['  -'];
     }
 
     private function shippingMethod(AdminOrder $order): string
     {
         return collect([$order->shipping_courier, $order->shipping_service])
             ->filter(fn ($part) => filled($part))
+            ->map(fn ($part) => $this->cleanLine($part))
             ->implode(' — ') ?: '-';
+    }
+
+    private function orderDate(AdminOrder $order): string
+    {
+        return $order->created_at
+            ? $order->created_at->timezone(config('app.timezone'))->format('d/m/Y H:i')
+            : '-';
+    }
+
+    private function cleanLine(mixed $value): string
+    {
+        $value = preg_replace('/[\r\n]+/', ' ', trim((string) $value));
+
+        return $value !== '' ? $value : '-';
     }
 
     private function formatRupiah(float $amount): string
