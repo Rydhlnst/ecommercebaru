@@ -269,6 +269,7 @@
                 const sessionUrl = @json(route('shop.checkout.session.store'));
                 const placeOrderUrl = @json(route('shop.checkout.place_order'));
                 const successUrl = @json(route('shop.checkout.success'));
+                const paymentMode = @json($paymentMode);
                 const submitLabel = @json($paymentMode === 'whatsapp' ? 'Pesan via WhatsApp' : 'Complete order');
                 let searchTimer;
                 let searchController;
@@ -563,6 +564,10 @@
                 courier.addEventListener('change', calculateShipping);
 
                     form.addEventListener('submit', async (event) => {
+                    if (paymentMode === 'whatsapp') {
+                        return;
+                    }
+
                     event.preventDefault();
                     errorBox.classList.add('hidden');
                     const button = document.getElementById('complete-order');
