@@ -210,6 +210,8 @@
                 const city = document.getElementById('city-name');
                 const cityId = document.getElementById('city-id');
                 const cityResults = document.getElementById('city-results');
+                const state = document.querySelector('[name="shipping_address[state]"]');
+                const postcode = document.querySelector('[name="shipping_address[postcode]"]');
                 const courier = document.getElementById('courier-select');
                 const options = document.getElementById('shipping-options');
                 const method = document.getElementById('shipping-method');
@@ -229,14 +231,27 @@
                 let searchTimer;
                 let searchController;
                 let calculateController;
+                let cityItems = [];
+                let activeCityIndex = -1;
+                let selectedCityLabel = '';
 
                 if (!form || !city || !cityId || !cityResults || !courier || !options || !method || !cost) {
                     return;
                 }
 
+                city.setAttribute('role', 'combobox');
+                city.setAttribute('aria-autocomplete', 'list');
+                city.setAttribute('aria-controls', 'city-results');
+                city.setAttribute('aria-expanded', 'false');
+                city.setAttribute('placeholder', 'Search city, district, or postal code');
+                cityResults.setAttribute('role', 'listbox');
+
                 const hideCityResults = () => {
                     cityResults.classList.add('hidden');
                     city.setAttribute('aria-expanded', 'false');
+                    city.removeAttribute('aria-activedescendant');
+                    cityItems = [];
+                    activeCityIndex = -1;
                 };
 
                 const showCityMessage = (message, isError = false) => {
@@ -264,6 +279,8 @@
 
                 const renderCityResults = (items) => {
                     cityResults.replaceChildren();
+                    cityItems = items;
+                    activeCityIndex = -1;
 
                     if (!items.length) {
                         showCityMessage('No matching destination found. Try a district, subdistrict, or postal code.');
@@ -274,11 +291,16 @@
                         const button = document.createElement('button');
                         button.type = 'button';
                         button.role = 'option';
-                        button.className = 'block w-full px-4 py-3 text-left text-sm hover:bg-[#fbf5f2]';
+                        button.id = `city-option-${item.id}`;
+                        button.setAttribute('aria-selected', 'false');
+                        button.className = 'block w-full px-4 py-3 text-left text-sm hover:bg-[#fbf5f2] focus:bg-[#fbf5f2] focus:outline-none';
                         button.textContent = item.label || item.name || item.city_name || 'Unknown destination';
                         button.addEventListener('click', () => {
                             city.value = button.textContent;
+                            selectedCityLabel = city.value;
                             cityId.value = String(item.id || item.city_id || '');
+                            if (state && item.province_name) state.value = item.province_name;
+                            if (postcode && item.zip_code) postcode.value = item.zip_code;
                             hideCityResults();
                             courier.dispatchEvent(new Event('change', { bubbles: true }));
                         });
@@ -287,6 +309,18 @@
 
                     cityResults.classList.remove('hidden');
                     city.setAttribute('aria-expanded', 'true');
+                };
+
+                const setActiveCity = (index) => {
+                    if (!cityItems.length) return;
+
+                    activeCityIndex = (index + cityItems.length) % cityItems.length;
+                    [...cityResults.querySelectorAll('[role="option"]')].forEach((option, optionIndex) => {
+                        const active = optionIndex === activeCityIndex;
+                        option.classList.toggle('bg-[#fbf5f2]', active);
+                        option.setAttribute('aria-selected', active ? 'true' : 'false');
+                    });
+                    city.setAttribute('aria-activedescendant', `city-option-${cityItems[activeCityIndex].id}`);
                 };
 
                 const searchCities = async () => {
@@ -422,8 +456,29 @@
                 };
 
                 city.addEventListener('input', () => {
+                    if (selectedCityLabel && city.value !== selectedCityLabel) {
+                        if (state) state.value = '';
+                        if (postcode) postcode.value = '';
+                    }
+                    selectedCityLabel = '';
+                    cityId.value = '';
+                    hideCityResults();
                     clearTimeout(searchTimer);
                     searchTimer = setTimeout(searchCities, 300);
+                });
+                city.addEventListener('keydown', (event) => {
+                    if (event.key === 'ArrowDown' && cityItems.length) {
+                        event.preventDefault();
+                        setActiveCity(activeCityIndex + 1);
+                    } else if (event.key === 'ArrowUp' && cityItems.length) {
+                        event.preventDefault();
+                        setActiveCity(activeCityIndex - 1);
+                    } else if (event.key === 'Enter' && activeCityIndex >= 0) {
+                        event.preventDefault();
+                        cityResults.querySelectorAll('[role="option"]')[activeCityIndex]?.click();
+                    } else if (event.key === 'Escape') {
+                        hideCityResults();
+                    }
                 });
                 city.addEventListener('blur', () => setTimeout(hideCityResults, 150));
                 courier.addEventListener('change', calculateShipping);
