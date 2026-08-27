@@ -455,7 +455,7 @@
                     }
                 };
 
-                city.addEventListener('input', () => {
+                const scheduleCitySearch = () => {
                     if (selectedCityLabel && city.value !== selectedCityLabel) {
                         if (state) state.value = '';
                         if (postcode) postcode.value = '';
@@ -465,6 +465,13 @@
                     hideCityResults();
                     clearTimeout(searchTimer);
                     searchTimer = setTimeout(searchCities, 300);
+                };
+
+                city.addEventListener('input', scheduleCitySearch);
+                city.addEventListener('keyup', (event) => {
+                    if (!['ArrowDown', 'ArrowUp', 'Enter', 'Escape', 'Tab'].includes(event.key)) {
+                        scheduleCitySearch();
+                    }
                 });
                 city.addEventListener('keydown', (event) => {
                     if (event.key === 'ArrowDown' && cityItems.length) {
