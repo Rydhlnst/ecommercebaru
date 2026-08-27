@@ -473,6 +473,13 @@
                         scheduleCitySearch();
                     }
                 });
+                city.addEventListener('focus', () => {
+                    if (city.value.trim().length >= 3 && !cityId.value && !cityItems.length) {
+                        clearTimeout(searchTimer);
+                        searchTimer = setTimeout(searchCities, 0);
+                    }
+                });
+                city.addEventListener('change', searchCities);
                 city.addEventListener('keydown', (event) => {
                     if (event.key === 'ArrowDown' && cityItems.length) {
                         event.preventDefault();
