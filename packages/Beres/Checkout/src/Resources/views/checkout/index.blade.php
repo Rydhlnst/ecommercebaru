@@ -194,8 +194,44 @@
                 <form id="checkout-form" class="checkout-form" method="post" action="{{ $paymentMode === 'whatsapp' ? route('shop.checkout.whatsapp') : route('shop.checkout.session.store') }}">
                     @csrf
                     <section class="checkout-section"><div class="mb-5 flex items-baseline justify-between gap-4"><h2 class="checkout-heading">Contact</h2><span class="text-sm text-[#746b66]">Already have an account? <a href="{{ route('shop.customer.session.index') }}" class="text-[#8d4a3d] underline">Sign in</a></span></div><input id="checkout-email" type="email" name="shipping_address[email]" placeholder="Email address" class="checkout-input" required /><label class="mt-3 flex items-center gap-2 text-sm text-[#514944]"><input type="checkbox" name="marketing_opt_in" class="accent-[#8d4a3d]" /> Email me with news and offers</label></section>
-                    <section class="checkout-section"><h2 class="checkout-heading mb-5">Delivery</h2><div class="grid grid-cols-1 gap-3 sm:grid-cols-2"><input type="text" name="shipping_address[first_name]" placeholder="First name" class="checkout-input" required /><input type="text" name="shipping_address[last_name]" placeholder="Last name" class="checkout-input" required /><input type="text" name="shipping_address[address1]" placeholder="Address" class="checkout-input sm:col-span-2" required /><input type="text" name="shipping_address[address2]" placeholder="Apartment, suite, etc. (optional)" class="checkout-input sm:col-span-2" /><div class="relative"><input id="city-name" type="text" name="shipping_address[city]" placeholder="City" autocomplete="off" class="checkout-input w-full" required /><input id="city-id" type="hidden" name="shipping_address[city_id]" /><div id="city-results" class="absolute z-20 mt-1 hidden max-h-48 w-full overflow-auto rounded-xl border border-[#e6dfda] bg-white shadow-lg"></div></div><input type="text" name="shipping_address[state]" placeholder="Province / state" class="checkout-input" required /><input type="text" name="shipping_address[postcode]" placeholder="Postal code" class="checkout-input" required /><input type="text" name="shipping_address[phone]" placeholder="Phone" class="checkout-input" required /><input type="text" name="shipping_address[country]" value="ID" placeholder="Country" class="checkout-input" required /></div><label class="mt-4 flex items-center gap-2 text-sm text-[#514944]"><input type="checkbox" name="save_information" class="accent-[#8d4a3d]" /> Save this information for next time</label></section>
-                    <section class="checkout-section"><h2 class="checkout-heading mb-5">Shipping method</h2><select id="courier-select" class="checkout-input" {{ $paymentMode === 'midtrans' ? 'required' : '' }}><option value="">Select a courier</option>@foreach($couriers as $code => $name)<option value="{{ $code }}">{{ $name }}</option>@endforeach</select><p class="mt-3 text-sm text-[#746b66]">Choose a city and courier to see available services. WhatsApp orders may continue without a courier selection.</p><div id="shipping-options" class="mt-4 hidden space-y-2"></div><input type="hidden" name="shipping_method" id="shipping-method" {{ $paymentMode === 'midtrans' ? 'required' : '' }} /><input type="hidden" name="shipping_cost" id="shipping-cost" value="0" /></section>
+                    <section class="checkout-section">
+                        <div class="mb-6">
+                            <h2 class="checkout-heading">Delivery</h2>
+                            <p class="mt-2 text-sm text-[#746b66]">Enter your address, then choose an exact delivery location from the search results.</p>
+                        </div>
+                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            <label class="block text-sm font-medium text-[#514944]" for="delivery-first-name">First name<input id="delivery-first-name" type="text" name="shipping_address[first_name]" class="checkout-input mt-1 w-full" required /></label>
+                            <label class="block text-sm font-medium text-[#514944]" for="delivery-last-name">Last name<input id="delivery-last-name" type="text" name="shipping_address[last_name]" class="checkout-input mt-1 w-full" required /></label>
+                            <label class="block text-sm font-medium text-[#514944] sm:col-span-2" for="delivery-address">Street address<input id="delivery-address" type="text" name="shipping_address[address1]" placeholder="Example: Jl. Buah Batu No. 10" class="checkout-input mt-1 w-full" required /></label>
+                            <label class="block text-sm font-medium text-[#514944] sm:col-span-2" for="delivery-address-2">Apartment, suite, etc. <span class="font-normal text-[#746b66]">(optional)</span><input id="delivery-address-2" type="text" name="shipping_address[address2]" class="checkout-input mt-1 w-full" /></label>
+                            <div class="sm:col-span-2">
+                                <label class="block text-sm font-medium text-[#514944]" for="city-name">Delivery location</label>
+                                <div class="relative mt-1">
+                                    <input id="city-name" type="text" name="shipping_address[city]" placeholder="Search city, district, or postal code" autocomplete="off" class="checkout-input w-full" required />
+                                    <input id="city-id" type="hidden" name="shipping_address[city_id]" />
+                                    <div id="city-results" class="absolute z-20 mt-1 hidden max-h-60 w-full overflow-auto rounded-xl border border-[#e6dfda] bg-white shadow-lg" aria-label="Delivery location results"></div>
+                                </div>
+                                <p class="mt-2 text-xs text-[#746b66]">Type at least 3 characters, then select the matching result.</p>
+                                <p id="city-selection-status" class="mt-2 hidden text-xs text-[#31572c]" role="status" aria-live="polite"></p>
+                            </div>
+                            <label class="block text-sm font-medium text-[#514944]" for="delivery-state">Province / state<input id="delivery-state" type="text" name="shipping_address[state]" class="checkout-input mt-1 w-full" required /></label>
+                            <label class="block text-sm font-medium text-[#514944]" for="delivery-postcode">Postal code<input id="delivery-postcode" type="text" name="shipping_address[postcode]" class="checkout-input mt-1 w-full" required /></label>
+                            <label class="block text-sm font-medium text-[#514944]" for="delivery-phone">Phone<input id="delivery-phone" type="tel" name="shipping_address[phone]" placeholder="08xxxxxxxxxx" class="checkout-input mt-1 w-full" required /></label>
+                            <label class="block text-sm font-medium text-[#514944]" for="delivery-country">Country<input id="delivery-country" type="text" name="shipping_address[country]" value="ID" class="checkout-input mt-1 w-full" required /></label>
+                        </div>
+                        <label class="mt-5 flex items-center gap-2 text-sm text-[#514944]"><input type="checkbox" name="save_information" class="accent-[#8d4a3d]" /> Save this information for next time</label>
+                    </section>
+                    <section class="checkout-section">
+                        <div class="mb-5">
+                            <h2 class="checkout-heading">Shipping method</h2>
+                            <p class="mt-2 text-sm text-[#746b66]">Step 1: choose your location above. Step 2: choose a courier below. Step 3: select a delivery service and price.</p>
+                        </div>
+                        <label class="block text-sm font-medium text-[#514944]" for="courier-select">Courier<select id="courier-select" class="checkout-input mt-1 w-full" {{ $paymentMode === 'midtrans' ? 'required' : '' }}><option value="">Choose a courier</option>@foreach($couriers as $code => $name)<option value="{{ $code }}">{{ $name }}</option>@endforeach</select></label>
+                        <p class="mt-3 text-xs text-[#746b66]">For WhatsApp orders, courier selection is optional. You can let the admin confirm shipping manually.</p>
+                        <div id="shipping-options" class="mt-4 hidden space-y-2"></div>
+                        <input type="hidden" name="shipping_method" id="shipping-method" {{ $paymentMode === 'midtrans' ? 'required' : '' }} />
+                        <input type="hidden" name="shipping_cost" id="shipping-cost" value="0" />
+                    </section>
                     <section class="checkout-section"><h2 class="checkout-heading">Payment</h2><p class="mt-1 text-sm text-[#746b66]">All transactions are secure and encrypted.</p>@if($paymentMode === 'whatsapp')<input type="hidden" name="payment_method" value="whatsapp" />@if($whatsappConfigured)<div class="mt-5 rounded-xl border border-[#c9ddc2] bg-[#f3f8f0] p-4 text-sm text-[#31572c]"><strong class="block">Order via WhatsApp</strong><span>Your order will be saved and the complete order details will open in WhatsApp for admin confirmation.</span></div>@else<div class="mt-5 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">WhatsApp checkout is not available yet. The admin must configure the WhatsApp number in Store Settings.</div>@endif @elseif($midtransActive)<label class="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-[#8d4a3d] bg-[#fbf5f2] p-4"><input type="radio" name="payment_method" value="midtrans" class="mt-1 accent-[#8d4a3d]" required checked /><span><strong class="block text-[#171514]">Midtrans</strong><span class="text-sm text-[#746b66]">Virtual account, QRIS, e-wallets, and cards.</span></span></label>@else<div class="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">Online payment is temporarily unavailable. Please contact the store administrator.</div>@endif<h3 class="mt-7 text-base font-semibold text-[#171514]">Billing address</h3><label class="mt-3 flex items-center gap-3 rounded-t-xl border border-[#e6dfda] bg-[#fbf5f2] p-4"><input type="radio" name="billing_choice" value="same" checked class="accent-[#8d4a3d]" /> Same as shipping address</label><label class="flex items-center gap-3 rounded-b-xl border-x border-b border-[#e6dfda] p-4"><input type="radio" name="billing_choice" value="different" class="accent-[#8d4a3d]" /> Use a different billing address</label><textarea name="notes" rows="3" class="checkout-input mt-5" placeholder="Order notes (optional)"></textarea></section>
                 </form>
                 <aside class="checkout-summary"><div class="checkout-summary-card"><h2 class="mb-6 text-xl font-semibold text-[#171514]">Order summary</h2><div class="checkout-summary-items">@foreach(($cart['items'] ?? []) as $item)<div class="checkout-summary-item"><div class="checkout-summary-image">@if(!empty($item['image_url']))<img src="{{ $item['image_url'] }}" alt="{{ $item['name'] }}" width="64" height="64" loading="lazy" />@endif<span class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#171514] px-1 text-[10px] text-white">{{ $item['quantity'] }}</span></div><div class="checkout-summary-info"><p class="checkout-summary-name">{{ $item['name'] }}</p><p class="text-xs text-[#746b66]">{{ $item['weight_label'] ?? 'Standard' }}</p></div><p class="checkout-summary-price">Rp {{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 1), 0, ',', '.') }}</p></div>@endforeach</div><div class="my-6 border-t border-[#d9d1cc]"></div><div class="space-y-3 text-sm"><div class="checkout-summary-row"><span class="text-[#746b66]">Subtotal</span><span>Rp {{ number_format($cart['subtotal'] ?? 0, 0, ',', '.') }}</span></div><div class="checkout-summary-row"><span class="text-[#746b66]">Shipping</span><span id="shipping-cost-display">Rp 0</span></div></div><div class="my-5 border-t border-[#d9d1cc]"></div><div class="checkout-summary-row text-lg font-semibold"><span>Total</span><span id="grand-total">Rp {{ number_format($cart['subtotal'] ?? 0, 0, ',', '.') }}</span></div>@php($checkoutAvailable = $paymentMode === 'whatsapp' ? $whatsappConfigured : $midtransActive)<button type="submit" form="checkout-form" id="complete-order" @disabled(!$checkoutAvailable) class="checkout-submit mt-7 w-full rounded-xl bg-[#2d5a27] px-5 py-4 font-semibold text-white transition hover:bg-[#1e3a1e] disabled:cursor-not-allowed disabled:opacity-50">{{ $paymentMode === 'whatsapp' ? 'Pesan via WhatsApp' : 'Complete order' }}</button><p class="mt-4 text-center text-xs text-[#746b66]">By placing your order, you agree to our terms and conditions.</p></div></aside>
@@ -210,6 +246,7 @@
                 const city = document.getElementById('city-name');
                 const cityId = document.getElementById('city-id');
                 const cityResults = document.getElementById('city-results');
+                const citySelectionStatus = document.getElementById('city-selection-status');
                 const state = document.querySelector('[name="shipping_address[state]"]');
                 const postcode = document.querySelector('[name="shipping_address[postcode]"]');
                 const courier = document.getElementById('courier-select');
@@ -262,6 +299,20 @@
                     cityResults.appendChild(messageElement);
                     cityResults.classList.remove('hidden');
                     city.setAttribute('aria-expanded', 'true');
+                    setCityStatus(message, isError ? 'error' : 'muted');
+                };
+
+                const setCityStatus = (message, tone = 'muted') => {
+                    if (!citySelectionStatus) return;
+
+                    const color = tone === 'error'
+                        ? 'text-red-700'
+                        : tone === 'success'
+                            ? 'text-[#31572c]'
+                            : 'text-[#746b66]';
+                    citySelectionStatus.className = `mt-2 text-xs ${color}`;
+                    citySelectionStatus.textContent = message;
+                    citySelectionStatus.classList.remove('hidden');
                 };
 
                 const updateTotal = (shippingCost) => {
@@ -301,6 +352,7 @@
                             cityId.value = String(item.id || item.city_id || '');
                             if (state && item.province_name) state.value = item.province_name;
                             if (postcode && item.zip_code) postcode.value = item.zip_code;
+                            setCityStatus(`Selected: ${city.value}`, 'success');
                             hideCityResults();
                             courier.dispatchEvent(new Event('change', { bubbles: true }));
                         });
@@ -309,6 +361,7 @@
 
                     cityResults.classList.remove('hidden');
                     city.setAttribute('aria-expanded', 'true');
+                    setCityStatus('Choose one result to set the exact delivery location.');
                 };
 
                 const setActiveCity = (index) => {
@@ -456,6 +509,8 @@
                 };
 
                 const scheduleCitySearch = () => {
+                    const query = city.value.trim();
+
                     if (selectedCityLabel && city.value !== selectedCityLabel) {
                         if (state) state.value = '';
                         if (postcode) postcode.value = '';
@@ -463,6 +518,7 @@
                     selectedCityLabel = '';
                     cityId.value = '';
                     hideCityResults();
+                    setCityStatus(query.length >= 3 ? 'Searching locations…' : 'Type at least 3 characters to search.');
                     clearTimeout(searchTimer);
                     searchTimer = setTimeout(searchCities, 300);
                 };
