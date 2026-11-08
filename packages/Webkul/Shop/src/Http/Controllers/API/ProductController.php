@@ -65,10 +65,12 @@ class ProductController extends APIController
 
         /**
          * Listing/carousel responses (no search term) are cached per catalog
-         * version, so repeated homepage visits skip the database entirely.
+         * version, so repeated homepage visits skip the database entirely. The
+         * listing is queried with the params the cache hands back, which are
+         * the normalized ones its key was built from.
          */
-        $data = $this->catalogApiCache->remember('products', request()->query(), function () use ($searchEngine) {
-            return ProductCardResource::collection($this->getProducts($searchEngine, ''))
+        $data = $this->catalogApiCache->remember('products', request()->query(), function (array $params) use ($searchEngine) {
+            return ProductCardResource::collection($this->getProducts($searchEngine, '', $params))
                 ->response()
                 ->getData(true);
         });
@@ -79,11 +81,11 @@ class ProductController extends APIController
     /**
      * Fetch the storefront product listing for the given search engine and query.
      */
-    protected function getProducts(string $searchEngine, string $query)
+    protected function getProducts(string $searchEngine, string $query, ?array $params = null)
     {
         return $this->productRepository
             ->setSearchEngine($searchEngine)
-            ->getAll(array_merge(request()->query(), [
+            ->getAll(array_merge($params ?? request()->query(), [
                 'query' => $query,
                 'channel_id' => core()->getCurrentChannel()->id,
                 'status' => 1,

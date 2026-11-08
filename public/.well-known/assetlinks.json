@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.ankeshmart.app",
+      "sha256_cert_fingerprints": [
+        "A6:3A:46:DF:E5:B4:C6:12:33:2A:13:FE:C0:D3:D1:80:8E:B3:2F:0C:A9:76:9C:40:37:34:91:8C:45:4D:AD:89"
+      ]
+    }
+  }
+]

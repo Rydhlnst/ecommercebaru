@@ -44,10 +44,12 @@ class CategoryController extends APIController
 
         /**
          * Category listings are cached per catalog version, so repeated
-         * storefront visits skip the database entirely.
+         * storefront visits skip the database entirely. The listing is queried
+         * with the params the cache hands back, which are the normalized ones
+         * its key was built from.
          */
-        $data = $this->catalogApiCache->remember('categories', request()->all(), function () use ($defaultParams) {
-            $categories = $this->categoryRepository->getAll(array_merge($defaultParams, request()->all()));
+        $data = $this->catalogApiCache->remember('categories', request()->all(), function (array $params) use ($defaultParams) {
+            $categories = $this->categoryRepository->getAll(array_merge($defaultParams, $params));
 
             return CategoryResource::collection($categories)
                 ->response()
